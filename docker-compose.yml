@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  mongo:
+    container_name: mongodatabase
+    image: mongo
+    ports:
+      - "27018:27017"
+    logging:
+      driver: none

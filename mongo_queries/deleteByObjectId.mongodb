@@ -1,0 +1,5 @@
+use("PINC-SE");
+
+db.solutions.deleteOne(
+  { "_id" : ObjectId('617bf8889bdddd023fdb018d') }
+);

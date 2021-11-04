@@ -1,0 +1,26 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// The current database to use.
+use('PINC-SE');
+
+// Search for documents in the current collection.
+db.getCollection('solutions')
+  .find(
+    {
+      /*
+      * Filter
+      * fieldA: value or expression
+      */
+      idSolution: "qSBSe16f7VirvdhBPz1GM"
+    },
+    {
+      /*
+      * Projection
+      * _id: 0, // exclude _id
+      * fieldA: 1 // include field
+      */
+      _id: 0,
+      baremoReferrer: 0
+    }
+  )

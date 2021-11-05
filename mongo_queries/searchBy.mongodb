@@ -12,7 +12,7 @@ db.getCollection('solutions')
       * Filter
       * fieldA: value or expression
       */
-      idSolution: "qSBSe16f7VirvdhBPz1GM"
+      solutionId: "Hq8FvywaZY7usN8kAU7Tk",
     },
     {
       /*
@@ -20,7 +20,6 @@ db.getCollection('solutions')
       * _id: 0, // exclude _id
       * fieldA: 1 // include field
       */
-      _id: 0,
       baremoReferrer: 0
     }
   )

@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('lodash');
-const Solution = require('../models/solutions')
+const Solution = require('../models/solutions');
+const { HTTP_RESPONSE } = require('@root/src/constants')
 
 /**
  * @description Verify that resources in the params bag exist in Mongo. If they are found, then the data
@@ -25,31 +26,21 @@ function checkResourceExistFromParams(collection) {
       let index 
       try {
         if(collection === 'solutions'){
-          const filter = {
-            active: true,
-            solutionId: req.params.solutionId
-          }
-
-          resp = await Solution.findOne(filter, {_id: 0})
+          const solutionId = req.params.solutionId
+          resp = await Solution.findOne({
+            solutionId: solutionId, 
+            active: true
+          })
           index = 'solution'
         } 
-  
         if(_.isEmpty(resp)){
-          throw new Error('Error while checking resource exists.');
+          throw new Error(HTTP_RESPONSE._404);
         }
         req.resources[index] = resp
-        return next();
+        next();
       } catch (err) {
-          res
-          .status(404)
-          .json({
-            error: {
-              code: 404,
-              message: `There was a problem trying to locate the resource. ${err}`,
-            }
-          })
-          .send()
-          return next()
+        res.status(404)
+        next(err)
       }
     };
   }

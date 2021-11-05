@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "testing":"nodemon test/test-server.js"
   },
   "repository": {
     "type": "git",

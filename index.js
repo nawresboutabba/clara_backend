@@ -17,6 +17,11 @@ app.use(express.json());
 
 
 const solutionsRouter = require('./src/routes/solutions')
+const httpMiddlewareRouter = require('./src/routes/http-middlewares')
+
+const logError = require('./src/handle-error/log-error')
+const clientErrorHandler = require('./src/handle-error/client-error-handler')
+const errorHandler = require('./src/handle-error/error-handler')
 
 const PORT = 3000
 const DB_CONNECTION = 'localhost:27017'
@@ -38,4 +43,9 @@ app.listen(PORT, () =>
 app.use(authentication);
 app.use('/', solutionsRouter);
 
+// @TODO configurar para que se desabilite en entorno de produccion
+app.use('/middleware-testing',httpMiddlewareRouter);
 
+app.use(logError)
+app.use(clientErrorHandler)
+app.use(errorHandler)

@@ -17,8 +17,15 @@ const FAKE_GENERATOR = {
     role: 'GENERATOR'
 }
 
+const HTTP_RESPONSE = {
+    _200: '200_OK',
+    _400: '400_BAD_REQUEST',
+    _404: '404_NOT_FOUND'
+}
+
 module.exports = {
     SOLUTION,
     SOLUTION_STATUS,
-    FAKE_GENERATOR
+    FAKE_GENERATOR,
+    HTTP_RESPONSE
 }

@@ -7,10 +7,10 @@ test:
 	./node_modules/mocha/bin/mocha --reporter $(REPORTER) $(MOCHA_OPTS) test/test.js
 	echo Ending test ***********************************************************
 
-solution-create:
+solution:
 	clear
 	echo Starting test *********************************************************
-	./node_modules/mocha/bin/mocha --reporter $(REPORTER) $(MOCHA_OPTS) test/solution-create.js
+	./node_modules/mocha/bin/mocha --reporter $(REPORTER) $(MOCHA_OPTS) test/solution.js
 	echo Ending test ***********************************************************
 
 middlewares:

@@ -78,14 +78,6 @@ router.get('/solution/:solutionId',[
 
 router.patch('/solution/:solutionId',[
     checkResourceExistFromParams('solutions'),
-    body('')
-    .custom(async(value, {req})=> {
-        // Convert keys to camelCase
-        req.resources = { 
-            solution : _.mapKeys(value, (v, k) => _.camelCase(k)) 
-        }
-        return Promise.resolve()
-    })
 ], async (req,res,next) => {
     try {
     const errors = validationResult(req).array();
@@ -94,19 +86,27 @@ router.patch('/solution/:solutionId',[
         res.status(400)
         throw new Error(JSON.stringify(errors));
     }
-    const solution = req.resources.solution
-    
+    const solution = _.mapKeys(req.body, (v, k) => _.camelCase(k))
+    console.log(_.mapKeys(req.body, (v, k) => _.camelCase(k)))
     solution.updated = new Date()
- 
-        await Solution.updateOne({
-            solutionId : req.params.solutionId
+    const solutionId = req.params.solutionId
+      await Solution.updateOne({
+            solutionId : solutionId
         }, solution )
-    
+
+        const resp = await Solution.findOne({
+            solutionId: solutionId, 
+            active: true
+          })
+
         res
-            .status(201)
+            .status(200)
+            //@TODO response from MongoDB
+            .json(resp)
             .send()
         next()        
     } catch(e) {
+        console.log("error!", e)
         next(e)
     }
 })
@@ -124,7 +124,6 @@ router.delete('/solution/:solutionId',[
         await Solution.updateOne({
             solutionId : req.params.solutionId
         }, {updated: new Date(), active: false} )
-    console.log("deleted")
         res
             .status(201)
             .send()

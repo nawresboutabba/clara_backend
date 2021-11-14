@@ -1,4 +1,10 @@
 const solution = {
     description:"Solution Example"
 }
-module.exports=solution
+const solutionUpdated = {
+    description:" modification description"
+}
+module.exports={
+    solution,
+    solutionUpdated
+}

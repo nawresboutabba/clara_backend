@@ -36,7 +36,9 @@ function checkResourceExistFromParams(collection) {
         if(_.isEmpty(resp)){
           throw new Error(HTTP_RESPONSE._404);
         }
+        // @TODO add camel case convertion
         req.resources[index] = resp
+
         next();
       } catch (err) {
         res.status(404)

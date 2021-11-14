@@ -2,8 +2,7 @@ const superagent = require('superagent')
 const expect = require("chai").expect;
 const PORT= 3000
 const URL = `http://localhost:${PORT}`;
-const regularSolution = require('./fake-resources/solutions/regular')
-const Solution = require('../src/models/solutions')
+const { solution } = require('./fake-resources/solutions/regular')
 
 let solutionId 
 describe('Give an middleware that check resources', () => {
@@ -13,7 +12,7 @@ describe('Give an middleware that check resources', () => {
     */
     superagent
     .post(`${URL}/solution`)
-    .send(regularSolution)
+    .send(solution)
     .end((error, response)=>{
       expect(response.status, `Error with POST status`).to.equal(200)
       solutionId = response.body.solutionId
@@ -21,9 +20,6 @@ describe('Give an middleware that check resources', () => {
     });      
   });
   after((done)=>{
-    /*
-    *  A fake-solution for testing inserted
-    */
     superagent
     .delete(`${URL}/solution/${solutionId}`)
     .end((error, response)=>{

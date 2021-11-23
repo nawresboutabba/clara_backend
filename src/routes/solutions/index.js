@@ -139,22 +139,4 @@ router.delete(
     }
   }
 );
-
-router.get("/wep", [], async (req, res, next) => {
-  const solutionId = "v-JPEQJi3oyYNtFfS_dCJ";
-
-  try {
-    const solutionInstance = await Solution.getSolutionActiveById(solutionId);
-    const resp = await solutionInstance.updateWithLog({ description: "japon" });
-    if (resp instanceof Error) {
-      throw resp;
-    }
-    res.status(200).send();
-    next();
-  } catch (error) {
-    res.status(500);
-    next(error);
-  }
-});
-
 module.exports = router;

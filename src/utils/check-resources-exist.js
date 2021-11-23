@@ -1,6 +1,6 @@
-'use strict';
-const _ = require('lodash');
-const Solution = require('../models/solutions')
+"use strict";
+const _ = require("lodash");
+const Solution = require("../models/solutions");
 
 /**
  * @description Verify that resources in the params bag exist in Mongo. If they are found, then the data
@@ -19,39 +19,39 @@ const Solution = require('../models/solutions')
  */
 
 function checkResourceExistFromParams(collection) {
-    return async function middleware(req, res, next) {
-      req.resources = {};
-      let resp = {}
-      let index 
-      try {
-        if(collection === 'solutions'){
-          const filter = {
-            active: true,
-            solutionId: req.params.solutionId
-          }
+  return async function middleware(req, res, next) {
+    req.resources = {};
+    let resp = {};
+    let index;
+    try {
+      if (collection === "solutions") {
+        const filter = {
+          active: true,
+          solutionId: req.params.solutionId,
+        };
 
-          resp = await Solution.findOne(filter, {_id: 0})
-          index = 'solution'
-        } 
-  
-        if(_.isEmpty(resp)){
-          throw new Error('Error while checking resource exists.');
-        }
-        req.resources[index] = resp
-        return next();
-      } catch (err) {
-          res
-          .status(404)
-          .json({
-            error: {
-              code: 404,
-              message: `There was a problem trying to locate the resource. ${err}`,
-            }
-          })
-          .send()
-          return next()
+        resp = await Solution.findOne(filter, { _id: 0 });
+        index = "solution";
       }
-    };
-  }
-  
-  module.exports = checkResourceExistFromParams;
+
+      if (_.isEmpty(resp)) {
+        throw new Error("Error while checking resource exists.");
+      }
+      req.resources[index] = resp;
+      return next();
+    } catch (err) {
+      res
+        .status(404)
+        .json({
+          error: {
+            code: 404,
+            message: `There was a problem trying to locate the resource. ${err}`,
+          },
+        })
+        .send();
+      return next();
+    }
+  };
+}
+
+module.exports = checkResourceExistFromParams;

@@ -4,9 +4,12 @@
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
 // Select the database to use.
-use('myFirstDatabase');
+use('PINC-SE');
 
 // The drop() command destroys all data from a collection.
 // Make sure you run it against the correct database and collection.
-db.users.drop();
-
+db.solutions.update({
+    solutionId : "CQfBy7xbOHZt2mUx9RPRT"
+},{$set:{
+    active: true
+}})

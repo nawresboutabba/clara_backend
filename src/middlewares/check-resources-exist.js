@@ -27,10 +27,7 @@ function checkResourceExistFromParams(collection) {
       try {
         if(collection === 'solutions'){
           const solutionId = req.params.solutionId
-          resp = await Solution.findOne({
-            solutionId: solutionId, 
-            active: true
-          })
+          resp = await Solution.getSolutionActiveById(solutionId)
           index = 'solution'
         } 
         if(_.isEmpty(resp)){

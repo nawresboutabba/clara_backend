@@ -5,6 +5,8 @@ const express = require ('express')
 const app = require('express')();
 const mongoose = require('mongoose');
 const authentication = require('@middlewares/authentication');
+const morgan = require("morgan");
+require('dotenv').config();
 //const cookieParser = require('cookie-parser');
 //const cors = require('cors');
 
@@ -14,9 +16,9 @@ const authentication = require('@middlewares/authentication');
 app.use(express.json());
 
 //app.use(express.urlencoded({ extended: true }));
-
-
+app.use(morgan("dev"));
 const solutionsRouter = require('./src/routes/solutions')
+const usersRouter = require('./src/routes/users')
 const httpMiddlewareRouter = require('./src/routes/http-middlewares')
 
 const logError = require('./src/handle-error/log-error')
@@ -26,10 +28,13 @@ const errorHandler = require('./src/handle-error/error-handler')
 const PORT = 3000
 const DB_CONNECTION = 'localhost:27017'
 const DB_NAME = 'PINC-SE'
-
-mongoose.connect(`mongodb://${DB_CONNECTION}/${DB_NAME}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+// `mongodb://${DB_CONNECTION}/${DB_NAME}`
+//`mongodb+srv://HECTOR:ntvgydrhouselomAs@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+mongoose.connect(`mongodb+srv://HECTOR:ntvgydrhouselomAs@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
+    //useNewUrlParser: true,
+    //useUnifiedTopology: true,
+    //retryWrites: true,// just for development
+    //retryReads: false //just for development
 })
     .then(db => console.log('DB is conected to', db.connection.host))
     .catch(err => console(err))
@@ -40,8 +45,9 @@ app.listen(PORT, () =>
         `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
     )
 );
-app.use(authentication);
+/* app.use(authentication); */
 app.use('/', solutionsRouter);
+app.use('/',usersRouter)
 
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);

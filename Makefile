@@ -17,4 +17,10 @@ middlewares:
 	clear
 	echo Start Test Server**************************
 	./node_modules/mocha/bin/mocha --reporter $(REPORTER) $(MOCHA_OPTS) test/middlewares.js
+	echo Ending test ***********************************************************
+
+user:
+	echo Start Test Server**************************
+	./node_modules/mocha/bin/mocha --reporter $(REPORTER) $(MOCHA_OPTS) test/user-session.js
+	echo Ending test ***********************************************************
 .PHONY: test

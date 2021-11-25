@@ -3,6 +3,19 @@ const user = {
     password:"passwordExample"
 }
 
+const generator = {
+    email:"adriana@gmail.com",
+    password: "passwordExample",
+    name: "adriana"
+}
+
+const committe = {
+    email: "rafael@gmail.com",
+    password:"passwordExample",
+    name: "rafael"
+}
 module.exports={
-    user
+    user,
+    generator,
+    committe
 }

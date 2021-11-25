@@ -12,16 +12,16 @@ const _ = require("lodash");
 const {
   validationResult,
   body,
-  param,
-  query,
-  check,
-  custom,
 } = require("express-validator");
 const checkResourceExistFromParams = require("@middlewares/check-resources-exist");
+const authentication = require("@middlewares/authentication");
 
 router.post(
   "/solution",
-  [body("description", "description can not be empty").notEmpty()],
+  [
+    body("description", "description can not be empty").notEmpty(),
+    authentication,
+  ],
   async (req, res, next) => {
     try {
       const errors = validationResult(req).array();
@@ -39,11 +39,11 @@ router.post(
         images,
         is_private: isPrivate,
       } = req.body;
-      const solution = new Solution({
+      const solution = await Solution.newSolution({
         // @TODO automatic Id
         solutionId: nanoid(),
         // calculated trough session
-        authorEmail: "hardcode@gmail.com",
+        authorEmail: req.user.email,
         created: created,
         updated: created,
         canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
@@ -55,12 +55,9 @@ router.post(
         images,
         isPrivate,
       });
-
-      const resp = await solution.save();
       res
         .status(200)
-        // @TODO delete _id and _v fields
-        .json(resp)
+        .json(solution)
         .send();
       next();
     } catch (e) {
@@ -71,7 +68,7 @@ router.post(
 
 router.get(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions")],
+  [checkResourceExistFromParams("solutions"), authentication],
   async (req, res, next) => {
     try {
       const errors = validationResult(req).array();
@@ -90,7 +87,7 @@ router.get(
 
 router.patch(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions")],
+  [checkResourceExistFromParams("solutions"), authentication],
   async (req, res, next) => {
     try {
       const errors = validationResult(req).array();
@@ -118,7 +115,7 @@ router.patch(
 
 router.delete(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions")],
+  [checkResourceExistFromParams("solutions"), authentication],
   async (req, res, next) => {
     try {
       const errors = validationResult(req).array();

@@ -22,6 +22,8 @@ router.post("/user/signup", [], async (req, res, next) => {
           userId: nanoid(),
           email: req.body.email,
           password: hash,
+          firstName: req.body.firt_name,
+          lastName:req.body.last_name
         });
         if (user instanceof Error) {
           res.status(500);
@@ -54,6 +56,8 @@ router.post("/user/login", async (req, res, next) => {
         {
           email: user.email,
           userId: user.userId,
+          firstName: user.firstName,
+          lastName: user.lastName
         },
         process.env.JWT_KEY,
         {

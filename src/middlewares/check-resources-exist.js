@@ -1,7 +1,8 @@
-'use strict';
-const _ = require('lodash');
-const Solution = require('../models/solutions');
-const { HTTP_RESPONSE } = require('@root/src/constants')
+"use strict";
+const _ = require("lodash");
+const Solution = require("../models/solutions");
+const Challenge = require("../models/challenges");
+const { HTTP_RESPONSE } = require("@root/src/constants");
 
 /**
  * @description Verify that resources in the params bag exist in Mongo. If they are found, then the data
@@ -20,28 +21,36 @@ const { HTTP_RESPONSE } = require('@root/src/constants')
  */
 
 function checkResourceExistFromParams(collection) {
-    return async function middleware(req, res, next) {
-      req.resources = {};
-      let resp = {}
-      let index 
-      try {
-        if(collection === 'solutions'){
-          const solutionId = req.params.solutionId
-          resp = await Solution.getSolutionActiveById(solutionId)
-          index = 'solution'
-        } 
-        if(_.isEmpty(resp)){
-          throw new Error(HTTP_RESPONSE._404);
-        }
-        // @TODO add camel case convertion
-        req.resources[index] = resp
-
-        next();
-      } catch (err) {
-        res.status(404)
-        next(err)
+  return async function middleware(req, res, next) {
+    req.resources = {};
+    let resp = {};
+    let index;
+    try {
+      if (collection === "solutions") {
+        const solutionId = req.params.solutionId;
+        // @TODO create lightning get resource 
+        resp = await Solution.getSolutionActiveById(solutionId);
+        index = "solution";
       }
-    };
-  }
-  
-  module.exports = checkResourceExistFromParams;
+      if (collection === 'challenges'){
+        const challengeId = req.params.challengeId
+        // @TODO create lightning get resource 
+        resp = await Challenge.getChallengeActiveById(challengeId)
+        index = "challenge"
+      }
+
+      if (_.isEmpty(resp)) {
+        throw new Error(HTTP_RESPONSE._404);
+      }
+      // @TODO add camel case convertion
+      req.resources[index] = resp;
+
+      next();
+    } catch (err) {
+      res.status(404);
+      next(err);
+    }
+  };
+}
+
+module.exports = checkResourceExistFromParams;

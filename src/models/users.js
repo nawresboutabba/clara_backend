@@ -17,6 +17,8 @@ const user = mongoose.Schema({
     unique: true,
   },
   password: { type: String, required: true },
+  firstName: String,
+  lastName: String, 
   workSpace: [
     {
       type: String,
@@ -63,6 +65,8 @@ user.statics.newGenericUser = async function (data) {
       email: data.email,
       active: true,
       password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
       workSpace: ["ABSOLUTE"],
     })
       .then((resp) => {

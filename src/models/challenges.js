@@ -1,67 +1,48 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const HistoricalSolution = require("./historical-solutions");
 const _ = require("lodash");
+const HistoricalChallenge = require("./historical-challenges");
 
-const solution = new Schema({
-  solutionId: String,
+const challenge = new Schema({
   challengeId: String,
-  authorEmail: String,
   created: {
     type: Date,
     default: Date.now,
   },
   updated: Date,
   description: String,
+  active: {
+    type: Boolean,
+    default: true,
+  },
   images: [
     {
       type: String,
     },
   ],
-  canChooseScope: {
-    type: Boolean,
-    default: true,
-  },
-  active: {
-    type: Boolean,
-    default: true,
-  },
-  isPrivate: {
-    type: Boolean,
-    default: true,
-  },
+  timePeriod: Number,
   status: String,
-  timeInPark: {
-    type: Number,
-    default: null,
-  },
-  baremoValidator: [
+  validators: [
     {
       type: String,
     },
   ],
-  baremoReferrer: [
+  referrer: String,
+  workSpaceAvailable: [
     {
       type: String,
     },
   ],
-  calification: {
-    complexity: Number,
-    impact: Number,
-  },
-  reactions: {
-    likes: Number,
-    confused: Number,
-  },
 });
 
-solution.statics.getSolutionActiveById = async function (id) {
+challenge.statics.getChallengeActiveById = async function (id) {
   return new Promise((resolve, reject) =>
     this.findOne({
-      solutionId: id,
+      challengeId: id,
       active: true,
     })
       .then((result) => {
+        // Return the Document Object then could be chained with other methods
         resolve(result);
       })
       .catch((err) => {
@@ -70,7 +51,41 @@ solution.statics.getSolutionActiveById = async function (id) {
   );
 };
 
-solution.methods.deactivateSolution = function () {
+challenge.statics.newChallenge = async function (data){
+  return new Promise((resolve, reject) => {
+    this.create(data)
+      .then((resp) => {
+        resolve(_.omit(resp.toJSON(), ["_id", "__v"]));
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });  
+}
+
+challenge.methods.updateWithLog = async function (update) {
+  const oldData = _.omit(this.toJSON(), ["_id", "__v"]);
+  update.updated = new Date();
+  Object.assign(this, update);
+  console.log("entre a la operacion")
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    await Promise.all([
+      HistoricalChallenge.create([oldData], { session: session }),
+      this.save({ session: session }),
+    ]);
+    await session.commitTransaction();
+    session.endSession();
+    return _.omit(this.toJSON(), ["_id", "__v"]);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return error;
+  }
+};
+
+challenge.methods.deactivateChallenge = function () {
   (this.updated = new Date()), (this.active = false);
 
   return new Promise((resolve, reject) => {
@@ -84,37 +99,5 @@ solution.methods.deactivateSolution = function () {
   });
 };
 
-solution.methods.updateWithLog = async function (update) {
-  const oldData = _.omit(this.toJSON(), ["_id", "__v"]);
-  update.updated = new Date();
-  Object.assign(this, update);
-  const session = await mongoose.startSession();
-  try {
-    session.startTransaction();
-    await Promise.all([
-      HistoricalSolution.create([oldData], { session: session }),
-      this.save({ session: session }),
-    ]);
-    await session.commitTransaction();
-    session.endSession();
-    return _.omit(this.toJSON(), ["_id", "__v"]);
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    return error;
-  }
-};
 
-solution.statics.newSolution = async function (data){
-  // Check that solution exist
-  return new Promise((resolve, reject) => {
-    this.create(data)
-      .then((resp) => {
-        resolve(_.omit(resp.toJSON(), ["_id", "__v", "password"]));
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });  
-}
-module.exports = mongoose.model("Solution", solution);
+module.exports = mongoose.model("Challenge", challenge);

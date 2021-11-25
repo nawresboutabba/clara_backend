@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 const solutionsRouter = require('./src/routes/solutions')
 const usersRouter = require('./src/routes/users')
+const challengeRouter = require('./src/routes/challenge')
 const httpMiddlewareRouter = require('./src/routes/http-middlewares')
 
 const logError = require('./src/handle-error/log-error')
@@ -45,9 +46,9 @@ app.listen(PORT, () =>
         `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
     )
 );
-/* app.use(authentication); */
 app.use('/', solutionsRouter);
-app.use('/',usersRouter)
+app.use('/',usersRouter);
+app.use('/', challengeRouter)
 
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);

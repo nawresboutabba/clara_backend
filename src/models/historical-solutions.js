@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema, model } from 'mongoose';
 
 const historicalSolution = new Schema({},{ strict: false });
 
-module.exports = mongoose.model("HistoricalSolution", historicalSolution);
+export default model("HistoricalSolution", historicalSolution);

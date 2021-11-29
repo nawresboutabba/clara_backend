@@ -1,20 +1,18 @@
 "use strict";
+import * as express from "express";
+const router = express.Router();
+import SolutionService from "../../services/Solution.service";
+import authentication from "../../middlewares/authentication";
+import * as _ from 'lodash'; 
+import { nanoid } from 'nanoid'
+import { NextFunction} from "express"
+import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
+import {
+  SOLUTION, SOLUTION_STATUS
+} from '../../constants'
 
-const router = require("express").Router();
-const Solution = require("@models/solutions");
-const { nanoid } = require("nanoid");
-const {
-  SOLUTION,
-  SOLUTION_STATUS,
-  HTTP_RESPONSE,
-} = require("@root/src/constants");
-const _ = require("lodash");
-const {
-  validationResult,
-  body,
-} = require("express-validator");
-const checkResourceExistFromParams = require("@middlewares/check-resources-exist");
-const authentication = require("@middlewares/authentication");
+import { validationResult, body } from "express-validator";
+import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 
 router.post(
   "/solution",
@@ -22,7 +20,7 @@ router.post(
     body("description", "description can not be empty").notEmpty(),
     authentication,
   ],
-  async (req, res, next) => {
+  async (req: RequestMiddleware, res: ResponseMiddleware, next:NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -33,13 +31,12 @@ router.post(
       const created = new Date();
       const {
         // It can be null if it does not have an associated problem
-        id_challenge: idChallenge,
         description,
         file_name: fileName,
         images,
         is_private: isPrivate,
       } = req.body;
-      const solution = await Solution.newSolution({
+      const solution = await SolutionService.newSolution({
         // @TODO automatic Id
         solutionId: nanoid(),
         // calculated trough session
@@ -49,11 +46,11 @@ router.post(
         canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
         status: SOLUTION_STATUS.LAUNCHED,
         timeInPark: SOLUTION.TIME_IN_PARK,
-        idChallenge,
+        isPrivate:false,
+        active: true,
         description,
-        fileName,
-        images,
-        isPrivate,
+        fileName: "URL1",
+        images: ["URL1","URL2"],
       });
       res
         .status(200)
@@ -68,8 +65,10 @@ router.post(
 
 router.get(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions"), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams("solutions"), 
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -87,8 +86,10 @@ router.get(
 
 router.patch(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions"), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams("solutions"), 
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -96,14 +97,9 @@ router.patch(
         res.status(400);
         throw new Error(JSON.stringify(errors));
       }
-      const solutionChanges = _.mapKeys(req.body, (v, k) => _.camelCase(k));
+      const solutionChanges = _.mapKeys(req.body, (v: any, k:any) => _.camelCase(k));
       const solutionId = req.params.solutionId;
-
-      const solutionInstance = await Solution.getSolutionActiveById(solutionId);
-      const resp = await solutionInstance.updateWithLog(solutionChanges);
-      if (resp instanceof Error) {
-        throw resp;
-      }
+      const resp = await SolutionService.updateWithLog(solutionId, solutionChanges);
       res.status(200).json(resp).send();
       next();
     } catch (error) {
@@ -115,8 +111,10 @@ router.patch(
 
 router.delete(
   "/solution/:solutionId",
-  [checkResourceExistFromParams("solutions"), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams("solutions"),
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -126,8 +124,7 @@ router.delete(
       }
 
       const solutionId = req.params.solutionId;
-      const solutionInstance = await Solution.getSolutionActiveById(solutionId);
-      await solutionInstance.deactivateSolution();
+      await SolutionService.deactivateSolution(solutionId);
 
       res.status(204).send();
       next();
@@ -136,4 +133,5 @@ router.delete(
     }
   }
 );
-module.exports = router;
+const solutionsRouter = router
+export default solutionsRouter;

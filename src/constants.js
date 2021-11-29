@@ -2,7 +2,7 @@
 
 const SOLUTION = {
     CAN_CHOOSE_SCOPE : true,
-    TIME_IN_PARK: '3000'
+    TIME_IN_PARK: 3000
 }
 
 const SOLUTION_STATUS = {
@@ -23,9 +23,14 @@ const HTTP_RESPONSE = {
     _404: '404_NOT_FOUND'
 }
 
+const RESOURCE = {
+    CHALLENGE: "challenge",
+    SOLUTION: "solution",
+}
 module.exports = {
     SOLUTION,
     SOLUTION_STATUS,
     FAKE_GENERATOR,
-    HTTP_RESPONSE
+    HTTP_RESPONSE,
+    RESOURCE
 }

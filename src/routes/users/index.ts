@@ -1,12 +1,17 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { nanoid } = require("nanoid");
-const User = require("../../models/users");
+import * as express from "express";
+import * as bcrypt from 'bcrypt';
+import { sign } from 'jsonwebtoken'
+import { NextFunction} from "express"
+import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
+import { nanoid } from 'nanoid'
+import UserService from "../../services/User.service";
+import authentication from "../../middlewares/authentication";
 
-router.post("/user/signup", [], async (req, res, next) => {
-  let user = await User.getUserActiveByEmail(req.body.email);
+const router = express.Router();
+
+
+router.post("/user/signup", [], async (req:RequestMiddleware, res: ResponseMiddleware, next) => {
+  let user = await UserService.getUserActiveByEmail(req.body.email);
   try {
     if (user) {
       res.status(409);
@@ -18,12 +23,14 @@ router.post("/user/signup", [], async (req, res, next) => {
           res.status(500);
           throw err;
         }
-        const user = await User.newGenericUser({
+        const user = await UserService.newGenericUser({
           userId: nanoid(),
           email: req.body.email,
           password: hash,
           firstName: req.body.firt_name,
-          lastName:req.body.last_name
+          lastName:req.body.last_name,
+          workSpace: ["ABSOLUTE"],
+          active: true,
         });
         if (user instanceof Error) {
           res.status(500);
@@ -39,8 +46,8 @@ router.post("/user/signup", [], async (req, res, next) => {
   }
 });
 
-router.post("/user/login", async (req, res, next) => {
-  const user = await User.getUserActiveByEmail(req.body.email);
+router.post("/user/login", async (req:RequestMiddleware, res: ResponseMiddleware, next) => {
+  const user = await UserService.getUserActiveByEmail(req.body.email);
   if (user == null) {
     res.status(500);
     next(new Error("Auth failed"));
@@ -52,7 +59,7 @@ router.post("/user/login", async (req, res, next) => {
         res.status(500);
         throw new Error("Auth failed");
       }
-      const token = jwt.sign(
+      const token = sign(
         {
           email: user.email,
           userId: user.userId,
@@ -78,18 +85,19 @@ router.post("/user/login", async (req, res, next) => {
 });
 
 // @Add authentication middleware
-router.delete("/user/:userId", [], async (req, res, next) => {
+router.delete("/user/:userId", [
+  authentication
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
-    let user = await User.getUserActiveByUserId(req.params.userId);
-
-    const result = await user.deleteUserWithLog();
-    if (result instanceof Error) {
-      res.status(500);
-      throw result;
-    }
-    res.status(204).send();
+    await UserService.deleteUserWithLog(req.params.userId);
+    res
+    .status(204)
+    .send();
   } catch (err) {
+    res
+    .status(500)
     next(err);
   }
 });
-module.exports = router;
+const userRouter = router
+export default userRouter;

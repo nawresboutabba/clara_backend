@@ -3,7 +3,7 @@
 const router = require('express').Router();
 const Configuration = require('../../models/configurations')
 const { validationResult, body, query } = require('express-validator');
-const checkResourceExistFromParams = require('@middlewares/check-resources-exist')
+import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 
 
 router.get('/check-resources-exist/solution/:solutionId',[

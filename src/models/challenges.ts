@@ -1,7 +1,18 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const _ = require("lodash");
-const HistoricalChallenge = require("./historical-challenges");
+import { Schema, model } from 'mongoose';
+
+export type TYPE_CHALLENGE  = {
+  challengeId:string,
+  created: Date,
+  updated?:Date,
+  description: String,
+  active: boolean,
+  images: Array<String>,
+  timePeriod: number,
+  status: string,
+  validators: Array<String>,
+  referrer: String,
+  workSpaceAvailable: Array<String>
+}
 
 const challenge = new Schema({
   challengeId: String,
@@ -35,7 +46,7 @@ const challenge = new Schema({
   ],
 });
 
-challenge.statics.getChallengeActiveById = async function (id) {
+/* challenge.statics.getChallengeActiveById = async function (id) {
   return new Promise((resolve, reject) =>
     this.findOne({
       challengeId: id,
@@ -97,7 +108,6 @@ challenge.methods.deactivateChallenge = function () {
         return reject(err);
       });
   });
-};
+}; */
 
-
-module.exports = mongoose.model("Challenge", challenge);
+export default model("Challenge", challenge);

@@ -3,8 +3,12 @@ const Challenge = require("@models/challenges");
 const Solution = require("@models/solutions");
 const _ = require("lodash");
 const { nanoid } = require("nanoid");
-const authentication = require("@middlewares/authentication");
-const checkResourceExistFromParams = require("@middlewares/check-resources-exist");
+import authentication from "../../middlewares/authentication";
+import { NextFunction } from 'express';
+import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
+import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
+import ChallengeService from '../../services/Challenge.service';
+import SolutionService from '../../services/Solution.service';
 const { validationResult, body } = require("express-validator");
 const {
   SOLUTION,
@@ -16,9 +20,9 @@ router.post(
   "/challenge",
   [
     body("description", "description can not be empty").notEmpty(),
-    authentication,
+/*     authentication, */
   ],
-  async (req, res, next) => {
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -35,12 +39,13 @@ router.post(
         referrer,
         work_space_available: workSpaceAvailable,
       } = req.body;
-      const challenge = await Challenge.newChallenge({
+      const challenge = await ChallengeService.newChallenge({
         challengeId: nanoid(),
         created,
         description,
         status: "LAUNCHED",
         images,
+        active: true, 
         timePeriod,
         validators,
         referrer,
@@ -58,9 +63,9 @@ router.post(
   [
     checkResourceExistFromParams(`challenges`),
     body("description", "description can not be empty").notEmpty(),
-    authentication,
+/*     authentication, */
   ],
-  async (req, res, next) => {
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -76,20 +81,22 @@ router.post(
         images,
         is_private: isPrivate,
       } = req.body;
-      const solution = await Solution.newSolution({
+      const solution = await SolutionService.newSolution({
         // @TODO automatic Id
         challengeId: challengeId,
         solutionId: nanoid(),
         // calculated trough session
-        authorEmail: "hardcode@gmail.com",
+        authorEmail: req.user.email,
         created: created,
         updated: created,
         canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
         status: SOLUTION_STATUS.LAUNCHED,
+        timeInPark: SOLUTION.TIME_IN_PARK,
         description,
-        fileName,
-        images,
-        isPrivate,
+        isPrivate:false,
+        active: true,
+        fileName: "URL1",
+        images: ["URL1","URL2"],
       });
       res.status(200).json(solution).send();
       next();
@@ -101,8 +108,10 @@ router.post(
 
 router.get(
   `/challenge/:challengeId`,
-  [checkResourceExistFromParams(`challenges`), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams(`challenges`), 
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -120,8 +129,10 @@ router.get(
 
 router.patch(
   "/challenge/:challengeId",
-  [checkResourceExistFromParams("challenges"), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams("challenges"), 
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -129,17 +140,11 @@ router.patch(
         res.status(400);
         throw new Error(JSON.stringify(errors));
       }
-      const challengeChanges = _.mapKeys(req.body, (v, k) => _.camelCase(k));
+      const challengeChanges = _.mapKeys(req.body, (v: any, k:any) => _.camelCase(k));
       const challengeId = req.params.challengeId;
 
-      const challengeInstance = await Challenge.getChallengeActiveById(
-        challengeId
-      );
-
-      const resp = await challengeInstance.updateWithLog(challengeChanges);
-      if (resp instanceof Error) {
-        throw resp;
-      }
+      const resp = await ChallengeService.updateWithLog(challengeId, challengeChanges);
+      
       res.status(200).json(resp).send();
       next();
     } catch (error) {
@@ -151,8 +156,10 @@ router.patch(
 
 router.delete(
   "/challenge/:challengeId",
-  [checkResourceExistFromParams("challenges"), authentication],
-  async (req, res, next) => {
+  [checkResourceExistFromParams("challenges"), 
+  authentication
+],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
@@ -160,12 +167,8 @@ router.delete(
         res.status(400);
         throw new Error(JSON.stringify(errors));
       }
-
       const challengeId = req.params.challengeId;
-      const challengeInstance = await Challenge.getChallengeActiveById(
-        challengeId
-      );
-      await challengeInstance.deactivateChallenge();
+      await ChallengeService.deactivateChallenge(challengeId);
 
       res.status(204).send();
       next();
@@ -175,4 +178,5 @@ router.delete(
   }
 );
 
-module.exports = router;
+const challengeRouter = router
+export default challengeRouter;

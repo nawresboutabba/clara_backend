@@ -1,7 +1,12 @@
 "use strict";
+
+import { NextFunction } from "express";
+import SolutionService from "../services/Solution.service";
+import ChallengeService from '../services/Challenge.service';
+import { RESOURCE } from "../constants";
+import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
+
 const _ = require("lodash");
-const Solution = require("../models/solutions");
-const Challenge = require("../models/challenges");
 const { HTTP_RESPONSE } = require("@root/src/constants");
 
 /**
@@ -20,23 +25,26 @@ const { HTTP_RESPONSE } = require("@root/src/constants");
   })
  */
 
-function checkResourceExistFromParams(collection) {
-  return async function middleware(req, res, next) {
+
+type TYPE_RESOURCE = string
+
+function checkResourceExistFromParams(collection:string) {
+  return async function middleware(req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) {
     req.resources = {};
     let resp = {};
-    let index;
+    let index: TYPE_RESOURCE;
     try {
       if (collection === "solutions") {
         const solutionId = req.params.solutionId;
         // @TODO create lightning get resource 
-        resp = await Solution.getSolutionActiveById(solutionId);
-        index = "solution";
+        resp = await SolutionService.getSolutionActiveById(solutionId);
+        index = RESOURCE.SOLUTION;
       }
       if (collection === 'challenges'){
         const challengeId = req.params.challengeId
         // @TODO create lightning get resource 
-        resp = await Challenge.getChallengeActiveById(challengeId)
-        index = "challenge"
+        resp = await ChallengeService.getChallengeActiveById(challengeId)
+        index = RESOURCE.CHALLENGE
       }
 
       if (_.isEmpty(resp)) {
@@ -53,4 +61,4 @@ function checkResourceExistFromParams(collection) {
   };
 }
 
-module.exports = checkResourceExistFromParams;
+export default checkResourceExistFromParams;

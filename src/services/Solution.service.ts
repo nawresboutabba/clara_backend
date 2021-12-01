@@ -3,7 +3,7 @@ import { startSession } from 'mongoose';
 import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
 
-type editOneParams = {
+export type editOneParams = {
     description?: string,
     images?: Array<string>,
     canChooseScope?:boolean,

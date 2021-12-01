@@ -1,0 +1,771 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"TYPE_SOLUTION": {
+				"properties": {
+					"toJSON": {},
+					"reactions": {
+						"properties": {
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"confused",
+							"likes"
+						],
+						"type": "object"
+					},
+					"calification": {
+						"properties": {
+							"impact": {
+								"type": "number",
+								"format": "double"
+							},
+							"complexity": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"impact",
+							"complexity"
+						],
+						"type": "object"
+					},
+					"fileName": {
+						"type": "string"
+					},
+					"baremoReferrer": {
+						"type": "string"
+					},
+					"baremoValidator": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"isPrivate": {
+						"type": "boolean"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"canChooseScope": {
+						"type": "boolean"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"description": {
+						"type": "string"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"authorEmail": {
+						"type": "string"
+					},
+					"challengeId": {
+						"type": "string"
+					},
+					"solutionId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fileName",
+					"timeInPark",
+					"status",
+					"isPrivate",
+					"active",
+					"canChooseScope",
+					"images",
+					"description",
+					"created",
+					"authorEmail",
+					"solutionId"
+				],
+				"type": "object"
+			},
+			"SolutionBody": {
+				"properties": {
+					"challenge_id": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_private": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"baremo_validator": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"baremo_referrer": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"TYPE_USER": {
+				"properties": {
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"workSpace": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"workSpace",
+					"active",
+					"lastName",
+					"firstName",
+					"password",
+					"userId",
+					"email"
+				],
+				"type": "object"
+			},
+			"UserBody": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"email",
+					"first_name",
+					"last_name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Login": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"TYPE_CHALLENGE": {
+				"properties": {
+					"workSpaceAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"referrer": {
+						"type": "string"
+					},
+					"validators": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"status": {
+						"type": "string"
+					},
+					"timePeriod": {
+						"type": "number",
+						"format": "double"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"description": {
+						"type": "string"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"challengeId": {
+						"type": "string"
+					},
+					"author": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"workSpaceAvailable",
+					"referrer",
+					"validators",
+					"status",
+					"timePeriod",
+					"images",
+					"active",
+					"description",
+					"created",
+					"challengeId",
+					"author"
+				],
+				"type": "object"
+			},
+			"ChallengeBody": {
+				"properties": {
+					"challengeId": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"time_period": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"timePeriod": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"work_space_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"validators": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"referrer": {
+						"type": "string"
+					},
+					"workSpaceAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"challengeId",
+					"created",
+					"description",
+					"active",
+					"images",
+					"timePeriod",
+					"status",
+					"validators",
+					"referrer",
+					"workSpaceAvailable"
+				],
+				"type": "object",
+				"additionalProperties": true
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "ideation_backend",
+		"version": "1.0.0",
+		"description": "ideation backend",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Clara Idea"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/solution": {
+			"post": {
+				"operationId": "NewSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_SOLUTION"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SolutionBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/solution/{solutionId}": {
+			"patch": {
+				"operationId": "UpdateSolutionPartially",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_SOLUTION"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SolutionBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "GetSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_SOLUTION"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/signup": {
+			"post": {
+				"operationId": "SignUp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_USER"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Login"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/{userId}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/challenge": {
+			"post": {
+				"operationId": "NewChallenge",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChallengeBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/challenge/{challengeId}/solution": {
+			"post": {
+				"operationId": "NewSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_SOLUTION"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChallengeBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/challenge/{challengeId}": {
+			"get": {
+				"operationId": "GetChallenge",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "UpdateChallengePartially",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChallengeBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteChallenge",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

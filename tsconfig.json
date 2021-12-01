@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
+      "experimentalDecorators": true,
       "module": "commonjs",
       "moduleResolution": "node",
       "outDir": "./dist",
       "allowJs": true,
-      "target": "es6"
+      "target": "es6",
+      "emitDecoratorMetadata": true,
     },
     "include": ["./src/**/*"]
   }

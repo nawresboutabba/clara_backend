@@ -1,14 +1,41 @@
 import { Schema, model } from 'mongoose';
 
 export type TYPE_USER = {
+  /**
+   * Mongo Document Id
+   */
   _id?: string,
+  /**
+   * User email
+   */
   email: string,
+  /**
+   * Business User Id
+   */
   userId: string,
+  /**
+   * Password encrypted
+   */
   password: string,
+  /**
+   * user first name
+   */
   firstName: string,
+  /**
+   * User last name
+   */
   lastName: string,
+  /**
+   * Is the user active?
+   */
   active: boolean,
+  /**
+   * Workspace that user could be explore
+   */
   workSpace: Array<string>,
+  /**
+   * Last user update
+   */
   updated?: Date
 }
 

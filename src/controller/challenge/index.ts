@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
 import { TYPE_CHALLENGE } from '../../models/challenges';
-import { UserRequest } from '../solution';
+import { UserRequest } from '../users';
 import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge } from '../../repository/challenge';
 import { TYPE_SOLUTION } from '../../models/solutions';
 import { newSolution } from '../../repository/solution'

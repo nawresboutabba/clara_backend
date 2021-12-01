@@ -1,5 +1,6 @@
 import { TYPE_SOLUTION } from "../models/solutions";
-import { SolutionBody, UserRequest } from "../controller/solution";
+import { SolutionBody } from "../controller/solution";
+import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import { SOLUTION, SOLUTION_STATUS } from '../constants'
 import { nanoid } from 'nanoid'

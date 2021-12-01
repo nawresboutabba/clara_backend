@@ -1,13 +1,8 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
 import { TYPE_SOLUTION } from '../../models/solutions';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/solution';
+import { UserRequest } from '../users';
 
-export interface UserRequest{
-    email: string;
-    userId: string;
-    firstName: string;
-    lastName:string;
-}
 
 export interface SolutionBody {
     challenge_id?:string,

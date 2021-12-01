@@ -32,7 +32,7 @@ const DB_CONNECTION = 'localhost:27017'
 const DB_NAME = 'PINC-SE'
 // `mongodb://${DB_CONNECTION}/${DB_NAME}`
 //`mongodb+srv://HECTOR:ntvgydrhouselomAs@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
-mongoose.connect(`mongodb+srv://HECTOR:ntvgydrhouselomAs@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://dev-enviroment:mIdDJ9RBelATRjgm@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
     //useNewUrlParser: true,
     //useUnifiedTopology: true,
     //retryWrites: true,// just for development

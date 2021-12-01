@@ -2,9 +2,8 @@ import { ChallengeBody } from "../controller/challenge";
 import { TYPE_CHALLENGE } from "../models/challenges";
 import ChallengeService from "../services/Challenge.service";
 import { nanoid } from 'nanoid'
-import { UserRequest } from "../controller/solution";
+import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
-import { Resolver } from "dns";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<TYPE_CHALLENGE> => {
     return new Promise (async (resolve, reject)=> {
@@ -22,6 +21,8 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               author: user.email, 
               challengeId: nanoid(),
               created,
+              isStrategic: false,
+              department: "GENERIC",
               description,
               status: "LAUNCHED",
               images,

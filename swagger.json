@@ -6,9 +6,110 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"TYPE_USER": {
+				"properties": {
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Last user update"
+					},
+					"workSpace": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Workspace that user could be explore"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Is the user active?"
+					},
+					"lastName": {
+						"type": "string",
+						"description": "User last name"
+					},
+					"firstName": {
+						"type": "string",
+						"description": "user first name"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password encrypted"
+					},
+					"userId": {
+						"type": "string",
+						"description": "Business User Id"
+					},
+					"email": {
+						"type": "string",
+						"description": "User email"
+					},
+					"_id": {
+						"type": "string",
+						"description": "Mongo Document Id"
+					}
+				},
+				"required": [
+					"workSpace",
+					"active",
+					"lastName",
+					"firstName",
+					"password",
+					"userId",
+					"email"
+				],
+				"type": "object"
+			},
+			"UserBody": {
+				"description": "User interface used just for create a user",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"email",
+					"first_name",
+					"last_name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Login": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"TYPE_SOLUTION": {
 				"properties": {
-					"toJSON": {},
+					"toJSON": {
+						"description": "lodash methods"
+					},
 					"reactions": {
 						"properties": {
 							"confused": {
@@ -24,7 +125,8 @@
 							"confused",
 							"likes"
 						],
-						"type": "object"
+						"type": "object",
+						"description": "Reactions in park"
 					},
 					"calification": {
 						"properties": {
@@ -41,61 +143,77 @@
 							"impact",
 							"complexity"
 						],
-						"type": "object"
+						"type": "object",
+						"description": "Calification summary (baremo average)"
 					},
 					"fileName": {
-						"type": "string"
+						"type": "string",
+						"description": "Filename submited by generator"
 					},
 					"baremoReferrer": {
-						"type": "string"
+						"type": "string",
+						"description": "Refer to baremo did it by referrer"
 					},
 					"baremoValidator": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "Refers to baremos did it by validators"
 					},
 					"timeInPark": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"description": "TimePeriod that challenge is in a Park for discussion"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"description": "Solution status @TODO do the solution status"
 					},
 					"isPrivate": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "Solution is shared with the community?"
 					},
 					"active": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
 					},
 					"canChooseScope": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "If true, solution's generator can choose if the \nsolution is shared with the community"
 					},
 					"images": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "Solution images"
 					},
 					"description": {
-						"type": "string"
+						"type": "string",
+						"description": "Solution description"
 					},
 					"updated": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"description": "Solution update date"
 					},
 					"created": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"description": "Solution creation date"
 					},
 					"authorEmail": {
-						"type": "string"
+						"type": "string",
+						"description": "Generator that create the solution"
 					},
 					"challengeId": {
-						"type": "string"
+						"type": "string",
+						"description": "Id that identify the challenge associated. If undefinedn then solution\nwas an initiative of a generator"
 					},
 					"solutionId": {
-						"type": "string"
+						"type": "string",
+						"description": "Id that uniquely identifies a solution"
 					}
 				},
 				"required": [
@@ -156,144 +274,75 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"TYPE_USER": {
-				"properties": {
-					"updated": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"workSpace": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"_id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"workSpace",
-					"active",
-					"lastName",
-					"firstName",
-					"password",
-					"userId",
-					"email"
-				],
-				"type": "object"
-			},
-			"UserBody": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"first_name": {
-						"type": "string"
-					},
-					"last_name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"username",
-					"password",
-					"email",
-					"first_name",
-					"last_name"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"Login": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email",
-					"password"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"TYPE_CHALLENGE": {
 				"properties": {
 					"workSpaceAvailable": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "Workspace is a concept that allows to manage resources access for users.\nIf a user and resources are in a same work space, then could be returned"
 					},
 					"referrer": {
-						"type": "string"
+						"type": "string",
+						"description": "Users who have the responsibility of managing an organization department.\nCould be committe member or not.  Referrer work with validators because generally a challenge impact\nis relationated with a organization area."
 					},
 					"validators": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "Committe Users who have the responsibility of managing the destination of the challenge"
 					},
 					"status": {
-						"type": "string"
+						"type": "string",
+						"description": "Challenge Status: @TODO define status challenge"
 					},
 					"timePeriod": {
 						"type": "number",
-						"format": "double"
+						"format": "double",
+						"description": "TimePeriod that challenge is in a Park for discussion. Dimenention is in hours. \nThen a challenge will be in a park Challenge create + timePeriod"
 					},
 					"images": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"description": "Challenge Images URL"
 					},
 					"active": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "Flag that indicate if a challenge is active.\nWhen a challenge is delete, the flag is false"
 					},
 					"description": {
-						"type": "string"
+						"type": "string",
+						"description": "Challenge description"
 					},
 					"updated": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"description": "Challenge Update date"
 					},
 					"created": {
 						"type": "string",
-						"format": "date-time"
+						"format": "date-time",
+						"description": "Challenge creation date"
+					},
+					"isStrategic": {
+						"type": "boolean",
+						"description": "If challenge response to strategic organization need."
+					},
+					"department": {
+						"type": "string",
+						"description": "Area that challenge is relationated @TODO add departments as CONSTANTS"
 					},
 					"challengeId": {
-						"type": "string"
+						"type": "string",
+						"description": "Id that uniquely identifies a challenge"
 					},
 					"author": {
-						"type": "string"
+						"type": "string",
+						"description": "Author's Challenge"
 					}
 				},
 				"required": [
@@ -306,10 +355,13 @@
 					"active",
 					"description",
 					"created",
+					"isStrategic",
+					"department",
 					"challengeId",
 					"author"
 				],
-				"type": "object"
+				"type": "object",
+				"description": "Challenge entity is a proposal that need a solution"
 			},
 			"ChallengeBody": {
 				"properties": {
@@ -400,6 +452,92 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/user/signup": {
+			"post": {
+				"operationId": "SignUp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TYPE_USER"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Login"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/{userId}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/solution": {
 			"post": {
 				"operationId": "NewSolution",
@@ -511,92 +649,6 @@
 					{
 						"in": "path",
 						"name": "solutionId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/signup": {
-			"post": {
-				"operationId": "SignUp",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/TYPE_USER"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserBody"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/user/login": {
-			"post": {
-				"operationId": "Login",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Login"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/user/{userId}": {
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
 						"required": true,
 						"schema": {
 							"type": "string"

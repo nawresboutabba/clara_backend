@@ -2,7 +2,20 @@ import { Post , Controller, Route, Body, Delete , Path} from 'tsoa'
 import { TYPE_USER } from '../../models/users'
 import { deleteUser, login, signUp } from '../../repository/users'
 
+/**
+ * User interface used when a user is added to Request after 
+ * authentication successfully
+ */
+export interface UserRequest{
+  email: string;
+  userId: string;
+  firstName: string;
+  lastName:string;
+}
 
+/**
+ * User interface used just for create a user
+ */
 export interface UserBody {
   username : string,
   password: string,

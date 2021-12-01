@@ -5,6 +5,7 @@ const app = require('express')();
 const mongoose = require('mongoose');
 const morgan = require("morgan");
 require('dotenv').config();
+const swaggerDocument =require( '../swagger.json')
 //const cookieParser = require('cookie-parser');
 //const cors = require('cors');
 
@@ -23,6 +24,8 @@ const httpMiddlewareRouter = require('./routes/http-middlewares')
 const logError = require('./handle-error/log-error')
 const clientErrorHandler = require('./handle-error/client-error-handler')
 const errorHandler = require('./handle-error/error-handler')
+
+import swaggerUi = require('swagger-ui-express');
 
 const PORT = 3000
 const DB_CONNECTION = 'localhost:27017'
@@ -44,6 +47,9 @@ app.listen(PORT, () =>
         `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
     )
 );
+// @TODO set as constants files
+const URL_ROOT = "http://localhost:3000";
+
 app.use('/', solutionsRouter);
 app.use('/',userRouter);
 app.use('/', challengeRouter);
@@ -53,3 +59,9 @@ app.use('/middleware-testing',httpMiddlewareRouter);
 app.use(logError)
 app.use(clientErrorHandler)
 app.use(errorHandler)
+/* if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing' || process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production') {
+    app.use();
+}
+
+ */
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

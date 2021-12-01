@@ -1,0 +1,12 @@
+{
+    "entryFile": "src/index.ts",
+    "spec": {
+    "outputDirectory": ".",
+    "specVersion": 3.0
+    },
+    "routes": {
+		"basePath": "/",
+		"entryFile": "./src/index.ts",
+		"routesDir": "./src/controller/**/*.ts"
+	}
+}

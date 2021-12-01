@@ -14,15 +14,15 @@ export type TYPE_SOLUTION = {
   status: string,
   timeInPark: number,
   baremoValidator?: Array<String>,
-  baremoReferrer?: String,
-  fileName: String
+  baremoReferrer?: string,
+  fileName: string
   calification?: {
-    complexity: Number,
-    impact: Number,
+    complexity: number,
+    impact: number,
   },
   reactions?: {
-    likes: Number,
-    confused: Number,
+    likes: number,
+    confused: number,
   },
   // lodash methods
   toJSON?: any

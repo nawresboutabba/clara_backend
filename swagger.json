@@ -6,12 +6,95 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"TYPE_USER": {
+			"HubI": {
 				"properties": {
-					"updated": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CompanyI": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"CNPJ": {
+						"type": "string"
+					},
+					"hub": {
+						"$ref": "#/components/schemas/HubI"
+					}
+				},
+				"required": [
+					"hub"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AreaI": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"company": {
+						"$ref": "#/components/schemas/CompanyI"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UserI": {
+				"properties": {
+					"_id": {
 						"type": "string",
-						"format": "date-time",
-						"description": "Last user update"
+						"description": "Mongo Document Id"
+					},
+					"email": {
+						"type": "string",
+						"description": "User email"
+					},
+					"userId": {
+						"type": "string",
+						"description": "Business User Id"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password encrypted"
+					},
+					"firstName": {
+						"type": "string",
+						"description": "user first name"
+					},
+					"lastName": {
+						"type": "string",
+						"description": "User last name"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Is the user active?"
+					},
+					"hub": {
+						"items": {
+							"$ref": "#/components/schemas/HubI"
+						},
+						"type": "array",
+						"description": "Hub visible for user"
+					},
+					"company": {
+						"items": {
+							"$ref": "#/components/schemas/CompanyI"
+						},
+						"type": "array",
+						"description": "Company visible for user"
+					},
+					"area": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Area that is visible for user"
 					},
 					"workSpace": {
 						"items": {
@@ -20,45 +103,23 @@
 						"type": "array",
 						"description": "Workspace that user could be explore"
 					},
-					"active": {
-						"type": "boolean",
-						"description": "Is the user active?"
-					},
-					"lastName": {
+					"updated": {
 						"type": "string",
-						"description": "User last name"
-					},
-					"firstName": {
-						"type": "string",
-						"description": "user first name"
-					},
-					"password": {
-						"type": "string",
-						"description": "Password encrypted"
-					},
-					"userId": {
-						"type": "string",
-						"description": "Business User Id"
-					},
-					"email": {
-						"type": "string",
-						"description": "User email"
-					},
-					"_id": {
-						"type": "string",
-						"description": "Mongo Document Id"
+						"format": "date-time",
+						"description": "Last user update"
 					}
 				},
 				"required": [
-					"workSpace",
-					"active",
-					"lastName",
-					"firstName",
-					"password",
+					"email",
 					"userId",
-					"email"
+					"password",
+					"firstName",
+					"lastName",
+					"active",
+					"workSpace"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": true
 			},
 			"UserBody": {
 				"description": "User interface used just for create a user",
@@ -105,28 +166,176 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"TYPE_SOLUTION": {
+			"ChallengeI": {
+				"description": "Challenge entity is a proposal that need a solution",
 				"properties": {
-					"toJSON": {
-						"description": "lodash methods"
+					"author": {
+						"type": "string",
+						"description": "Email author Challenge"
 					},
-					"reactions": {
-						"properties": {
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
+					"challengeId": {
+						"type": "string",
+						"description": "Id that uniquely identifies a challenge"
+					},
+					"title": {
+						"type": "string",
+						"description": "Challenge title"
+					},
+					"department": {
+						"type": "string",
+						"description": "Area that challenge is relationated @TODO add departments as CONSTANTS"
+					},
+					"isStrategic": {
+						"type": "boolean",
+						"description": "If challenge response to strategic organization need."
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Challenge creation date"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Challenge Update date"
+					},
+					"description": {
+						"type": "string",
+						"description": "Challenge description"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Flag that indicate if a challenge is active.\nWhen a challenge is delete, the flag is false"
+					},
+					"images": {
+						"items": {
+							"type": "string"
 						},
-						"required": [
-							"confused",
-							"likes"
-						],
-						"type": "object",
-						"description": "Reactions in park"
+						"type": "array",
+						"description": "Challenge Images URL"
+					},
+					"timePeriod": {
+						"type": "number",
+						"format": "double",
+						"description": "TimePeriod that challenge is in a Park for discussion. Dimenention is in hours. \nThen a challenge will be in a park Challenge create + timePeriod"
+					},
+					"status": {
+						"type": "string",
+						"description": "Challenge Status: @TODO define status challenge"
+					},
+					"validators": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Committe Users who have the responsibility of managing the destination of the challenge"
+					},
+					"referrer": {
+						"type": "string",
+						"description": "Users who have the responsibility of managing an organization department.\nCould be committe member or not.  Referrer work with validators because generally a challenge impact\nis relationated with a organization area."
+					},
+					"workSpaceAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Workspace is a concept that allows to manage resources access for users.\nIf a user and resources are in a same work space, then could be returned"
+					}
+				},
+				"required": [
+					"author",
+					"challengeId",
+					"title",
+					"department",
+					"isStrategic",
+					"created",
+					"description",
+					"active",
+					"images",
+					"timePeriod",
+					"status",
+					"validators",
+					"referrer",
+					"workSpaceAvailable"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SolutionI": {
+				"properties": {
+					"_id": {},
+					"author": {
+						"type": "string",
+						"description": "Generator that create the solution"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution creation date"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution update date"
+					},
+					"description": {
+						"type": "string",
+						"description": "Solution description"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Solution images"
+					},
+					"solutionId": {
+						"type": "string",
+						"description": "Id that uniquely identifies a solution"
+					},
+					"challengeId": {
+						"type": "string",
+						"description": "Id that identify the challenge associated. If undefinedn then solution\nwas an initiative of a generator"
+					},
+					"challenge": {
+						"$ref": "#/components/schemas/ChallengeI",
+						"description": "Challenge Object. challengeId refer to challenge attribute. \nThe redundace is for performance lookup (for example Solutions with a particular challengeId)"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "If true, solution's generator can choose if the \nsolution is shared with the community"
+					},
+					"isPrivate": {
+						"type": "boolean",
+						"description": "Solution is shared with the community?"
+					},
+					"status": {
+						"type": "string",
+						"description": "Solution status @TODO do the solution status"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double",
+						"description": "TimePeriod that challenge is in a Park for discussion"
+					},
+					"baremoValidator": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Refers to baremos did it by validators @TODO convert to object"
+					},
+					"baremoReferrer": {
+						"type": "string",
+						"description": "Refer to baremo did it by referrer. @TODO convert to Object"
+					},
+					"fileName": {
+						"type": "string",
+						"description": "Filename submited by generator"
 					},
 					"calification": {
 						"properties": {
@@ -146,90 +355,42 @@
 						"type": "object",
 						"description": "Calification summary (baremo average)"
 					},
-					"fileName": {
-						"type": "string",
-						"description": "Filename submited by generator"
-					},
-					"baremoReferrer": {
-						"type": "string",
-						"description": "Refer to baremo did it by referrer"
-					},
-					"baremoValidator": {
-						"items": {
-							"type": "string"
+					"reactions": {
+						"properties": {
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
 						},
-						"type": "array",
-						"description": "Refers to baremos did it by validators"
+						"required": [
+							"confused",
+							"likes"
+						],
+						"type": "object",
+						"description": "Reactions in park"
 					},
-					"timeInPark": {
-						"type": "number",
-						"format": "double",
-						"description": "TimePeriod that challenge is in a Park for discussion"
-					},
-					"status": {
-						"type": "string",
-						"description": "Solution status @TODO do the solution status"
-					},
-					"isPrivate": {
-						"type": "boolean",
-						"description": "Solution is shared with the community?"
-					},
-					"active": {
-						"type": "boolean",
-						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
-					},
-					"canChooseScope": {
-						"type": "boolean",
-						"description": "If true, solution's generator can choose if the \nsolution is shared with the community"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Solution images"
-					},
-					"description": {
-						"type": "string",
-						"description": "Solution description"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution update date"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution creation date"
-					},
-					"authorEmail": {
-						"type": "string",
-						"description": "Generator that create the solution"
-					},
-					"challengeId": {
-						"type": "string",
-						"description": "Id that identify the challenge associated. If undefinedn then solution\nwas an initiative of a generator"
-					},
-					"solutionId": {
-						"type": "string",
-						"description": "Id that uniquely identifies a solution"
+					"toJSON": {
+						"description": "lodash methods"
 					}
 				},
 				"required": [
-					"fileName",
-					"timeInPark",
-					"status",
-					"isPrivate",
-					"active",
-					"canChooseScope",
-					"images",
-					"description",
 					"created",
-					"authorEmail",
-					"solutionId"
+					"description",
+					"active",
+					"images",
+					"solutionId",
+					"canChooseScope",
+					"isPrivate",
+					"status",
+					"timeInPark",
+					"fileName"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": true
 			},
 			"SolutionBody": {
 				"properties": {
@@ -274,95 +435,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"TYPE_CHALLENGE": {
-				"properties": {
-					"workSpaceAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Workspace is a concept that allows to manage resources access for users.\nIf a user and resources are in a same work space, then could be returned"
-					},
-					"referrer": {
-						"type": "string",
-						"description": "Users who have the responsibility of managing an organization department.\nCould be committe member or not.  Referrer work with validators because generally a challenge impact\nis relationated with a organization area."
-					},
-					"validators": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Committe Users who have the responsibility of managing the destination of the challenge"
-					},
-					"status": {
-						"type": "string",
-						"description": "Challenge Status: @TODO define status challenge"
-					},
-					"timePeriod": {
-						"type": "number",
-						"format": "double",
-						"description": "TimePeriod that challenge is in a Park for discussion. Dimenention is in hours. \nThen a challenge will be in a park Challenge create + timePeriod"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Challenge Images URL"
-					},
-					"active": {
-						"type": "boolean",
-						"description": "Flag that indicate if a challenge is active.\nWhen a challenge is delete, the flag is false"
-					},
-					"description": {
-						"type": "string",
-						"description": "Challenge description"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Challenge Update date"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Challenge creation date"
-					},
-					"isStrategic": {
-						"type": "boolean",
-						"description": "If challenge response to strategic organization need."
-					},
-					"department": {
-						"type": "string",
-						"description": "Area that challenge is relationated @TODO add departments as CONSTANTS"
-					},
-					"challengeId": {
-						"type": "string",
-						"description": "Id that uniquely identifies a challenge"
-					},
-					"author": {
-						"type": "string",
-						"description": "Author's Challenge"
-					}
-				},
-				"required": [
-					"workSpaceAvailable",
-					"referrer",
-					"validators",
-					"status",
-					"timePeriod",
-					"images",
-					"active",
-					"description",
-					"created",
-					"isStrategic",
-					"department",
-					"challengeId",
-					"author"
-				],
-				"type": "object",
-				"description": "Challenge entity is a proposal that need a solution"
-			},
 			"ChallengeBody": {
 				"properties": {
 					"challengeId": {
@@ -371,6 +443,9 @@
 					"created": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
 					},
 					"updated": {
 						"type": "string",
@@ -424,6 +499,7 @@
 				"required": [
 					"challengeId",
 					"created",
+					"title",
 					"description",
 					"active",
 					"images",
@@ -461,7 +537,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_USER"
+									"$ref": "#/components/schemas/UserI"
 								}
 							}
 						}
@@ -547,7 +623,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_SOLUTION"
+									"$ref": "#/components/schemas/SolutionI"
 								}
 							}
 						}
@@ -576,7 +652,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_SOLUTION"
+									"$ref": "#/components/schemas/SolutionI"
 								}
 							}
 						}
@@ -638,7 +714,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_SOLUTION"
+									"$ref": "#/components/schemas/SolutionI"
 								}
 							}
 						}
@@ -666,15 +742,17 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+									"$ref": "#/components/schemas/ChallengeI"
 								}
 							}
 						}
 					}
 				},
+				"description": "New Challenge method",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "Challenge definition according to ChallengeBody",
 					"required": true,
 					"content": {
 						"application/json": {
@@ -695,7 +773,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_SOLUTION"
+									"$ref": "#/components/schemas/SolutionI"
 								}
 							}
 						}
@@ -722,6 +800,53 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "ListSolutions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SolutionI"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "init",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/challenge/{challengeId}": {
@@ -733,7 +858,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+									"$ref": "#/components/schemas/ChallengeI"
 								}
 							}
 						}
@@ -759,7 +884,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TYPE_CHALLENGE"
+									"$ref": "#/components/schemas/ChallengeI"
 								}
 							}
 						}

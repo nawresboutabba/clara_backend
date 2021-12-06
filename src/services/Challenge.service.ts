@@ -1,7 +1,9 @@
-import Challenge, { TYPE_CHALLENGE } from "../models/challenges";
+import Challenge, { ChallengeI } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalChallenge from "../models/historical-challenges";
 import * as _ from 'lodash'; 
+import { SolutionI } from "../models/situation.solutions";
+import SolutionService from "./Solution.service";
 
 type editOneParams = {
     description?:string,
@@ -14,7 +16,7 @@ type editOneParams = {
 }
 
 const ChallengeService = {
-    async getChallengeActiveById  (id: string): Promise<TYPE_CHALLENGE> {
+    async getChallengeActiveById  (id: string): Promise<any> {
         return new Promise((resolve, reject) =>
           Challenge.findOne({
             challengeId: id,
@@ -29,7 +31,7 @@ const ChallengeService = {
             })
         );
     },
-    async newChallenge (challenge : TYPE_CHALLENGE): Promise<TYPE_CHALLENGE>{
+    async newChallenge (challenge : ChallengeI): Promise<any>{
         return new Promise((resolve, reject) => {
           Challenge.create(challenge)
             .then((response) => {
@@ -41,7 +43,7 @@ const ChallengeService = {
             });
         });  
     },
-    async updateWithLog  (challengeId: string ,challengeChanges: editOneParams): Promise<TYPE_CHALLENGE> {
+    async updateWithLog  (challengeId: string ,challengeChanges: editOneParams): Promise<ChallengeI> {
         const challenge = await this.getChallengeActiveById(challengeId)
         const oldData = _.omit(challenge.toJSON(), ["_id", "__v"]);
         Object.assign(challenge, challengeChanges);
@@ -72,7 +74,11 @@ const ChallengeService = {
         }catch(error){
             return error
         }
-    }
+    },
+    async listSolutions (challengeId: string): Promise<SolutionI[]>{
+        const solutions = await SolutionService.listSolutionsChallenge(challengeId)
+        return solutions
+      }
 }
 
 export default ChallengeService;

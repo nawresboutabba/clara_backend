@@ -1,11 +1,12 @@
 import { ChallengeBody } from "../controller/challenge";
-import { TYPE_CHALLENGE } from "../models/challenges";
+import { ChallengeI } from "../models/situation.challenges";
+import { SolutionI } from "../models/situation.solutions";
 import ChallengeService from "../services/Challenge.service";
 import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 
-export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<TYPE_CHALLENGE> => {
+export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeI> => {
     return new Promise (async (resolve, reject)=> {
         try{
             const created = new Date();
@@ -15,11 +16,13 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               time_period: timePeriod,
               validators,
               referrer,
+              title,
               work_space_available: workSpaceAvailable,
             } = body;
             const challenge = await ChallengeService.newChallenge({
               author: user.email, 
               challengeId: nanoid(),
+              title,
               created,
               isStrategic: false,
               department: "GENERIC",
@@ -39,13 +42,13 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
     })
 }
 
-export const getChallenge = async (challenge: TYPE_CHALLENGE, challengeId : string ): Promise<TYPE_CHALLENGE> => {
+export const getChallenge = async (challenge: ChallengeI, challengeId : string ): Promise<ChallengeI> => {
   return new Promise ((resolve, reject)=> {
       return resolve(challenge)
   })
 }
 
-export const updateChallengePartially = async (body: ChallengeBody, challengeId: string): Promise<TYPE_CHALLENGE> => {
+export const updateChallengePartially = async (body: ChallengeBody, challengeId: string): Promise<ChallengeI> => {
   return new Promise (async(resolve, reject)=> {
     try{
       const challengeChanges = _.mapKeys(body, (v: any, k:any) => _.camelCase(k));
@@ -65,6 +68,17 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
       return resolve(true)
     }catch(error){
       return reject("DELETE_CHALLENGE_FAILED")
+    }
+  })
+}
+
+export const listSolutions = async (challengeId: string): Promise<SolutionI []> => {
+  return new Promise (async (resolve, reject)=> {
+    try {
+      const listSolutions = await ChallengeService.listSolutions(challengeId)
+      return resolve(listSolutions)
+    }catch (error){
+      return reject(error)
     }
   })
 }

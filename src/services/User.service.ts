@@ -1,10 +1,10 @@
-import User, { TYPE_USER } from "../models/users";
+import User, { UserI } from "../models/users";
 import { startSession } from 'mongoose';
 import HistoricalUser from "../models/historical-users";
 import * as _ from 'lodash'; 
 
 const UserService = {
-    async getUserActiveByEmail (email: string): Promise <TYPE_USER> {
+    async getUserActiveByEmail (email: string): Promise <UserI> {
         return new Promise((resolve, reject) => {
           User.findOne({
             email: email,
@@ -19,14 +19,14 @@ const UserService = {
             });
         });
       },
-    async getUserActiveByUserId (userId:string ): Promise<TYPE_USER> {
+    async getUserActiveByUserId (userId:string ): Promise<UserI> {
         const user = await User.findOne({
             userId: userId,
             active: true,
           })
           return user
       },
-    async newGenericUser (user: TYPE_USER ): Promise<TYPE_USER> {
+    async newGenericUser (user: UserI ): Promise<UserI> {
         return new Promise((resolve, reject) => {
           User.create({
             userId: user.userId,

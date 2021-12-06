@@ -1,6 +1,9 @@
 import { Schema, model } from 'mongoose';
+import { CompanyI } from './organizacion.companies';
+import { AreaI } from './organization.area';
+import { HubI } from './organization.hub';
 
-export type TYPE_USER = {
+export interface UserI {
   /**
    * Mongo Document Id
    */
@@ -30,6 +33,18 @@ export type TYPE_USER = {
    */
   active: boolean,
   /**
+   * Hub visible for user
+   */
+  hub?: Array<HubI>,
+  /**
+   * Company visible for user
+   */
+  company?: Array<CompanyI>,
+  /**
+   * Area that is visible for user
+   */
+  area?: Array<AreaI>,
+  /**
    * Workspace that user could be explore
    */
   workSpace: Array<string>,
@@ -56,6 +71,16 @@ const user = new Schema({
   password: { type: String, required: true },
   firstName: String,
   lastName: String, 
+  hub:[{ 
+    type: Schema.Types.ObjectId, 
+    ref: 'Hub'}],
+  company:[{
+    type: Schema.Types.ObjectId,
+    ref: 'Company'}],
+  area: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Area'
+  }],
   workSpace: [
     {
       type: String,

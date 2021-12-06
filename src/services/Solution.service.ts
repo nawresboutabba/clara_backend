@@ -1,7 +1,10 @@
-import Solution, { TYPE_SOLUTION } from "../models/solutions";
+//import Solution, { SolutionI } from "../models/solutions";
+import Solution, { SolutionI } from "../models/situation.solutions"
+import { ChallengeI } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
+import Challenge from '../models/situation.challenges'
 
 export type editOneParams = {
     description?: string,
@@ -16,12 +19,13 @@ export type editOneParams = {
 }
 
 const SolutionService = {
-    async getSolutionActiveById (id: String): Promise <TYPE_SOLUTION> {
+    async getSolutionActiveById (id: String): Promise <any> {
         return new Promise((resolve, reject) =>
           Solution.findOne({
             solutionId: id,
             active: true,
           })
+          .populate('challenge')
             .then((result) => {
               return resolve(result);
             })
@@ -42,7 +46,7 @@ const SolutionService = {
             return error
         }
       },
-      async updateWithLog (solutionId: string, solutionChanges: editOneParams): Promise<TYPE_SOLUTION> {
+      async updateWithLog (solutionId: string, solutionChanges: editOneParams): Promise<SolutionI> {
         const solution = await this.getSolutionActiveById(solutionId)
         const oldData = _.omit(solution.toJSON(), ["_id", "__v"])
         Object.assign(solution, solutionChanges);
@@ -63,9 +67,12 @@ const SolutionService = {
           return error;
         }
       },
-      async newSolution  (data: TYPE_SOLUTION): Promise<TYPE_SOLUTION> {
+      async newSolution  (data: SolutionI, challenge?: ChallengeI): Promise<any> {
         // Check that solution exist
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+          if(data.challengeId){
+            data.challenge = challenge
+          }
           Solution.create(data)
             .then((resp) => {
               resolve(resp);
@@ -74,6 +81,10 @@ const SolutionService = {
               reject(err);
             });
         })
-    },  
+    },
+    async listSolutionsChallenge (challengeId: string ): Promise<any[]>{
+      const solutions = await Solution.find({challengeId: challengeId, active: true})
+      return solutions
+    }    
 }
 export default SolutionService;

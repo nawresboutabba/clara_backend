@@ -1,5 +1,5 @@
 import { Post , Controller, Route, Body, Delete , Path} from 'tsoa'
-import { TYPE_USER } from '../../models/users'
+import { UserI } from '../../models/users'
 import { deleteUser, login, signUp } from '../../repository/users'
 
 /**
@@ -31,7 +31,7 @@ export interface Login {
 @Route("user")
 export default class UserController extends Controller {
   @Post("signup")
-  public async signUp(@Body() body: UserBody): Promise<TYPE_USER> {
+  public async signUp(@Body() body: UserBody): Promise<UserI> {
     return signUp(body)
   }
   @Post("login")

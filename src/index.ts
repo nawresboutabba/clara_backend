@@ -19,11 +19,12 @@ app.use(morgan("dev"));
 import solutionsRouter from './routes/solutions'
 import userRouter from './routes/users'
 import challengeRouter from './routes/challenge';
+import organizationsRouter from './routes/organization'
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
-const logError = require('./handle-error/log-error')
-const clientErrorHandler = require('./handle-error/client-error-handler')
-const errorHandler = require('./handle-error/error-handler')
+import { logError } from './handle-error/log-error';
+import { clientErrorHandler } from './handle-error/client-error-handler';
+import { errorHandler } from './handle-error/error-handler';
 
 import swaggerUi = require('swagger-ui-express');
 
@@ -47,12 +48,10 @@ app.listen(PORT, () =>
         `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
     )
 );
-// @TODO set as constants files
-const URL_ROOT = "http://localhost:3000";
-
 app.use('/', solutionsRouter);
 app.use('/',userRouter);
 app.use('/', challengeRouter);
+app.use('/', organizationsRouter)
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);
 

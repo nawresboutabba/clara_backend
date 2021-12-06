@@ -1,20 +1,10 @@
 const router = require("express").Router();
-const Challenge = require("@models/challenges");
-const Solution = require("@models/solutions");
-const _ = require("lodash");
-const { nanoid } = require("nanoid");
+
 import authentication from "../../middlewares/authentication";
 import { NextFunction } from 'express';
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-import ChallengeService from '../../services/Challenge.service';
-import SolutionService from '../../services/Solution.service';
 const { validationResult, body } = require("express-validator");
-const {
-  SOLUTION,
-  SOLUTION_STATUS,
-  HTTP_RESPONSE,
-} = require("@root/src/constants");
 import ChallengeController from '../../controller/challenge'
 
 router.post(
@@ -145,5 +135,18 @@ router.delete(
   }
 );
 
+router.get('/challenge/:challengeId/solution',
+async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
+  try {
+    const challengeController = new ChallengeController();
+    const solutions = await challengeController.listSolutions(req.params.challengeId)
+    res
+    .json(solutions)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
 const challengeRouter = router
 export default challengeRouter;

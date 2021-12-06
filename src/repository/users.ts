@@ -1,14 +1,14 @@
 import { hash, compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
-import { TYPE_USER } from '../models/users';
+import { UserI } from '../models/users';
 import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
 import { UserBody, Login } from '../controller/users'
 import { ERRORS } from '../handle-error/const'
 
-export const signUp  = async (body: UserBody):Promise<TYPE_USER> => {
+export const signUp  = async (body: UserBody):Promise<UserI> => {
   return new Promise (async (resolve, reject)=> {
-    let user: TYPE_USER;
+    let user: UserI;
     user = await UserService.getUserActiveByEmail(body.email);
     if (user) {
       return  reject (ERRORS.USER_EXIST_409);

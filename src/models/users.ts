@@ -33,10 +33,6 @@ export interface UserI {
    */
   active: boolean,
   /**
-   * Hub visible for user
-   */
-  hub?: Array<HubI>,
-  /**
    * Company visible for user
    */
   company?: Array<CompanyI>,

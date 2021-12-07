@@ -4,7 +4,6 @@ import { ChallengeI } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
-import Challenge from '../models/situation.challenges'
 
 export type editOneParams = {
     description?: string,

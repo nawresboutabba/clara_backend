@@ -2,7 +2,7 @@ import User, { UserI } from "../models/users";
 import { startSession } from 'mongoose';
 import HistoricalUser from "../models/historical-users";
 import * as _ from 'lodash'; 
-
+import { CompanyI } from "../models/organizacion.companies";
 const UserService = {
     async getUserActiveByEmail (email: string): Promise <UserI> {
         return new Promise((resolve, reject) => {
@@ -73,6 +73,46 @@ const UserService = {
             }
       })
     },
+    async addUserInCompany (userId: string, company: CompanyI):Promise<UserI>{
+      return new Promise (async (resolve, reject)=> {
+        try{
+          const resp = await User
+          .findOneAndUpdate({userId:userId},{$addToSet:{company:company}},{new: true})
+          return resolve(resp)
+        }catch (error){
+          return reject(error)
+        }
+      })
+    },
+    async deleteUserInCompany(userId: string, company: CompanyI): Promise<UserI>{
+      return new Promise (async (resolve, reject)=> {
+        try{
+          const companyId = company._id
+          const resp = await User
+
+          .findOneAndUpdate({userId:userId}, {$pull: {company:companyId}},{new: true})
+          return resolve(resp)
+        }catch(error){
+          return reject(error)
+        }
+      })
+    },
+    async checkUserInCompany(userId: string, company: CompanyI):Promise<boolean>{
+      return new Promise(async (resolve, reject)=> {
+        try{
+          /**
+           * @see https://docs.mongodb.com/manual/reference/operator/query/all/
+           */
+          const resp = await User.findOne({$and:[{userId:userId}, {active:true}, {company:{$all:company}}]})
+          if(resp){
+            return resolve(true)
+          }
+          return resolve(false)
+        }catch(error){
+          return reject(error)
+        }
+      })
+    }
 }
 
 export default UserService;

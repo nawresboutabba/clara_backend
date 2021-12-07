@@ -8,26 +8,45 @@
 		"schemas": {
 			"HubI": {
 				"properties": {
+					"hubId": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					}
 				},
+				"required": [
+					"hubId",
+					"name"
+				],
 				"type": "object",
 				"additionalProperties": true
 			},
 			"CompanyI": {
 				"properties": {
+					"_id": {},
+					"companyId": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
 					"CNPJ": {
 						"type": "string"
 					},
+					"active": {
+						"type": "boolean"
+					},
 					"hub": {
-						"$ref": "#/components/schemas/HubI"
+						"items": {
+							"$ref": "#/components/schemas/HubI"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
+					"companyId",
+					"active",
 					"hub"
 				],
 				"type": "object",
@@ -42,6 +61,10 @@
 						"$ref": "#/components/schemas/CompanyI"
 					}
 				},
+				"required": [
+					"name",
+					"company"
+				],
 				"type": "object",
 				"additionalProperties": true
 			},
@@ -74,13 +97,6 @@
 					"active": {
 						"type": "boolean",
 						"description": "Is the user active?"
-					},
-					"hub": {
-						"items": {
-							"$ref": "#/components/schemas/HubI"
-						},
-						"type": "array",
-						"description": "Hub visible for user"
 					},
 					"company": {
 						"items": {
@@ -167,19 +183,44 @@
 				"additionalProperties": true
 			},
 			"ChallengeI": {
-				"description": "Challenge entity is a proposal that need a solution",
 				"properties": {
+					"_id": {},
 					"author": {
 						"type": "string",
-						"description": "Email author Challenge"
+						"description": "Generator that create the solution"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution creation date"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution update date"
+					},
+					"title": {
+						"type": "string",
+						"description": "Situation title"
+					},
+					"description": {
+						"type": "string",
+						"description": "Solution description"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Solution images"
 					},
 					"challengeId": {
 						"type": "string",
 						"description": "Id that uniquely identifies a challenge"
-					},
-					"title": {
-						"type": "string",
-						"description": "Challenge title"
 					},
 					"department": {
 						"type": "string",
@@ -188,31 +229,6 @@
 					"isStrategic": {
 						"type": "boolean",
 						"description": "If challenge response to strategic organization need."
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Challenge creation date"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Challenge Update date"
-					},
-					"description": {
-						"type": "string",
-						"description": "Challenge description"
-					},
-					"active": {
-						"type": "boolean",
-						"description": "Flag that indicate if a challenge is active.\nWhen a challenge is delete, the flag is false"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Challenge Images URL"
 					},
 					"timePeriod": {
 						"type": "number",
@@ -243,15 +259,14 @@
 					}
 				},
 				"required": [
-					"author",
-					"challengeId",
-					"title",
-					"department",
-					"isStrategic",
 					"created",
+					"title",
 					"description",
 					"active",
 					"images",
+					"challengeId",
+					"department",
+					"isStrategic",
 					"timePeriod",
 					"status",
 					"validators",
@@ -277,6 +292,10 @@
 						"type": "string",
 						"format": "date-time",
 						"description": "Solution update date"
+					},
+					"title": {
+						"type": "string",
+						"description": "Situation title"
 					},
 					"description": {
 						"type": "string",
@@ -372,13 +391,11 @@
 						],
 						"type": "object",
 						"description": "Reactions in park"
-					},
-					"toJSON": {
-						"description": "lodash methods"
 					}
 				},
 				"required": [
 					"created",
+					"title",
 					"description",
 					"active",
 					"images",
@@ -511,6 +528,22 @@
 				],
 				"type": "object",
 				"additionalProperties": true
+			},
+			"AreaBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"companyId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"companyId"
+				],
+				"type": "object",
+				"additionalProperties": true
 			}
 		},
 		"securitySchemes": {}
@@ -606,6 +639,115 @@
 					{
 						"in": "path",
 						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/user/{userId}/company/{companyId}": {
+			"get": {
+				"operationId": "CheckUserInCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "companyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddUserInCompany",
+				"responses": {
+					"200": {
+						"description": "UserI",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint that use a Committe for adding an user to company workspace",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User that will be added to company workspace",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "company additionated to user workspace",
+						"in": "path",
+						"name": "companyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteCompanyInUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint that use a Committe for deleting an user to company workspace",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User that will be deleted from company workspace",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "companyId",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -937,6 +1079,35 @@
 						}
 					}
 				]
+			}
+		},
+		"/area": {
+			"post": {
+				"operationId": "NewArea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AreaI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AreaBody"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
 import { UserBody, Login } from '../controller/users'
 import { ERRORS } from '../handle-error/const'
+import CompanyService from '../services/Organization.Company.Service';
 
 export const signUp  = async (body: UserBody):Promise<UserI> => {
   return new Promise (async (resolve, reject)=> {
@@ -68,5 +69,45 @@ export const deleteUser = async (userId : string): Promise <boolean> => {
         return reject(ERRORS.DELETE_USER_500)
       }
       
+    })
+}
+
+export const addUserInCompany = async (userId: string, companyId: string): Promise<UserI> => {
+  return new Promise (async (resolve, reject)=> {
+    try{
+      const company = await CompanyService.getActiveCompanyById(companyId)
+      console.log(company)
+      if (company){
+        const resp = await UserService.addUserInCompany(userId, company)
+        return resolve(resp)
+      }
+      throw new Error("COMPANY_NULL OR UNDEFINED")
+    }catch(error){
+      return reject(error)
+    }
+  })
+}
+
+export const deleteCompanyInUser = async (userId:string, companyId: string): Promise<UserI> => {
+    return new Promise(async (resolve, reject)=> {
+      try{
+        const company = await CompanyService.getActiveCompanyById(companyId)
+        const resp = await UserService.deleteUserInCompany(userId, company)
+        return resolve(resp)
+      }catch(error){
+        return reject(error)
+      }
+    })
+}
+
+export const checkUserInCompany = async (userId: string, companyId: string): Promise<boolean> => {
+    return new Promise(async (resolve, reject)=> {
+      try{
+        const company = await CompanyService.getActiveCompanyById(companyId)
+        const resp = UserService.checkUserInCompany(userId, company)
+        return resolve(resp)
+      }catch(error){
+        return reject(error)
+      }
     })
 }

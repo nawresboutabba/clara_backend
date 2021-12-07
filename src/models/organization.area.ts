@@ -2,16 +2,26 @@ import { Schema, model } from 'mongoose';
 import { CompanyI } from './organizacion.companies';
 
 export interface AreaI {
-    name?: string,
-    company?: CompanyI
+    name: string,
+    company: CompanyI
 }
 
 const area =  new Schema({
-    name: String,
+    areaId: {
+        type: String,
+        required: true, 
+        unique: true
+    },
+    name: {
+        type:String,
+        required: true,
+    },
     company: { 
         type: Schema.Types.ObjectId, 
         ref: 'Company',
         required: true }
 })
+
+area.index({name:1, company:1}, {unique:true})
 
 export default model('Area', area)

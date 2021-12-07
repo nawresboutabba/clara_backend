@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
 import { SolutionI } from '../../models/situation.solutions';
-import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/solution';
+import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
 import { UserRequest } from '../users';
 
 

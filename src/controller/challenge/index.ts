@@ -2,8 +2,8 @@ import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Req
 import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from "../../models/situation.solutions";
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/challenge';
-import { newSolution } from '../../repository/solution'
+import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/repository.challenge';
+import { newSolution } from '../../repository/repository.solution'
 
 export interface ChallengeBody {
     challengeId:string,

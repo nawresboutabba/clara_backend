@@ -19,7 +19,9 @@ app.use(morgan("dev"));
 import solutionsRouter from './routes/solutions'
 import userRouter from './routes/users'
 import challengeRouter from './routes/challenge';
-import organizationsRouter from './routes/organization'
+import companyRouter from './routes/company';
+import areaRouter from './routes/area';
+import hubRouter from './routes/hub';
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
 import { logError } from './handle-error/log-error';
@@ -31,13 +33,8 @@ import swaggerUi = require('swagger-ui-express');
 const PORT = 3000
 const DB_CONNECTION = 'localhost:27017'
 const DB_NAME = 'PINC-SE'
-// `mongodb://${DB_CONNECTION}/${DB_NAME}`
-//`mongodb+srv://HECTOR:ntvgydrhouselomAs@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
-mongoose.connect(`mongodb+srv://dev-enviroment:mIdDJ9RBelATRjgm@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
-    //useNewUrlParser: true,
-    //useUnifiedTopology: true,
-    //retryWrites: true,// just for development
-    //retryReads: false //just for development
+
+mongoose.connect(`mongodb+srv://dev-enviroment:0Q5ryUinCQ0pOeiT@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
 })
     .then(db => console.log('DB is conected to', db.connection.host))
     .catch(err => console.log(err))
@@ -51,7 +48,9 @@ app.listen(PORT, () =>
 app.use('/', solutionsRouter);
 app.use('/',userRouter);
 app.use('/', challengeRouter);
-app.use('/', organizationsRouter)
+app.use('/', companyRouter);
+app.use('/', areaRouter);
+app.use('/', hubRouter);
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);
 

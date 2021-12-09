@@ -1,8 +1,10 @@
 import { Schema, model } from 'mongoose';
 
 export interface HubI {
+    _id?: any,
     hubId: string,
-    name:string
+    name:string,
+    active: boolean
 }
 
 const hub = new Schema({
@@ -15,6 +17,10 @@ const hub = new Schema({
         type:String,
         required: true,
         unique:true
+    },
+    active:{
+        type: Boolean,
+        required: true
     }
 })
 

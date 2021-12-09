@@ -76,6 +76,9 @@ const UserService = {
     async addUserInCompany (userId: string, company: CompanyI):Promise<UserI>{
       return new Promise (async (resolve, reject)=> {
         try{
+          /**
+           * @see https://docs.mongodb.com/manual/reference/operator/update/addToSet/
+           */
           const resp = await User
           .findOneAndUpdate({userId:userId},{$addToSet:{company:company}},{new: true})
           return resolve(resp)

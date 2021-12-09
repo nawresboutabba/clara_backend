@@ -31,6 +31,34 @@ router.post ('/company',[
         next(error)
     }
 })
+
+router.post('/company/hub/:hubId',[
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+    try{
+        const companyController = new CompanyController()  
+        const resp = await companyController.addToHub(req.body, req.params.hubId)     
+        res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+        next(error)
+    }
+})
+
+router.delete('/company/hub/:hubId',[
+], async (req:RequestMiddleware, res:ResponseMiddleware, next:NextFunction)=> {
+try{  
+    const companyController = new CompanyController()  
+    const resp = await companyController.pullToHub(req.body, req.params.hubId)     
+    res
+    .json(resp)
+    .status(200)
+    .send()
+}catch(error){
+    next(error)
+}
+})
 const companyRouter = router
 
 export default companyRouter

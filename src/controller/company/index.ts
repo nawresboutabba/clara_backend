@@ -1,7 +1,7 @@
-import { Controller, Body, Post } from "tsoa";
+import { Controller, Body, Post, Route, Path, Delete } from "tsoa";
 import { CompanyI } from "../../models/organizacion.companies";
 import { HubI } from "../../models/organization.hub";
-import { newCompany } from "../../repository/repository.company";
+import { newCompany, addToHub, pullToHub } from "../../repository/repository.company";
 
 export interface CompanyBody {
     name: string,
@@ -9,9 +9,24 @@ export interface CompanyBody {
     hub?: HubI[]
 }
 
+@Route('company')
 export default class CompanyController extends Controller {
     @Post()
     public async newCompany(@Body() body:CompanyBody):Promise<CompanyI>{
         return newCompany(body)
+    }
+    /**
+     * Endpoint for adding a company to hub. 
+     * @param body company that will be added @TODO company have to get throught leader session 
+     * @param hubId 
+     * @returns 
+     */
+    @Post(':hubId')
+    public async addToHub(@Body() body: any, @Path('hubId') hubId: string): Promise<CompanyI>{
+        return addToHub(body.companyId, hubId)
+    }
+    @Delete(':hubId')
+    public async pullToHub(@Body() body: any , @Path('hubId') hubId:string): Promise<CompanyI>{
+        return pullToHub (body.companyId, hubId)
     }
 }

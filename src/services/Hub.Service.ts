@@ -12,6 +12,16 @@ const HubService = {
             }
 
         })
+    },
+    async getHubActiveById( hubId: string): Promise<HubI>{
+        return new Promise(async (resolve, reject)=> {
+            try{
+                const hub = await Hub.findOne({hubId: hubId, active:true})
+                return resolve(hub)
+            }catch(error){
+                return reject(error)
+            }
+        })
     }
 }
 

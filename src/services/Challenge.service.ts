@@ -4,6 +4,8 @@ import HistoricalChallenge from "../models/historical-challenges";
 import * as _ from 'lodash'; 
 import { SolutionI } from "../models/situation.solutions";
 import SolutionService from "./Solution.service";
+import ServiceError from "../handle-error/error.service";
+import { ERRORS, HTTP_RESPONSE } from "../constants";
 
 type editOneParams = {
     description?:string,
@@ -23,11 +25,15 @@ const ChallengeService = {
             active: true,
           })
             .then((result) => {
-              // Return the Document Object then could be chained with other methods
-              resolve(result);
+              return resolve(result);
             })
             .catch((err) => {
-              return reject(err);
+              const customError = new ServiceError(
+                ERRORS.SERVICE.GET_CHALLENGE_ACTIVE_BY_ID,
+                HTTP_RESPONSE._404,
+                err
+              )
+              return reject(customError);
             })
         );
     },

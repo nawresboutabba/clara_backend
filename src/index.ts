@@ -8,7 +8,7 @@ require('dotenv').config();
 const swaggerDocument =require( '../swagger.json')
 //const cookieParser = require('cookie-parser');
 //const cors = require('cors');
-
+//global.repositoryError = require('./handle-error/error.repository')
 //app.use(cors());
 //app.use(cookieParser());
 
@@ -24,9 +24,9 @@ import areaRouter from './routes/area';
 import hubRouter from './routes/hub';
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
-import { logError } from './handle-error/log-error';
-import { clientErrorHandler } from './handle-error/client-error-handler';
-import { errorHandler } from './handle-error/error-handler';
+import { logError } from './handle-error/middleware.log-error';
+import { clientErrorHandler } from './handle-error/middleware.client-error-handler';
+import { errorHandler } from './handle-error/middleware.error-handler';
 
 import swaggerUi = require('swagger-ui-express');
 
@@ -36,7 +36,7 @@ const DB_NAME = 'PINC-SE'
 
 mongoose.connect(`mongodb+srv://dev-enviroment:0Q5ryUinCQ0pOeiT@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
 })
-    .then(db => console.log('DB is conected to', db.connection.host))
+    .then(db => console.log(`DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`))
     .catch(err => console.log(err))
 
 

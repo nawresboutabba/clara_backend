@@ -5,6 +5,7 @@ import ChallengeService from "../services/Challenge.service";
 import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
+import UserService from "../services/User.service";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeI> => {
     return new Promise (async (resolve, reject)=> {
@@ -19,21 +20,21 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               title,
               work_space_available: workSpaceAvailable,
             } = body;
+            const author = await UserService.getUserActiveByUserId(user.userId)
             const challenge = await ChallengeService.newChallenge({
-              author: user.email, 
+              author: author, 
               challengeId: nanoid(),
               title,
               created,
               isStrategic: false,
-              department: "GENERIC",
               description,
               status: "LAUNCHED",
               images,
               active: true, 
               timePeriod,
-              validators,
-              referrer,
-              workSpaceAvailable,
+              // @TODO parameter have to get from req.body
+              WSALevel: "COMPANY",
+              fileComplementary: "http://archivo.pdf"
             });  
             return resolve(challenge)          
         }catch (error){

@@ -1,7 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { CompanyI } from './organizacion.companies';
 import { AreaI } from './organization.area';
-import { HubI } from './organization.hub';
 
 export interface UserI {
   /**
@@ -33,25 +31,24 @@ export interface UserI {
    */
   active: boolean,
   /**
-   * Company visible for user
+   * External User. If true is external user that has participation in OpenChallenges
    */
-  company?: Array<CompanyI>,
+  externalUser: boolean
   /**
    * Area that is visible for user
    */
-  area?: Array<AreaI>,
-  /**
-   * Workspace that user could be explore
-   */
-  workSpace: Array<string>,
+  areaVisible?: Array<AreaI>,
   /**
    * Last user update
    */
   updated?: Date
+  /**
+   * Resume: Points earned for participation in platform.
+   */
+  points?: Number
 }
 
 const user = new Schema({
-  active: Boolean,
   email: {
     type: String,
     required: true,
@@ -67,21 +64,16 @@ const user = new Schema({
   password: { type: String, required: true },
   firstName: String,
   lastName: String, 
-  hub:[{ 
-    type: Schema.Types.ObjectId, 
-    ref: 'Hub'}],
-  company:[{
-    type: Schema.Types.ObjectId,
-    ref: 'Company'}],
+  active: Boolean,
+  externalUser: Boolean,
   area: [{
     type: Schema.Types.ObjectId,
     ref: 'Area'
   }],
-  workSpace: [
-    {
-      type: String,
-    },
-  ],
   updated: Date,
+  points: {
+    type: Number,
+    default: 0
+  }
 });
 export default model("User", user);

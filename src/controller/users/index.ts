@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
 import { UserI } from '../../models/users'
-import { deleteUser, login, signUp, addUserInCompany, deleteCompanyInUser, checkUserInCompany } from '../../repository/repository.users'
+import { deleteUser, login, signUp } from '../../repository/repository.users'
 
 /**
  * User interface used when a user is added to Request after 
@@ -43,28 +43,28 @@ export default class UserController extends Controller {
     return deleteUser(userId)
 
   }
-  @Get('/user/:userId/company/:companyId')
+/*   @Get('/user/:userId/company/:companyId')
   public async checkUserInCompany(@Path('userId') userId: string, @Path('companyId') companyId: string): Promise <boolean> {
     return checkUserInCompany(userId, companyId)
-  }
+  } */
   /**
    * Endpoint that use a Committe for adding an user to company workspace
    * @param userId User that will be added to company workspace
    * @param companyId company additionated to user workspace
    * @returns UserI
    */
-  @Post('/user/:userId/company/:companyId')
+/*   @Post('/user/:userId/company/:companyId')
   public async addUserInCompany(@Path('userId') userId: string, @Path('companyId') companyId: string ): Promise<UserI>{
     return addUserInCompany(userId, companyId)
-  }
+  } */
   /**
    * Endpoint that use a Committe for deleting an user to company workspace
    * @param userId User that will be deleted from company workspace
    * @param companyId 
    * @returns 
    */
-  @Delete('/user/:userId/company/:companyId')
+/*   @Delete('/user/:userId/company/:companyId')
   public async deleteCompanyInUser( @Path('userId') userId: string,@Path('companyId') companyId: string ): Promise<UserI>{
     return deleteCompanyInUser(userId, companyId)
-  }
+  } */
 }

@@ -21,11 +21,17 @@ export default class CompanyController extends Controller {
      * @param hubId 
      * @returns 
      */
-    @Post(':hubId')
+    @Post('/hub/:hubId')
     public async addToHub(@Body() body: any, @Path('hubId') hubId: string): Promise<CompanyI>{
         return addToHub(body.companyId, hubId)
     }
-    @Delete(':hubId')
+    /**
+     * Endpoint for delete a company from Hub. 
+     * @param body company that will be deleted @TODO company have to get throught leader session 
+     * @param hubId 
+     * @returns 
+     */
+    @Delete('/hub/:hubId')
     public async pullToHub(@Body() body: any , @Path('hubId') hubId:string): Promise<CompanyI>{
         return pullToHub (body.companyId, hubId)
     }

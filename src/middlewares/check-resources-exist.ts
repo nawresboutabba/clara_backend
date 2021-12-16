@@ -3,8 +3,9 @@
 import { NextFunction } from "express";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from '../services/Challenge.service';
-import { RESOURCE } from "../constants";
+import  { ERRORS, RESOURCE }  from "../constants";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
+import RoutingError from "../handle-error/error.routing";
 
 const _ = require("lodash");
 const { HTTP_RESPONSE } = require("@root/src/constants");
@@ -26,13 +27,11 @@ const { HTTP_RESPONSE } = require("@root/src/constants");
  */
 
 
-type TYPE_RESOURCE = string
-
 function checkResourceExistFromParams(collection:string) {
   return async function middleware(req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) {
     req.resources = {};
     let resp = {};
-    let index: TYPE_RESOURCE;
+    let index: any ;
     try {
       if (collection === "solutions") {
         const solutionId = req.params.solutionId;
@@ -48,14 +47,14 @@ function checkResourceExistFromParams(collection:string) {
       }
 
       if (_.isEmpty(resp)) {
-        throw new Error(HTTP_RESPONSE._404);
+        const customError = new RoutingError(ERRORS.ROUTING.CHECK_RESOURCE, HTTP_RESPONSE._404)
+        throw customError;
       }
       // @TODO add camel case convertion
       req.resources[index] = resp;
 
       next();
     } catch (err) {
-      res.status(404);
       next(err);
     }
   };

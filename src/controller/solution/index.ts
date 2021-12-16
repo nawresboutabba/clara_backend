@@ -11,10 +11,12 @@ export interface SolutionBody {
     can_choose_scope?:boolean,
     is_private?:boolean,
     status?: string,
+    title?: string,
     time_in_park?: number,
     baremo_validator?: Array<String>,
     baremo_referrer?: string,
     file_name?: string
+    WSALevel?: string
 }
 
 export interface SolutionResponse {

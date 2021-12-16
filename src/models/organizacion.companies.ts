@@ -1,13 +1,12 @@
 import { Schema, model } from 'mongoose';
-import { HubI } from './organization.hub';
+import { UserI } from './users';
 
 export interface CompanyI {
     _id?: any,
     companyId: string,
     name?:string,
     CNPJ?: string,
-    active: boolean,
-    hub: HubI[]
+    committe?: Array<UserI>
 }
 
 const company = new Schema({
@@ -26,11 +25,10 @@ const company = new Schema({
         required: true,
         unique:true
     },
-    active:{
-        type: Boolean,
-        default: true
-    },
-    hub: [{ type: Schema.Types.ObjectId, ref: 'Hub' }]
+    committe: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 })
 
 export default model('Company', company);

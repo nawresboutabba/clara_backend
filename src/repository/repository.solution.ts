@@ -7,26 +7,30 @@ import ChallengeService from "../services/Challenge.service";
 import { SOLUTION, SOLUTION_STATUS } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
+import UserService from "../services/User.service";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionI> => {
     return new Promise (async (resolve, reject)=> {
         try {
-          //@TODO check that challenge exist
-
-          //@TODO have to use lodash for convert to cameCase
+          /**
+           * If user does not exist then catch sequence
+           */
+          const author = await UserService.getUserActiveByUserId(user.userId)
+          // @TODO have to use lodash for convert to cameCase
             const created = new Date();
             const {
               description,
               file_name: fileName,
               images,
               is_private: isPrivate,
+              title
             } = body;
 
             let data: SolutionI
             data = {
               solutionId: nanoid(),
-              title: "Titulo hardcodeado",
-              author: user.email,
+              title: title,
+              author: author,
               created: created,
               updated: created,
               canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
@@ -35,8 +39,10 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
               isPrivate:false,
               active: true,
               description,
-              fileName: "URL1",
+              fileComplementary: "URL1",
               images: ["URL1","URL2"],
+              // @TODO . WSAL Level is a req.body attribute
+              WSALevel:"COMPANY",
             }
             let challenge: ChallengeI
             if (challengeId){
@@ -46,7 +52,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
             const solution = await SolutionService.newSolution(data, challenge);          
             return resolve(solution)  
         }catch (error) {
-            return reject ("ERROR_INSERT_NEW_SOLUTION")
+            return reject (error)
         }
     }) 
 }

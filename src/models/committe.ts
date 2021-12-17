@@ -1,13 +1,18 @@
 import { Schema, model } from "mongoose";
 import { UserI } from "./users";
-import { GroupValidatorI } from "./group-validator";
 
 export interface CommitteI {
-    leader: UserI,
-    general: Array<UserI>
+    active: boolean,
+    leader?: UserI,
+    general?: Array<UserI>
 }
 
 const committe = new Schema({
+    active: {
+        type: Boolean,
+        unique: true,
+        default:true
+    },
     leader: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -17,5 +22,4 @@ const committe = new Schema({
         ref: 'User'
     }],
 })
-
 export default model('Committe', committe);

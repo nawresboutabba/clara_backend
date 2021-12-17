@@ -22,6 +22,8 @@ import challengeRouter from './routes/challenge';
 import companyRouter from './routes/company';
 import areaRouter from './routes/area';
 import hubRouter from './routes/hub';
+import committeRouter from './routes/committe'
+
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
 import { logError } from './handle-error/middleware.log-error';
@@ -51,6 +53,7 @@ app.use('/', challengeRouter);
 app.use('/', companyRouter);
 app.use('/', areaRouter);
 app.use('/', hubRouter);
+app.use('/', committeRouter)
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);
 

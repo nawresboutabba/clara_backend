@@ -30,13 +30,6 @@ export interface SolutionI extends SituationBaseI {
      * TimePeriod that challenge is in a Park for discussion
      */
     timeInPark: number,
-    /**
-     * Reactions in park
-     */
-    reactions?: {
-      likes: number,
-      confused: number,
-    },
   }
 
 
@@ -59,10 +52,7 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
         type: Number,
         default: null,
       },
-    reactions: {
-        likes: Number,
-        confused: Number,
-      },
+
 }))
 
 export default Solution;

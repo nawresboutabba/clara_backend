@@ -43,7 +43,7 @@ const UserService = {
             ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
             HTTP_RESPONSE._500, 
             error)
-          return reject(error)
+          return reject(customError)
         })
       })
     },
@@ -106,6 +106,36 @@ const UserService = {
       })
     })
   },
+  async  getUsers (usersId: Array<string>):Promise<Array<UserI>>{
+    return new Promise(async (resolve, reject)=>{
+      try{
+        let committePromise: Array<Promise<UserI>>= [] 
+        usersId.forEach(user => {
+          committePromise.push(this.getUserActiveByUserId(user))
+      })
+          await Promise
+          .all(committePromise)
+          .then(result => {
+              return resolve (result)
+          })
+          .catch(error => {
+              const customError = new ServiceError(
+                ERRORS.SERVICE.USER_EXIST,
+                HTTP_RESPONSE._500,
+                error
+              )
+              return reject(error)
+          })      
+      }catch(error){
+        const customError = new ServiceError(
+          ERRORS.SERVICE.USER_EXIST,
+          HTTP_RESPONSE._500,
+          error
+        )
+        return reject(customError)
+      }
+    })
+  }
 }
 
 export default UserService;

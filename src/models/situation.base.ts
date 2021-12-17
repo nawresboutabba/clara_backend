@@ -3,6 +3,8 @@ import { GroupValidatorI } from './group-validator';
 import { AreaI } from './organization.area';
 import { UserI } from './users';
 import { ValidatorI } from './validator';
+import { WSALevel } from '../constants';
+  
 
 export const options = { 
   discriminatorKey: 'itemtype', 
@@ -71,7 +73,14 @@ export interface SituationBaseI {
   /**
    * Complementary files to challenge, solution or problem
    */
-  fileComplementary: string
+  fileComplementary: string,
+  /**
+   * Reactions in park
+   */
+  reactions?: {
+    likes: number,
+    confused: number,
+  },
 }
 
 const situationBase = new Schema({
@@ -119,7 +128,11 @@ const situationBase = new Schema({
        ref: 'Validator'
      },
      status: String,
-     fileComplementary: String
+     fileComplementary: String,
+     reactions: {
+      likes: Number,
+      confused: Number,
+    },
 }, options)
 
 export default model("SituationBase", situationBase);

@@ -38,7 +38,7 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
             });  
             return resolve(challenge)          
         }catch (error){
-            return reject("ERROR_NEW_CHALLENGE")
+            return reject(error)
         }
     })
 }
@@ -68,7 +68,7 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
       await ChallengeService.deactivateChallenge(challengeId);
       return resolve(true)
     }catch(error){
-      return reject("DELETE_CHALLENGE_FAILED")
+      return reject(error)
     }
   })
 }

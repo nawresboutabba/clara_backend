@@ -24,4 +24,4 @@ const baremo = new Schema({
     }],
 })
 
-export default model('Baremo', baremo);
+export default model('Validator', baremo);

@@ -2,6 +2,7 @@ import { ChallengeBody } from "../controller/challenge";
 import { ChallengeI } from "../models/situation.challenges";
 import { SolutionI } from "../models/situation.solutions";
 import ChallengeService from "../services/Challenge.service";
+import GroupValidatorService from "../services/GroupValidator.service";
 import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
@@ -12,29 +13,36 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
         try{
             const created = new Date();
             const {
+              title,
               description,
               images,
-              time_period: timePeriod,
-              validators,
-              referrer,
-              title,
-              work_space_available: workSpaceAvailable,
+              WSALevel,
+              group_validator_id,
+              is_strategic,
+              file_complementary
             } = body;
             const author = await UserService.getUserActiveByUserId(user.userId)
+            const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator_id)
             const challenge = await ChallengeService.newChallenge({
               author: author, 
+              created,
               challengeId: nanoid(),
               title,
-              created,
-              isStrategic: false,
               description,
-              status: "LAUNCHED",
               images,
+              WSALevel,
+              groupValidator,
+              /**
+               * @TODO use de machine state
+               */
+              status: "LAUNCHED",
               active: true, 
-              timePeriod,
-              // @TODO parameter have to get from req.body
-              WSALevel: "COMPANY",
-              fileComplementary: "http://archivo.pdf"
+              /**
+               * Get to global configuration?
+               */
+              timePeriod: 3000,
+              fileComplementary: file_complementary,
+              isStrategic: is_strategic
             });  
             return resolve(challenge)          
         }catch (error){

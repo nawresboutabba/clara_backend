@@ -5,21 +5,21 @@ import { UserRequest } from '../users';
 import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/repository.challenge';
 import { newSolution } from '../../repository/repository.solution'
 
+/**
+ * Data that can be edited or inserted. Other are edited by 
+ * another endpoints
+ */
 export interface ChallengeBody {
-    challengeId:string,
-    created: Date,
     title: string,
-    updated?:Date,
-    time_period?: number, 
     description: string,
-    active: boolean,
     images: Array<string>,
-    timePeriod: number,
-    status: string,
-    work_space_available?: Array<string>,
-    validators: Array<string>,
-    referrer: string,
-    workSpaceAvailable: Array<string>
+    WSALevel: "COMPANY" | "AREA",
+    /**
+     * groupValidatorId
+     */
+    group_validator_id?: string
+    is_strategic: boolean,
+    file_complementary: string
 }
 
 @Route('challenge')

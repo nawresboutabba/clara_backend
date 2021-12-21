@@ -70,6 +70,19 @@ const CommitteService = {
                 return reject(customError)
             }
         })
+    },
+    async checkUserInCommitte(userId: string): Promise<Boolean>{
+        return new Promise((resolve, reject)=> {
+            const inCommitte = Committe.findOne({
+                active: true
+            }).populate({
+                path:'committe',
+                match: {
+                    userId:userId 
+                }
+            })
+            return resolve(inCommitte)
+        })
     }
 }
 export default CommitteService;

@@ -4,24 +4,35 @@ import { UserI } from "./users";
 import { BaremoI } from "./baremo";
 
 export interface ValidatorI {
-    groupValidator: GroupValidatorI
+    /**
+     * Validator User
+     */
     user: UserI,
-    baremo: Array<BaremoI>,
+    /**
+     * Validator Id
+     */
+    validatorId: string,
+    active: boolean,
+    created: Date,
+    finished?: Date
 }
 
 const baremo = new Schema({
-    groupValidator: {
-        type: Schema.Types.ObjectId,
-        ref: 'Validator'
-    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    baremo: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Baremo'
-    }],
+    validatorId: {
+        type: String,
+        required: true
+    },
+    active:{
+        type:Boolean,
+        default: true,
+        required:true
+    },
+    created: Date,
+    finished: Date
 })
 
 export default model('Validator', baremo);

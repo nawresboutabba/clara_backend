@@ -6,73 +6,15 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"HubI": {
-				"properties": {
-					"hubId": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"hubId",
-					"name"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"CompanyI": {
-				"properties": {
-					"_id": {},
-					"companyId": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"CNPJ": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"hub": {
-						"items": {
-							"$ref": "#/components/schemas/HubI"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"companyId",
-					"active",
-					"hub"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"AreaI": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"company": {
-						"$ref": "#/components/schemas/CompanyI"
-					}
-				},
-				"required": [
-					"name",
-					"company"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"UserI": {
 				"properties": {
 					"_id": {
 						"type": "string",
 						"description": "Mongo Document Id"
+					},
+					"username": {
+						"type": "string",
+						"description": "Username"
 					},
 					"email": {
 						"type": "string",
@@ -98,26 +40,16 @@
 						"type": "boolean",
 						"description": "Is the user active?"
 					},
-					"company": {
-						"items": {
-							"$ref": "#/components/schemas/CompanyI"
-						},
-						"type": "array",
-						"description": "Company visible for user"
+					"externalUser": {
+						"type": "boolean",
+						"description": "External User. If true is external user that has participation in OpenChallenges"
 					},
-					"area": {
+					"areaVisible": {
 						"items": {
 							"$ref": "#/components/schemas/AreaI"
 						},
 						"type": "array",
 						"description": "Area that is visible for user"
-					},
-					"workSpace": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Workspace that user could be explore"
 					},
 					"updated": {
 						"type": "string",
@@ -126,13 +58,55 @@
 					}
 				},
 				"required": [
+					"username",
 					"email",
 					"userId",
 					"password",
 					"firstName",
 					"lastName",
 					"active",
-					"workSpace"
+					"externalUser"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CompanyI": {
+				"properties": {
+					"_id": {},
+					"companyId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"CNPJ": {
+						"type": "string"
+					},
+					"committe": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"companyId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AreaI": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"company": {
+						"$ref": "#/components/schemas/CompanyI"
+					}
+				},
+				"required": [
+					"name",
+					"company"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -182,12 +156,73 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"TeamI": {
+				"properties": {
+					"teamId": {
+						"type": "string"
+					},
+					"creator": {
+						"$ref": "#/components/schemas/UserI"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"teamId",
+					"creator",
+					"members",
+					"created",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"GroupValidatorI": {
+				"properties": {
+					"groupValidatorId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"area": {
+						"$ref": "#/components/schemas/AreaI"
+					}
+				},
+				"required": [
+					"groupValidatorId",
+					"name",
+					"created",
+					"area"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"ChallengeI": {
 				"properties": {
 					"_id": {},
 					"author": {
-						"type": "string",
-						"description": "Generator that create the solution"
+						"$ref": "#/components/schemas/UserI",
+						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamI",
+						"description": "Team that propose the solution. Just available for challenges\nwith TEAMWORK active.\nThis field exclusive with author and coauthor configuration"
 					},
 					"created": {
 						"type": "string",
@@ -218,13 +253,66 @@
 						"type": "array",
 						"description": "Solution images"
 					},
+					"WSALevel": {
+						"type": "string",
+						"enum": [
+							"COMPANY",
+							"AREA"
+						],
+						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
+					},
+					"areasAvailable": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Areas available. Is user if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+					},
+					"departmentAffected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Departments Affected"
+					},
+					"groupValidator": {
+						"$ref": "#/components/schemas/GroupValidatorI",
+						"description": "Group that do the analysis about the situation"
+					},
+					"status": {
+						"type": "string",
+						"description": "Challenge | Problem | Solution Status: @TODO define situation challenge"
+					},
+					"fileComplementary": {
+						"type": "string",
+						"description": "Complementary files to challenge, solution or problem"
+					},
+					"reactions": {
+						"properties": {
+							"comments": {
+								"type": "number",
+								"format": "double"
+							},
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"comments",
+							"confused",
+							"likes"
+						],
+						"type": "object",
+						"description": "Reactions in park"
+					},
 					"challengeId": {
 						"type": "string",
 						"description": "Id that uniquely identifies a challenge"
-					},
-					"department": {
-						"type": "string",
-						"description": "Area that challenge is relationated @TODO add departments as CONSTANTS"
 					},
 					"isStrategic": {
 						"type": "boolean",
@@ -235,27 +323,12 @@
 						"format": "double",
 						"description": "TimePeriod that challenge is in a Park for discussion. Dimenention is in hours. \nThen a challenge will be in a park Challenge create + timePeriod"
 					},
-					"status": {
-						"type": "string",
-						"description": "Challenge Status: @TODO define status challenge"
-					},
-					"validators": {
+					"participationMode": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array",
-						"description": "Committe Users who have the responsibility of managing the destination of the challenge"
-					},
-					"referrer": {
-						"type": "string",
-						"description": "Users who have the responsibility of managing an organization department.\nCould be committe member or not.  Referrer work with validators because generally a challenge impact\nis relationated with a organization area."
-					},
-					"workSpaceAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Workspace is a concept that allows to manage resources access for users.\nIf a user and resources are in a same work space, then could be returned"
+						"description": "Participation mode accepted: could be INDIVIDUAL_WITH_COAUTHORSHIP and/or TEAM"
 					}
 				},
 				"required": [
@@ -264,14 +337,13 @@
 					"description",
 					"active",
 					"images",
+					"WSALevel",
+					"status",
+					"fileComplementary",
 					"challengeId",
-					"department",
 					"isStrategic",
 					"timePeriod",
-					"status",
-					"validators",
-					"referrer",
-					"workSpaceAvailable"
+					"participationMode"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -280,8 +352,12 @@
 				"properties": {
 					"_id": {},
 					"author": {
-						"type": "string",
-						"description": "Generator that create the solution"
+						"$ref": "#/components/schemas/UserI",
+						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamI",
+						"description": "Team that propose the solution. Just available for challenges\nwith TEAMWORK active.\nThis field exclusive with author and coauthor configuration"
 					},
 					"created": {
 						"type": "string",
@@ -311,6 +387,63 @@
 						},
 						"type": "array",
 						"description": "Solution images"
+					},
+					"WSALevel": {
+						"type": "string",
+						"enum": [
+							"COMPANY",
+							"AREA"
+						],
+						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
+					},
+					"areasAvailable": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Areas available. Is user if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+					},
+					"departmentAffected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Departments Affected"
+					},
+					"groupValidator": {
+						"$ref": "#/components/schemas/GroupValidatorI",
+						"description": "Group that do the analysis about the situation"
+					},
+					"status": {
+						"type": "string",
+						"description": "Challenge | Problem | Solution Status: @TODO define situation challenge"
+					},
+					"fileComplementary": {
+						"type": "string",
+						"description": "Complementary files to challenge, solution or problem"
+					},
+					"reactions": {
+						"properties": {
+							"comments": {
+								"type": "number",
+								"format": "double"
+							},
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"comments",
+							"confused",
+							"likes"
+						],
+						"type": "object",
+						"description": "Reactions in park"
 					},
 					"solutionId": {
 						"type": "string",
@@ -332,65 +465,10 @@
 						"type": "boolean",
 						"description": "Solution is shared with the community?"
 					},
-					"status": {
-						"type": "string",
-						"description": "Solution status @TODO do the solution status"
-					},
 					"timeInPark": {
 						"type": "number",
 						"format": "double",
 						"description": "TimePeriod that challenge is in a Park for discussion"
-					},
-					"baremoValidator": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Refers to baremos did it by validators @TODO convert to object"
-					},
-					"baremoReferrer": {
-						"type": "string",
-						"description": "Refer to baremo did it by referrer. @TODO convert to Object"
-					},
-					"fileName": {
-						"type": "string",
-						"description": "Filename submited by generator"
-					},
-					"calification": {
-						"properties": {
-							"impact": {
-								"type": "number",
-								"format": "double"
-							},
-							"complexity": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"impact",
-							"complexity"
-						],
-						"type": "object",
-						"description": "Calification summary (baremo average)"
-					},
-					"reactions": {
-						"properties": {
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"confused",
-							"likes"
-						],
-						"type": "object",
-						"description": "Reactions in park"
 					}
 				},
 				"required": [
@@ -399,12 +477,13 @@
 					"description",
 					"active",
 					"images",
+					"WSALevel",
+					"status",
+					"fileComplementary",
 					"solutionId",
 					"canChooseScope",
 					"isPrivate",
-					"status",
-					"timeInPark",
-					"fileName"
+					"timeInPark"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -432,6 +511,9 @@
 					"status": {
 						"type": "string"
 					},
+					"title": {
+						"type": "string"
+					},
 					"time_in_park": {
 						"type": "number",
 						"format": "double"
@@ -447,36 +529,32 @@
 					},
 					"file_name": {
 						"type": "string"
+					},
+					"WSALevel": {
+						"type": "string"
 					}
 				},
 				"type": "object",
 				"additionalProperties": true
 			},
-			"ChallengeBody": {
+			"ChallengeResponse": {
 				"properties": {
-					"challengeId": {
-						"type": "string"
-					},
 					"created": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"title": {
+					"status": {
 						"type": "string"
 					},
 					"updated": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"time_period": {
-						"type": "number",
-						"format": "double"
+					"title": {
+						"type": "string"
 					},
 					"description": {
 						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
 					},
 					"images": {
 						"items": {
@@ -484,29 +562,42 @@
 						},
 						"type": "array"
 					},
-					"timePeriod": {
+					"WSALevel": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"reactions": {
+						"properties": {
+							"comments": {
+								"type": "number",
+								"format": "double"
+							},
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"comments",
+							"confused",
+							"likes"
+						],
+						"type": "object"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					},
+					"time_period": {
 						"type": "number",
 						"format": "double"
 					},
-					"status": {
-						"type": "string"
-					},
-					"work_space_available": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"validators": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"referrer": {
-						"type": "string"
-					},
-					"workSpaceAvailable": {
+					"participation_mode": {
 						"items": {
 							"type": "string"
 						},
@@ -514,17 +605,126 @@
 					}
 				},
 				"required": [
-					"challengeId",
 					"created",
+					"status",
+					"updated",
 					"title",
 					"description",
-					"active",
 					"images",
-					"timePeriod",
-					"status",
-					"validators",
-					"referrer",
-					"workSpaceAvailable"
+					"WSALevel",
+					"file_complementary",
+					"reactions",
+					"is_strategic",
+					"time_period",
+					"participation_mode"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ChallengeBody": {
+				"description": "Data that can be edited or inserted. Other are edited by \nanother endpoints",
+				"properties": {
+					"author": {
+						"type": "string",
+						"description": "author is required for a challenge"
+					},
+					"coauthor": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Not used for challenge"
+					},
+					"team": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel": {
+						"type": "string",
+						"enum": [
+							"COMPANY",
+							"AREA"
+						]
+					},
+					"group_validator": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					},
+					"participation_mode": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"title",
+					"description",
+					"images",
+					"WSALevel",
+					"file_complementary",
+					"author",
+					"is_strategic",
+					"participation_mode"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"HubI": {
+				"properties": {
+					"_id": {},
+					"hubId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"hubId",
+					"name",
+					"active"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CompanyBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"CNPJ": {
+						"type": "string"
+					},
+					"hub": {
+						"items": {
+							"$ref": "#/components/schemas/HubI"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"CNPJ"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -541,6 +741,178 @@
 				"required": [
 					"name",
 					"companyId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CommitteI": {
+				"properties": {
+					"active": {
+						"type": "boolean"
+					},
+					"leader": {
+						"$ref": "#/components/schemas/UserI"
+					},
+					"general": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"active"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"GroupValidatorBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"validators": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"area": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"validators",
+					"area"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IntegrantI": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "Validator User"
+					},
+					"integrantId": {
+						"type": "string",
+						"description": "committe integrant Id"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "is active?"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time",
+						"description": "When was created?"
+					},
+					"lastChangePosition": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Date of the last change of position in the committe. \nFor example from LEADER to GENERAL or GENERAL to leader"
+					},
+					"finished": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Date end"
+					},
+					"groupValidator": {
+						"$ref": "#/components/schemas/GroupValidatorI",
+						"description": "committe integrant can be part of group validator\n. Just Committe integrants can be validators"
+					},
+					"role": {
+						"type": "string",
+						"description": "What is the role? Committe General or Committe Leader"
+					}
+				},
+				"required": [
+					"user",
+					"integrantId",
+					"active",
+					"created",
+					"lastChangePosition",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UserResponse": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"email",
+					"first_name",
+					"last_name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"TeamResponse": {
+				"properties": {
+					"team_id": {
+						"type": "string"
+					},
+					"creator": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"team_id",
+					"creator",
+					"members",
+					"name",
+					"created"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"TeamBody": {
+				"properties": {
+					"creator": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"creator",
+					"members",
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -639,115 +1011,6 @@
 					{
 						"in": "path",
 						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/user/user/{userId}/company/{companyId}": {
-			"get": {
-				"operationId": "CheckUserInCompany",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "companyId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "AddUserInCompany",
-				"responses": {
-					"200": {
-						"description": "UserI",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserI"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint that use a Committe for adding an user to company workspace",
-				"security": [],
-				"parameters": [
-					{
-						"description": "User that will be added to company workspace",
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"description": "company additionated to user workspace",
-						"in": "path",
-						"name": "companyId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"delete": {
-				"operationId": "DeleteCompanyInUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserI"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint that use a Committe for deleting an user to company workspace",
-				"security": [],
-				"parameters": [
-					{
-						"description": "User that will be deleted from company workspace",
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "path",
-						"name": "companyId",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -884,7 +1147,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ChallengeI"
+									"$ref": "#/components/schemas/ChallengeResponse"
 								}
 							}
 						}
@@ -1081,6 +1344,109 @@
 				]
 			}
 		},
+		"/company": {
+			"post": {
+				"operationId": "NewCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CompanyBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/company/hub/{hubId}": {
+			"post": {
+				"operationId": "AddToHub",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint for adding a company to hub.",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "hubId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "company that will be added",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "PullToHub",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint for delete a company from Hub.",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "hubId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "company that will be deleted",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
 		"/area": {
 			"post": {
 				"operationId": "NewArea",
@@ -1104,6 +1470,228 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/AreaBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/committe/leader": {
+			"post": {
+				"operationId": "NewLeader",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommitteI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/committe": {
+			"post": {
+				"operationId": "NewCommitte",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/group-validator": {
+			"post": {
+				"operationId": "NewGroupValidator",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Fix response",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GroupValidatorBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrant/leader/{integrantId}": {
+			"post": {
+				"operationId": "NewLeader",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IntegrantI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint for add or reeplace a leader of committe.\nThe new leader have to be a `general commite` user first",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "integrantId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/integrant/general": {
+			"post": {
+				"operationId": "NewIntegrant",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IntegrantI"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint used for add a new integrant to committe. \nUser could be a new integrant or old integrant with active=false",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "user that will be converted from generator to commite (GENERAL)",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrant": {
+			"get": {
+				"operationId": "GetGeneralMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IntegrantI"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/integrant/general/{integrantId}": {
+			"delete": {
+				"operationId": "DeleteLeader",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "integrantId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/team": {
+			"post": {
+				"operationId": "NewTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TeamResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new Team for a challenge or situation",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TeamBody"
 							}
 						}
 					}

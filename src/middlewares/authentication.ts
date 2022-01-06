@@ -9,6 +9,9 @@ export default (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunct
         req.user = decoded;
         next();
     } catch (error) {
+        /**
+         * @TODO respose according to convention
+         */
         return res.status(401).json({
             message: 'Auth failed'
         });

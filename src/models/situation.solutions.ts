@@ -51,7 +51,7 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
     timeInPark: {
         type: Number,
         default: null,
-      },
+      }
 
 }))
 

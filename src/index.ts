@@ -24,7 +24,8 @@ import areaRouter from './routes/area';
 import hubRouter from './routes/hub';
 import committeRouter from './routes/committe'
 import groupValidatorRouter from './routes/group-validator';
-import validatorRouter from './routes/validator';
+import integrantRouter from './routes/integrant';
+import teamRouter from './routes/team'
 
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
@@ -55,9 +56,10 @@ app.use('/', challengeRouter);
 app.use('/', companyRouter);
 app.use('/', areaRouter);
 app.use('/', hubRouter);
-app.use('/', committeRouter)
-app.use('/', groupValidatorRouter)
-app.use('/', validatorRouter)
+app.use('/', committeRouter);
+app.use('/', groupValidatorRouter);
+app.use('/', integrantRouter);
+app.use('/', teamRouter);
 // @TODO configurar para que se desabilite en entorno de produccion
 app.use('/middleware-testing',httpMiddlewareRouter);
 

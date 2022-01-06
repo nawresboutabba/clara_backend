@@ -4,22 +4,46 @@ import authentication from "../../middlewares/authentication";
 import { NextFunction } from 'express';
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-const { validationResult, body } = require("express-validator");
+const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
+import RoutingError from "../../handle-error/error.routing";
+import { ERRORS, HTTP_RESPONSE } from "../../constants";
 
 router.post(
   "/challenge",
   [
-    body("description", "description can not be empty").notEmpty(),
     authentication,
+    body("description", "description can not be empty").notEmpty(),
+    body("title", "title can not be empty").notEmpty(),
+    /**
+     * participation could be TEAM OR INDIVIDUAL_WITH_COAUTHORSHIP or both
+     */
+    body("participation_mode").custom((value:Array<string> , {req}): Promise<void>=> {
+      return new Promise((resolve, reject)=> {
+        value.forEach(element => {
+          if (["TEAM", "INDIVIDUAL_WITH_COAUTHORSHIP"].includes(element) == false){
+            return reject("participation_mode invalid")
+          }
+        });
+          if(value.length <3){
+            return resolve()
+          }
+          return reject("participation_mode invalid")
+      })
+    }),
+    check("WSALevel", "WSALevel invalid").isIn(['COMPANY', 'AREA']),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
       if (errors.length > 0) {
-        res.status(400);
-        throw new Error(JSON.stringify(errors));
+        const customError = new RoutingError(
+          ERRORS.ROUTING.PATCH_SOLUTION,
+          HTTP_RESPONSE._400,
+          errors
+          )
+        throw customError;
       }
       const challengeController = new ChallengeController();
       const challenge = await challengeController.newChallenge(req.body, req.user)

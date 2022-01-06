@@ -1,4 +1,4 @@
-import { ChallengeBody } from "../controller/challenge";
+import { ChallengeBody, ChallengeResponse } from "../controller/challenge";
 import { ChallengeI } from "../models/situation.challenges";
 import { SolutionI } from "../models/situation.solutions";
 import ChallengeService from "../services/Challenge.service";
@@ -7,8 +7,8 @@ import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
-
-export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeI> => {
+import { genericChallengeFilter } from "../utils/field-filters/challenge";
+export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
         try{
             const created = new Date();
@@ -17,12 +17,16 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               description,
               images,
               WSALevel,
-              group_validator_id,
+              group_validator,
               is_strategic,
-              file_complementary
+              file_complementary,
+              participation_mode
             } = body;
+
             const author = await UserService.getUserActiveByUserId(user.userId)
-            const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator_id)
+ 
+            const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator)
+   
             const challenge = await ChallengeService.newChallenge({
               author: author, 
               created,
@@ -42,9 +46,11 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
                */
               timePeriod: 3000,
               fileComplementary: file_complementary,
-              isStrategic: is_strategic
-            });  
-            return resolve(challenge)          
+              isStrategic: is_strategic,
+              participationMode: participation_mode
+            });
+            const resp = genericChallengeFilter(challenge)
+            return resolve(resp)          
         }catch (error){
             return reject(error)
         }

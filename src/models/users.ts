@@ -7,6 +7,10 @@ export interface UserI {
    */
   _id?: string,
   /**
+   * Username 
+   */
+  username: string,
+  /**
    * User email
    */
   email: string,
@@ -45,10 +49,11 @@ export interface UserI {
   /**
    * Resume: Points earned for participation in platform.
    */
-  points?: Number
+  //points?: Number
 }
 
 const user = new Schema({
+  username: String, 
   email: {
     type: String,
     required: true,

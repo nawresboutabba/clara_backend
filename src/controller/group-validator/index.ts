@@ -9,8 +9,13 @@ export interface GroupValidatorBody {
 
 @Route('/group-validator')
 export default class GroupValidatorController extends Controller{
+    /**
+     * Fix response
+     * @param body 
+     * @returns 
+     */
     @Post()
-    public async newGroupValidator (@Body() body: GroupValidatorBody ){
+    public async newGroupValidator (@Body() body: GroupValidatorBody ):Promise<any>{
         return newGroupValidator(body.name, body.validators, body.area)
     }
 }

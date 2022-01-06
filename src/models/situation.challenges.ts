@@ -16,12 +16,17 @@ export interface ChallengeI extends SituationBaseI  {
      * Then a challenge will be in a park Challenge create + timePeriod
      */
     timePeriod: number,
+    /**
+     * Participation mode accepted: could be INDIVIDUAL_WITH_COAUTHORSHIP and/or TEAM
+     */
+    participationMode: Array<string>
   }
 
 const Challenge = SituationBase.discriminator('Challenge',new Schema({
     challengeId: String,
     isStrategic: Boolean,
     timePeriod: Number,
+    participationMode: [String]
   }, options));
 
   export default Challenge

@@ -23,11 +23,11 @@ router.post('/committe/leader',[
     }
 })
 
-router.post('/committe/',[
+router.post('/committe',[
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try{
         const committeController = new CommitteController()
-        const committe = await committeController.newCommitte(req.body.leader, req.body.committe)
+        const committe = await committeController.newCommitte(req.body)
         res
         .json(committe)
         .status(200)

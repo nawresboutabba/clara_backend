@@ -4,22 +4,28 @@ import { SolutionI } from "../../models/situation.solutions";
 import { UserRequest } from '../users';
 import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/repository.challenge';
 import { newSolution } from '../../repository/repository.solution'
+import { SituationBody, SituationResponse } from '../situation/situation';
+import { SolutionResponse } from '../solution';
 
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
  */
-export interface ChallengeBody {
-    title: string,
-    description: string,
-    images: Array<string>,
-    WSALevel: "COMPANY" | "AREA",
+export interface ChallengeBody extends SituationBody {
     /**
-     * groupValidatorId
+     * author is required for a challenge
      */
-    group_validator_id?: string
+    author: string,
     is_strategic: boolean,
-    file_complementary: string
+    file_complementary: string,
+    participation_mode: string[],
+}
+
+
+export interface ChallengeResponse extends SituationResponse {
+    is_strategic: boolean,
+    time_period: number,
+    participation_mode: Array<string>
 }
 
 @Route('challenge')
@@ -31,11 +37,11 @@ export default class ChallengeController extends Controller {
      * @returns 
      */
     @Post()
-    public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeI> {
+    public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
         return newChallenge(body, user)
     }
     @Post(':challengeId/solution')
-    public async newSolution(@Body() body: ChallengeBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionI>{
+    public async newSolution(@Body() body: ChallengeBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
         return newSolution(body, user, challengeId)
     }
     @Get(':challengeId')

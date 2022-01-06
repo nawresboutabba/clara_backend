@@ -2,8 +2,8 @@ import { Schema, model } from 'mongoose';
 import { GroupValidatorI } from './group-validator';
 import { AreaI } from './organization.area';
 import { UserI } from './users';
-import { ValidatorI } from './validator';
 import { WSALevel } from '../constants';
+import { TeamI } from './team';
   
 
 export const options = { 
@@ -14,10 +14,17 @@ export const options = {
 export interface SituationBaseI {
   _id?: any,
     /**
-     * Generator that create the solution
+     * Generator that create the solution. 
+     * This field exclusive with team configuration
      */  
-  author: UserI,
-      /**
+  author?: UserI,
+    /**
+     * Team that propose the solution. Just available for challenges
+     * with TEAMWORK active.
+     * This field exclusive with author and coauthor configuration
+     */
+  team?: TeamI,
+     /**
      * Solution creation date
      */
   created: Date,
@@ -61,12 +68,6 @@ export interface SituationBaseI {
    */
   groupValidator?: GroupValidatorI,
   /**
-   * validators that compose the group. 
-   * The redundance exist because a group validator can change in the 
-   * future, then is better save the validators that do a baremo for this challenge. 
-   */
-  validators?: Array<ValidatorI>,
-  /**
   * Challenge | Problem | Solution Status: @TODO define situation challenge
   */
   status: string,
@@ -80,6 +81,7 @@ export interface SituationBaseI {
   reactions?: {
     likes: number,
     confused: number,
+    comments: number
   },
 }
 
@@ -87,6 +89,10 @@ const situationBase = new Schema({
     author: {
       type: Schema.Types.ObjectId,
       ref: 'User'
+    },
+    team: {
+      type: Schema.Types.ObjectId, 
+      ref: 'Team' 
     },
     created: {
         type: Date,
@@ -123,15 +129,12 @@ const situationBase = new Schema({
        type: Schema.Types.ObjectId,
        ref: 'GroupValidator'
      },
-     validators: {
-       type: Schema.Types.ObjectId,
-       ref: 'Validator'
-     },
      status: String,
      fileComplementary: String,
      reactions: {
       likes: Number,
       confused: Number,
+      comments: Number
     },
 }, options)
 

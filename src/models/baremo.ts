@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose";
 import { ChallengeI } from "./situation.challenges";
 import { SolutionI } from "./situation.solutions";
-import { ValidatorI } from "./validator";
+import { IntegrantI } from "./integrant";
 import { SpecialistInterventionI } from "./specialist-intervention";
 
 export interface BaremoI {
-    intervention: ValidatorI | SpecialistInterventionI,
+    intervention: IntegrantI | SpecialistInterventionI,
     situation: ChallengeI | SolutionI,
     comment: String
 }

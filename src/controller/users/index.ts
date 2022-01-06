@@ -28,6 +28,14 @@ export interface Login {
   email: string,
   password: string
 }
+
+export interface UserResponse {
+  username : string,
+  email: string,
+  first_name: string,
+  last_name: string
+}
+
 @Route("user")
 export default class UserController extends Controller {
   @Post("signup")
@@ -51,7 +59,7 @@ export default class UserController extends Controller {
    * Endpoint that use a Committe for adding an user to company workspace
    * @param userId User that will be added to company workspace
    * @param companyId company additionated to user workspace
-   * @returns UserI
+   * @returns
    */
 /*   @Post('/user/:userId/company/:companyId')
   public async addUserInCompany(@Path('userId') userId: string, @Path('companyId') companyId: string ): Promise<UserI>{

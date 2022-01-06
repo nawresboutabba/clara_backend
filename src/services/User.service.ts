@@ -124,7 +124,7 @@ const UserService = {
                 HTTP_RESPONSE._500,
                 error
               )
-              return reject(error)
+              return reject(customError)
           })      
       }catch(error){
         const customError = new ServiceError(

@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 import { AreaI } from "./organization.area";
-import { ValidatorI } from "./validator";
 
 export interface GroupValidatorI {
+    groupValidatorId: string,
     name: string,
     created: Date,
-    validators: Array<ValidatorI>,
     area: AreaI,
 }
 
 const groupValidator = new Schema({
+    groupValidatorId: String,
     name: {
         type: String,
         required: true
@@ -18,10 +18,6 @@ const groupValidator = new Schema({
         type: Date,
         required: true
     },
-    validators: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Validator'
-    }],
     area: {
         type: Schema.Types.ObjectId,
         ref: 'Area'

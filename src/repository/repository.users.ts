@@ -6,7 +6,6 @@ import UserService from '../services/User.service';
 import { UserBody, Login } from '../controller/users'
 import { ERRORS, HTTP_RESPONSE } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
-import { response } from 'express';
 
 export const signUp  = async (body: UserBody):Promise<UserI> => {
   return new Promise (async (resolve, reject)=> {
@@ -25,6 +24,7 @@ export const signUp  = async (body: UserBody):Promise<UserI> => {
               }
               await UserService.newGenericUser({
                 userId: nanoid(),
+                username: body.username,
                 email: body.email,
                 password: hash,
                 firstName: body.first_name,
@@ -121,45 +121,3 @@ export const deleteUser = async (userId : string): Promise <boolean> => {
       })
     })
 }
-
-/*
-export const addUserInCompany = async (userId: string, companyId: string): Promise<UserI> => {
-  return new Promise (async (resolve, reject)=> {
-    try{
-      const company = await CompanyService.getActiveCompanyById(companyId)
-      console.log(company)
-      if (company){
-        const resp = await UserService.addUserInCompany(userId, company)
-        return resolve(resp)
-      }
-      throw new Error("COMPANY_NULL OR UNDEFINED")
-    }catch(error){
-      return reject(error)
-    }
-  })
-}
-
-export const deleteCompanyInUser = async (userId:string, companyId: string): Promise<UserI> => {
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const company = await CompanyService.getActiveCompanyById(companyId)
-        const resp = await UserService.deleteUserInCompany(userId, company)
-        return resolve(resp)
-      }catch(error){
-        return reject(error)
-      }
-    })
-}
-
-export const checkUserInCompany = async (userId: string, companyId: string): Promise<boolean> => {
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const company = await CompanyService.getActiveCompanyById(companyId)
-        const resp = UserService.checkUserInCompany(userId, company)
-        return resolve(resp)
-      }catch(error){
-        return reject(error)
-      }
-    })
-}
-*/

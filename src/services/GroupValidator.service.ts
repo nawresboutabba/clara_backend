@@ -1,17 +1,24 @@
 import ServiceError from "../handle-error/error.service";
 import GroupValidator, { GroupValidatorI } from "../models/group-validator";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
-import { ValidatorI } from "../models/validator";
+import { IntegrantI } from "../models/integrant";
 import { AreaI } from "../models/organization.area";
 
 const GroupValidatorService = {
-    async getGroupValidatorById(groupValidatorId:string ): Promise<GroupValidatorI>{
+    async getGroupValidatorById(GVId:string ): Promise<GroupValidatorI>{
         return new Promise (async (resolve, reject)=> {
             try{
-                const groupValidator = await GroupValidator.findOne({
-                    groupValidatorId: groupValidatorId
+                /**
+                 * If group validator ID is null, then error
+                 */
+
+                let groupValidator = await GroupValidator.findOne({
+                    groupValidatorId: GVId,
                 })
-                return resolve(groupValidator)
+                if(groupValidator){
+                    return resolve(groupValidator)
+                }
+                return resolve(undefined)
             }catch(error){
                 const customError = new ServiceError(
                     ERRORS.SERVICE.GET_GROUP_VALIDATOR,
@@ -22,13 +29,13 @@ const GroupValidatorService = {
             }
         })
     },
-    async newGroupValidator (name: string, validators: Array<ValidatorI>, area: AreaI) {
+    async newGroupValidator (name: string, integrants: Array<IntegrantI>, area: AreaI) {
         return new Promise((resolve, reject)=> {
             try{
                 const groupValidator = GroupValidator.create({
                     name,
                     created: new Date(),
-                    validators,
+                    integrants,
                     area
                 })
                 return resolve(groupValidator)

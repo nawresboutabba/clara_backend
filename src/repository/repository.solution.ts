@@ -1,6 +1,6 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
-import { SolutionBody } from "../controller/solution";
+import { SolutionBody, SolutionResponse } from "../controller/solution";
 import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
@@ -8,8 +8,9 @@ import { SOLUTION, SOLUTION_STATUS } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
+import { genericSolutionFilter } from "../utils/field-filters/solution";
 
-export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionI> => {
+export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
         try {
           /**
@@ -20,7 +21,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
             const created = new Date();
             const {
               description,
-              file_name: fileName,
+              file_complementary: fileComplementary,
               images,
               is_private: isPrivate,
               title
@@ -50,7 +51,8 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
               challenge = await ChallengeService.getChallengeActiveById(challengeId)
             }
             const solution = await SolutionService.newSolution(data, challenge);          
-            return resolve(solution)  
+            const resp = genericSolutionFilter(solution)
+            return resolve(resp)  
         }catch (error) {
             return reject (error)
         }

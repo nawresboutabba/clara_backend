@@ -27,7 +27,7 @@ const CommitteService = {
 
         })
     },
-    async getCommitteActive():Promise<CommitteI>{
+/*     async getCommitteActive():Promise<CommitteI>{
         return new Promise(async (resolve, reject)=> {
             try{
                 const committe = await Committe.findOne({active:true})
@@ -41,7 +41,7 @@ const CommitteService = {
                 return reject(customError)
             }
         })
-    },
+    }, */
     async newCommitte(leader?: UserI, general?: Array<UserI>):Promise<CommitteI>{
         return new Promise(async (resolve, reject)=> {
             try{

@@ -4,34 +4,47 @@ import { SolutionBody, SolutionResponse } from "../controller/solution";
 import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { SOLUTION, SOLUTION_STATUS } from '../constants'
+import { ERRORS, HTTP_RESPONSE, SOLUTION, SOLUTION_STATUS } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
 import { genericSolutionFilter } from "../utils/field-filters/solution";
+import TeamService from "../services/Team.service";
+import RepositoryError from "../handle-error/error.repository";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
         try {
+          const insertedBy = await UserService.getUserActiveByUserId(user.userId)
           /**
-           * If user does not exist then catch sequence
+           * Solution have to have setted `author` or `team`.
+           * If both are undefined or null, then throw error
            */
-          const author = await UserService.getUserActiveByUserId(user.userId)
-          // @TODO have to use lodash for convert to cameCase
+          const author = await UserService.getUserActiveByUserId(body.author)
+          const team = await TeamService.getTeamById(body.team)
+          if(!(author || team )){
+            throw new RepositoryError(
+              ERRORS.REPOSITORY.TEAM_AND_AUTHOR_NOT_EXIST,
+              HTTP_RESPONSE._404
+            )
+          }
             const created = new Date();
             const {
               description,
               file_complementary: fileComplementary,
               images,
               is_private: isPrivate,
-              title
+              title,
+              WSALevel
             } = body;
 
             let data: SolutionI
             data = {
+              insertedBy,
               solutionId: nanoid(),
               title: title,
-              author: author,
+              author,
+              team,
               created: created,
               updated: created,
               canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
@@ -40,10 +53,9 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
               isPrivate:false,
               active: true,
               description,
-              fileComplementary: "URL1",
-              images: ["URL1","URL2"],
-              // @TODO . WSAL Level is a req.body attribute
-              WSALevel:"COMPANY",
+              fileComplementary: fileComplementary,
+              images: images,
+              WSALevel,
             }
             let challenge: ChallengeI
             if (challengeId){
@@ -77,13 +89,17 @@ export const deleteSolution = async (solutionId: string): Promise<boolean> => {
       await SolutionService.deactivateSolution(solutionId);
       return resolve(true)
     }catch (error){
+      /**
+       * @TODO set error
+       */
       return reject("ERROR_ELIMINAR_SOLUTION")
     }
   })
 }
 
-export const getSolution = (solutionId: string, solution: SolutionI): Promise <SolutionI>=> {
+export const getSolution = (solutionId: string, solution: SolutionI): Promise <SolutionResponse>=> {
   return new Promise (async (resolve, reject)=> {
-    return resolve(solution)
+    const resp = genericSolutionFilter(solution)
+    return resolve(resp)
   })
 }

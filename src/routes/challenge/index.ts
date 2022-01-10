@@ -4,10 +4,10 @@ import authentication from "../../middlewares/authentication";
 import { NextFunction } from 'express';
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-const { validationResult, body,check } = require("express-validator");
+const { validationResult, body,check, query } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 
 router.post(
   "/challenge",
@@ -60,17 +60,24 @@ router.post(
 router.post(
   "/challenge/:challengeId/solution",
   [
-    checkResourceExistFromParams(`challenges`),
-    body("description", "description can not be empty").notEmpty(),
     authentication,
+    checkResourceExistFromParams(`challenges`),
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
+    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY])
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
 
       if (errors.length > 0) {
-        res.status(400);
-        throw new Error(JSON.stringify(errors));
+        const customError = new RoutingError(
+          ERRORS.ROUTING.ADD_SOLUTION,
+          HTTP_RESPONSE._400,
+          errors
+          )
+        throw customError;
       }
       const challengeController = new ChallengeController();
       const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId)
@@ -159,11 +166,32 @@ router.delete(
   }
 );
 
-router.get('/challenge/:challengeId/solution',
+router.get('/challenge/:challengeId/solution',[
+  check('init').escape(),
+  check('offset').escape(),
+  check('order-by').escape()
+],
 async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
   try {
+    const errors = validationResult(req).array();
+
+    if (errors.length > 0) {
+      const customError = new RoutingError(
+        ERRORS.ROUTING.PATCH_SOLUTION,
+        HTTP_RESPONSE._400,
+        errors
+        )
+      throw customError;
+    }
+
     const challengeController = new ChallengeController();
-    const solutions = await challengeController.listSolutions(req.params.challengeId)
+    const init: number = parseInt(req.query.init.toString()) || 0
+    const offset: number = parseInt(req.query.offset.toString()) || 10
+    const solutions = await challengeController.listSolutions(
+      req.params.challengeId, 
+      init,
+      offset
+      )
     res
     .json(solutions)
     .status(200)

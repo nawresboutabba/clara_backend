@@ -6,7 +6,7 @@ export default (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunct
     try {
         const token = req.headers.authorization.split(" ")[1];
         const decoded = verify(token, process.env.JWT_KEY);
-        req.user = decoded;
+        req.user = decoded.user;
         next();
     } catch (error) {
         /**

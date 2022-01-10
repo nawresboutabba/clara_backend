@@ -1,5 +1,6 @@
 import { ChallengeResponse } from "../../controller/challenge";
 import { ChallengeI } from "../../models/situation.challenges";
+import { genericUserFilter } from "./user";
 
 /**
  * Challenge information filter. 
@@ -10,7 +11,7 @@ import { ChallengeI } from "../../models/situation.challenges";
  */
 
 export const genericChallengeFilter = async (challenge : ChallengeI): Promise<ChallengeResponse> => {
-    return new Promise((resolve, reject)=> {
+    return new Promise(async (resolve, reject)=> {
         const { 
             created,
             title, 
@@ -25,8 +26,11 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
             participationMode,
             reactions
         } = challenge
-
+        const author = await genericUserFilter(challenge.author)
+        const inserted_by = await genericUserFilter(challenge.insertedBy)
         return resolve({
+            inserted_by,
+            author,
             created,
             title, 
             description , 

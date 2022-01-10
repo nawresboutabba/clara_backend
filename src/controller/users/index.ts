@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
 import { UserI } from '../../models/users'
-import { deleteUser, login, signUp } from '../../repository/repository.users'
+import { deleteUser, getUserInformation, login, signUp } from '../../repository/repository.users'
 
 /**
  * User interface used when a user is added to Request after 
@@ -30,10 +30,19 @@ export interface Login {
 }
 
 export interface UserResponse {
+  external_user: boolean,
+  active: boolean,
+  points: number,
   username : string,
   email: string,
   first_name: string,
   last_name: string
+}
+
+export interface UserInformationResponse extends UserResponse {
+  committe_member: boolean,
+  points: number,
+  
 }
 
 @Route("user")
@@ -51,28 +60,8 @@ export default class UserController extends Controller {
     return deleteUser(userId)
 
   }
-/*   @Get('/user/:userId/company/:companyId')
-  public async checkUserInCompany(@Path('userId') userId: string, @Path('companyId') companyId: string): Promise <boolean> {
-    return checkUserInCompany(userId, companyId)
-  } */
-  /**
-   * Endpoint that use a Committe for adding an user to company workspace
-   * @param userId User that will be added to company workspace
-   * @param companyId company additionated to user workspace
-   * @returns
-   */
-/*   @Post('/user/:userId/company/:companyId')
-  public async addUserInCompany(@Path('userId') userId: string, @Path('companyId') companyId: string ): Promise<UserI>{
-    return addUserInCompany(userId, companyId)
-  } */
-  /**
-   * Endpoint that use a Committe for deleting an user to company workspace
-   * @param userId User that will be deleted from company workspace
-   * @param companyId 
-   * @returns 
-   */
-/*   @Delete('/user/:userId/company/:companyId')
-  public async deleteCompanyInUser( @Path('userId') userId: string,@Path('companyId') companyId: string ): Promise<UserI>{
-    return deleteCompanyInUser(userId, companyId)
-  } */
+  @Get('info')
+  public async getInformation(@Body() user:UserI): Promise<UserResponse>{
+    return getUserInformation(user)
+  }
 }

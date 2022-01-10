@@ -49,7 +49,7 @@ export interface UserI {
   /**
    * Resume: Points earned for participation in platform.
    */
-  //points?: Number
+  points: number
 }
 
 const user = new Schema({

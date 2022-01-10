@@ -5,26 +5,37 @@ import authentication from "../../middlewares/authentication";
 import * as _ from 'lodash'; 
 import { NextFunction} from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
-import { validationResult, body } from "express-validator";
+import { validationResult, body , check} from "express-validator";
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import SolutionController from '../../controller/solution/index'
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 
 
 router.post(
   "/solution",
   [
-    body("description", "description can not be empty").notEmpty(),
-    body("title", "title can not be empty").notEmpty(),
     authentication,
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    body("author", VALIDATIONS_MESSAGE_ERROR.SOLUTION.AUTHOR_EMPTY).notEmpty(),
+    check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
+    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
+    body("author").custom((value:string , {req}): Promise<void>=> {
+      return new Promise((resolve, reject)=> {
+        if(!(req.body.author || req.body.team)){
+          return reject(ERRORS.ROUTING.TEAM_AND_AUTHOR_NOT_EXIST)
+        }
+        return resolve()
+      })
+    }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next:NextFunction) => {
     try {
       const errors = validationResult(req).array();
       if (errors.length > 0) {
         const customError = new RoutingError(
-          ERRORS.ROUTING.SIGNUP_USER,
+          ERRORS.ROUTING.ADD_SOLUTION,
           HTTP_RESPONSE._400,
           errors
           )

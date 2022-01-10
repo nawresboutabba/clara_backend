@@ -30,6 +30,7 @@ const UserService = {
       },
     async getUserActiveByUserId (userId:string ): Promise<UserI> {
       return new Promise(async (resolve, reject)=> {
+
         await User
         .findOne({
           userId: userId,

@@ -80,5 +80,21 @@ router.delete("/user/:userId", [
     next(err);
   }
 });
+
+router.get('/user/info',[
+  authentication
+],async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=>{
+  try{
+    const userController = new UserController()
+
+    const userInformation = await userController.getInformation(req.user)
+    res
+    .json(userInformation)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
 const userRouter = router
 export default userRouter;

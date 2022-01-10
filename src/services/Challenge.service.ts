@@ -81,8 +81,8 @@ const ChallengeService = {
             return error
         }
     },
-    async listSolutions (challengeId: string): Promise<SolutionI[]>{
-        const solutions = await SolutionService.listSolutionsChallenge(challengeId)
+    async listSolutions (challengeId: string, init:number, offset:number): Promise<SolutionI[]>{
+        const solutions = await SolutionService.listSolutionsChallenge(challengeId, init, offset)
         return solutions
       }
 }

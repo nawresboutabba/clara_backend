@@ -3,9 +3,10 @@ import { sign } from 'jsonwebtoken';
 import { UserI } from '../models/users';
 import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
-import { UserBody, Login } from '../controller/users'
+import { UserBody, Login, UserResponse, UserRequest } from '../controller/users'
 import { ERRORS, HTTP_RESPONSE } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
+import { genericUserFilter } from '../utils/field-filters/user';
 
 export const signUp  = async (body: UserBody):Promise<UserI> => {
   return new Promise (async (resolve, reject)=> {
@@ -30,7 +31,8 @@ export const signUp  = async (body: UserBody):Promise<UserI> => {
                 firstName: body.first_name,
                 lastName: body.last_name,
                 active: true,
-                externalUser: false
+                externalUser: false,
+                points: 0
               })
               .then(user => {
                 return resolve(user)
@@ -54,7 +56,7 @@ export const login = async (body: Login ) : Promise<string> => {
   return new Promise (async (resolve, reject )=> {
       UserService
       .getUserActiveByEmail(body.email)
-      .then(async user=> {
+      .then(async (user: UserI) => {
         if (user == null) {
           /**
            * User does not exist
@@ -69,17 +71,9 @@ export const login = async (body: Login ) : Promise<string> => {
              */
               return reject(new RepositoryError(ERRORS.REPOSITORY.AUTH_FAILED, HTTP_RESPONSE._500,err))
             }
-  
-            let userInformation: {
-              email: string,
-              userId: string,
-              firstName:string,
-              lastName:string,
-            }
-            userInformation = user
             const token = sign(
               {
-                userInformation : userInformation
+                user
               },
               process.env.JWT_KEY,
               {
@@ -120,4 +114,17 @@ export const deleteUser = async (userId : string): Promise <boolean> => {
         return reject(error)
       })
     })
+}
+
+export const getUserInformation = async (userInformation: UserRequest): Promise<UserResponse> => {
+  return new Promise(async (resolve, reject)=> {
+    try{
+      const user: UserI = await UserService.getUserActiveByUserId(userInformation.userId);
+      const resp = await genericUserFilter(user)
+
+      return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
+  })
 }

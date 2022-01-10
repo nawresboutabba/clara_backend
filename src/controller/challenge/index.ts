@@ -1,6 +1,5 @@
 import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
-import { SolutionI } from "../../models/situation.solutions";
 import { UserRequest } from '../users';
 import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/repository.challenge';
 import { newSolution } from '../../repository/repository.solution'
@@ -45,9 +44,26 @@ export default class ChallengeController extends Controller {
         return newSolution(body, user, challengeId)
     }
     @Get(':challengeId')
-    public async getChallenge(@Request() challenge: ChallengeI, @Path('challengeId') challengeId: string): Promise<ChallengeI> {
-        return getChallenge(challenge, challengeId)
+    public async getChallenge(@Request() challenge: ChallengeI, @Path('challengeId') challengeId: string): Promise<ChallengeResponse> {
+        return getChallenge(challenge)
     }
+
+    /**
+     * listing solution's challenge
+     * @param challengeId challenge for listing
+     * @param init first document order
+     * @param offset document per page
+     * @returns 
+     */
+     @Get(':challengeId/solution/')
+     public async listSolutions(
+         @Path('challengeId') challengeId: string, 
+         @Query() init?: number,
+         @Query() offset?: number,
+         ): Promise<SolutionResponse []> {
+         return listSolutions(challengeId, init, offset)
+     }
+
     @Patch(':challengeId')
     public async updateChallengePartially(@Body() body:ChallengeBody, @Path('challengeId') challengeId: string): Promise<ChallengeI> {
         return updateChallengePartially(body, challengeId)
@@ -55,19 +71,5 @@ export default class ChallengeController extends Controller {
     @Delete(':challengeId')
     public async deleteChallenge(challengeId: string): Promise<boolean>{
         return deleteChallenge(challengeId)
-    } /**
-     * listing solution's challenge
-     * @param challengeId challenge for listing
-     * @param init first document order
-     * @param offset document per page
-     * @returns 
-     */
-    @Get(':challengeId/solution')
-    public async listSolutions(
-        @Path('challengeId') challengeId: string, 
-        @Query() init?: number,
-        @Query() offset?:number,
-        ): Promise<SolutionI []> {
-        return listSolutions(challengeId)
-    }
+    } 
 }

@@ -2,10 +2,11 @@ import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} fr
 import { SolutionI } from '../../models/situation.solutions';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
 import { SituationBody, SituationResponse } from '../situation/situation';
-import { UserRequest } from '../users';
+import { UserRequest, UserResponse } from '../users';
 
 
 export interface SolutionBody extends SituationBody {
+    author: string,
     /**
      * Challenge could be undefined if the solution doesn't have a challenge associated
      */
@@ -20,7 +21,7 @@ export interface SolutionResponse extends SituationResponse{
     /**
      * challenge associated
      */
-    challenge?: string,
+    challengeId?: string,
     /**
      * Always is setting this attribute. Could be setting by user or committe.
      * Depends on solution configuration
@@ -30,6 +31,9 @@ export interface SolutionResponse extends SituationResponse{
      * Always is setting this attribute. Depends on solution configuration
      */
     time_in_park: number,
+    /**
+     * Solution ID
+     */
     solutionId: string
 }
 
@@ -49,7 +53,7 @@ export default class SolutionController extends Controller {
         return deleteSolution(solutionId)
     }
     @Get(':solutionId')
-    public async getSolution(@Path('solutionId') solutionId:string ,@Request() solution: SolutionI): Promise<SolutionI> {
+    public async getSolution(@Path('solutionId') solutionId:string ,@Request() solution: SolutionI): Promise<SolutionResponse> {
         return getSolution(solutionId, solution)
     }
 }

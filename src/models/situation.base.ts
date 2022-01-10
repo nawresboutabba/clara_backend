@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 import { GroupValidatorI } from './group-validator';
 import { AreaI } from './organization.area';
 import { UserI } from './users';
-import { WSALevel } from '../constants';
 import { TeamI } from './team';
   
 
@@ -13,6 +12,12 @@ export const options = {
 
 export interface SituationBaseI {
   _id?: any,
+  /**
+   * When the inserted user is not same that author user. 
+   * Used for committe (Committe integrants has 
+   * a Functionality for add generator's challenge)
+   */
+  insertedBy: UserI,
     /**
      * Generator that create the solution. 
      * This field exclusive with team configuration
@@ -86,6 +91,10 @@ export interface SituationBaseI {
 }
 
 const situationBase = new Schema({
+    insertedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },  
     author: {
       type: Schema.Types.ObjectId,
       ref: 'User'

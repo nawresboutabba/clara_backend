@@ -17,6 +17,10 @@ export interface SituationBody {
 }
 
 export interface SituationResponse {
+    /**
+     * User that inserted the solution
+    */
+    inserted_by: UserResponse,
     author?: UserResponse,
     created: Date,
     status: string,

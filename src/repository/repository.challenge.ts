@@ -8,11 +8,15 @@ import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
 import { genericChallengeFilter } from "../utils/field-filters/challenge";
+import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
+import { SolutionResponse } from "../controller/solution";
+
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
         try{
             const created = new Date();
             const {
+              author,
               title,
               description,
               images,
@@ -23,12 +27,13 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               participation_mode
             } = body;
 
-            const author = await UserService.getUserActiveByUserId(user.userId)
- 
+            const insertedBy = await UserService.getUserActiveByUserId(user.userId)
+            const authorEntity = await UserService.getUserActiveByUserId(author)
             const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator)
    
             const challenge = await ChallengeService.newChallenge({
-              author: author, 
+              insertedBy: insertedBy,
+              author: authorEntity, 
               created,
               challengeId: nanoid(),
               title,
@@ -57,9 +62,10 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
     })
 }
 
-export const getChallenge = async (challenge: ChallengeI, challengeId : string ): Promise<ChallengeI> => {
+export const getChallenge = async (challenge: ChallengeI ): Promise<ChallengeResponse> => {
   return new Promise ((resolve, reject)=> {
-      return resolve(challenge)
+    const resp = genericChallengeFilter(challenge)
+      return resolve(resp)
   })
 }
 
@@ -87,11 +93,14 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
   })
 }
 
-export const listSolutions = async (challengeId: string): Promise<SolutionI []> => {
+export const listSolutions = async (challengeId: string, init: number , offset: number): Promise<SolutionResponse []> => {
   return new Promise (async (resolve, reject)=> {
     try {
-      const listSolutions = await ChallengeService.listSolutions(challengeId)
-      return resolve(listSolutions)
+      const listSolutions = await ChallengeService.listSolutions(challengeId, init, offset)
+
+      const resp = genericArraySolutionsFilter(listSolutions)
+
+      return resolve(resp)
     }catch (error){
       return reject(error)
     }

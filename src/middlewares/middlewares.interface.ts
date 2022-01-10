@@ -1,13 +1,13 @@
 import * as express from 'express';
-import { TYPE_CHALLENGE } from '../models/challenges';
-import { TYPE_SOLUTION } from '../models/solutions';
-import { UserRequest } from '../controller/users';
+import { ChallengeI } from '../models/situation.challenges';
+import { SolutionI } from '../models/situation.solutions';
+import { UserI } from '../models/users';
 
 export interface RequestMiddleware extends express.Request {
-    user: UserRequest;
+    user: UserI;
     resources?: {
-      solution?: TYPE_SOLUTION 
-      challenge?: TYPE_CHALLENGE
+      solution?: SolutionI 
+      challenge?: ChallengeI
     }
 }
 

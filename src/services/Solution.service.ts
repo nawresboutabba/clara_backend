@@ -106,8 +106,10 @@ const SolutionService = {
           }
         })
     },
-    async listSolutionsChallenge (challengeId: string ): Promise<any[]>{
-      const solutions = await Solution.find({challengeId: challengeId, active: true})
+    async listSolutionsChallenge (challengeId: string, init:number, offset: number ): Promise<any[]>{
+      const solutions = await Solution
+      .find({challengeId: challengeId, active: true})
+      .skip(init).limit(offset)
       return solutions
     }    
 }

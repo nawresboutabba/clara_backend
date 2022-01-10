@@ -16,6 +16,20 @@ const TeamService = {
                 return resolve(result)
             })
             .catch(error => {
+                // @TODO set error
+                return reject(error)
+            })
+        })
+    },
+    async getTeamById(teamId: string): Promise<TeamI> {
+        return new Promise(async (resolve, reject)=> {
+            await Team
+            .findOne({teamId: teamId})
+            .then(result => {
+                return resolve(result)
+            })
+            .catch(error=> {
+                // @TODO set error
                 return reject(error)
             })
         })

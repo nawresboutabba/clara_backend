@@ -6,6 +6,11 @@ export interface AreaBody {
     name:string,
     companyId: string
 }
+
+export interface AreaResponse {
+    name: string,
+}
+
 @Route('area')
 export default class AreaController extends Controller {
     @Post()

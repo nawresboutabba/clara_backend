@@ -1,6 +1,6 @@
 import { UserResponse } from "../../controller/users";
 import { UserI } from "../../models/users";
-
+import { genericArrayAreaFilter } from "./area";
 
 /**
  * User information filter. 
@@ -10,10 +10,13 @@ import { UserI } from "../../models/users";
  * @returns 
  */
 export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
-    return new Promise((resolve, reject)=> {
+    return new Promise(async (resolve, reject)=> {
         if(user) {
-            const { externalUser, active, points, firstName, lastName , email, username} = user
+            const { areaVisible, externalUser, active, points, firstName, lastName , email, username} = user
+            const area_visible = await genericArrayAreaFilter(areaVisible)
+            
             return resolve({
+                area_visible,
                 external_user: externalUser,
                 active, 
                 points,

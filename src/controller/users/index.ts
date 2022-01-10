@@ -1,6 +1,8 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
+import { AreaI } from '../../models/organization.area'
 import { UserI } from '../../models/users'
 import { deleteUser, getUserInformation, login, signUp } from '../../repository/repository.users'
+import { AreaResponse } from '../area/area'
 
 /**
  * User interface used when a user is added to Request after 
@@ -30,6 +32,7 @@ export interface Login {
 }
 
 export interface UserResponse {
+  area_visible: Array<AreaResponse>,
   external_user: boolean,
   active: boolean,
   points: number,

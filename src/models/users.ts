@@ -71,7 +71,7 @@ const user = new Schema({
   lastName: String, 
   active: Boolean,
   externalUser: Boolean,
-  area: [{
+  areaVisible: [{
     type: Schema.Types.ObjectId,
     ref: 'Area'
   }],

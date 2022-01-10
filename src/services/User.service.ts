@@ -36,6 +36,7 @@ const UserService = {
           userId: userId,
           active: true,
         })
+        .populate('areaVisible')
         .then(user => {
           return resolve(user)
         })

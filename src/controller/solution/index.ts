@@ -58,9 +58,13 @@ export default class SolutionController extends Controller {
     public async getSolution(@Path('solutionId') solutionId:string ,@Request() solution: SolutionI): Promise<SolutionResponse> {
         return getSolution(solutionId, solution)
     }
+    /**
+     * Solutions Listing without challenge associated 
+     * @param query 
+     * @returns 
+     */
     @Get()
     public async listSolutions(@Query() query: QueryForm): Promise<SolutionResponse []> {
-        
         return listSolutions(query, undefined)
     }
 }

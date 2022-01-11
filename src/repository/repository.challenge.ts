@@ -98,9 +98,7 @@ export const listSolutions = async (query: QueryForm,challengeId?: string ): Pro
   return new Promise (async (resolve, reject)=> {
     try {
       const listSolutions = await ChallengeService.listSolutions(query, challengeId)
-
       const resp = genericArraySolutionsFilter(listSolutions)
-
       return resolve(resp)
     }catch (error){
       return reject(error)

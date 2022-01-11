@@ -64,8 +64,11 @@ router.get(
     try {
       const solutionController = new SolutionController()
       const query: QueryForm = await formatQuery(req.query)
-      const solution = await solutionController.listSolutions(query)
-      res.status(200).json(solution).send();
+      const solutions = await solutionController.listSolutions(query)
+      res
+      .json(solutions)
+      .status(200)
+      .send();
       next();
     } catch (e) {
       next(e);

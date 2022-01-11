@@ -10,6 +10,7 @@ import UserService from "../services/User.service";
 import { genericChallengeFilter } from "../utils/field-filters/challenge";
 import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
 import { SolutionResponse } from "../controller/solution";
+import { QueryForm } from "../utils/params.query";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -93,10 +94,10 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
   })
 }
 
-export const listSolutions = async (challengeId: string, init: number , offset: number): Promise<SolutionResponse []> => {
+export const listSolutions = async (query: QueryForm,challengeId?: string ): Promise<SolutionResponse []> => {
   return new Promise (async (resolve, reject)=> {
     try {
-      const listSolutions = await ChallengeService.listSolutions(challengeId, init, offset)
+      const listSolutions = await ChallengeService.listSolutions(query, challengeId)
 
       const resp = genericArraySolutionsFilter(listSolutions)
 

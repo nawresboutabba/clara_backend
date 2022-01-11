@@ -6,6 +6,7 @@ import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { QueryForm } from "../utils/params.query";
 
 export type editOneParams = {
     description?: string,
@@ -106,10 +107,26 @@ const SolutionService = {
           }
         })
     },
-    async listSolutionsChallenge (challengeId: string, init:number, offset: number ): Promise<any[]>{
+    async listSolutions(query: QueryForm ,challengeId: string): Promise<any[]>{
+          
       const solutions = await Solution
-      .find({challengeId: challengeId, active: true})
-      .skip(init).limit(offset)
+      .find(
+        {..._.pickBy({
+          created: query.created,
+          active:true,
+          title:{
+            $regex : `.*${query.title}.*`, 
+          }
+        }, _.identity),
+        challengeId
+        }
+      )
+      .skip(query.init)
+      .limit(query.offset)
+      /**
+       * Filter order criteria unused
+       */
+      .sort(_.pickBy(query.sort,_.identity))
       return solutions
     }    
 }

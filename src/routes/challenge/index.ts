@@ -4,10 +4,11 @@ import authentication from "../../middlewares/authentication";
 import { NextFunction } from 'express';
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-const { validationResult, body,check, query } = require("express-validator");
+const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { formatQuery, QueryForm } from "../../utils/params.query";
 
 router.post(
   "/challenge",
@@ -169,7 +170,8 @@ router.delete(
 router.get('/challenge/:challengeId/solution',[
   check('init').escape(),
   check('offset').escape(),
-  check('order-by').escape()
+  check('order-by').escape(),
+  check('criteria').escape()
 ],
 async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
   try {
@@ -185,12 +187,11 @@ async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
     }
 
     const challengeController = new ChallengeController();
-    const init: number = parseInt(req.query.init.toString()) || 0
-    const offset: number = parseInt(req.query.offset.toString()) || 10
+    const query: QueryForm = await formatQuery(req.query)
+
     const solutions = await challengeController.listSolutions(
-      req.params.challengeId, 
-      init,
-      offset
+      req.params.challengeId,
+      query
       )
     res
     .json(solutions)

@@ -14,7 +14,7 @@ const swaggerDocument =require( '../swagger.json')
 
 app.use(express.json());
 
-//app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
 import solutionsRouter from './routes/solutions'
 import userRouter from './routes/users'
@@ -26,7 +26,7 @@ import committeRouter from './routes/committe'
 import groupValidatorRouter from './routes/group-validator';
 import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
-
+//import session from './middlewares/session'
 const httpMiddlewareRouter = require('./routes/http-middlewares')
 
 import { logError } from './handle-error/middleware.log-error';
@@ -50,6 +50,7 @@ app.listen(PORT, () =>
         `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
     )
 );
+//app.use(session)
 app.use('/', solutionsRouter);
 app.use('/',userRouter);
 app.use('/', challengeRouter);

@@ -5,6 +5,7 @@ import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, 
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { SolutionResponse } from '../solution';
+import { QueryForm } from '../../utils/params.query';
 
 /**
  * Data that can be edited or inserted. Other are edited by 
@@ -58,10 +59,9 @@ export default class ChallengeController extends Controller {
      @Get(':challengeId/solution/')
      public async listSolutions(
          @Path('challengeId') challengeId: string, 
-         @Query() init?: number,
-         @Query() offset?: number,
+         @Query() query: QueryForm
          ): Promise<SolutionResponse []> {
-         return listSolutions(challengeId, init, offset)
+         return listSolutions( query, challengeId)
      }
 
     @Patch(':challengeId')

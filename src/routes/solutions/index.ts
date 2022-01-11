@@ -10,6 +10,7 @@ import checkResourceExistFromParams from '../../middlewares/check-resources-exis
 import SolutionController from '../../controller/solution/index'
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { formatQuery, QueryForm } from "../../utils/params.query";
 
 
 router.post(
@@ -55,6 +56,25 @@ router.post(
 );
 
 router.get(
+  "/solution",
+  [
+    authentication
+  ],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try {
+      const solutionController = new SolutionController()
+      const query: QueryForm = await formatQuery(req.query)
+      const solution = await solutionController.listSolutions(query)
+      res.status(200).json(solution).send();
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+
+router.get(
   "/solution/:solutionId",
   [checkResourceExistFromParams("solutions"), 
   authentication
@@ -70,6 +90,7 @@ router.get(
     }
   }
 );
+
 
 router.patch(
   "/solution/:solutionId",

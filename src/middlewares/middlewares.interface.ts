@@ -8,7 +8,7 @@ export interface RequestMiddleware extends express.Request {
     resources?: {
       solution?: SolutionI 
       challenge?: ChallengeI
-    }
+    },
 }
 
 export interface ResponseMiddleware extends express.Response {

@@ -6,6 +6,7 @@ import { SolutionI } from "../models/situation.solutions";
 import SolutionService from "./Solution.service";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { QueryForm } from "../utils/params.query";
 
 type editOneParams = {
     description?:string,
@@ -81,8 +82,15 @@ const ChallengeService = {
             return error
         }
     },
-    async listSolutions (challengeId: string, init:number, offset:number): Promise<SolutionI[]>{
-        const solutions = await SolutionService.listSolutionsChallenge(challengeId, init, offset)
+    /**
+     * This method is used for get solution's listing. 
+     * When challengeId is undefined, then solution without challenge associated are returned
+     * @param query  
+     * @param challengeId 
+     * @returns 
+     */
+    async listSolutions (query: QueryForm, challengeId?: string ): Promise<SolutionI[]>{
+        const solutions = await SolutionService.listSolutions(query, challengeId)
         return solutions
       }
 }

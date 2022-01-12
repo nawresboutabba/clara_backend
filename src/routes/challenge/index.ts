@@ -97,16 +97,19 @@ router.post(
 router.get('/challenge',[
 
 ], async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=> {
-  const challengeController = new ChallengeController()
+  try{
+    const challengeController = new ChallengeController()
 
-  const query: QueryChallengeForm = await formatChallengeQuery(req.query)
-  const challenges = await challengeController.listChallenges(query)
-
-  res
-  .json(challenges)
-  .status(200)
-  .send()
-
+    const query: QueryChallengeForm = await formatChallengeQuery(req.query)
+    const challenges = await challengeController.listChallenges(query)
+  
+    res
+    .json(challenges)
+    .status(200)
+    .send()    
+  }catch(error){
+    next(error)
+  }
 })
 
 router.get(

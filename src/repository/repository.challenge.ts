@@ -95,8 +95,13 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
 
 export const listChallenges = async (query: QueryChallengeForm):Promise<ChallengeResponse []> => {
   return new Promise(async (resolve, reject)=> {
-    const challenges = await ChallengeService.listChallenges(query)
-    const resp = await genericArrayChallengeFilter(challenges)
-    return resolve(resp)
+    try{
+      const challenges = await ChallengeService.listChallenges(query)
+      const resp = await genericArrayChallengeFilter(challenges)
+      return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
+
   })
 }

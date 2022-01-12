@@ -46,6 +46,11 @@ export default class ChallengeController extends Controller {
     public async newSolution(@Body() body: ChallengeBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
         return newSolution(body, user, challengeId)
     }
+    /**
+     * Challenge listing
+     * @param query 
+     * @returns 
+     */
     @Get()
     public async listChallenges(@Query() query: QueryChallengeForm): Promise<ChallengeResponse[]>{
         return listChallenges(query)

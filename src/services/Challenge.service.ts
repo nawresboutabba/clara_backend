@@ -82,31 +82,39 @@ const ChallengeService = {
     },
     async listChallenges (query: QueryChallengeForm): Promise<Array<any>>{
       return new Promise(async (resolve, reject)=> {
-          let findQuery = {
-            ..._.pickBy({
-            created: query.created,
-            active:true,
-            title:{
-              $regex : `.*${query.title}.*`, 
-            },
-            participationMode: query.participationMode
-          }, _.identity)
-        } 
+        try{
+            let findQuery = {
+              ..._.pickBy({
+              created: query.created,
+              active:true,
+              title:{
+                $regex : `.*${query.title}.*`, 
+              },
+              participationMode: query.participationMode
+            }, _.identity)
+          } 
 
-        if(query.isStrategic != undefined){
-          findQuery.isStrategic = query.isStrategic
+          if(query.isStrategic != undefined){
+            findQuery.isStrategic = query.isStrategic
+          }
+
+          const challenges = await Challenge
+          .find({...findQuery})
+          .skip(query.init)
+          .limit(query.offset)
+          /**
+           * Filter order criteria unused
+           */
+          .sort(_.pickBy(query.sort,_.identity))
+          
+          return resolve(challenges)
+        }catch(error){
+          return reject(new ServiceError(
+            ERRORS.SERVICE.CHALLENGE_LISTING,
+            HTTP_RESPONSE._500,
+            error
+          ))
         }
-
-        const challenges = await Challenge
-        .find({...findQuery})
-        .skip(query.init)
-        .limit(query.offset)
-        /**
-         * Filter order criteria unused
-         */
-        .sort(_.pickBy(query.sort,_.identity))
-        
-        return resolve(challenges)
       })
     }
 }

@@ -3,9 +3,9 @@ import * as _ from 'lodash'
 
 export interface QuerySituationForm {
     created?: createdFilter,
-    init: number,
-    offset: number,
-    sort: {
+    init?: number,
+    offset?: number,
+    sort?: {
         title:string,
         created: string    
     }

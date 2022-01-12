@@ -1226,6 +1226,7 @@
 						}
 					}
 				},
+				"description": "User information",
 				"security": [],
 				"parameters": []
 			}
@@ -1270,18 +1271,22 @@
 										"$ref": "#/components/schemas/SolutionResponse"
 									},
 									"type": "array"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Solutions Listing without challenge associated",
 				"security": [],
 				"parameters": [
 					{
 						"in": "query",
 						"name": "query",
-						"required": true,
+						"required": false,
 						"schema": {
 							"type": "string"
 						}

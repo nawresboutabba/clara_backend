@@ -1,4 +1,4 @@
-import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Query} from 'tsoa'
+import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Query, Example} from 'tsoa'
 import { SolutionI } from '../../models/situation.solutions';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
@@ -58,13 +58,15 @@ export default class SolutionController extends Controller {
     public async getSolution(@Path('solutionId') solutionId:string ,@Request() solution: SolutionI): Promise<SolutionResponse> {
         return getSolution(solutionId, solution)
     }
+
     /**
-     * Solutions Listing without challenge associated 
+     * Solutions Listing without challenge associated
+     *  
      * @param query 
      * @returns 
      */
     @Get()
-    public async listSolutions(@Query() query: any): Promise<SolutionResponse []> {
+    public async listSolutions(@Query() query?: any): Promise<SolutionResponse []> {
         return listSolutions(query, undefined)
     }
 }

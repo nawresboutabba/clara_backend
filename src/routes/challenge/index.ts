@@ -8,7 +8,8 @@ const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
-import { formatQuery, QueryForm } from "../../utils/params.query";
+import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
+import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 
 router.post(
   "/challenge",
@@ -93,6 +94,21 @@ router.post(
   }
 );
 
+router.get('/challenge',[
+
+], async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=> {
+  const challengeController = new ChallengeController()
+
+  const query: QueryChallengeForm = await formatChallengeQuery(req.query)
+  const challenges = await challengeController.listChallenges(query)
+
+  res
+  .json(challenges)
+  .status(200)
+  .send()
+
+})
+
 router.get(
   `/challenge/:challengeId`,
   [checkResourceExistFromParams(`challenges`), 
@@ -108,7 +124,11 @@ router.get(
       }
       const challengeController = new ChallengeController();
       const challenge = await challengeController.getChallenge(req.resources.challenge,  req.params.challengeId)
-      res.status(200).json(challenge).send();
+      
+      res
+      .json(challenge)
+      .status(200)
+      .send();
       next();
     } catch (e) {
       next(e);
@@ -170,8 +190,6 @@ router.delete(
 router.get('/challenge/:challengeId/solution',[
   check('init').escape(),
   check('offset').escape(),
-  check('order-by').escape(),
-  check('criteria').escape()
 ],
 async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
   try {
@@ -187,7 +205,7 @@ async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
     }
 
     const challengeController = new ChallengeController();
-    const query: QueryForm = await formatQuery(req.query)
+    const query: QuerySolutionForm = await formatSolutionQuery(req.query)
 
     const solutions = await challengeController.listSolutions(
       req.params.challengeId,

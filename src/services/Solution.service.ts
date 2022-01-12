@@ -6,7 +6,7 @@ import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
-import { QueryForm } from "../utils/params.query";
+import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 
 export type editOneParams = {
     description?: string,
@@ -107,27 +107,34 @@ const SolutionService = {
           }
         })
     },
-    async listSolutions(query: QueryForm ,challengeId: string): Promise<any[]>{
-          
-      const solutions = await Solution
-      .find(
-        {..._.pickBy({
-          created: query.created,
-          active:true,
-          title:{
-            $regex : `.*${query.title}.*`, 
+    /**
+     * Solution List. Is used for solution without challenge associated too.
+     * @param query 
+     * @param challengeId 
+     * @returns 
+     */
+    async listSolutions(query: QuerySolutionForm ,challengeId: string): Promise<Array<SolutionI>>{
+      return new Promise (async (resolve, reject)=> {
+        const solutions = await Solution
+        .find(
+          {..._.pickBy({
+            created: query.created,
+            active:true,
+            title:{
+              $regex : `.*${query.title}.*`, 
+            }
+          }, _.identity),
+          challengeId
           }
-        }, _.identity),
-        challengeId
-        }
-      )
-      .skip(query.init)
-      .limit(query.offset)
-      /**
-       * Filter order criteria unused
-       */
-      .sort(_.pickBy(query.sort,_.identity))
-      return solutions
+        )
+        .skip(query.init)
+        .limit(query.offset)
+        /**
+         * Filter order criteria unused
+         */
+        .sort(_.pickBy(query.sort,_.identity))
+        return solutions
+      })    
     }    
 }
 export default SolutionService;

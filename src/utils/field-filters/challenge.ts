@@ -46,3 +46,20 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
         })
     })
 }
+
+export const genericArrayChallengeFilter = async (challenges: Array<ChallengeI>): Promise<Array<ChallengeResponse>> =>  {
+    return new Promise(async (resolve, reject)=> {
+        let arrayChallenge: Array<Promise<ChallengeResponse>>= []
+        challenges.forEach(challenge => {
+            arrayChallenge.push(genericChallengeFilter(challenge))
+        })
+        await Promise
+        .all(arrayChallenge)
+        .then(result => {
+            return resolve(result)
+        })
+        .catch(error=> {
+            return reject(error)
+        })        
+    })
+}

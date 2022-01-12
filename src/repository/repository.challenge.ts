@@ -1,16 +1,14 @@
 import { ChallengeBody, ChallengeResponse } from "../controller/challenge";
 import { ChallengeI } from "../models/situation.challenges";
-import { SolutionI } from "../models/situation.solutions";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
 import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
-import { genericChallengeFilter } from "../utils/field-filters/challenge";
-import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
+import { genericArrayChallengeFilter, genericChallengeFilter } from "../utils/field-filters/challenge";
 import { SolutionResponse } from "../controller/solution";
-import { QueryForm } from "../utils/params.query";
+import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -94,14 +92,11 @@ export const deleteChallenge = async (challengeId : string): Promise<boolean> =>
   })
 }
 
-export const listSolutions = async (query: QueryForm,challengeId?: string ): Promise<SolutionResponse []> => {
-  return new Promise (async (resolve, reject)=> {
-    try {
-      const listSolutions = await ChallengeService.listSolutions(query, challengeId)
-      const resp = genericArraySolutionsFilter(listSolutions)
-      return resolve(resp)
-    }catch (error){
-      return reject(error)
-    }
+
+export const listChallenges = async (query: QueryChallengeForm):Promise<ChallengeResponse []> => {
+  return new Promise(async (resolve, reject)=> {
+    const challenges = await ChallengeService.listChallenges(query)
+    const resp = await genericArrayChallengeFilter(challenges)
+    return resolve(resp)
   })
 }

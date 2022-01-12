@@ -2,11 +2,9 @@ import Challenge, { ChallengeI } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalChallenge from "../models/historical-challenges";
 import * as _ from 'lodash'; 
-import { SolutionI } from "../models/situation.solutions";
-import SolutionService from "./Solution.service";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
-import { QueryForm } from "../utils/params.query";
+import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 
 type editOneParams = {
     description?:string,
@@ -82,17 +80,35 @@ const ChallengeService = {
             return error
         }
     },
-    /**
-     * This method is used for get solution's listing. 
-     * When challengeId is undefined, then solution without challenge associated are returned
-     * @param query  
-     * @param challengeId 
-     * @returns 
-     */
-    async listSolutions (query: QueryForm, challengeId?: string ): Promise<SolutionI[]>{
-        const solutions = await SolutionService.listSolutions(query, challengeId)
-        return solutions
-      }
+    async listChallenges (query: QueryChallengeForm): Promise<Array<any>>{
+      return new Promise(async (resolve, reject)=> {
+          let findQuery = {
+            ..._.pickBy({
+            created: query.created,
+            active:true,
+            title:{
+              $regex : `.*${query.title}.*`, 
+            },
+            participationMode: query.participationMode
+          }, _.identity)
+        } 
+
+        if(query.isStrategic != undefined){
+          findQuery.isStrategic = query.isStrategic
+        }
+
+        const challenges = await Challenge
+        .find({...findQuery})
+        .skip(query.init)
+        .limit(query.offset)
+        /**
+         * Filter order criteria unused
+         */
+        .sort(_.pickBy(query.sort,_.identity))
+        
+        return resolve(challenges)
+      })
+    }
 }
 
 export default ChallengeService;

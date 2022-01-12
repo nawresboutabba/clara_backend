@@ -8,9 +8,10 @@ import { ERRORS, HTTP_RESPONSE, SOLUTION, SOLUTION_STATUS } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
-import { genericSolutionFilter } from "../utils/field-filters/solution";
+import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import TeamService from "../services/Team.service";
 import RepositoryError from "../handle-error/error.repository";
+import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -101,5 +102,17 @@ export const getSolution = (solutionId: string, solution: SolutionI): Promise <S
   return new Promise (async (resolve, reject)=> {
     const resp = genericSolutionFilter(solution)
     return resolve(resp)
+  })
+}
+
+export const listSolutions = async (query: QuerySolutionForm,challengeId?: string ): Promise<SolutionResponse []> => {
+  return new Promise (async (resolve, reject)=> {
+    try {
+      const listSolutions = await SolutionService.listSolutions(query, challengeId)
+      const resp = genericArraySolutionsFilter(listSolutions)
+      return resolve(resp)
+    }catch (error){
+      return reject(error)
+    }
   })
 }

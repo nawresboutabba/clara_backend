@@ -1,11 +1,13 @@
 import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listSolutions } from '../../repository/repository.challenge';
+import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges } from '../../repository/repository.challenge';
+import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { SolutionResponse } from '../solution';
-import { QueryForm } from '../../utils/params.query';
+import { QuerySolutionForm } from '../../utils/params-query/solution.query.params';
+import { QueryChallengeForm } from '../../utils/params-query/challenge.query.params';
 
 /**
  * Data that can be edited or inserted. Other are edited by 
@@ -44,6 +46,11 @@ export default class ChallengeController extends Controller {
     public async newSolution(@Body() body: ChallengeBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
         return newSolution(body, user, challengeId)
     }
+    @Get()
+    public async listChallenges(@Query() query: QueryChallengeForm): Promise<ChallengeResponse[]>{
+        return listChallenges(query)
+    }
+
     @Get(':challengeId')
     public async getChallenge(@Request() challenge: ChallengeI, @Path('challengeId') challengeId: string): Promise<ChallengeResponse> {
         return getChallenge(challenge)
@@ -59,7 +66,7 @@ export default class ChallengeController extends Controller {
      @Get(':challengeId/solution/')
      public async listSolutions(
          @Path('challengeId') challengeId: string, 
-         @Query() query: QueryForm
+         @Query() query: QuerySolutionForm
          ): Promise<SolutionResponse []> {
          return listSolutions( query, challengeId)
      }

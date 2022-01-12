@@ -1,6 +1,7 @@
-import checkISOData from "./date";
+import checkISOData from "../date";
 import * as _ from 'lodash'
-export interface QueryForm {
+
+export interface QuerySituationForm {
     created?: createdFilter,
     init: number,
     offset: number,
@@ -8,15 +9,15 @@ export interface QueryForm {
         title:string,
         created: string    
     }
-    title: string
+    title?: string
 }
 
-interface createdFilter {
+export interface createdFilter {
     $lte?:Date,
     $gte?: Date
 }
 
-export function formatQuery(query: any): Promise<QueryForm> {
+export function formatSitutationQuery(query: any): Promise<QuerySituationForm> {
     return new Promise((resolve, reject)=> {
         /**
          * Pagination extraction and cleaning
@@ -42,15 +43,18 @@ export function formatQuery(query: any): Promise<QueryForm> {
            */
           const { created_order, title_order }= query
 
-          const queryForm: QueryForm = {
+          const queryForm: QuerySituationForm = {
               init,
               offset,
               sort :{
                   title: title_order,
                   created: created_order
               },
-              title
           }
+            
+          queryForm.title = title ? title : ''         
+ 
+
           if (!(_.isEmpty(created))){
             queryForm.created = created
           }

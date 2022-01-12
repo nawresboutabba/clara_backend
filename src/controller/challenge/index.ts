@@ -52,7 +52,7 @@ export default class ChallengeController extends Controller {
      * @returns 
      */
     @Get()
-    public async listChallenges(@Query() query: QueryChallengeForm): Promise<ChallengeResponse[]>{
+    public async listChallenges(@Query() query: any): Promise<ChallengeResponse[]>{
         return listChallenges(query)
     }
 
@@ -71,7 +71,7 @@ export default class ChallengeController extends Controller {
      @Get(':challengeId/solution/')
      public async listSolutions(
          @Path('challengeId') challengeId: string, 
-         @Query() query: QuerySolutionForm
+         @Query() query: any
          ): Promise<SolutionResponse []> {
          return listSolutions( query, challengeId)
      }

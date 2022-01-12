@@ -64,7 +64,7 @@ export default class SolutionController extends Controller {
      * @returns 
      */
     @Get()
-    public async listSolutions(@Query() query: QuerySolutionForm): Promise<SolutionResponse []> {
+    public async listSolutions(@Query() query: any): Promise<SolutionResponse []> {
         return listSolutions(query, undefined)
     }
 }

@@ -6,6 +6,22 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"AreaI": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"company": {
+						"$ref": "#/components/schemas/CompanyI"
+					}
+				},
+				"required": [
+					"name",
+					"company"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"UserI": {
 				"properties": {
 					"_id": {
@@ -55,6 +71,11 @@
 						"type": "string",
 						"format": "date-time",
 						"description": "Last user update"
+					},
+					"points": {
+						"type": "number",
+						"format": "double",
+						"description": "Resume: Points earned for participation in platform."
 					}
 				},
 				"required": [
@@ -65,7 +86,8 @@
 					"firstName",
 					"lastName",
 					"active",
-					"externalUser"
+					"externalUser",
+					"points"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -95,18 +117,18 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"AreaI": {
+			"AreaBody": {
 				"properties": {
 					"name": {
 						"type": "string"
 					},
-					"company": {
-						"$ref": "#/components/schemas/CompanyI"
+					"companyId": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"name",
-					"company"
+					"companyId"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -152,6 +174,218 @@
 				"required": [
 					"email",
 					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AreaResponse": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UserResponse": {
+				"properties": {
+					"area_visible": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"external_user": {
+						"type": "boolean"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"points": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"area_visible",
+					"external_user",
+					"active",
+					"points",
+					"username",
+					"email",
+					"first_name",
+					"last_name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SolutionResponse": {
+				"properties": {
+					"inserted_by": {
+						"$ref": "#/components/schemas/UserResponse",
+						"description": "User that inserted the solution"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"type": "string"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"reactions": {
+						"properties": {
+							"comments": {
+								"type": "number",
+								"format": "double"
+							},
+							"confused": {
+								"type": "number",
+								"format": "double"
+							},
+							"likes": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"comments",
+							"confused",
+							"likes"
+						],
+						"type": "object"
+					},
+					"challengeId": {
+						"type": "string",
+						"description": "challenge associated"
+					},
+					"is_private": {
+						"type": "boolean",
+						"description": "Always is setting this attribute. Could be setting by user or committe.\nDepends on solution configuration"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double",
+						"description": "Always is setting this attribute. Depends on solution configuration"
+					},
+					"solutionId": {
+						"type": "string",
+						"description": "Solution ID"
+					}
+				},
+				"required": [
+					"inserted_by",
+					"created",
+					"status",
+					"updated",
+					"title",
+					"description",
+					"images",
+					"WSALevel",
+					"file_complementary",
+					"reactions",
+					"is_private",
+					"time_in_park",
+					"solutionId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SolutionBody": {
+				"properties": {
+					"author": {
+						"type": "string"
+					},
+					"coauthor": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Not used for challenge"
+					},
+					"team": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel": {
+						"type": "string",
+						"enum": [
+							"COMPANY",
+							"AREA"
+						]
+					},
+					"group_validator": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"challenge": {
+						"type": "string",
+						"description": "Challenge could be undefined if the solution doesn't have a challenge associated"
+					},
+					"is_private": {
+						"type": "boolean",
+						"description": "if committee allow to user choose solution privacity"
+					}
+				},
+				"required": [
+					"title",
+					"description",
+					"images",
+					"WSALevel",
+					"file_complementary",
+					"author"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -216,6 +450,10 @@
 			"ChallengeI": {
 				"properties": {
 					"_id": {},
+					"insertedBy": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
+					},
 					"author": {
 						"$ref": "#/components/schemas/UserI",
 						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
@@ -332,6 +570,7 @@
 					}
 				},
 				"required": [
+					"insertedBy",
 					"created",
 					"title",
 					"description",
@@ -351,6 +590,10 @@
 			"SolutionI": {
 				"properties": {
 					"_id": {},
+					"insertedBy": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
+					},
 					"author": {
 						"$ref": "#/components/schemas/UserI",
 						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
@@ -472,6 +715,7 @@
 					}
 				},
 				"required": [
+					"insertedBy",
 					"created",
 					"title",
 					"description",
@@ -488,57 +732,15 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"SolutionBody": {
-				"properties": {
-					"challenge_id": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"can_choose_scope": {
-						"type": "boolean"
-					},
-					"is_private": {
-						"type": "boolean"
-					},
-					"status": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"time_in_park": {
-						"type": "number",
-						"format": "double"
-					},
-					"baremo_validator": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"baremo_referrer": {
-						"type": "string"
-					},
-					"file_name": {
-						"type": "string"
-					},
-					"WSALevel": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": true
-			},
 			"ChallengeResponse": {
 				"properties": {
+					"inserted_by": {
+						"$ref": "#/components/schemas/UserResponse",
+						"description": "User that inserted the solution"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
 					"created": {
 						"type": "string",
 						"format": "date-time"
@@ -605,6 +807,7 @@
 					}
 				},
 				"required": [
+					"inserted_by",
 					"created",
 					"status",
 					"updated",
@@ -729,22 +932,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"AreaBody": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"companyId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"companyId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"CommitteI": {
 				"properties": {
 					"active": {
@@ -838,30 +1025,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"UserResponse": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"first_name": {
-						"type": "string"
-					},
-					"last_name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"username",
-					"email",
-					"first_name",
-					"last_name"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"TeamResponse": {
 				"properties": {
 					"team_id": {
@@ -933,6 +1096,35 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/area": {
+			"post": {
+				"operationId": "NewArea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AreaI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AreaBody"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/signup": {
 			"post": {
 				"operationId": "SignUp",
@@ -1019,6 +1211,25 @@
 				]
 			}
 		},
+		"/user/info": {
+			"get": {
+				"operationId": "GetInformation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/solution": {
 			"post": {
 				"operationId": "NewSolution",
@@ -1028,7 +1239,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SolutionI"
+									"$ref": "#/components/schemas/SolutionResponse"
 								}
 							}
 						}
@@ -1046,6 +1257,36 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "ListSolutions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SolutionResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Solutions Listing without challenge associated",
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/solution/{solutionId}": {
@@ -1119,7 +1360,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SolutionI"
+									"$ref": "#/components/schemas/SolutionResponse"
 								}
 							}
 						}
@@ -1167,6 +1408,36 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "ListChallenges",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ChallengeResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Challenge listing",
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/challenge/{challengeId}/solution": {
@@ -1178,7 +1449,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SolutionI"
+									"$ref": "#/components/schemas/SolutionResponse"
 								}
 							}
 						}
@@ -1215,7 +1486,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/SolutionI"
+										"$ref": "#/components/schemas/SolutionResponse"
 									},
 									"type": "array"
 								}
@@ -1223,9 +1494,11 @@
 						}
 					}
 				},
+				"description": "listing solution's challenge",
 				"security": [],
 				"parameters": [
 					{
+						"description": "challenge for listing",
 						"in": "path",
 						"name": "challengeId",
 						"required": true,
@@ -1235,20 +1508,10 @@
 					},
 					{
 						"in": "query",
-						"name": "init",
-						"required": false,
+						"name": "query",
+						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "offset",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]
@@ -1263,7 +1526,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ChallengeI"
+									"$ref": "#/components/schemas/ChallengeResponse"
 								}
 							}
 						}
@@ -1442,35 +1705,6 @@
 					"content": {
 						"application/json": {
 							"schema": {}
-						}
-					}
-				}
-			}
-		},
-		"/area": {
-			"post": {
-				"operationId": "NewArea",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AreaI"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/AreaBody"
-							}
 						}
 					}
 				}

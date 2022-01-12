@@ -1,5 +1,4 @@
-import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
-import { AreaI } from '../../models/organization.area'
+import { Post , Controller, Route, Body, Delete , Path, Get, Query, Header, Inject} from 'tsoa'
 import { UserI } from '../../models/users'
 import { deleteUser, getUserInformation, login, signUp } from '../../repository/repository.users'
 import { AreaResponse } from '../area/area'
@@ -58,13 +57,18 @@ export default class UserController extends Controller {
   public async login(@Body() body: Login ): Promise<string>{
     return login(body)
   }
-  @Delete(":userId")
+  @Delete(':userId')
   public async delete(@Path('userId') userId: string): Promise<boolean>{
     return deleteUser(userId)
 
   }
+  /**
+   * User information 
+   * @param userRequest UserRequestType
+   * @returns 
+   */
   @Get('info')
-  public async getInformation(@Body() user:UserI): Promise<UserResponse>{
+  public async getInformation( @Inject() user:UserRequest ): Promise<UserResponse>{
     return getUserInformation(user)
   }
 }

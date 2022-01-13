@@ -11,9 +11,10 @@ import { QueryChallengeForm } from "../utils/params-query/challenge.query.params
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { UserI } from "../models/users";
 import { newComment } from "./repository.comment";
-import { genericCommentFilter } from "../utils/field-filters/comment";
+import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 import RepositoryError from "../handle-error/error.repository";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
+import CommentService from "../services/Comment.service";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -134,6 +135,7 @@ export const newChallengeComment = async (challengeId: string, commentBody:Comme
         const commentChallenge = {
           insertedBy,
           author,
+          isPrivate: commentBody.is_private,
           comment: commentBody.comment,
           date: new Date(),
           challenge
@@ -146,4 +148,23 @@ export const newChallengeComment = async (challengeId: string, commentBody:Comme
         return reject(error)
       }
     })
+}
+
+export const getComments = async (challengeId: string, user: UserI): Promise <CommentResponse[]> => {
+  return new Promise(async (resolve, reject)=> {
+
+    /**
+     * Poner los comentarios privados a true si:
+     * - El usuario es dueño de los comentarios 
+     * - Es parte del comite
+     * - Participa de alguna forma como creador del challenge
+     * @TODO hacer una funcion para esto
+     */
+
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const userEntity = await UserService.getUserActiveByUserId(user.userId)
+    const comments = await CommentService.getComments(challenge, userEntity)
+    const resp = await genericArrayCommentFilter(comments)
+    return resolve(resp)
+  })
 }

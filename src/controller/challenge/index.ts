@@ -1,7 +1,7 @@
 import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Inject} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment } from '../../repository/repository.challenge';
+import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment, getComments } from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
@@ -93,5 +93,9 @@ export default class ChallengeController extends Controller {
     @Post('/:challengeId/comment')
     public async newComment (@Path('challengeId') challengeId: string , @Body() comment: CommentBody, @Inject() user: UserI): Promise<CommentResponse>{
         return newChallengeComment(challengeId, comment, user)
+    }
+    @Get('/:challengeId/comment')
+    public async getComments (@Path('challengeId') challengeId: string, @Inject() user: UserI): Promise<CommentResponse[]>{
+        return getComments(challengeId, user)
     }
 }

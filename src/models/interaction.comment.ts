@@ -3,12 +3,17 @@ import InteractionBase, { InteractionBaseI, options } from "./interaction.base";
 
 
 export interface CommentI extends InteractionBaseI{
-  comment: string
+  comment: string,
+  isPrivate: boolean
 }
 
 
 const Comment = InteractionBase.discriminator('Comment',new Schema({
-    comment: String
+    comment: String,
+    isPrivate: {
+      type: Boolean,
+      default: false
+  },
   }, options));
 
   export default Comment

@@ -25,7 +25,9 @@ export const genericAreaFilter = async (area: AreaI): Promise<AreaResponse> => {
 export const genericArrayAreaFilter =  async (area: Array<AreaI>): Promise<Array<AreaResponse>> => {
     return new Promise(async (resolve, reject)=> {
         let arrayArea: Array<Promise<AreaResponse>>= []
-
+        if(!area){
+            return resolve([])
+        }
         area.forEach(area => {
             arrayArea.push(genericAreaFilter(area))
         })

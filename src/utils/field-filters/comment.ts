@@ -6,13 +6,15 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
     return new Promise(async (resolve, reject)=> {
         const {
             comment,
-            date
+            date,
+            isPrivate
         } = commentEntity
         const author = await genericUserFilter(commentEntity.author)
         let resp: CommentResponse = {
             comment,
             date, 
-            author
+            author,
+            is_private: isPrivate
         }
         if (commentEntity.author.userId == commentEntity.insertedBy.userId){
             return resolve({... resp})
@@ -21,5 +23,22 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
 
         resp.insertedBy = insertedBy
         return resolve({...resp})
+    })
+}
+
+export const genericArrayCommentFilter = async(comments: CommentI[]): Promise<CommentResponse[]> =>{
+    return new Promise(async (resolve, reject)=> {
+        let arrayComment: Array<Promise<CommentResponse>>= []
+        comments.forEach(comment => {
+            arrayComment.push(genericCommentFilter(comment))
+        })
+        await Promise
+        .all(arrayComment)
+        .then(result => {
+            return resolve(result)
+        })
+        .catch(error=> {
+            return reject(error)
+        })  
     })
 }

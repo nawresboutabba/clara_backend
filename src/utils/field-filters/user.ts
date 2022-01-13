@@ -14,7 +14,6 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
         if(user) {
             const { areaVisible, externalUser, active, points, firstName, lastName , email, username} = user
             const area_visible = await genericArrayAreaFilter(areaVisible)
-            
             return resolve({
                 area_visible,
                 external_user: externalUser,

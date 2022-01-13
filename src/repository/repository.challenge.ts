@@ -152,6 +152,7 @@ export const newChallengeComment = async (challengeId: string, commentBody:Comme
 
 export const getComments = async (challengeId: string, user: UserI): Promise <CommentResponse[]> => {
   return new Promise(async (resolve, reject)=> {
+    try{
 
     /**
      * Poner los comentarios privados a true si:
@@ -161,10 +162,13 @@ export const getComments = async (challengeId: string, user: UserI): Promise <Co
      * @TODO hacer una funcion para esto
      */
 
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
-    const userEntity = await UserService.getUserActiveByUserId(user.userId)
-    const comments = await CommentService.getComments(challenge, userEntity)
-    const resp = await genericArrayCommentFilter(comments)
-    return resolve(resp)
+     const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+     const userEntity = await UserService.getUserActiveByUserId(user.userId)
+     const comments = await CommentService.getComments(challenge, userEntity)
+     const resp = await genericArrayCommentFilter(comments)
+     return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
   })
 }

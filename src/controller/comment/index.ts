@@ -1,7 +1,6 @@
-import { InteractionResponse } from "../interaction";
+import { InteractionBody, InteractionResponse } from "../interaction";
 
-export interface CommentBody {
-    author: string,
+export interface CommentBody extends InteractionBody {
     comment: string,
     is_private: boolean
 }

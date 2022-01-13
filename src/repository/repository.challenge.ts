@@ -15,6 +15,10 @@ import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-
 import RepositoryError from "../handle-error/error.repository";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import CommentService from "../services/Comment.service";
+import { ReactionBody, ReactionResponse } from "../controller/reaction";
+import ReactionService from "../services/Reaction.service";
+import { isReaction } from "./repository.reaction";
+import { genericReactionFilter } from "../utils/field-filters/reaction";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -167,6 +171,40 @@ export const getComments = async (challengeId: string, user: UserI): Promise <Co
      const comments = await CommentService.getComments(challenge, userEntity)
      const resp = await genericArrayCommentFilter(comments)
      return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
+  })
+}
+
+export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
+  return new Promise(async (resolve, reject)=> {
+    try{
+      const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+      const author = await UserService.getUserActiveByUserId(user.userId)  
+
+      if (!(isReaction(reaction.type))){
+        throw new RepositoryError(
+          ERRORS.REPOSITORY.REACTION_INVALID,
+          HTTP_RESPONSE._500
+        )
+      }
+
+      /**
+       * For reactions insertedBy and author is the same user
+       */
+      const newReaction = {
+        insertedBy: author,
+        author,
+        challenge,
+        type: reaction.type,
+        date: new Date()
+      }
+  
+      const reactionEntity = await ReactionService.newReaction(newReaction) 
+      
+      const resp = genericReactionFilter(reactionEntity)
+      return resolve(resp)
     }catch(error){
       return reject(error)
     }

@@ -1,13 +1,14 @@
 import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Inject} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment, getComments } from '../../repository/repository.challenge';
+import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment, getComments, newReaction } from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
+import { ReactionBody, ReactionResponse } from '../reaction';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -97,5 +98,16 @@ export default class ChallengeController extends Controller {
     @Get('/:challengeId/comment')
     public async getComments (@Path('challengeId') challengeId: string, @Inject() user: UserI): Promise<CommentResponse[]>{
         return getComments(challengeId, user)
+    }
+    /**
+     * New Reacion
+     * @param challengeId 
+     * @param reaction 
+     * @param user 
+     * @returns 
+     */
+    @Post('/:challengeId/reaction')
+    public async newReaction(@Path('challengeId') challengeId: string, reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse>{
+        return newReaction(challengeId, reaction, user)
     }
 }

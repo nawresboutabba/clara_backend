@@ -252,5 +252,21 @@ router.get('/challenge/:challengeId/comment',[
     next(error)
   }
 })
+
+router.post('/challenge/:challengeId/reaction',[
+  authentication
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+    try{
+      const challengeController = new ChallengeController()
+      const resp = await challengeController.newReaction( req.params.challengeId, req.body, req.user)
+      res
+      .json(resp)
+      .status(200)
+      .send()
+    }catch(error){
+      next(error)
+    }
+})
+
 const challengeRouter = router
 export default challengeRouter;

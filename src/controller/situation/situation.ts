@@ -1,4 +1,3 @@
-import { IntegerValidator } from "tsoa";
 import { UserResponse } from "../users";
 
 export interface SituationBody {

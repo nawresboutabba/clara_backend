@@ -1,14 +1,13 @@
-import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
+import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Inject} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges } from '../../repository/repository.challenge';
+import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment } from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { SolutionResponse } from '../solution';
-import { QuerySolutionForm } from '../../utils/params-query/solution.query.params';
-import { QueryChallengeForm } from '../../utils/params-query/challenge.query.params';
-
+import { CommentBody, CommentResponse } from '../comment';
+import { UserI } from '../../models/users';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -83,5 +82,16 @@ export default class ChallengeController extends Controller {
     @Delete(':challengeId')
     public async deleteChallenge(challengeId: string): Promise<boolean>{
         return deleteChallenge(challengeId)
-    } 
+    }
+    /**
+     * Challenge comment operation
+     * @param challengeId Challenge
+     * @param comment comment
+     * @param user user that insert the comment
+     * @returns 
+     */
+    @Post('/:challengeId/comment')
+    public async newComment (@Path('challengeId') challengeId: string , @Body() comment: CommentBody, @Inject() user: UserI): Promise<CommentResponse>{
+        return newChallengeComment(challengeId, comment, user)
+    }
 }

@@ -7,8 +7,13 @@ import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
 import { genericArrayChallengeFilter, genericChallengeFilter } from "../utils/field-filters/challenge";
-import { SolutionResponse } from "../controller/solution";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
+import { CommentBody, CommentResponse } from "../controller/comment";
+import { UserI } from "../models/users";
+import { newComment } from "./repository.comment";
+import { genericCommentFilter } from "../utils/field-filters/comment";
+import RepositoryError from "../handle-error/error.repository";
+import { ERRORS, HTTP_RESPONSE } from "../constants";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -104,4 +109,41 @@ export const listChallenges = async (query: QueryChallengeForm):Promise<Challeng
     }
 
   })
+}
+
+export const newChallengeComment = async (challengeId: string, commentBody:CommentBody, user: UserI): Promise<CommentResponse> => {
+    return new Promise(async (resolve, reject)=> {
+      try{
+        let insertedBy: UserI
+        const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+        const author = await UserService.getUserActiveByUserId(commentBody.author)
+        
+        if ( !(challenge && author)){
+          throw new RepositoryError(
+            ERRORS.REPOSITORY.CHALLENGE_OR_AUTHOR_NOT_VALID,
+            HTTP_RESPONSE._500
+          )
+        }
+
+        if (commentBody.author == user.userId){
+          insertedBy = author
+        } else {
+          insertedBy = await UserService.getUserActiveByUserId(user.userId)
+        }
+        
+        const commentChallenge = {
+          insertedBy,
+          author,
+          comment: commentBody.comment,
+          date: new Date(),
+          challenge
+        }
+  
+        const comment = await newComment(commentChallenge)
+        const resp = await genericCommentFilter(comment)
+        return resolve(resp)
+      }catch(error){
+        return reject(error)
+      }
+    })
 }

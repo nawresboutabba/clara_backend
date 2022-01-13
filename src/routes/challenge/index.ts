@@ -222,5 +222,20 @@ async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
     next(error)
   }
 })
+
+router.post('/challenge/:challengeId/comment',[
+  authentication
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+    try{
+      const challengeController = new ChallengeController()
+      const resp = await challengeController.newComment( req.params.challengeId, req.body, req.user)
+      res
+      .json(resp)
+      .status(200)
+      .send()
+    }catch(error){
+      next(error)
+    }
+})
 const challengeRouter = router
 export default challengeRouter;

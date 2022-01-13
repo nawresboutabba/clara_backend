@@ -889,6 +889,52 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"CommentResponse": {
+				"properties": {
+					"insertedBy": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"challenge": {
+						"$ref": "#/components/schemas/ChallengeResponse"
+					},
+					"solution": {
+						"$ref": "#/components/schemas/SolutionResponse"
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"author",
+					"date",
+					"comment"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CommentBody": {
+				"properties": {
+					"author": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"author",
+					"comment"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"HubI": {
 				"properties": {
 					"_id": {},
@@ -1271,16 +1317,12 @@
 										"$ref": "#/components/schemas/SolutionResponse"
 									},
 									"type": "array"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {}
-									}
 								}
 							}
 						}
 					}
 				},
+				"description": "Solutions Listing without challenge associated",
 				"security": [],
 				"parameters": [
 					{
@@ -1610,6 +1652,47 @@
 						}
 					}
 				]
+			}
+		},
+		"/challenge/{challengeId}/comment": {
+			"post": {
+				"operationId": "NewComment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Challenge comment operation",
+				"security": [],
+				"parameters": [
+					{
+						"description": "Challenge",
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "comment",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CommentBody"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/company": {

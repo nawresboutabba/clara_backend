@@ -909,12 +909,16 @@
 					},
 					"comment": {
 						"type": "string"
+					},
+					"is_private": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"author",
 					"date",
-					"comment"
+					"comment",
+					"is_private"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -926,11 +930,15 @@
 					},
 					"comment": {
 						"type": "string"
+					},
+					"is_private": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"author",
-					"comment"
+					"comment",
+					"is_private"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1693,6 +1701,35 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "GetComments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CommentResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/company": {

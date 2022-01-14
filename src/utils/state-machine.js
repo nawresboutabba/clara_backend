@@ -1,1 +1,0 @@
-const wep = 8

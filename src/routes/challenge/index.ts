@@ -13,6 +13,7 @@ import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
 import ChallengeService from "../../services/Challenge.service";
+import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 router.post(
   "/challenge",
@@ -56,21 +57,12 @@ router.post(
         }
         return reject("WSALevel invalid")
       })     
-    })
-
+    }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
+      await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_CHALLENGE)
 
-      if (errors.length > 0) {
-        const customError = new RoutingError(
-          ERRORS.ROUTING.PATCH_SOLUTION,
-          HTTP_RESPONSE._400,
-          errors
-          )
-        throw customError;
-      }
       const challengeController = new ChallengeController();
       const challenge = await challengeController.newChallenge(req.body, req.user)
       res
@@ -106,15 +98,9 @@ router.post(
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
-      if (errors.length > 0) {
-        const customError = new RoutingError(
-          ERRORS.ROUTING.ADD_SOLUTION,
-          HTTP_RESPONSE._400,
-          errors
-          )
-        throw customError;
-      }
+
+      await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_SOLUTION)
+
       const challengeController = new ChallengeController();
       const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId)
       res
@@ -156,12 +142,7 @@ router.get(
 ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
 
-      if (errors.length > 0) {
-        res.status(400);
-        throw new Error(JSON.stringify(errors));
-      }
       const challengeController = new ChallengeController();
       const challenge = await challengeController.getChallenge(req.resources.challenge,  req.params.challengeId)
       
@@ -183,12 +164,8 @@ router.patch(
 ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
 
-      if (errors.length > 0) {
-        res.status(400);
-        throw new Error(JSON.stringify(errors));
-      }
+      await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.PATCH_SOLUTION)
 
       const challengeController = new ChallengeController();
       const challenge = await challengeController.updateChallengePartially(req.body,  req.params.challengeId)
@@ -211,12 +188,7 @@ router.delete(
 ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
 
-      if (errors.length > 0) {
-        res.status(400);
-        throw new Error(JSON.stringify(errors));
-      }
       const challengeController = new ChallengeController();
       await challengeController.deleteChallenge(req.params.challengeId)
       res.status(204).send();
@@ -233,16 +205,8 @@ router.get('/challenge/:challengeId/solution',[
 ],
 async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
   try {
-    const errors = validationResult(req).array();
 
-    if (errors.length > 0) {
-      const customError = new RoutingError(
-        ERRORS.ROUTING.PATCH_SOLUTION,
-        HTTP_RESPONSE._400,
-        errors
-        )
-      throw customError;
-    }
+    await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.LISTING_SOLUTIONS)
 
     const challengeController = new ChallengeController();
     const query: QuerySolutionForm = await formatSolutionQuery(req.query)

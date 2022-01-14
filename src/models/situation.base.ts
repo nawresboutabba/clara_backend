@@ -61,7 +61,7 @@ export interface SituationBaseI {
    */
   WSALevel: "COMPANY" | "AREA",
   /**
-   * Areas available. Is user if WSALevel = AREA because a situation isn't available for all Company. Just for some areas.
+   * Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas.
    */
   areasAvailable?: Array<AreaI>,
   /**

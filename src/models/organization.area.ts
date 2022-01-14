@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { CompanyI } from './organizacion.companies';
 
 export interface AreaI {
+    areaId:string,
     name: string,
     company: CompanyI
 }

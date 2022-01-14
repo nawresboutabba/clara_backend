@@ -11,6 +11,7 @@ import SolutionController from '../../controller/solution/index'
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
+import AreaService from "../../services/Area.service";
 
 
 router.post(
@@ -21,7 +22,24 @@ router.post(
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("author", VALIDATIONS_MESSAGE_ERROR.SOLUTION.AUTHOR_EMPTY).notEmpty(),
     check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
-    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
+    /**
+     * @see SituationI for details about the combination between WSALevel and areas_available
+     */
+    check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        if([WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
+          if (value == WSALEVEL.AREA){
+            const areas = await AreaService.getAreasById(req.body.areas_available)
+            if(areas.length == req.body.areas_available.length){
+              return resolve()
+            }
+            return reject("Array area invalid")
+          }
+          return resolve()
+        }
+        return reject("WSALevel invalid")
+      })     
+    }),
     body("author").custom((value:string , {req}): Promise<void>=> {
       return new Promise((resolve, reject)=> {
         if(!(req.body.author || req.body.team)){

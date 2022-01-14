@@ -101,7 +101,7 @@ const IntegrantService = {
                  * Relationated with @TODO above. 
                  * If integrant is null then integrant.user throw error
                  */
-                if(integrant && integrant.user){
+                if(integrant?.user){
                     if(integrant.active == true){
                         const resp: IntegrantStatusI = {
                             isActive: true,

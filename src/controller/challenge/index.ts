@@ -27,7 +27,8 @@ export interface ChallengeBody extends SituationBody {
 export interface ChallengeResponse extends SituationResponse {
     is_strategic: boolean,
     time_period: number,
-    participation_mode: Array<string>
+    participation_mode: Array<string>,
+    challenge_id: string
 }
 
 @Route('challenge')

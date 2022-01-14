@@ -23,6 +23,7 @@ const ChallengeService = {
             challengeId: id,
             active: true,
           })
+          .populate("areasAvailable")
             .then((result) => {
               return resolve(result);
             })

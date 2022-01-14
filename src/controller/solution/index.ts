@@ -2,7 +2,6 @@ import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Qu
 import { SolutionI } from '../../models/situation.solutions';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
-import { QuerySolutionForm } from '../../utils/params-query/solution.query.params';
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { UserRequest } from '../users';
 

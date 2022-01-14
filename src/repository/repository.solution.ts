@@ -4,7 +4,7 @@ import { SolutionBody, SolutionResponse } from "../controller/solution";
 import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { ERRORS, HTTP_RESPONSE, SOLUTION, SOLUTION_STATUS } from '../constants'
+import { ERRORS, HTTP_RESPONSE, SOLUTION, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
@@ -12,6 +12,8 @@ import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/fie
 import TeamService from "../services/Team.service";
 import RepositoryError from "../handle-error/error.repository";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
+import AreaService from "../services/Area.service";
+import { AreaI } from "../models/organization.area";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -36,9 +38,14 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
               images,
               is_private: isPrivate,
               title,
-              WSALevel
+              WSALevel,
+              areas_available
             } = body;
+            let areasAvailable: Array<AreaI>
 
+            if (WSALevel == WSALEVEL.AREA){
+               areasAvailable = await AreaService.getAreasById(areas_available)
+            }
             let data: SolutionI
             data = {
               insertedBy,
@@ -57,6 +64,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
               fileComplementary: fileComplementary,
               images: images,
               WSALevel,
+              areasAvailable
             }
             let challenge: ChallengeI
             if (challengeId){

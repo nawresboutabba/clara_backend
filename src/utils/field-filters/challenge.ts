@@ -1,5 +1,6 @@
 import { ChallengeResponse } from "../../controller/challenge";
 import { ChallengeI } from "../../models/situation.challenges";
+import { genericAreaFilter, genericArrayAreaFilter } from "./area";
 import { genericUserFilter } from "./user";
 
 /**
@@ -24,11 +25,14 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
             isStrategic,
             timePeriod,
             participationMode,
-            reactions
+            reactions,
+            challengeId
         } = challenge
         const author = await genericUserFilter(challenge.author)
         const inserted_by = await genericUserFilter(challenge.insertedBy)
+        const areasAvailable = await genericArrayAreaFilter(challenge.areasAvailable)
         return resolve({
+            challenge_id: challengeId,
             inserted_by,
             author,
             created,
@@ -42,7 +46,8 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
             is_strategic: isStrategic,
             time_period: timePeriod,
             participation_mode: participationMode,
-            reactions
+            reactions,
+            areas_available: areasAvailable
         })
     })
 }

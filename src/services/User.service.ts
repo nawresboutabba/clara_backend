@@ -15,7 +15,7 @@ const UserService = {
               email: email,
               active: true,              
             })
-            .lean()
+            .populate('areaVisible')
             .then(result => {
               return resolve(result)
             })

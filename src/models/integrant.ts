@@ -44,8 +44,17 @@ export interface IntegrantI {
 
 export interface IntegrantStatusI {
     integrantId?: string,
+    /**
+     * exist: if the user was/is a memeber, then true.
+     */
     exist: boolean,
+    /**
+     * active: user exist and nowaday is a member, then true
+     */
     isActive: boolean,
+    /**
+     * role: if user exist, then has role. this field not depend on active flag
+     */
     role?: string
 } 
 

@@ -13,12 +13,14 @@ import { UserI } from "../models/users";
 import { newComment } from "./repository.comment";
 import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 import RepositoryError from "../handle-error/error.repository";
-import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { ERRORS, HTTP_RESPONSE, WSALEVEL } from "../constants";
 import CommentService from "../services/Comment.service";
 import { ReactionBody, ReactionResponse } from "../controller/reaction";
 import ReactionService from "../services/Reaction.service";
 import { isReaction } from "./repository.reaction";
 import { genericReactionFilter } from "../utils/field-filters/reaction";
+import AreaService from "../services/Area.service";
+import { AreaI } from "../models/organization.area";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -33,13 +35,21 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               group_validator,
               is_strategic,
               file_complementary,
-              participation_mode
+              participation_mode,
+              areas_available
             } = body;
 
             const insertedBy = await UserService.getUserActiveByUserId(user.userId)
             const authorEntity = await UserService.getUserActiveByUserId(author)
             const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator)
-   
+            
+            let areasAvailable: Array<AreaI>
+
+            if (WSALevel == WSALEVEL.AREA){
+               areasAvailable = await AreaService.getAreasById(areas_available)
+            }
+
+
             const challenge = await ChallengeService.newChallenge({
               insertedBy: insertedBy,
               author: authorEntity, 
@@ -61,7 +71,8 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
               timePeriod: 3000,
               fileComplementary: file_complementary,
               isStrategic: is_strategic,
-              participationMode: participation_mode
+              participationMode: participation_mode,
+              areasAvailable
             });
             const resp = genericChallengeFilter(challenge)
             return resolve(resp)          

@@ -1,5 +1,6 @@
 import { SolutionResponse } from "../../controller/solution";
 import { SolutionI } from "../../models/situation.solutions";
+import { genericArrayAreaFilter } from "./area";
 import { genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async(solution: SolutionI ): Promise<SolutionResponse> => {
@@ -22,6 +23,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
 
         const author = await genericUserFilter(solution.author)
         const inserted_by = await genericUserFilter(solution.insertedBy)
+        const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
         return resolve({
             inserted_by,
             author,
@@ -37,7 +39,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             is_private: isPrivate,
             time_in_park: timeInPark,
             reactions,
-            challengeId            
+            challengeId,
+            areas_available: areasAvailable            
         })
     })
 }

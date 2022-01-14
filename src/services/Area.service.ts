@@ -36,6 +36,25 @@ const AreaService = {
                 return reject(customError)
             }
         })
+    },
+    async getAreasById(areas: Array<string>): Promise<Array<AreaI>>{
+        return new Promise(async (resolve, reject)=> {
+            try{
+                const areasEntity = await Area.find({
+                    areaId : {
+                        $in: areas
+                    }
+                })
+                return resolve(areasEntity)
+            }catch(error){
+                const customError = new ServiceError(
+                    ERRORS.SERVICE.GET_AREA,
+                    HTTP_RESPONSE._500,
+                    error
+                )
+                return reject(customError)                
+            }
+        })
     }
 }
 

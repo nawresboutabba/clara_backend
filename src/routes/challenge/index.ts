@@ -1,20 +1,26 @@
 const router = require("express").Router();
 
 import authentication from "../../middlewares/authentication";
+import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
+import AreaService from "../../services/Area.service";
+import ChallengeService from "../../services/Challenge.service";
 
 router.post(
   "/challenge",
   [
     authentication,
+    acl(
+      RULES.IS_COMMITTE_MEMBER
+    ),
     body("description", "description can not be empty").notEmpty(),
     body("title", "title can not be empty").notEmpty(),
     /**
@@ -33,7 +39,25 @@ router.post(
           return reject("participation_mode invalid")
       })
     }),
-    check("WSALevel", "WSALevel invalid").isIn(['COMPANY', 'AREA']),
+    /**
+     * @see SituationI for details about the combination between WSALevel and areas_available
+     */
+    check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        if(['COMPANY', 'AREA'].includes(value)){
+          if (value == "AREA"){
+            const areas = await AreaService.getAreasById(req.body.areas_available)
+            if(areas.length == req.body.areas_available.length){
+              return resolve()
+            }
+            return reject("Array area invalid")
+          }
+          return resolve()
+        }
+        return reject("WSALevel invalid")
+      })     
+    })
+
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
@@ -63,16 +87,26 @@ router.post(
   "/challenge/:challengeId/solution",
   [
     authentication,
-    checkResourceExistFromParams(`challenges`),
+    acl(
+      RULES.CAN_VIEW_CHALLENGE
+    ),
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
-    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY])
+    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
+    /**
+     * Check that solution participation modality according to challenge participation modality
+     */
+    check("author","Author isn't valid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        const challenge = await ChallengeService.getChallengeActiveById(req.params.challengeId)
+        
+      })
+    })
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const errors = validationResult(req).array();
-
       if (errors.length > 0) {
         const customError = new RoutingError(
           ERRORS.ROUTING.ADD_SOLUTION,
@@ -95,7 +129,7 @@ router.post(
 );
 
 router.get('/challenge',[
-
+  authentication,
 ], async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=> {
   try{
     const challengeController = new ChallengeController()
@@ -114,8 +148,11 @@ router.get('/challenge',[
 
 router.get(
   `/challenge/:challengeId`,
-  [checkResourceExistFromParams(`challenges`), 
-  authentication
+  [
+    authentication,
+    acl(
+      RULES.CAN_VIEW_CHALLENGE
+    )
 ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
@@ -224,7 +261,10 @@ async (req:RequestMiddleware ,res: ResponseMiddleware,next:NextFunction)=> {
 })
 
 router.post('/challenge/:challengeId/comment',[
-  authentication
+  authentication,
+  acl(
+    RULES.CAN_VIEW_CHALLENGE
+  )
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try{
       const challengeController = new ChallengeController()
@@ -239,7 +279,10 @@ router.post('/challenge/:challengeId/comment',[
 })
 
 router.get('/challenge/:challengeId/comment',[
-  authentication
+  authentication,
+  acl(
+    RULES.CAN_VIEW_CHALLENGE
+  )
 ], async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=> {
   try{
     const challengeController = new ChallengeController()
@@ -254,7 +297,10 @@ router.get('/challenge/:challengeId/comment',[
 })
 
 router.post('/challenge/:challengeId/reaction',[
-  authentication
+  authentication,
+  acl(
+    RULES.CAN_VIEW_CHALLENGE
+  )
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try{
       const challengeController = new ChallengeController()

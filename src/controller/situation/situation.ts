@@ -1,3 +1,4 @@
+import { AreaResponse } from "../area/area";
 import { UserResponse } from "../users";
 
 export interface SituationBody {
@@ -13,6 +14,7 @@ export interface SituationBody {
     WSALevel: "COMPANY" | "AREA",
     group_validator?: string,
     file_complementary: string,
+    areas_available: Array<string>
 }
 
 export interface SituationResponse {
@@ -34,4 +36,5 @@ export interface SituationResponse {
         confused: number,
         comments: number
     }
+    areas_available: Array<AreaResponse>
 }

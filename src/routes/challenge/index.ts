@@ -7,8 +7,7 @@ import checkResourceExistFromParams from '../../middlewares/check-resources-exis
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";

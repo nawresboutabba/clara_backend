@@ -4,7 +4,7 @@ import { UserI } from "./users";
 export interface TeamI {
     teamId: string,
     creator: UserI,
-    members: Array<UserI>,
+    members?: Array<UserI>,
     created: Date,
     name: string
 }

@@ -108,15 +108,15 @@ const UserService = {
       })
     })
   },
-  async  getUsers (usersId: Array<string>):Promise<Array<UserI>>{
+  async  getUsersById (usersId: Array<string>):Promise<Array<UserI>>{
     return new Promise(async (resolve, reject)=>{
       try{
-        let committePromise: Array<Promise<UserI>>= [] 
+        let users: Array<Promise<UserI>>= [] 
         usersId.forEach(user => {
-          committePromise.push(this.getUserActiveByUserId(user))
+          users.push(this.getUserActiveByUserId(user))
       })
           await Promise
-          .all(committePromise)
+          .all(users)
           .then(result => {
               return resolve (result)
           })

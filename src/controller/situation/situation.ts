@@ -1,13 +1,9 @@
 import { AreaResponse } from "../area/area";
+import { TeamResponse } from "../team";
 import { UserResponse } from "../users";
 
 export interface SituationBody {
     author?: string,
-    /**
-     * Not used for challenge
-     */
-    coauthor?: Array<string>,
-    team?: string,
     title: string,
     description: string,
     images: Array<string>,
@@ -17,12 +13,15 @@ export interface SituationBody {
     areas_available: Array<string>
 }
 
+
 export interface SituationResponse {
     /**
      * User that inserted the solution
     */
     inserted_by: UserResponse,
     author?: UserResponse,
+    coauthor?: UserResponse[],
+    team?: TeamResponse,
     created: Date,
     status: string,
     updated: Date,

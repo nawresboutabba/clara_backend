@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema, model } from "mongoose";
 
 const configuration = new Schema ({
     idConfiguration: String,
@@ -19,6 +18,4 @@ const configuration = new Schema ({
     timeInPark: Number
 });
 
-
-
-module.exports = mongoose.model('Configuration', configuration)
+export default model('Configuration', configuration);

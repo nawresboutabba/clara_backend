@@ -33,7 +33,9 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
 export const genericArrayUserFilter =  async (users: Array<UserI>): Promise<Array<UserResponse>> => {
     return new Promise(async (resolve, reject)=> {
         let arrayUser: Array<Promise<UserResponse>>= []
-
+        if (!users){
+            return resolve([])
+        }
         users.forEach(user => {
             arrayUser.push(genericUserFilter(user))
         })

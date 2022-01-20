@@ -5,7 +5,7 @@ import { NextFunction} from "express"
 import TeamController from "../../controller/team";
 const router = express.Router();
 
-router.post('/team',[
+/* router.post('/team',[
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try {
         const teamController =  new TeamController()
@@ -17,7 +17,7 @@ router.post('/team',[
     }catch(error){
         next(error)
     }
-})
+}) */
 
 const teamRouter = router
 export default teamRouter;

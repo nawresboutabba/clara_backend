@@ -3,6 +3,8 @@ import TeamService from "../services/Team.service";
 import UserService from "../services/User.service";
 import { genericUserFilter, genericArrayUserFilter } from "../utils/field-filters/user";
 import { nanoid } from 'nanoid'
+import { UserI } from "../models/users";
+import { TeamI } from "../models/team";
 
 
 /**
@@ -14,12 +16,9 @@ import { nanoid } from 'nanoid'
  * @param name 
  * @returns 
  */
-export const newTeam = async (creator: string, members: Array<string>, teamName: string): Promise<TeamResponse> => {
+/* export const newTeam = async (creator: string, members: Array<string>, teamName: string): Promise<TeamResponse> => {
     return new Promise(async (resolve, reject)=> {
         try{
-            /**
-             * @TODO Check that the user can have just one participation for challenge
-             */
             const creatorUser = await UserService.getUserActiveByUserId(creator)
             const membersUser = await UserService.getUsers(members)
             const id = nanoid()
@@ -41,4 +40,22 @@ export const newTeam = async (creator: string, members: Array<string>, teamName:
             return reject(error)
         }
     })
-}
+} */
+
+export const newTeam = async (creator: UserI, name: string): Promise<TeamI> => {
+    return new Promise(async (resolve, reject)=> {
+        try{
+
+            const newTeam: TeamI = {
+                teamId: nanoid(),
+                creator,
+                created: new Date(),
+                name
+            }
+            const team = await TeamService.newTeam(newTeam)
+            return resolve(team)
+        }catch(error){
+            return reject(error)
+        }
+    })
+} 

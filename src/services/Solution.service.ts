@@ -113,27 +113,40 @@ const SolutionService = {
      * @param challengeId 
      * @returns 
      */
-    async listSolutions(query: QuerySolutionForm ,challengeId: string): Promise<Array<SolutionI>>{
+    async listSolutions(query: QuerySolutionForm ,challengeId: string): Promise<any>{
       return new Promise (async (resolve, reject)=> {
-        const solutions = await Solution
-        .find(
-          {..._.pickBy({
-            created: query.created,
-            active:true,
-            title:{
-              $regex : `.*${query.title}.*`, 
+        try{
+          const solutions = await Solution
+          .find(
+            {..._.pickBy({
+              created: query.created,
+              active:true,
+              title:{
+                $regex : `.*${query.title}.*`, 
+              }
+            }, _.identity),
+            challengeId
             }
-          }, _.identity),
-          challengeId
-          }
-        )
-        .skip(query.init)
-        .limit(query.offset)
-        /**
-         * Filter order criteria unused
-         */
-        .sort(_.pickBy(query.sort,_.identity))
-        return solutions
+          )
+          .skip(query.init)
+          .limit(query.offset)
+          /**
+           * Filter order criteria unused
+           */
+          .sort(_.pickBy(query.sort,_.identity))
+          .populate('team')
+          .populate('insertedBy')
+          .populate('areasAvailable')
+          .populate('author')
+          .populate('coauthor')
+          return resolve(solutions)
+        }catch(error){
+          return reject( new ServiceError(
+            ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
+            HTTP_RESPONSE._500,
+            error
+          ))
+        }
       })    
     }    
 }

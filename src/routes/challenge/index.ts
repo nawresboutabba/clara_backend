@@ -7,12 +7,13 @@ import checkResourceExistFromParams from '../../middlewares/check-resources-exis
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { ERRORS, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, PARTICIPATION_MODE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
 import ChallengeService from "../../services/Challenge.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import { ChallengeI } from "../../models/situation.challenges";
 
 router.post(
   "/challenge",
@@ -84,14 +85,20 @@ router.post(
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
-    check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
+    /**
+     * WorkSpaceAvailable depends on Challenge.WSA
+     */
+    //check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
     /**
      * Check that solution participation modality according to challenge participation modality
      */
-    check("author","Author isn't valid").custom((value: string, {req}): Promise<void>=> {
+    check("participation.chosen_mode","PARTICIPATION_MODE_INVALID").custom((value: string, {req}): Promise<void>=> {
       return new Promise(async (resolve, reject)=> {
-        const challenge = await ChallengeService.getChallengeActiveById(req.params.challengeId)
-        
+        const challenge: ChallengeI = req.resources.challenge
+        if (challenge.participationMode.includes(value)){
+          return resolve()
+        }
+        return reject()
       })
     })
   ],
@@ -99,7 +106,6 @@ router.post(
     try {
 
       await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_SOLUTION)
-
       const challengeController = new ChallengeController();
       const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId)
       res

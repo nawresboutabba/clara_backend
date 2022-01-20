@@ -1,4 +1,5 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
+import { TeamI } from '../../models/team'
 import { newTeam } from '../../repository/repository.team'
 import { UserResponse } from '../users'
 
@@ -12,7 +13,7 @@ export interface TeamBody {
 export interface TeamResponse {
     team_id: string,
     creator: UserResponse,
-    members: Array<UserResponse>,
+    members?: Array<UserResponse>,
     name: string,
     created: Date
 }
@@ -27,7 +28,11 @@ export default class TeamController extends Controller {
      * @returns
      */
     @Post()
-    public async newTeam(@Body() body: TeamBody): Promise<TeamResponse>{
-        return newTeam(body.creator , body.members, body.name)
+    public async newTeam(@Body() body: TeamBody): Promise<any>{
+        /**
+         * @TODO check endpoint
+         */
+        /* return newTeam(body.creator , body.name) */
+        return true
     }
 }

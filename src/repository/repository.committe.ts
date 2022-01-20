@@ -34,7 +34,7 @@ export const newCommitte = async  (leader?: string, committe?: Array<string>):Pr
                 leaderInstance = await UserService.getUserActiveByUserId(leader)
             }
             if (committe){
-                committeInstance = await UserService.getUsers(committe)
+                committeInstance = await UserService.getUsersById(committe)
             }
             const newCommitte = await CommitteService.newCommitte(leaderInstance , committeInstance )
             return resolve(newCommitte)

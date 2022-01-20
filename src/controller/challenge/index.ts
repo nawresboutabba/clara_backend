@@ -5,7 +5,7 @@ import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, 
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
-import { SolutionResponse } from '../solution';
+import { SolutionBody, SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';
@@ -44,7 +44,7 @@ export default class ChallengeController extends Controller {
         return newChallenge(body, user)
     }
     @Post(':challengeId/solution')
-    public async newSolution(@Body() body: ChallengeBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
+    public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
         return newSolution(body, user, challengeId)
     }
     /**

@@ -7,7 +7,6 @@ import { UserRequest } from '../users';
 
 
 export interface SolutionBody extends SituationBody {
-    author: string,
     /**
      * Challenge could be undefined if the solution doesn't have a challenge associated
      */
@@ -15,14 +14,30 @@ export interface SolutionBody extends SituationBody {
     /**
      * if committee allow to user choose solution privacity
      */
-    is_private?: boolean
+    is_private?: boolean,
+    /**
+     * Participation defines the type of intervention 
+     * that the creator chose to make the proposal.
+     * - It can be TEAM: then the creator plus the guests, form a team
+     * - It can be INDIVIDUAL_WITH_COAUTHORSHIP: then the creator will be the author and the guests will be co-authors
+     * the interpretation depends on the value in chosen_mode
+     */
+     participation : {
+        chosen_mode: string,
+        creator: string,
+        guest: Array<string>
+        /**
+         * is used if the modality is equal to TEAM
+         */
+        team_name?: string
+    }
 }
 
 export interface SolutionResponse extends SituationResponse{
     /**
      * challenge associated
      */
-    challengeId?: string,
+    challenge_id?: string,
     /**
      * Always is setting this attribute. Could be setting by user or committe.
      * Depends on solution configuration
@@ -35,7 +50,14 @@ export interface SolutionResponse extends SituationResponse{
     /**
      * Solution ID
      */
-    solutionId: string
+    solution_id: string,
+    /**
+     * If participation is equal to INDIVIDUAL_WITH_COAUTHORSHIP, 
+     * then the valid fields for reading are "author" and "coauthors"
+     * If participation is equal to TEAM,
+     * then the valid field for reading is "team"
+     */
+    participation_mode_choosed: string
 }
 
 

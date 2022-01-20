@@ -1,7 +1,11 @@
+import { PARTICIPATION_MODE } from "../../constants";
 import { SolutionResponse } from "../../controller/solution";
+import { TeamResponse } from "../../controller/team";
+import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import { genericArrayAreaFilter } from "./area";
-import { genericUserFilter } from "./user";
+import { genericTeamFilter } from "./team";
+import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async(solution: SolutionI ): Promise<SolutionResponse> => {
     return new Promise(async (resolve, reject)=> {
@@ -18,16 +22,26 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             isPrivate,
             timeInPark,
             reactions,
-            challengeId
+            challengeId,
+            participationModeChoosed
         } = solution
 
+        let coauthor : UserResponse[]
+        let team : TeamResponse
+        if(solution.participationModeChoosed == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+            coauthor = await genericArrayUserFilter(solution.coauthor)
+        }else if (solution.participationModeChoosed == PARTICIPATION_MODE.TEAM){
+            team = await genericTeamFilter(solution.team)
+        }
         const author = await genericUserFilter(solution.author)
         const inserted_by = await genericUserFilter(solution.insertedBy)
         const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
         return resolve({
             inserted_by,
             author,
-            solutionId,
+            coauthor,
+            team,
+            solution_id:solutionId,
             created,
             status,
             updated,
@@ -39,12 +53,12 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             is_private: isPrivate,
             time_in_park: timeInPark,
             reactions,
-            challengeId,
-            areas_available: areasAvailable            
+            challenge_id:challengeId,
+            areas_available: areasAvailable,
+            participation_mode_choosed: participationModeChoosed            
         })
     })
 }
-
 export const genericArraySolutionsFilter = async(solutions : Array<SolutionI>):Promise<Array<SolutionResponse>>=> {
     return new Promise (async (resolve, reject)=> {
         let arraySolution: Array<Promise<SolutionResponse>>= []

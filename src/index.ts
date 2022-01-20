@@ -26,9 +26,9 @@ import committeRouter from './routes/committe'
 import groupValidatorRouter from './routes/group-validator';
 import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
-import interactionRouter from './routes/interaction';
+import invitationRouter from './routes/invitation'
+
 //import session from './middlewares/session'
-const httpMiddlewareRouter = require('./routes/http-middlewares')
 
 import { logError } from './handle-error/middleware.log-error';
 import { clientErrorHandler } from './handle-error/middleware.client-error-handler';
@@ -62,10 +62,7 @@ app.use('/', committeRouter);
 app.use('/', groupValidatorRouter);
 app.use('/', integrantRouter);
 app.use('/', teamRouter);
-app.use('/', interactionRouter);
-// @TODO configurar para que se desabilite en entorno de produccion
-app.use('/middleware-testing',httpMiddlewareRouter);
-
+app.use('/', invitationRouter);
 app.use(logError)
 app.use(clientErrorHandler)
 app.use(errorHandler)

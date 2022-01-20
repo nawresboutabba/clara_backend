@@ -30,6 +30,10 @@ export interface SolutionI extends SituationBaseI {
      * TimePeriod that challenge is in a Park for discussion
      */
     timeInPark: number,
+    /**
+     * Single value. Election between availables in Challenge.participationMode 
+     */
+    participationModeChoosed: string
   }
 
 
@@ -51,8 +55,8 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
     timeInPark: {
         type: Number,
         default: null,
-      }
-
+      },
+    participationModeChoosed: String
 }))
 
 export default Solution;

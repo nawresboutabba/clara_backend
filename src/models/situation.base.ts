@@ -23,9 +23,13 @@ export interface SituationBaseI {
      * This field exclusive with team configuration
      */  
   author?: UserI,
+  /**
+   * field that is combined with author 
+   * when participationModeChosen = "INDIVIDUAL_WITH_COAUTHORSHIP"
+   */
+  coauthor?: Array<UserI>,
     /**
-     * Team that propose the solution. Just available for challenges
-     * with TEAMWORK active.
+     * Field that is filled when participationModeChosen = "TEAM"
      * This field exclusive with author and coauthor configuration
      */
   team?: TeamI,
@@ -99,6 +103,10 @@ const situationBase = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
+    coauthor:[ {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }],
     team: {
       type: Schema.Types.ObjectId, 
       ref: 'Team' 

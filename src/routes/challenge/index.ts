@@ -11,9 +11,9 @@ import { ERRORS, PARTICIPATION_MODE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL 
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
-import ChallengeService from "../../services/Challenge.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { ChallengeI } from "../../models/situation.challenges";
+import GroupValidatorService from "../../services/GroupValidator.service";
 
 router.post(
   "/challenge",
@@ -24,29 +24,36 @@ router.post(
     ),
     body("description", "description can not be empty").notEmpty(),
     body("title", "title can not be empty").notEmpty(),
-    /**
-     * participation could be TEAM OR INDIVIDUAL_WITH_COAUTHORSHIP or both
-     */
-    body("participation_mode").custom((value:Array<string> , {req}): Promise<void>=> {
-      return new Promise((resolve, reject)=> {
-        value.forEach(element => {
-          if (["TEAM", "INDIVIDUAL_WITH_COAUTHORSHIP"].includes(element) == false){
-            return reject("participation_mode invalid")
-          }
-        });
-          if(value.length <3){
-            return resolve()
-          }
-          return reject("participation_mode invalid")
+    check("group_validator", "group_validator invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async(resolve, reject)=> {
+        const groupValidator = await GroupValidatorService.getGroupValidatorById(req.body.group_validator)
+        if(groupValidator){
+          return resolve()
+        }
+        return reject()
       })
     }),
     /**
+     * Checking the configuration of allowed solutions.
+     */
+    body("can_choose_scope", "can_choose_scope invalid").notEmpty().escape().isIn([true, false]),
+    body("is_private", "is_private invalid").notEmpty().escape().isIn([true, false]),
+    body("filter_reaction_filter", "filter_reaction invalid").notEmpty().escape().isIn([true, false]),
+    body("filter_minimun_likes", "filter_minimun_likes invalid").notEmpty().escape().isInt(),
+    body("filter_maximum_dont_understand", "filter_maximum_dont_understand invalid").notEmpty().escape().isInt(),
+    body("community_can_see_reactions", "community_can_see_reactions invalid").notEmpty().escape().isIn([true, false]),
+    body("can_show_disagreement", "can_show_disagreement invalid").notEmpty().escape().isIn([true, false]),
+    body("can_fix_disapproved_idea", "can_fix_disapproved_idea invalid").notEmpty().escape().isIn([true, false]),
+    body("time_in_park", "time_in_park invalid").notEmpty().escape().isInt(),
+    body("time_expert_feedback", "time_expert_feedback invalid").notEmpty().escape().isInt(),
+    body("time_idea_fix", "time_idea_fix invalid").notEmpty().escape().isInt(),
+    /**
      * @see SituationI for details about the combination between WSALevel and areas_available
      */
-    check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
+     check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
       return new Promise(async (resolve, reject)=> {
-        if(['COMPANY', 'AREA'].includes(value)){
-          if (value == "AREA"){
+        if([WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
+          if (value == WSALEVEL.AREA){
             const areas = await AreaService.getAreasById(req.body.areas_available)
             if(areas.length == req.body.areas_available.length){
               return resolve()
@@ -58,6 +65,24 @@ router.post(
         return reject("WSALevel invalid")
       })     
     }),
+    /**
+     * participation could be TEAM OR INDIVIDUAL_WITH_COAUTHORSHIP or both
+     */
+    body("participation_mode_available").custom((value:Array<string> , {req}): Promise<void>=> {
+      return new Promise((resolve, reject)=> {
+        value.forEach(element => {
+          if ([PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(element) == false){
+            return reject("participation_mode_available invalid")
+          }
+        });
+          if(value.length <3){
+            return resolve()
+          }
+          return reject("participation_mode_available invalid")
+      })
+    }),
+    body("is_strategic", "is_strategic invalid").notEmpty().escape().isIn([true, false]),
+    body("external_contribution_available", "external_contribution_available invalid").notEmpty().escape().isIn([true, false]),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
@@ -283,5 +308,18 @@ router.post('/challenge/:challengeId/reaction',[
     }
 })
 
+router.post('/challenge/default-configuration',[
+], (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const challengeController = new ChallengeController()
+    const challengeConfiguration = challengeController.setChallengeDefaultConfiguration(req.body)
+    res
+    .json(challengeConfiguration)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
 const challengeRouter = router
 export default challengeRouter;

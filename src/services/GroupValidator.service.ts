@@ -1,8 +1,6 @@
 import ServiceError from "../handle-error/error.service";
 import GroupValidator, { GroupValidatorI } from "../models/group-validator";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
-import { IntegrantI } from "../models/integrant";
-import { AreaI } from "../models/organization.area";
 
 const GroupValidatorService = {
     async getGroupValidatorById(GVId:string ): Promise<GroupValidatorI>{
@@ -29,16 +27,13 @@ const GroupValidatorService = {
             }
         })
     },
-    async newGroupValidator (name: string, integrants: Array<IntegrantI>, area: AreaI) {
+    async newGroupValidator (groupValidator: GroupValidatorI): Promise<any> {
         return new Promise((resolve, reject)=> {
             try{
-                const groupValidator = GroupValidator.create({
-                    name,
-                    created: new Date(),
-                    integrants,
-                    area
+                const groupValidatorResp = GroupValidator.create({
+                    ...groupValidator
                 })
-                return resolve(groupValidator)
+                return resolve(groupValidatorResp)
             }catch(error){
                 const customError = new ServiceError(
                     ERRORS.SERVICE.NEW_GROUP_VALIDATOR,

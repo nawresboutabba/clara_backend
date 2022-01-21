@@ -59,7 +59,15 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, challen
             images: images,
             WSALevel,
             areasAvailable,
-            participationModeChoosed: body.participation.chosen_mode
+            participationModeChosen: body.participation.chosen_mode,
+            filterReactionFilter: false,
+            filterMinimunLikes: 0,
+            filterMaximunDontUnderstand:1000,
+            communityCanSeeReactions: true,
+            filterCanShowDisagreement: true,
+            filterCanFixDesapprovedIdea: true,
+            timeExpertFeedback: 3000,
+            timeIdeaFix:3000
           }
 
           let challenge: ChallengeI

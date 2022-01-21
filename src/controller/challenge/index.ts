@@ -9,6 +9,9 @@ import { SolutionBody, SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';
+import { ChallengeConfigurationI } from '../../models/configuration.challenge';
+import { setDefaultChallengeConfiguration } from '../../repository/repository.configuration-challenge';
+import { ChallengeConfigurationBody } from '../configuration';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -21,6 +24,7 @@ export interface ChallengeBody extends SituationBody {
     is_strategic: boolean,
     file_complementary: string,
     participation_mode: string[],
+    group_validator: string
 }
 
 
@@ -110,5 +114,9 @@ export default class ChallengeController extends Controller {
     @Post('/:challengeId/reaction')
     public async newReaction(@Path('challengeId') challengeId: string, reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse>{
         return newReaction(challengeId, reaction, user)
+    }
+    @Post('/default-configuration')
+    public async setChallengeDefaultConfiguration(@Body() body: ChallengeConfigurationBody): Promise<ChallengeConfigurationI>{
+        return setDefaultChallengeConfiguration(body)
     }
 }

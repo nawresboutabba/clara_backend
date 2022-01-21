@@ -23,14 +23,14 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             timeInPark,
             reactions,
             challengeId,
-            participationModeChoosed
+            participationModeChosen
         } = solution
 
         let coauthor : UserResponse[]
         let team : TeamResponse
-        if(solution.participationModeChoosed == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+        if(solution.participationModeChosen == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
             coauthor = await genericArrayUserFilter(solution.coauthor)
-        }else if (solution.participationModeChoosed == PARTICIPATION_MODE.TEAM){
+        }else if (solution.participationModeChosen == PARTICIPATION_MODE.TEAM){
             team = await genericTeamFilter(solution.team)
         }
         const author = await genericUserFilter(solution.author)
@@ -55,7 +55,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             reactions,
             challenge_id:challengeId,
             areas_available: areasAvailable,
-            participation_mode_choosed: participationModeChoosed            
+            participation_mode_choosed: participationModeChosen            
         })
     })
 }

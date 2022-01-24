@@ -21,7 +21,6 @@ import userRouter from './routes/users'
 import challengeRouter from './routes/challenge';
 import companyRouter from './routes/company';
 import areaRouter from './routes/area';
-import hubRouter from './routes/hub';
 import groupValidatorRouter from './routes/group-validator';
 import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
@@ -56,7 +55,6 @@ app.use('/',userRouter);
 app.use('/', challengeRouter);
 app.use('/', companyRouter);
 app.use('/', areaRouter);
-app.use('/', hubRouter);
 app.use('/', groupValidatorRouter);
 app.use('/', integrantRouter);
 app.use('/', teamRouter);

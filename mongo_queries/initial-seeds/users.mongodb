@@ -21,6 +21,7 @@ db.users.insertMany([{
     "active":true,
     "email":"rafael@gmail.com",
     "userId":"k0muWMToR4TWKhv1loYIF",
+    // "passwordExample"
     "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
     "workSpace":["ABSOLUTE"],
     "__v":{"$numberInt":"0"},
@@ -29,6 +30,19 @@ db.users.insertMany([{
     "username":"PERRI",
     "areaVisible":[{"$oid":"61eeae6aba4af3e0bed0e872"}],
     "externalUser":false
+    },
+    {"_id": ObjectId("61eecb80e6398fceb9dcc484"),
+    "username":"MARU",
+    "email":"mariela@gmail.com",
+    "userId":"U62s2L0NwIUplXeaeqprA",
+    "password":"$2b$10$/0r5bZhfHmH9pZDDAtSa3eOy4IGgBCwS1SOv8TztnZTVsFU3Tfp0C",
+    "firstName":"mariela",
+    "lastName":"cordera",
+    "active":true,
+    "externalUser":false,
+    "areaVisible":[],
+    "points":{"$numberInt":"0"},
+    "__v":{"$numberInt":"0"}
     }
 ])
 

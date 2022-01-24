@@ -8,7 +8,7 @@ import { ERRORS, HTTP_RESPONSE } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
 
-export const signUp  = async (body: UserBody):Promise<UserI> => {
+export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
     await UserService
     .getUserActiveByEmail(body.email)
@@ -32,10 +32,11 @@ export const signUp  = async (body: UserBody):Promise<UserI> => {
                 lastName: body.last_name,
                 active: true,
                 externalUser: false,
-                points: 0
+                points: 0,
               })
-              .then(user => {
-                return resolve(user)
+              .then(async user => {
+                const resp = await genericUserFilter(user)
+                return resolve(resp)
               })
               .catch(error => {
                 return reject(error)

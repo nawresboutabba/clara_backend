@@ -6,6 +6,7 @@ import UserController from "../../controller/users";
 import { body , validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE } from "../../constants";
+import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 const router = express.Router();
 
@@ -14,20 +15,13 @@ router.post("/user/signup", [
   body('password', 'password can not be empty').notEmpty(),
   body('password_confirmation', 'password_confirmation can not be empty').notEmpty(),
   body('first_name','first_name can not be empty').notEmpty(),
-  body('last_name','last_name can not be empty').notEmpty()
+  body('last_name','last_name can not be empty').notEmpty(),
+  body('username', "username can not be empty").notEmpty()
 ], async (req:RequestMiddleware, res: ResponseMiddleware, next:NextFunction) => {
   
   try {
+    await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.SIGNUP_USER)
 
-    const errors = validationResult(req).array();
-    if (errors.length > 0) {
-      const customError = new RoutingError(
-        ERRORS.ROUTING.SIGNUP_USER,
-        HTTP_RESPONSE._400,
-        errors
-        )
-      throw customError;
-    } 
     const userController = new UserController()
     const response = await userController.signUp(req.body)
     res

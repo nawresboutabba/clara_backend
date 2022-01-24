@@ -51,14 +51,7 @@ const UserService = {
     },
     async newGenericUser (user: UserI ): Promise<UserI> {
         return new Promise((resolve, reject) => {
-          User.create({
-            userId: user.userId,
-            email: user.email,
-            active: true,
-            password: user.password,
-            firstName: user.firstName,
-            lastName: user.lastName
-          })
+          User.create({...user})
             .then((resp) => {
               return resolve(resp);
             })

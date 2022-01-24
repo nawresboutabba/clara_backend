@@ -5,6 +5,7 @@ import { body, check, validationResult } from "express-validator";
 import { ERRORS, VALIDATIONS_MESSAGE_ERROR } from "../../constants";
 import AreaService from "../../services/Area.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import authentication from "../../middlewares/authentication";
 
 const router = require("express").Router();
 
@@ -16,6 +17,7 @@ const router = require("express").Router();
  * its space or it can be another.
  */
 router.post('/area',[
+    authentication,
     body("name", VALIDATIONS_MESSAGE_ERROR.AREA.NAME_EMPTY).notEmpty(),
     check("name", "area's name exist").custom((value , {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {
@@ -47,6 +49,7 @@ router.post('/area',[
 })
 
 router.get('/area/:areaId',[
+    authentication,
     check("areaId", "area does not exist").custom((value , {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {
             const area = await AreaService.getAreaById(value)
@@ -71,6 +74,7 @@ router.get('/area/:areaId',[
 })
 
 router.get('/area',[
+    authentication
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=>{
     try{
         const areaController =  new AreaController()

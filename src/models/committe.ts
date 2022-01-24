@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
-import { UserI } from "./users";
+import { IntegrantI } from "./integrant";
 
 export interface CommitteI {
     active: boolean,
-    leader?: UserI,
-    general?: Array<UserI>
+    leader?: IntegrantI,
+    general?: Array<IntegrantI>
 }
 
 const committe = new Schema({
@@ -15,11 +15,11 @@ const committe = new Schema({
     },
     leader: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Integrant'
     },
     committe: [{
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Integrant'
     }],
 })
 export default model('Committe', committe);

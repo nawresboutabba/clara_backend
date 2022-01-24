@@ -112,7 +112,7 @@ export default class ChallengeController extends Controller {
      * @returns 
      */
     @Post('/:challengeId/reaction')
-    public async newReaction(@Path('challengeId') challengeId: string, reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse>{
+    public async newReaction(@Path('challengeId') challengeId: string, @Body() reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse>{
         return newReaction(challengeId, reaction, user)
     }
     @Post('/default-configuration')

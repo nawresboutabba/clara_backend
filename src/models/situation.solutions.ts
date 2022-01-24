@@ -21,9 +21,12 @@ export interface SolutionI extends SituationBaseI {
      * If true, solution's generator can choose if the 
      * solution is shared with the community
      */
-    canChooseScope:boolean,
+     canChooseScope:boolean,
     /**
-     * Solution is shared with the community in the Park
+     * Solution is shared with the community in the Park.
+     * Is combined with the canChooseScope attribute. 
+     * either obtained from the challenger configuration 
+     * or from the general configuration, it depends on the situation.
      */
     isPrivate:boolean,
     /**

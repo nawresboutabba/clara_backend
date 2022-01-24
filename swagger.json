@@ -8,6 +8,9 @@
 		"schemas": {
 			"AreaI": {
 				"properties": {
+					"areaId": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
@@ -16,6 +19,7 @@
 					}
 				},
 				"required": [
+					"areaId",
 					"name",
 					"company"
 				],
@@ -234,6 +238,60 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"TeamBody": {
+				"properties": {
+					"creator": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"creator",
+					"members",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"TeamResponse": {
+				"properties": {
+					"team_id": {
+						"type": "string"
+					},
+					"creator": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"members": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"team_id",
+					"creator",
+					"name",
+					"created"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"SolutionResponse": {
 				"properties": {
 					"inserted_by": {
@@ -242,6 +300,15 @@
 					},
 					"author": {
 						"$ref": "#/components/schemas/UserResponse"
+					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamResponse"
 					},
 					"created": {
 						"type": "string",
@@ -294,7 +361,13 @@
 						],
 						"type": "object"
 					},
-					"challengeId": {
+					"areas_available": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"challenge_id": {
 						"type": "string",
 						"description": "challenge associated"
 					},
@@ -307,9 +380,13 @@
 						"format": "double",
 						"description": "Always is setting this attribute. Depends on solution configuration"
 					},
-					"solutionId": {
+					"solution_id": {
 						"type": "string",
 						"description": "Solution ID"
+					},
+					"participation_mode_choosed": {
+						"type": "string",
+						"description": "If participation is equal to INDIVIDUAL_WITH_COAUTHORSHIP, \nthen the valid fields for reading are \"author\" and \"coauthors\"\nIf participation is equal to TEAM,\nthen the valid field for reading is \"team\""
 					}
 				},
 				"required": [
@@ -323,9 +400,11 @@
 					"WSALevel",
 					"file_complementary",
 					"reactions",
+					"areas_available",
 					"is_private",
 					"time_in_park",
-					"solutionId"
+					"solution_id",
+					"participation_mode_choosed"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -333,16 +412,6 @@
 			"SolutionBody": {
 				"properties": {
 					"author": {
-						"type": "string"
-					},
-					"coauthor": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Not used for challenge"
-					},
-					"team": {
 						"type": "string"
 					},
 					"title": {
@@ -370,6 +439,12 @@
 					"file_complementary": {
 						"type": "string"
 					},
+					"areas_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
 					"challenge": {
 						"type": "string",
 						"description": "Challenge could be undefined if the solution doesn't have a challenge associated"
@@ -377,6 +452,33 @@
 					"is_private": {
 						"type": "boolean",
 						"description": "if committee allow to user choose solution privacity"
+					},
+					"participation": {
+						"properties": {
+							"team_name": {
+								"type": "string",
+								"description": "is used if the modality is equal to TEAM"
+							},
+							"guest": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"creator": {
+								"type": "string"
+							},
+							"chosen_mode": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"guest",
+							"creator",
+							"chosen_mode"
+						],
+						"type": "object",
+						"description": "Participation defines the type of intervention \nthat the creator chose to make the proposal.\n- It can be TEAM: then the creator plus the guests, form a team\n- It can be INDIVIDUAL_WITH_COAUTHORSHIP: then the creator will be the author and the guests will be co-authors\nthe interpretation depends on the value in chosen_mode"
 					}
 				},
 				"required": [
@@ -385,7 +487,8 @@
 					"images",
 					"WSALevel",
 					"file_complementary",
-					"author"
+					"areas_available",
+					"participation"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -415,7 +518,6 @@
 				"required": [
 					"teamId",
 					"creator",
-					"members",
 					"created",
 					"name"
 				],
@@ -433,16 +535,12 @@
 					"created": {
 						"type": "string",
 						"format": "date-time"
-					},
-					"area": {
-						"$ref": "#/components/schemas/AreaI"
 					}
 				},
 				"required": [
 					"groupValidatorId",
 					"name",
-					"created",
-					"area"
+					"created"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -458,9 +556,16 @@
 						"$ref": "#/components/schemas/UserI",
 						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
 					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array",
+						"description": "field that is combined with author \nwhen participationModeChosen = \"INDIVIDUAL_WITH_COAUTHORSHIP\""
+					},
 					"team": {
 						"$ref": "#/components/schemas/TeamI",
-						"description": "Team that propose the solution. Just available for challenges\nwith TEAMWORK active.\nThis field exclusive with author and coauthor configuration"
+						"description": "Field that is filled when participationModeChosen = \"TEAM\"\nThis field exclusive with author and coauthor configuration"
 					},
 					"created": {
 						"type": "string",
@@ -504,7 +609,7 @@
 							"$ref": "#/components/schemas/AreaI"
 						},
 						"type": "array",
-						"description": "Areas available. Is user if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
 					},
 					"departmentAffected": {
 						"items": {
@@ -598,9 +703,16 @@
 						"$ref": "#/components/schemas/UserI",
 						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
 					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array",
+						"description": "field that is combined with author \nwhen participationModeChosen = \"INDIVIDUAL_WITH_COAUTHORSHIP\""
+					},
 					"team": {
 						"$ref": "#/components/schemas/TeamI",
-						"description": "Team that propose the solution. Just available for challenges\nwith TEAMWORK active.\nThis field exclusive with author and coauthor configuration"
+						"description": "Field that is filled when participationModeChosen = \"TEAM\"\nThis field exclusive with author and coauthor configuration"
 					},
 					"created": {
 						"type": "string",
@@ -644,7 +756,7 @@
 							"$ref": "#/components/schemas/AreaI"
 						},
 						"type": "array",
-						"description": "Areas available. Is user if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
 					},
 					"departmentAffected": {
 						"items": {
@@ -706,12 +818,52 @@
 					},
 					"isPrivate": {
 						"type": "boolean",
-						"description": "Solution is shared with the community?"
+						"description": "Solution is shared with the community in the Park.\nIs combined with the canChooseScope attribute. \neither obtained from the challenger configuration \nor from the general configuration, it depends on the situation."
+					},
+					"participationModeChosen": {
+						"type": "string",
+						"description": "Single value. Election between availables in Challenge.participationMode"
+					},
+					"filterReactionFilter": {
+						"type": "boolean",
+						"description": "variable that indicates if \nthe automatic filtering options are enabled in the Park"
+					},
+					"filterMinimunLikes": {
+						"type": "number",
+						"format": "double",
+						"description": "Valid if filterReactionFilter == true"
+					},
+					"filterMaximunDontUnderstand": {
+						"type": "number",
+						"format": "double",
+						"description": "Valid if filterReactionFilter == true"
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
+						"description": "The visualization of the occurred reactions can be disabled"
+					},
+					"filterCanShowDisagreement": {
+						"type": "boolean",
+						"description": "If an idea is rejected, those responsible for \nthe idea can show disagreement with the result"
+					},
+					"filterCanFixDesapprovedIdea": {
+						"type": "boolean",
+						"description": "The user can make corrections to his idea when it is rejected."
 					},
 					"timeInPark": {
 						"type": "number",
 						"format": "double",
-						"description": "TimePeriod that challenge is in a Park for discussion"
+						"description": "TimePeriod that challenge is in a Park for discussion\nIs used if isPrivate == false"
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double",
+						"description": "Time limit that the expert has to give his evaluation"
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double",
+						"description": "Time limit for those responsible for the idea to \nmake a new delivery of the corrected solution.\nIs used if filterCanFixDesapprovedIdea == true"
 					}
 				},
 				"required": [
@@ -727,7 +879,16 @@
 					"solutionId",
 					"canChooseScope",
 					"isPrivate",
-					"timeInPark"
+					"participationModeChosen",
+					"filterReactionFilter",
+					"filterMinimunLikes",
+					"filterMaximunDontUnderstand",
+					"communityCanSeeReactions",
+					"filterCanShowDisagreement",
+					"filterCanFixDesapprovedIdea",
+					"timeInPark",
+					"timeExpertFeedback",
+					"timeIdeaFix"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -740,6 +901,15 @@
 					},
 					"author": {
 						"$ref": "#/components/schemas/UserResponse"
+					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamResponse"
 					},
 					"created": {
 						"type": "string",
@@ -792,6 +962,12 @@
 						],
 						"type": "object"
 					},
+					"areas_available": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
 					"is_strategic": {
 						"type": "boolean"
 					},
@@ -804,6 +980,9 @@
 							"type": "string"
 						},
 						"type": "array"
+					},
+					"challenge_id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -817,9 +996,11 @@
 					"WSALevel",
 					"file_complementary",
 					"reactions",
+					"areas_available",
 					"is_strategic",
 					"time_period",
-					"participation_mode"
+					"participation_mode",
+					"challenge_id"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -830,16 +1011,6 @@
 					"author": {
 						"type": "string",
 						"description": "author is required for a challenge"
-					},
-					"coauthor": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Not used for challenge"
-					},
-					"team": {
-						"type": "string"
 					},
 					"title": {
 						"type": "string"
@@ -866,6 +1037,12 @@
 					"file_complementary": {
 						"type": "string"
 					},
+					"areas_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
 					"is_strategic": {
 						"type": "boolean"
 					},
@@ -882,9 +1059,11 @@
 					"images",
 					"WSALevel",
 					"file_complementary",
+					"areas_available",
 					"author",
 					"is_strategic",
-					"participation_mode"
+					"participation_mode",
+					"group_validator"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -939,6 +1118,216 @@
 					"author",
 					"comment",
 					"is_private"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ReactionResponse": {
+				"properties": {
+					"insertedBy": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"challenge": {
+						"$ref": "#/components/schemas/ChallengeResponse"
+					},
+					"solution": {
+						"$ref": "#/components/schemas/SolutionResponse"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"author",
+					"date",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ReactionBody": {
+				"properties": {
+					"author": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"author",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ChallengeConfigurationI": {
+				"properties": {
+					"configurationId": {
+						"type": "string"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"isPrivate": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not.\nthis option is used in combination with `canChooseScope`."
+					},
+					"filterReactionFilter": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"filterMinimunLikes": {
+						"type": "number",
+						"format": "double",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"filterMaximunDontUnderstand": {
+						"type": "number",
+						"format": "double",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"filterCanShowDisagreement": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"filterCanFixDesapprovedIdea": {
+						"type": "boolean",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double",
+						"description": "Configuration used when a solution is generated. \nIt can be with an associated challenge or not."
+					},
+					"WSALevel": {
+						"type": "string"
+					},
+					"participationModeAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isStrategic": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"configurationId",
+					"updated",
+					"canChooseScope",
+					"isPrivate",
+					"filterReactionFilter",
+					"filterMinimunLikes",
+					"filterMaximunDontUnderstand",
+					"communityCanSeeReactions",
+					"filterCanShowDisagreement",
+					"filterCanFixDesapprovedIdea",
+					"timeInPark",
+					"timeExpertFeedback",
+					"timeIdeaFix",
+					"WSALevel",
+					"participationModeAvailable",
+					"isStrategic"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ChallengeConfigurationBody": {
+				"properties": {
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_private": {
+						"type": "boolean"
+					},
+					"filter_reaction_filter": {
+						"type": "boolean"
+					},
+					"filter_minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"filter_maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"can_show_disagreement": {
+						"type": "boolean"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"WSALevel": {
+						"type": "string"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"can_choose_scope",
+					"is_private",
+					"filter_reaction_filter",
+					"filter_minimum_likes",
+					"filter_maximum_dont_understand",
+					"community_can_see_reactions",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix",
+					"WSALevel",
+					"participation_mode_available",
+					"is_strategic"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1011,21 +1400,10 @@
 				"properties": {
 					"name": {
 						"type": "string"
-					},
-					"validators": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"area": {
-						"type": "string"
 					}
 				},
 				"required": [
-					"name",
-					"validators",
-					"area"
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1075,61 +1453,6 @@
 					"created",
 					"lastChangePosition",
 					"role"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"TeamResponse": {
-				"properties": {
-					"team_id": {
-						"type": "string"
-					},
-					"creator": {
-						"$ref": "#/components/schemas/UserResponse"
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/UserResponse"
-						},
-						"type": "array"
-					},
-					"name": {
-						"type": "string"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"team_id",
-					"creator",
-					"members",
-					"name",
-					"created"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"TeamBody": {
-				"properties": {
-					"creator": {
-						"type": "string"
-					},
-					"members": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"creator",
-					"members",
-					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1283,6 +1606,34 @@
 				"description": "User information",
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/team": {
+			"post": {
+				"operationId": "NewTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Create a new Team for a challenge or situation",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TeamBody"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/solution": {
@@ -1526,7 +1877,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ChallengeBody"
+								"$ref": "#/components/schemas/SolutionBody"
 							}
 						}
 					}
@@ -1730,6 +2081,74 @@
 						}
 					}
 				]
+			}
+		},
+		"/challenge/{challengeId}/reaction": {
+			"post": {
+				"operationId": "NewReaction",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ReactionResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "New Reacion",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "challengeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ReactionBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/challenge/default-configuration": {
+			"post": {
+				"operationId": "SetChallengeDefaultConfiguration",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChallengeConfigurationI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChallengeConfigurationBody"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/company": {
@@ -2025,36 +2444,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/team": {
-			"post": {
-				"operationId": "NewTeam",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/TeamResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Create a new Team for a challenge or situation",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamBody"
-							}
-						}
-					}
-				}
 			}
 		}
 	},

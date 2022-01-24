@@ -28,12 +28,12 @@ export interface ConfigurationResponse {
 
 export interface ChallengeConfigurationBody extends ConfigurationBody{
     WSALevel: string
-    participation_mode_available: [string],
+    participation_mode_available: string[],
     is_strategic: boolean
 }
 
 export interface ChallengeConfigurationResponse extends ConfigurationResponse {
     WSALevel: string,
-    participation_mode_available: string [],
+    participation_mode_available: string[],
     is_strategic: boolean
 }

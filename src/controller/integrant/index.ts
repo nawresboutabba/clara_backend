@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
 import { IntegrantI } from '../../models/integrant';
-import { newIntegrant , isIntegrant, deleteIntegrant, newLeader, getAllCommitte, getGeneralMembers } from '../../repository/repository.integrants'
+import { newIntegrant , deleteIntegrant, newLeader, getAllCommitte, getGeneralMembers } from '../../repository/repository.integrants'
 import router = require('../../routes/configuration');
 /**
  * Endpoint for `Integrant` operations

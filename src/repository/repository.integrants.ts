@@ -4,6 +4,8 @@ import { IntegrantI } from "../models/integrant";
 import UserService from "../services/User.service";
 import IntegrantService from "../services/Integrant.service";
 import { nanoid } from 'nanoid'
+import { genericArrayIntegrantFilter, genericIntegrantFilter } from "../utils/field-filters/integrant";
+import { IntegrantResponse } from "../controller/integrant";
 
 
 /**
@@ -14,7 +16,7 @@ import { nanoid } from 'nanoid'
  * @returns 
  */
 
-export const newIntegrant = async (userId: string): Promise<IntegrantI> => {
+export const newIntegrant = async (userId: string): Promise<IntegrantResponse> => {
     return new Promise (async (resolve, reject)=> {
         try{
             /**
@@ -46,7 +48,8 @@ export const newIntegrant = async (userId: string): Promise<IntegrantI> => {
                     check.integrantId,
                     COMMITTE_ROLE.GENERAL
                 )
-                return resolve(integrant)
+                const resp = genericIntegrantFilter(integrant)
+                return resolve(resp)
             }
             /**
              * User wasn't / isn't a member . He's register as a GENERAL MEMBER
@@ -65,7 +68,8 @@ export const newIntegrant = async (userId: string): Promise<IntegrantI> => {
                         role: COMMITTE_ROLE.GENERAL
                     }
                     const integrant = await IntegrantService.newIntegrant(integrantNew)
-                    return resolve(integrant)
+                    const resp = genericIntegrantFilter(integrant)
+                    return resolve(resp)
                 }else{
                     const customError = new RepositoryError(
                         ERRORS.REPOSITORY.USER_NOT_EXIST,
@@ -117,7 +121,7 @@ export const deleteIntegrant = async (integrantId:string ): Promise<boolean> => 
     })
 }
 
-export const newLeader= async (integrantId: string):Promise<IntegrantI>=> {
+export const newLeader= async (integrantId: string):Promise<IntegrantResponse>=> {
     return new Promise(async (resolve, reject)=> {
         try{
             const check = await IntegrantService.checkIntegrantStatus(integrantId)
@@ -128,6 +132,7 @@ export const newLeader= async (integrantId: string):Promise<IntegrantI>=> {
                      * Check for by current leader
                      */
                     const currentLeader = await IntegrantService.currentLeader()
+                    
                     if(currentLeader){
                          await IntegrantService.abdicationLeader(currentData)
                     }
@@ -135,8 +140,8 @@ export const newLeader= async (integrantId: string):Promise<IntegrantI>=> {
                      * Convert from committe general to leader
                      */
                     const leader = await IntegrantService.convertToLeader(integrantId, currentData)
-
-                    return resolve(leader)
+                    const resp = await genericIntegrantFilter(leader)
+                    return resolve(resp)
                 }else{
                     const customError = new RepositoryError(
                         ERRORS.REPOSITORY.MEMBER_IS_A_LEADER_OR_ROLE_NOT_EXIST,
@@ -177,11 +182,12 @@ export const getAllCommitte = async (): Promise<Array<IntegrantI>> => {
     })
 }
 
-export const getGeneralMembers = async(): Promise<Array<IntegrantI>> => {
+export const getGeneralMembers = async(): Promise<Array<IntegrantResponse>> => {
     return new Promise(async (resolve, reject)=> {
         try{
             const generalMembers = await IntegrantService.getGeneralMembers()
-            return resolve(generalMembers)
+            const resp = await genericArrayIntegrantFilter(generalMembers)
+            return resolve(resp)
         }catch(error){
             return reject(error)
         }

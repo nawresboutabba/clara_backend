@@ -1,4 +1,5 @@
 import { COMMITTE_ROLE, ERRORS, HTTP_RESPONSE } from "../constants";
+import { IntegrantResponse } from "../controller/integrant";
 import ServiceError from "../handle-error/error.service";
 import Integrant, { IntegrantI } from "../models/integrant";
 import { IntegrantStatusI } from "../models/integrant";
@@ -196,7 +197,9 @@ const IntegrantService = {
                 },{
                     lastChangePosition: currentData,
                     role: COMMITTE_ROLE.LEADER
-                })
+                },
+                { returnOriginal: false },)
+                .populate('user')
                 return resolve(integrant)
             }catch(error){
                 const customError = new ServiceError(
@@ -208,25 +211,15 @@ const IntegrantService = {
             }
         })
     },
-    async currentLeader ():Promise<IntegrantI | void>{
+    async currentLeader ():Promise<IntegrantI>{
         return new Promise(async (resolve, reject)=> {
             try{
-                const currentLeader = await Integrant.find({
+                const currentLeader = await Integrant.findOne({
                   role:COMMITTE_ROLE.LEADER,
                   active: true  
                 })
-                if(currentLeader.length == 0){
-                    return resolve()
-                }
-                if(currentLeader.length == 1){
-                    return resolve(currentLeader[1])
-                }else{
-                    const customError = new ServiceError(
-                        ERRORS.SERVICE.MULTIPLES_CURRENT_LEADER,
-                        HTTP_RESPONSE._500
-                    )
-                    return reject(customError)
-                }
+
+                return resolve(currentLeader)
             }catch(error){
                 const customError = new ServiceError(
                     ERRORS.SERVICE.MULTIPLES_CURRENT_LEADER,
@@ -237,18 +230,20 @@ const IntegrantService = {
         })
     },
     async abdicationLeader(currentData?: Date):Promise<IntegrantI>{
-        return new Promise((resolve, reject)=>{
+        return new Promise(async (resolve, reject)=>{
             try{
                 if (!currentData){
-                    currentData = new Date()
+                    throw new Error ("currentData is required")
                 }
-                const general = Integrant.findOneAndUpdate({
+                const general = await Integrant.findOneAndUpdate({
                     active:true,
-                    rol:COMMITTE_ROLE.LEADER
+                    role:COMMITTE_ROLE.LEADER
                 },{
-                    rol:COMMITTE_ROLE.GENERAL,
-                    lastChangePosition: currentData
+                    role:COMMITTE_ROLE.GENERAL,
+                    lastChangePosition: currentData,
+                    update:currentData
                 })
+
                 return resolve(general)
             }catch(error){
                 const customError = new ServiceError(
@@ -264,7 +259,7 @@ const IntegrantService = {
         return new Promise(async (resolve, reject)=> {
             try{
                 const members = await Integrant.find({
-                    isActive: true.valueOf,
+                    active: true,
                     finished: null
                 })
                 return resolve(members)
@@ -286,6 +281,7 @@ const IntegrantService = {
                     finished: null,
                     role: COMMITTE_ROLE.GENERAL
                 })
+                .populate('user')
                 return resolve(generalMembers)
             }catch(error){
                 const customError = new ServiceError(

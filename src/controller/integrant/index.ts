@@ -1,7 +1,20 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
 import { IntegrantI } from '../../models/integrant';
-import { newIntegrant , deleteIntegrant, newLeader, getAllCommitte, getGeneralMembers } from '../../repository/repository.integrants'
-import router = require('../../routes/configuration');
+import { newIntegrant , deleteIntegrant, newLeader, getGeneralMembers } from '../../repository/repository.integrants'
+import { UserResponse } from '../users';
+
+export interface IntegrantResponse {
+    user: UserResponse,
+    integrant_id: string, 
+    active: boolean,
+    created: Date,
+    last_change_position: Date,
+    finished?: Date,
+    group_validator?: string,
+    role: string 
+}
+
+
 /**
  * Endpoint for `Integrant` operations
  */
@@ -14,7 +27,7 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/leader/:integrantId')
-    public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantI>{
+    public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
         return newLeader(integrantId)
     }
     /**
@@ -24,11 +37,11 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/general')
-    public async newIntegrant(@Body() userId: string): Promise<IntegrantI>{
+    public async newIntegrant(@Body() userId: string): Promise<IntegrantResponse>{
         return newIntegrant(userId)
     }
     @Get()
-    public async getGeneralMembers():Promise<Array<IntegrantI>> {
+    public async getGeneralMembers():Promise<Array<IntegrantResponse>> {
         return getGeneralMembers()
     }
     @Delete('/general/:integrantId')

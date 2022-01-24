@@ -1,0 +1,33 @@
+use('PINC-SE')
+/**Users Insert
+ */
+db.users.insertMany([{
+    "_id": ObjectId("619d3881784795cff58174f8"),
+    "active":true,
+    "email":"adriana@gmail.com",
+    "userId":"pDWNYCf1BrFEX2UyHoTGG",
+    // "passwordExample"
+    "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
+    "workSpace":["ABSOLUTE"],
+    "__v":{"$numberInt":"0"},
+    "firstName":"adriana",
+    "lastName":"cardozo",
+    "username":"WASO",
+    "areaVisible":[{"$oid":"61afa167416ada18d66ca396"}],
+    "externalUser":false
+},
+{
+    "_id":ObjectId("619e5e1d880d9b6656fa6560"),
+    "active":true,
+    "email":"rafael@gmail.com",
+    "userId":"k0muWMToR4TWKhv1loYIF",
+    "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
+    "workSpace":["ABSOLUTE"],
+    "__v":{"$numberInt":"0"},
+    "firstName":"rafael",
+    "lastName":"rodrigue",
+    "username":"PERRI",
+    "externalUser":false
+    }
+])
+

@@ -7,15 +7,18 @@ import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 
 const AreaService = {
-    async newArea (data: AreaBody, company: CompanyI):Promise<AreaI>{
+    async newArea (data: AreaI):Promise<AreaI>{
         return new Promise(async (resolve, reject)=> {
             try{
-                let area : AreaI
-                area = Object.assign(data,{company}, {areaId: nanoid()})
-                const resp = await Area.create(area)
+                const resp = await Area.create(data)
                 return resolve(resp)
             }catch(error){
-                return reject(error)
+                const customError = new ServiceError(
+                    ERRORS.SERVICE.NEW_AREA,
+                    HTTP_RESPONSE._500,
+                    error
+                )
+                return reject(customError)
             }
 
         })
@@ -55,6 +58,21 @@ const AreaService = {
                 return reject(customError)                
             }
         })
+    },
+    async getAllAreas(): Promise<Array<AreaI>>{
+      return new Promise(async (resolve, reject)=> {
+          try{
+            const areas = await Area.find({})
+            return resolve(areas)
+          }catch(error){
+              return reject(new ServiceError(
+                  ERRORS.SERVICE.GET_ALL_AREAS,
+                  HTTP_RESPONSE._500,
+                  error
+              ))
+          }
+
+      })
     }
 }
 

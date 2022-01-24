@@ -12,8 +12,9 @@ import { AreaI } from "../../models/organization.area";
 export const genericAreaFilter = async (area: AreaI): Promise<AreaResponse> => {
     return new Promise((resolve, reject)=> {
         if(area) {
-            const { name } = area
+            const { areaId, name } = area
             return resolve({
+                area_id: areaId,
                 name
             })            
         }

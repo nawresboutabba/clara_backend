@@ -8,7 +8,7 @@ export function throwSanitizatorErrors(validationResult: Function, req: RequestM
             const errors = validationResult(req).array();
             if (errors.length > 0) {
               const customError = new RoutingError(
-                ERRORS.ROUTING.PATCH_SOLUTION,
+                routingError,
                 HTTP_RESPONSE._400,
                 errors
                 )

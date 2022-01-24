@@ -6,6 +6,34 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"AreaResponse": {
+				"properties": {
+					"area_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"area_id",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AreaBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"AreaI": {
 				"properties": {
 					"areaId": {
@@ -13,15 +41,11 @@
 					},
 					"name": {
 						"type": "string"
-					},
-					"company": {
-						"$ref": "#/components/schemas/CompanyI"
 					}
 				},
 				"required": [
 					"areaId",
-					"name",
-					"company"
+					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -96,47 +120,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"CompanyI": {
-				"properties": {
-					"_id": {},
-					"companyId": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"CNPJ": {
-						"type": "string"
-					},
-					"committe": {
-						"items": {
-							"$ref": "#/components/schemas/UserI"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"companyId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"AreaBody": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"companyId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"companyId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"UserBody": {
 				"description": "User interface used just for create a user",
 				"properties": {
@@ -178,18 +161,6 @@
 				"required": [
 					"email",
 					"password"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"AreaResponse": {
-				"properties": {
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1332,6 +1303,31 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"CompanyI": {
+				"properties": {
+					"_id": {},
+					"companyId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"CNPJ": {
+						"type": "string"
+					},
+					"committe": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"companyId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"HubI": {
 				"properties": {
 					"_id": {},
@@ -1482,7 +1478,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AreaI"
+									"$ref": "#/components/schemas/AreaResponse"
 								}
 							}
 						}
@@ -1500,6 +1496,54 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "GetAllAreas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/AreaResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/area/{areaId}": {
+			"get": {
+				"operationId": "GetArea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AreaResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "areaId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/user/signup": {

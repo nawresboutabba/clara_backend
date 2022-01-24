@@ -27,6 +27,7 @@ db.users.insertMany([{
     "firstName":"rafael",
     "lastName":"rodrigue",
     "username":"PERRI",
+    "areaVisible":[{"$oid":"61eeae6aba4af3e0bed0e872"}],
     "externalUser":false
     }
 ])

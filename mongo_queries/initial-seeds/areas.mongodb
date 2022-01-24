@@ -1,0 +1,16 @@
+use('PINC-SE')
+/**Areas Insert
+ */
+db.areas.insertMany([{
+    "_id": ObjectId("61afa167416ada18d66ca396"),
+    "areaId":"VZEQlqlQsAOeamZ6c_F09",
+    "name":"MARKETING",
+    "__v":{"$numberInt":"0"}
+    },
+    {"_id":ObjectId("61eeae6aba4af3e0bed0e872"),
+    "areaId":"9ohr-MSg-DUOB7ohHhI-B",
+    "name":"PRODUCCION",
+    "__v":{"$numberInt":"0"}
+    }
+])
+

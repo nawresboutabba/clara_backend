@@ -13,13 +13,21 @@ export function acl(rule:string){
              * Admin Role has full Access.Same function in IS_ADMIN (case situation)
              */
             if(req.user.email === OWNER){
-                next()
+                return next()
             }
             switch(rule){
-                case RULES.CAN_VIEW_CHALLENGE: await CAN_VIEW_CHALLENGE(req)
-                case RULES.IS_COMMITTE_MEMBER: await IS_COMMITTE_MEMBER(req)
-                case RULES.IS_LEADER: await IS_LEADER(req)
-                case RULES.IS_ADMIN: await IS_ADMIN(req)
+                case RULES.CAN_VIEW_CHALLENGE: 
+                    await CAN_VIEW_CHALLENGE(req)
+                    break;
+                case RULES.IS_COMMITTE_MEMBER: 
+                    await IS_COMMITTE_MEMBER(req)
+                    break;
+                case RULES.IS_LEADER: 
+                    await IS_LEADER(req)
+                    break;
+                case RULES.IS_ADMIN: 
+                    await IS_ADMIN(req)
+                    break;
             }
 
             next()

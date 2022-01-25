@@ -71,11 +71,10 @@ export const newIntegrant = async (userBody: IntegrantBody): Promise<IntegrantRe
                     const resp = genericIntegrantFilter(integrant)
                     return resolve(resp)
                 }else{
-                    const customError = new RepositoryError(
+                    throw new RepositoryError(
                         ERRORS.REPOSITORY.USER_NOT_EXIST,
                         HTTP_RESPONSE._404
                     )
-                    return reject (customError)
                 }
             }
         }catch(error){

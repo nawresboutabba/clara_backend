@@ -34,7 +34,6 @@ router.post('/integrant/general',[
     check('userId',"user does not exist").custom((value, {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {
             const user = await UserService.getUserActiveByUserId(value)
-
             if(!user){
                 return reject()
             }
@@ -43,8 +42,9 @@ router.post('/integrant/general',[
     })
 ],async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try{
+        await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.SIGNUP_USER)
         const integrantController = new IntegrantController()
-        const integrant = await integrantController.newIntegrant(req.body.userId)
+        const integrant = await integrantController.newIntegrant(req.body)
         res
         .json(integrant)
         .send()

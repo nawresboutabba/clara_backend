@@ -1,0 +1,26 @@
+use('PINC-SE')
+/**Users Insert
+ */
+
+ db.integrants.insertMany([
+    {
+    "_id":ObjectId("61eeee011db2ef2256fe8522"),
+    "user":{"$oid":"619e5e1d880d9b6656fa6560"},
+    "integrantId":"JEGJyib9DHgZHzqw8pM42",
+    "active":true,
+    "created":{"$date":{"$numberLong":"1643048449778"}},
+    "lastChangePosition":{"$date":{"$numberLong":"1643052837273"}},
+    "role":"GENERAL",
+    "__v":{"$numberInt":"0"}
+    },
+    {
+    "_id":ObjectId("61eef355db5b243c12a47479"),
+    "user":{"$oid":"619d3881784795cff58174f8"},
+    "integrantId":"cCh_MH31bxugWkdnMU0Wb",
+    "active":true,
+    "created":{"$date":{"$numberLong":"1643049813438"}},
+    "lastChangePosition":{"$date":{"$numberLong":"1643052837273"}},
+    "role":"LEADER",
+    "__v":{"$numberInt":"0"}
+    }
+ ])

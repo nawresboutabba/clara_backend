@@ -1,21 +1,31 @@
-use('PINC-SE')
-/**Users Insert
- */
-db.users.insertMany([{
+use('myFirstDatabase')
+
+
+db.users.insertMany([
+ /**
+    Adriana Cardozo is a member of the general 
+    committee and is part of the validation team 1. 
+    The area of origin is MARKENTING.
+  */    
+    {
     "_id": ObjectId("619d3881784795cff58174f8"),
     "active":true,
     "email":"adriana@gmail.com",
     "userId":"pDWNYCf1BrFEX2UyHoTGG",
     // "passwordExample"
     "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
-    "workSpace":["ABSOLUTE"],
     "__v":{"$numberInt":"0"},
     "firstName":"adriana",
     "lastName":"cardozo",
-    "username":"WASO",
+    "username":"ADRIANA_CARDOZO",
     "areaVisible":[{"$oid":"61afa167416ada18d66ca396"}],
     "externalUser":false
 },
+ /**
+    Rafael is a member of the general 
+    committee and is part of the validation team 1. 
+    The area of origin is PRODUCTION.
+  */    
 {
     "_id":ObjectId("619e5e1d880d9b6656fa6560"),
     "active":true,
@@ -23,14 +33,18 @@ db.users.insertMany([{
     "userId":"k0muWMToR4TWKhv1loYIF",
     // "passwordExample"
     "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
-    "workSpace":["ABSOLUTE"],
     "__v":{"$numberInt":"0"},
     "firstName":"rafael",
-    "lastName":"rodrigue",
-    "username":"PERRI",
-    "areaVisible":[{"$oid":"61eeae6aba4af3e0bed0e872"}],
+    "lastName":"rodriguez",
+    "username":"RAFA",
+    "areaVisible":[ObjectId(61eeae6aba4af3e0bed0e872)],
     "externalUser":false
     },
+ /**
+    Mariela is a member of the general 
+    committee and is part of the validation team 2. 
+    The area of origin is SALES.
+  */   
     {"_id": ObjectId("61eecb80e6398fceb9dcc484"),
     "username":"MARU",
     "email":"mariela@gmail.com",
@@ -40,26 +54,81 @@ db.users.insertMany([{
     "lastName":"cordera",
     "active":true,
     "externalUser":false,
-    "areaVisible":[],
+    "areaVisible":[ObjectId("61f0159f1df85ec66c70c6ad")],
     "points":{"$numberInt":"0"},
     "__v":{"$numberInt":"0"}
     },
-    /**
+
+ /**
+    João is the leader of the committee.
     Admin ROLE. Check OWNER in src/constants.ts
-     */
+  */   
     {
     "_id": ObjectId("61efe9c77f52d235f27015f7"),
-    "username":"SARQUIS_BOUTROS",
+    "username":"JOAO",
     "email":"owner@gmail.com",
     "userId":"aJ7LHLSI9-0QPisX5KvT4",
     "password":"$2b$10$1YP14rQHB2iILZVngTdjeu7TNu9my.tXUvX4GhBRPNdvXGeT.sLWa",
-    "firstName":"Hector",
-    "lastName":"Sarquis Boutros",
+    "firstName":"João",
+    "lastName":"Caetano",
     "active":true,
     "externalUser":false,
     "areaVisible":[],
     "points":{"$numberInt":"0"},
     "__v":{"$numberInt":"0"}
-    }
+    },
+ /**
+    Ricardo is a Product Owner.
+    Admin ROLE. Check OWNER in src/constants.ts
+  */
+  {
+    "_id":ObjectId("61f009fe17cafbe26e24154c"),
+    "username":"CALCA",
+    "email":"owner@gmail.com",
+    "userId":"j1iEj1I6eD5PbwQqY874f",
+    "password":"$2b$10$R6fpIn4SD7zRhQ8rQkPFLeSF16l0LA3HcFXlIu0q6e.RdM6kIRnyy",
+    "firstName":"Ricardo",
+    "lastName":"SCalcagno",
+    "active":true,
+    "externalUser":false,
+    "areaVisible":[],
+    "points":{"$numberInt":"0"},
+    "__v":{"$numberInt":"0"}
+  },
+ /**
+    Paula is a member of the general 
+    committee and is part of the validation team 2. 
+    The area of origin is SALES.
+  */   
+  {
+    "_id": ObjectId("61f00b786c33b0e651607b4a"),
+    "username":"PAU",
+    "email":"paula@gmail.com",
+    "userId":"ED_CP9a-qa2iTIOzR4evL",
+    "password":"$2b$10$0ehAGcDmftEM8MAEakPJNeNL3eZlvbcCsjiShlhj6oC/lDOrPD2rS",
+    "firstName":"Paula",
+    "lastName":"Paretto",
+    "active":true,
+    "externalUser":false,
+    "areaVisible":[ObjectId(61f0159f1df85ec66c70c6ad)],
+    "points":{"$numberInt":"0"},
+    "__v":{"$numberInt":"0"}
+    },
+    /**
+    Felipe is a generator
+     */
+        {"_id": ObjectId("61f00cf56c33b0e651607b4d"),
+        "username":"coutinho",
+        "email":"felipe@gmail.com",
+        "userId":"LScX6gHw0rUUmXEcoH-1w",
+        "password":"$2b$10$xTZD65X/tF29QgdnW8ft1O/L.9fiGPvPhOaBMs/UnxP4bK4WM62t6",
+        "firstName":"Felipe",
+        "lastName":"Coutinho",
+        "active":true,
+        "externalUser":false,
+        "areaVisible":[ObjectId(61eeae6aba4af3e0bed0e872)],
+        "points":{"$numberInt":"0"},
+        "__v":{"$numberInt":"0"}
+        }  
 ])
 

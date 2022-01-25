@@ -9,7 +9,13 @@ db.areas.insertMany([{
     },
     {"_id":ObjectId("61eeae6aba4af3e0bed0e872"),
     "areaId":"9ohr-MSg-DUOB7ohHhI-B",
-    "name":"PRODUCCION",
+    "name":"PRODUCTION",
+    "__v":{"$numberInt":"0"}
+    },
+    {
+    "_id":ObjectId("61f0159f1df85ec66c70c6ad"),
+    "areaId":"boDNuIio2D-_E32KCMHaK",
+    "name":"SALES",
     "__v":{"$numberInt":"0"}
     }
 ])

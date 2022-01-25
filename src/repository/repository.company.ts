@@ -2,7 +2,6 @@ import { CompanyI } from "../models/organizacion.companies"
 import { CompanyBody } from '../controller/company'
 import CompanyService from "../services/Organization.Company.Service"
 import { nanoid } from 'nanoid'
-import HubService from "../services/Hub.Service"
 
 export const newCompany = async (body: CompanyBody): Promise<CompanyI>=> {
     return new Promise(async (resolve, reject)=> {

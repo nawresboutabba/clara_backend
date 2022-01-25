@@ -1,7 +1,10 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
-import { IntegrantI } from '../../models/integrant';
-import { newIntegrant , deleteIntegrant, newLeader, getGeneralMembers } from '../../repository/repository.integrants'
+import { newIntegrant , newLeader, getGeneralMembers, deleteGeneralMember } from '../../repository/repository.integrants'
 import { UserResponse } from '../users';
+
+export interface IntegrantBody{
+    userId: string
+}
 
 export interface IntegrantResponse {
     user: UserResponse,
@@ -37,16 +40,16 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/general')
-    public async newIntegrant(@Body() userId: string): Promise<IntegrantResponse>{
-        return newIntegrant(userId)
+    public async newIntegrant(@Body() user: IntegrantBody): Promise<IntegrantResponse>{
+        return newIntegrant(user)
     }
     @Get()
     public async getGeneralMembers():Promise<Array<IntegrantResponse>> {
         return getGeneralMembers()
     }
     @Delete('/general/:integrantId')
-    public async deleteLeader(@Path('integrantId') integrantId: string): Promise<boolean>{
-        return deleteIntegrant(integrantId)
+    public async deleteGeneralMember(@Path('integrantId') integrantId: string): Promise<boolean>{
+        return deleteGeneralMember(integrantId)
     }
     /**
      * Return all committe: LEADER + GENERAL

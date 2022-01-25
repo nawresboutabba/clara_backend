@@ -34,88 +34,46 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"AreaI": {
+			"UserResponse": {
 				"properties": {
-					"areaId": {
-						"type": "string"
+					"area_visible": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
 					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"areaId",
-					"name"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"UserI": {
-				"properties": {
-					"_id": {
-						"type": "string",
-						"description": "Mongo Document Id"
-					},
-					"username": {
-						"type": "string",
-						"description": "Username"
-					},
-					"email": {
-						"type": "string",
-						"description": "User email"
-					},
-					"userId": {
-						"type": "string",
-						"description": "Business User Id"
-					},
-					"password": {
-						"type": "string",
-						"description": "Password encrypted"
-					},
-					"firstName": {
-						"type": "string",
-						"description": "user first name"
-					},
-					"lastName": {
-						"type": "string",
-						"description": "User last name"
+					"external_user": {
+						"type": "boolean"
 					},
 					"active": {
-						"type": "boolean",
-						"description": "Is the user active?"
-					},
-					"externalUser": {
-						"type": "boolean",
-						"description": "External User. If true is external user that has participation in OpenChallenges"
-					},
-					"areaVisible": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Area that is visible for user"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Last user update"
+						"type": "boolean"
 					},
 					"points": {
 						"type": "number",
-						"format": "double",
-						"description": "Resume: Points earned for participation in platform."
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
 					}
 				},
 				"required": [
+					"area_visible",
+					"external_user",
+					"active",
+					"points",
 					"username",
 					"email",
-					"userId",
-					"password",
-					"firstName",
-					"lastName",
-					"active",
-					"externalUser",
-					"points"
+					"first_name",
+					"last_name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -161,50 +119,6 @@
 				"required": [
 					"email",
 					"password"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"UserResponse": {
-				"properties": {
-					"area_visible": {
-						"items": {
-							"$ref": "#/components/schemas/AreaResponse"
-						},
-						"type": "array"
-					},
-					"external_user": {
-						"type": "boolean"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"points": {
-						"type": "number",
-						"format": "double"
-					},
-					"username": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"first_name": {
-						"type": "string"
-					},
-					"last_name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"area_visible",
-					"external_user",
-					"active",
-					"points",
-					"username",
-					"email",
-					"first_name",
-					"last_name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -460,6 +374,92 @@
 					"file_complementary",
 					"areas_available",
 					"participation"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AreaI": {
+				"properties": {
+					"areaId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"areaId",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UserI": {
+				"properties": {
+					"_id": {
+						"type": "string",
+						"description": "Mongo Document Id"
+					},
+					"username": {
+						"type": "string",
+						"description": "Username"
+					},
+					"email": {
+						"type": "string",
+						"description": "User email"
+					},
+					"userId": {
+						"type": "string",
+						"description": "Business User Id"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password encrypted"
+					},
+					"firstName": {
+						"type": "string",
+						"description": "user first name"
+					},
+					"lastName": {
+						"type": "string",
+						"description": "User last name"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Is the user active?"
+					},
+					"externalUser": {
+						"type": "boolean",
+						"description": "External User. If true is external user that has participation in OpenChallenges"
+					},
+					"areaVisible": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Area that is visible for user"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Last user update"
+					},
+					"points": {
+						"type": "number",
+						"format": "double",
+						"description": "Resume: Points earned for participation in platform."
+					}
+				},
+				"required": [
+					"username",
+					"email",
+					"userId",
+					"password",
+					"firstName",
+					"lastName",
+					"active",
+					"externalUser",
+					"points"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1328,27 +1328,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"HubI": {
-				"properties": {
-					"_id": {},
-					"hubId": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"hubId",
-					"name",
-					"active"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"CompanyBody": {
 				"properties": {
 					"name": {
@@ -1357,37 +1336,11 @@
 					"CNPJ": {
 						"type": "string"
 					},
-					"hub": {
-						"items": {
-							"$ref": "#/components/schemas/HubI"
-						},
-						"type": "array"
-					}
+					"hub": {}
 				},
 				"required": [
 					"name",
 					"CNPJ"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"CommitteI": {
-				"properties": {
-					"active": {
-						"type": "boolean"
-					},
-					"leader": {
-						"$ref": "#/components/schemas/UserI"
-					},
-					"general": {
-						"items": {
-							"$ref": "#/components/schemas/UserI"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"active"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1404,51 +1357,55 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"IntegrantI": {
+			"IntegrantResponse": {
 				"properties": {
 					"user": {
-						"$ref": "#/components/schemas/UserI",
-						"description": "Validator User"
+						"$ref": "#/components/schemas/UserResponse"
 					},
-					"integrantId": {
-						"type": "string",
-						"description": "committe integrant Id"
+					"integrant_id": {
+						"type": "string"
 					},
 					"active": {
-						"type": "boolean",
-						"description": "is active?"
+						"type": "boolean"
 					},
 					"created": {
 						"type": "string",
-						"format": "date-time",
-						"description": "When was created?"
+						"format": "date-time"
 					},
-					"lastChangePosition": {
+					"last_change_position": {
 						"type": "string",
-						"format": "date-time",
-						"description": "Date of the last change of position in the committe. \nFor example from LEADER to GENERAL or GENERAL to leader"
+						"format": "date-time"
 					},
 					"finished": {
 						"type": "string",
-						"format": "date-time",
-						"description": "Date end"
+						"format": "date-time"
 					},
-					"groupValidator": {
-						"$ref": "#/components/schemas/GroupValidatorI",
-						"description": "committe integrant can be part of group validator\n. Just Committe integrants can be validators"
+					"group_validator": {
+						"type": "string"
 					},
 					"role": {
-						"type": "string",
-						"description": "What is the role? Committe General or Committe Leader"
+						"type": "string"
 					}
 				},
 				"required": [
 					"user",
-					"integrantId",
+					"integrant_id",
 					"active",
 					"created",
-					"lastChangePosition",
+					"last_change_position",
 					"role"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IntegrantBody": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1555,7 +1512,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserI"
+									"$ref": "#/components/schemas/UserResponse"
 								}
 							}
 						}
@@ -2224,134 +2181,6 @@
 				}
 			}
 		},
-		"/company/hub/{hubId}": {
-			"post": {
-				"operationId": "AddToHub",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CompanyI"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint for adding a company to hub.",
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "hubId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"description": "company that will be added",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "PullToHub",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CompanyI"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint for delete a company from Hub.",
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "hubId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"description": "company that will be deleted",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
-			}
-		},
-		"/committe/leader": {
-			"post": {
-				"operationId": "NewLeader",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CommitteI"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "string"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/committe": {
-			"post": {
-				"operationId": "NewCommitte",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
-			}
-		},
 		"/group-validator": {
 			"post": {
 				"operationId": "NewGroupValidator",
@@ -2389,7 +2218,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IntegrantI"
+									"$ref": "#/components/schemas/IntegrantResponse"
 								}
 							}
 						}
@@ -2418,7 +2247,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IntegrantI"
+									"$ref": "#/components/schemas/IntegrantResponse"
 								}
 							}
 						}
@@ -2428,12 +2257,11 @@
 				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"description": "user that will be converted from generator to commite (GENERAL)",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "string"
+								"$ref": "#/components/schemas/IntegrantBody"
 							}
 						}
 					}
@@ -2450,7 +2278,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/IntegrantI"
+										"$ref": "#/components/schemas/IntegrantResponse"
 									},
 									"type": "array"
 								}
@@ -2464,7 +2292,7 @@
 		},
 		"/integrant/general/{integrantId}": {
 			"delete": {
-				"operationId": "DeleteLeader",
+				"operationId": "DeleteGeneralMember",
 				"responses": {
 					"200": {
 						"description": "Ok",

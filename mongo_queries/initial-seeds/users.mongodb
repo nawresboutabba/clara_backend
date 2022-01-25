@@ -43,6 +43,23 @@ db.users.insertMany([{
     "areaVisible":[],
     "points":{"$numberInt":"0"},
     "__v":{"$numberInt":"0"}
+    },
+    /**
+    Admin ROLE. Check OWNER in src/constants.ts
+     */
+    {
+    "_id": ObjectId("61efe9c77f52d235f27015f7"),
+    "username":"SARQUIS_BOUTROS",
+    "email":"owner@gmail.com",
+    "userId":"aJ7LHLSI9-0QPisX5KvT4",
+    "password":"$2b$10$1YP14rQHB2iILZVngTdjeu7TNu9my.tXUvX4GhBRPNdvXGeT.sLWa",
+    "firstName":"Hector",
+    "lastName":"Sarquis Boutros",
+    "active":true,
+    "externalUser":false,
+    "areaVisible":[],
+    "points":{"$numberInt":"0"},
+    "__v":{"$numberInt":"0"}
     }
 ])
 

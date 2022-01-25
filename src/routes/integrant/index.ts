@@ -1,7 +1,8 @@
 import { NextFunction } from "express";
 import { check, validationResult } from "express-validator";
-import { ERRORS } from "../../constants";
+import { ERRORS, RULES } from "../../constants";
 import IntegrantController from "../../controller/integrant";
+import { acl } from "../../middlewares/acl";
 import authentication from "../../middlewares/authentication";
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import IntegrantService from "../../services/Integrant.service";
@@ -11,6 +12,7 @@ import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.er
 const router = require("express").Router();
 
 router.get('/integrant/general',[
+    authentication
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
     try{
         const integrantController = new IntegrantController()
@@ -26,6 +28,9 @@ router.get('/integrant/general',[
 
 router.post('/integrant/general',[
     authentication,
+    acl(
+        RULES.IS_LEADER
+      ),
     check('userId',"user does not exist").custom((value, {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {
             const user = await UserService.getUserActiveByUserId(value)
@@ -49,6 +54,10 @@ router.post('/integrant/general',[
 })
 
 router.post('/integrant/leader/:integrantId',[
+    authentication,
+    acl(
+        RULES.IS_ADMIN
+      ),
     check('integrantId', "integrant does not exist").custom((value, {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {
             const check = await IntegrantService.checkIntegrantStatus(value)
@@ -74,10 +83,23 @@ router.post('/integrant/leader/:integrantId',[
 
 
 router.delete('/integrant/general/:integrantId',[
+    authentication,
+    acl(
+        RULES.IS_LEADER
+      ),
+    check('integrantId', "integrant does not exist").custom((value, {req}): Promise<void>=> {
+        return new Promise(async (resolve, reject)=> {
+            const check = await IntegrantService.checkIntegrantStatus(value)
+            if(check.exist && check.isActive){
+                return resolve()
+            }
+            return reject()
+        })
+    }),
 ],async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=> {
     try{
         const integrantController = new IntegrantController()
-        const integrant = await integrantController.deleteLeader(req.params.integrantId)
+        const integrant = await integrantController.deleteGeneralMember(req.params.integrantId)
         res
         .json(integrant)
         .send()

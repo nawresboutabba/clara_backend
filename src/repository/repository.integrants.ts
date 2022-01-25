@@ -5,7 +5,7 @@ import UserService from "../services/User.service";
 import IntegrantService from "../services/Integrant.service";
 import { nanoid } from 'nanoid'
 import { genericArrayIntegrantFilter, genericIntegrantFilter } from "../utils/field-filters/integrant";
-import { IntegrantResponse } from "../controller/integrant";
+import { IntegrantBody, IntegrantResponse } from "../controller/integrant";
 
 
 /**
@@ -16,7 +16,7 @@ import { IntegrantResponse } from "../controller/integrant";
  * @returns 
  */
 
-export const newIntegrant = async (userId: string): Promise<IntegrantResponse> => {
+export const newIntegrant = async (userBody: IntegrantBody): Promise<IntegrantResponse> => {
     return new Promise (async (resolve, reject)=> {
         try{
             /**
@@ -26,7 +26,7 @@ export const newIntegrant = async (userId: string): Promise<IntegrantResponse> =
              * role: if user exist, then has role. this field not depend on active flag
              * 
              */
-            const check = await IntegrantService.checkUserInCommitte(userId)
+            const check = await IntegrantService.checkUserInCommitte(userBody.userId)
             /**
              * User is member and active. They can't be added again.
              */
@@ -55,7 +55,7 @@ export const newIntegrant = async (userId: string): Promise<IntegrantResponse> =
              * User wasn't / isn't a member . He's register as a GENERAL MEMBER
              */
             if(!check.exist){
-                const user = await UserService.getUserActiveByUserId(userId)
+                const user = await UserService.getUserActiveByUserId(userBody.userId)
                 
                 if (user){
                     const currentDate = new  Date()
@@ -100,7 +100,7 @@ export const isIntegrant = async (integrantId: string): Promise<boolean> => {
     })
 }
 
-export const deleteIntegrant = async (integrantId:string ): Promise<boolean> => {
+export const deleteGeneralMember = async (integrantId:string ): Promise<boolean> => {
     return new Promise(async (resolve, reject)=> {
         try{
             const integrant = await IntegrantService.getIntegrantActiveById(integrantId)

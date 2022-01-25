@@ -1,9 +1,7 @@
 import { COMMITTE_ROLE, ERRORS, HTTP_RESPONSE } from "../constants";
-import { IntegrantResponse } from "../controller/integrant";
 import ServiceError from "../handle-error/error.service";
 import Integrant, { IntegrantI } from "../models/integrant";
 import { IntegrantStatusI } from "../models/integrant";
-import { getGeneralMembers } from "../repository/repository.integrants";
 
 const IntegrantService = {
     async getIntegrantActiveById(integrantId:string):Promise<IntegrantI>{
@@ -71,7 +69,7 @@ const IntegrantService = {
                     integrantId:integrantId
                 },{
                     active: false,
-                    finished: new Date
+                    finished: new Date()
                 })
                 return resolve(true)
             }catch(error){
@@ -218,11 +216,12 @@ const IntegrantService = {
                   role:COMMITTE_ROLE.LEADER,
                   active: true  
                 })
+                .populate('user')
 
                 return resolve(currentLeader)
             }catch(error){
                 const customError = new ServiceError(
-                    ERRORS.SERVICE.MULTIPLES_CURRENT_LEADER,
+                    ERRORS.SERVICE.GET_CURRENT_LEADER,
                     HTTP_RESPONSE._500
                 )
                 return reject(customError)

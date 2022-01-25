@@ -2,10 +2,11 @@ import { NextFunction } from "express";
 import { RequestMiddleware , ResponseMiddleware} from "../../middlewares/middlewares.interface";
 import AreaController from "../../controller/area/area";
 import { body, check, validationResult } from "express-validator";
-import { ERRORS, VALIDATIONS_MESSAGE_ERROR } from "../../constants";
+import { ERRORS, RULES, VALIDATIONS_MESSAGE_ERROR } from "../../constants";
 import AreaService from "../../services/Area.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import authentication from "../../middlewares/authentication";
+import { acl } from "../../middlewares/acl";
 
 const router = require("express").Router();
 
@@ -18,6 +19,9 @@ const router = require("express").Router();
  */
 router.post('/area',[
     authentication,
+    acl(
+        RULES.IS_LEADER
+    ),
     body("name", VALIDATIONS_MESSAGE_ERROR.AREA.NAME_EMPTY).notEmpty(),
     check("name", "area's name exist").custom((value , {req}): Promise<void>=> {
         return new Promise(async (resolve, reject)=> {

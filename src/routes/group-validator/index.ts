@@ -8,10 +8,12 @@ import GroupValidatorService from "../../services/GroupValidator.service";
 import IntegrantService from "../../services/Integrant.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import * as _ from 'lodash';
+import authentication from "../../middlewares/authentication";
 
 const router = require("express").Router();
 
 router.post('/group-validator',[
+    authentication,
     body("name", "name can not be empty").notEmpty(),
     body("name","group validator name already exist").custom(async (value, {req}): Promise<void> => {
         return new Promise(async (resolve, reject)=> {
@@ -61,6 +63,21 @@ router.post('/group-validator',[
         const committe = await groupValidatorController.newGroupValidator(req.body)
         res
         .json(committe)
+        .send()
+    }catch(error){
+        next(error)
+    }
+})
+
+router.get('/group-validator',[
+    authentication
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> { 
+    try{
+        const groupValidatorController = new GroupValidatorController()
+        const groupValidators = await groupValidatorController.getAllGroupValidatorsDetails()
+        res
+        .json(groupValidators)
+        .status(200)
         .send()
     }catch(error){
         next(error)

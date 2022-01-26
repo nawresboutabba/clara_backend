@@ -168,7 +168,7 @@ export const newLeader= async (integrantId: string):Promise<IntegrantResponse>=>
 export const getAllCommitte = async (): Promise<Array<IntegrantI>> => {
     return new Promise(async (resolve, reject)=> {
         try{
-            const committe = await IntegrantService.getAllMembers()
+            const committe = await IntegrantService.getAllActiveMembers()
             return resolve(committe)
         }catch(error){
             const customError = new RepositoryError(

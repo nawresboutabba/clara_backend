@@ -49,3 +49,14 @@ export const genericArrayUserFilter =  async (users: Array<UserI>): Promise<Arra
         })
     })
 }
+
+export const lightUserFilter =  (user: UserI): any=> {
+    return ({
+        user_id: user._id,
+        username: user.username,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        points: user.points,
+    })
+}

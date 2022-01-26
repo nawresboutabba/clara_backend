@@ -6,6 +6,8 @@ import { GroupValidatorI } from "../models/group-validator";
 import { nanoid } from "nanoid";
 import { IntegrantI } from "../models/integrant";
 import { genericGroupValidatorFilter } from "../utils/field-filters/group-validator";
+import { genericUserFilter, lightUserFilter } from "../utils/field-filters/user";
+import { genericIntegrantFilter } from "../utils/field-filters/integrant";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,
@@ -41,5 +43,27 @@ export const newGroupValidator = async (body:GroupValidatorBody)=> {
         }catch(error){
             return reject(error)
         }
+    })
+}
+
+/**
+ * @TODO create dictionary type or similar for this response
+ * @returns 
+ */
+export const getAllGroupValidatorsDetails = async(): Promise<any> => {
+    return new Promise(async (resolve, reject)=> {
+        const groupValidators : IntegrantI[] = await IntegrantService.getAllActiveMembers()
+
+        const grouping = groupValidators.reduce((groupingGV, item): any => {
+                if(item.groupValidator){
+                    let groupValidatorId = item.groupValidator.groupValidatorId
+                    let groupDetails = {"name": item.groupValidator.name, "created": item.groupValidator.created}
+                    groupingGV[groupValidatorId] = groupingGV[groupValidatorId] || {"details": groupDetails, "integrants": []}
+                    let user = lightUserFilter(item.user)
+                    groupingGV[groupValidatorId].integrants.push(user)     
+                }
+                return groupingGV
+            }, {})
+        return resolve(grouping)
     })
 }

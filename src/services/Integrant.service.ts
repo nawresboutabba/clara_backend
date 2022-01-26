@@ -1,5 +1,6 @@
 import { COMMITTE_ROLE, ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
+import { GroupValidatorI } from "../models/group-validator";
 import Integrant, { IntegrantI } from "../models/integrant";
 import { IntegrantStatusI } from "../models/integrant";
 
@@ -11,6 +12,8 @@ const IntegrantService = {
                     integrantId: integrantId,
                     active: true
                 })
+                .populate('groupValidator')
+                .populate('user')
                 return resolve(integrant)
             }catch(error){
                 const customError = new ServiceError(
@@ -33,6 +36,8 @@ const IntegrantService = {
                         active: true
                     }]
                 })
+                .populate('groupValidator')
+                .populate('user')
                 return resolve (integrantsResp)
             }catch(error){
                 const customError = new ServiceError(
@@ -150,6 +155,7 @@ const IntegrantService = {
                     role: role,
                     active:true
                 })
+                .populate('groupValidator')
                 return resolve(integrant)
             }catch(error){
                 return reject(error)
@@ -261,6 +267,7 @@ const IntegrantService = {
                     active: true,
                     finished: null
                 })
+                .populate('groupValidator')
                 return resolve(members)
             }catch(error){
                 const customError = new ServiceError(
@@ -281,6 +288,7 @@ const IntegrantService = {
                     role: COMMITTE_ROLE.GENERAL
                 })
                 .populate('user')
+                .populate('groupValidator')
                 return resolve(generalMembers)
             }catch(error){
                 const customError = new ServiceError(
@@ -289,6 +297,25 @@ const IntegrantService = {
                     error
                 )
                 return reject(customError)
+            }
+        })
+    },
+    async insertIntegrantsToGroupValidator(integrants: Array<IntegrantI>, groupValidator: GroupValidatorI): Promise<any> {
+        return new Promise(async (resolve, reject)=> {
+            try{
+                const resp = await Integrant.updateMany({
+                    _id:{$in: integrants}
+                },{
+                    groupValidator: groupValidator
+                })
+                return resolve(resp)
+            }catch(error){
+                return reject( new ServiceError(
+                    ERRORS.SERVICE.INSERT_INTEGRANT_TO_GROUP_VALIDATOR,
+                    HTTP_RESPONSE._500,
+                    error
+                )
+            )
             }
         })
     }

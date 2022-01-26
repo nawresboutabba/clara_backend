@@ -43,6 +43,21 @@ const GroupValidatorService = {
                 return reject(customError)
             }
         })
+    },
+    async getAllGroupValidators (): Promise<any> {
+        return new Promise(async (resolve, reject)=> {
+            try{
+                const groupValidatorsResp = await GroupValidator.find({})
+                return resolve(groupValidatorsResp)
+            }catch(error){
+                const customError = new ServiceError(
+                    ERRORS.SERVICE.GET_ALL_GROUP_VALIDATORS,
+                    HTTP_RESPONSE._500,
+                    error
+                )
+                return reject(customError)
+            }
+        })
     }
 }
 

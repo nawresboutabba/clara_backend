@@ -1,5 +1,5 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request} from 'tsoa'
-import { newGroupValidator } from '../../repository/repository.group-validator';
+import { getAllGroupValidatorsDetails, newGroupValidator } from '../../repository/repository.group-validator';
 
 export interface GroupValidatorBody {
     name: string,
@@ -16,5 +16,12 @@ export default class GroupValidatorController extends Controller{
     @Post()
     public async newGroupValidator (@Body() body: GroupValidatorBody ):Promise<any>{
         return newGroupValidator(body)
+    }
+    /**
+     * 
+     */
+    @Get()
+    public async getAllGroupValidatorsDetails ():Promise<any>{
+        return getAllGroupValidatorsDetails()
     }
 }

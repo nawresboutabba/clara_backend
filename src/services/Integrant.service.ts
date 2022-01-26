@@ -260,7 +260,7 @@ const IntegrantService = {
             }
         })
     },
-    async getAllMembers(): Promise<Array<IntegrantI>> {
+    async getAllActiveMembers(): Promise<IntegrantI []> {
         return new Promise(async (resolve, reject)=> {
             try{
                 const members = await Integrant.find({
@@ -268,6 +268,7 @@ const IntegrantService = {
                     finished: null
                 })
                 .populate('groupValidator')
+                .populate('user')
                 return resolve(members)
             }catch(error){
                 const customError = new ServiceError(

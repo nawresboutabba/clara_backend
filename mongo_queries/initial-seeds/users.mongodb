@@ -14,11 +14,11 @@ db.users.insertMany([
     "userId":"pDWNYCf1BrFEX2UyHoTGG",
     // "passwordExample"
     "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
-    "__v":{"$numberInt":"0"},
+    "__v":0,
     "firstName":"adriana",
     "lastName":"cardozo",
     "username":"ADRIANA_CARDOZO",
-    "areaVisible":[{"$oid":"61afa167416ada18d66ca396"}],
+    "areaVisible":[ObjectId("61afa167416ada18d66ca396")],
     "externalUser":false
 },
  /**
@@ -33,11 +33,11 @@ db.users.insertMany([
     "userId":"k0muWMToR4TWKhv1loYIF",
     // "passwordExample"
     "password":"$2b$10$BYXxVweQ0xVnOK5U8q.TaeogHTYe.gxBTbxRAMLLFOKtOwKPNpA/C",
-    "__v":{"$numberInt":"0"},
+    "__v":0,
     "firstName":"rafael",
     "lastName":"rodriguez",
     "username":"RAFA",
-    "areaVisible":[ObjectId(61eeae6aba4af3e0bed0e872)],
+    "areaVisible":[ObjectId("61eeae6aba4af3e0bed0e872")],
     "externalUser":false
     },
  /**
@@ -64,18 +64,18 @@ db.users.insertMany([
     Admin ROLE. Check OWNER in src/constants.ts
   */   
     {
-    "_id": ObjectId("61efe9c77f52d235f27015f7"),
-    "username":"JOAO",
-    "email":"owner@gmail.com",
-    "userId":"aJ7LHLSI9-0QPisX5KvT4",
-    "password":"$2b$10$1YP14rQHB2iILZVngTdjeu7TNu9my.tXUvX4GhBRPNdvXGeT.sLWa",
-    "firstName":"João",
-    "lastName":"Caetano",
-    "active":true,
-    "externalUser":false,
-    "areaVisible":[],
-    "points":{"$numberInt":"0"},
-    "__v":{"$numberInt":"0"}
+      "_id": ObjectId("61efe9c77f52d235f27015f7"),
+      "username":"JOAO",
+      "email":"joao@gmail.com",
+      "userId":"aJ7LHLSI9-0QPisX5KvT4",
+      "password":"$2b$10$1YP14rQHB2iILZVngTdjeu7TNu9my.tXUvX4GhBRPNdvXGeT.sLWa",
+      "firstName":"João",
+      "lastName":"Caetano",
+      "active":true,
+      "externalUser":false,
+      "areaVisible":[],
+      "points":{"$numberInt":"0"},
+      "__v":{"$numberInt":"0"}
     },
  /**
     Ricardo is a Product Owner.
@@ -110,7 +110,7 @@ db.users.insertMany([
     "lastName":"Paretto",
     "active":true,
     "externalUser":false,
-    "areaVisible":[ObjectId(61f0159f1df85ec66c70c6ad)],
+    "areaVisible":[ObjectId("61f0159f1df85ec66c70c6ad")],
     "points":{"$numberInt":"0"},
     "__v":{"$numberInt":"0"}
     },
@@ -126,7 +126,7 @@ db.users.insertMany([
         "lastName":"Coutinho",
         "active":true,
         "externalUser":false,
-        "areaVisible":[ObjectId(61eeae6aba4af3e0bed0e872)],
+        "areaVisible":[ObjectId("61eeae6aba4af3e0bed0e872")],
         "points":{"$numberInt":"0"},
         "__v":{"$numberInt":"0"}
         }  

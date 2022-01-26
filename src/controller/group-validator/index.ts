@@ -3,6 +3,7 @@ import { newGroupValidator } from '../../repository/repository.group-validator';
 
 export interface GroupValidatorBody {
     name: string,
+    integrants: string[]
 }
 
 @Route('/group-validator')

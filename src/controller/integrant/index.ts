@@ -1,4 +1,5 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
+import { GroupValidatorResponse } from '../../repository/repository.group-validator';
 import { newIntegrant , newLeader, getGeneralMembers, deleteGeneralMember } from '../../repository/repository.integrants'
 import { UserResponse } from '../users';
 
@@ -13,7 +14,7 @@ export interface IntegrantResponse {
     created: Date,
     last_change_position: Date,
     finished?: Date,
-    group_validator?: string,
+    group_validator?: GroupValidatorResponse,
     role: string 
 }
 

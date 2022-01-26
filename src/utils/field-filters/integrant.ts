@@ -1,5 +1,6 @@
 import { IntegrantResponse } from "../../controller/integrant";
 import { IntegrantI } from "../../models/integrant";
+import { genericGroupValidatorFilter } from "./group-validator";
 import { genericUserFilter } from "./user";
 
 export const genericIntegrantFilter = async (integrant : IntegrantI): Promise<IntegrantResponse> => {
@@ -10,10 +11,11 @@ export const genericIntegrantFilter = async (integrant : IntegrantI): Promise<In
             created,
             lastChangePosition,
             finished,
-            groupValidator,
             role
         } = integrant
         const user = await genericUserFilter(integrant.user)
+        const group_validator = await genericGroupValidatorFilter(integrant.groupValidator)
+
         return resolve ({
             user,
             integrant_id: integrantId,
@@ -21,7 +23,8 @@ export const genericIntegrantFilter = async (integrant : IntegrantI): Promise<In
             created,
             last_change_position: lastChangePosition,
             finished,
-            role            
+            role,
+            group_validator            
         })
     })
 }

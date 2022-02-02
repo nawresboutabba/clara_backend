@@ -13,6 +13,19 @@ import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../.
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 
+router.post("/solution/default-configuration",[
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try{
+    const solutionController = new SolutionController()
+    const solutionConfiguration = await solutionController.setSolutionDefaultConfiguration(req.body)
+  res
+  .json(solutionConfiguration)
+  .status(200)
+  .send()
+  }catch(error){
+    next(error)
+  }
+})
 
 router.post(
   "/solution",

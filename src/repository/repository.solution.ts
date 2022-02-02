@@ -15,6 +15,8 @@ import { AreaI } from "../models/organization.area";
 import { newTeam } from "./repository.team"
 import { TeamI } from "../models/team";
 import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation } from "./repository.invitation";
+import { ConfigurationBody } from "../controller/configuration";
+import { ConfigurationBaseI } from "../models/configuration.default";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {

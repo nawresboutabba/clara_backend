@@ -1,41 +1,38 @@
-import { nanoid } from "nanoid"
-import { ChallengeConfigurationBody } from "../controller/configuration"
-import { ChallengeConfigurationI } from "../models/configuration.challenge"
-import DefaultConfigurationChallengeService from "../services/ConfigurationChallenge.service"
+import { RESOURCE } from "../constants"
+import { ConfigurationBody } from "../controller/configuration"
+import { ConfigurationBaseI } from "../models/configuration.default"
+import ConfigurationService from "../services/Configuration.service"
+import { toCamelCase } from "../utils/general/to-camel-case"
 
-export const setDefaultChallengeConfiguration= async (configuration: ChallengeConfigurationBody): Promise<ChallengeConfigurationI> => {
+
+export const getChallengeConfiguration = async (): Promise<ConfigurationBaseI> => {
     return new Promise(async (resolve, reject)=> {
         try{
-            const currentConfiguration = await DefaultConfigurationChallengeService.getDefaultChallengeConfiguration()
-            
-            const date = new Date()
-            const conf: ChallengeConfigurationI = {
-                configurationId: nanoid(),
-                updated:date,
-                canChooseScope: configuration.can_choose_scope,
-                isPrivate:configuration.is_private,
-                filterReactionFilter: configuration.filter_reaction_filter,
-                filterMinimunLikes: configuration.filter_minimum_likes,
-                filterMaximunDontUnderstand:configuration.filter_maximum_dont_understand,
-                communityCanSeeReactions: configuration.community_can_see_reactions,
-                filterCanShowDisagreement: configuration.can_show_disagreement,
-                filterCanFixDesapprovedIdea:configuration.can_fix_disapproved_idea,
-                timeInPark: configuration.time_in_park,
-                timeExpertFeedback: configuration.time_expert_feedback,
-                timeIdeaFix:configuration.time_idea_fix,
-                WSALevel: configuration.WSALevel,
-                participationModeAvailable: configuration.participation_mode_available,
-                isStrategic: configuration.is_strategic
-            }
-
-            if(currentConfiguration == undefined){
-                const challengeConfiguration = await DefaultConfigurationChallengeService.newConfiguration(conf)
-                return resolve(challengeConfiguration)
-            }
-            const challengeConfiguration = DefaultConfigurationChallengeService.setDefaultChallengeConfiguration(conf)
-            return resolve(challengeConfiguration)
+            const configuration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
+            return resolve(configuration)
         }catch(error){
             return reject(error)
         }
     })
 }
+
+  export const setDefaultConfiguration = async (configuration: ConfigurationBody, situation: string): Promise<ConfigurationBaseI> => {
+      return new Promise(async (resolve, reject)=> {
+          try{
+            const configurationDefault = await ConfigurationService.getConfigurationDefault(situation) 
+            let configurationCamelCase = toCamelCase(configuration)
+            configurationCamelCase.situationConfig = situation,
+            configurationCamelCase.updated = new Date() 
+            console.log(configurationCamelCase)
+            if(configurationDefault){
+                const configurationResp = await ConfigurationService.updateConfigurationDefault(situation, configurationCamelCase)
+                return resolve(configurationResp)
+            }
+    
+            const configurationResp = await ConfigurationService.setConfiguration(configurationCamelCase)
+            return resolve(configurationResp)
+          }catch(error){
+              return reject(error)
+          }
+    })
+  }

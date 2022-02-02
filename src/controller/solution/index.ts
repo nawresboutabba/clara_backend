@@ -1,7 +1,11 @@
 import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Query, Example} from 'tsoa'
+import { RESOURCE } from '../../constants';
+import { ConfigurationBaseI } from '../../models/configuration.default';
 import { SolutionI } from '../../models/situation.solutions';
+import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
+import { ConfigurationBody } from '../configuration';
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { UserRequest } from '../users';
 
@@ -89,5 +93,9 @@ export default class SolutionController extends Controller {
     @Get()
     public async listSolutions(@Query() query?: any): Promise<SolutionResponse []> {
         return listSolutions(query, undefined)
+    }
+    @Post('/default-configuration')
+    public async setSolutionDefaultConfiguration(@Body() body:ConfigurationBody): Promise<ConfigurationBaseI> {
+        return setDefaultConfiguration(body, RESOURCE.SOLUTION)
     }
 }

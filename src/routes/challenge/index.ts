@@ -7,13 +7,95 @@ import checkResourceExistFromParams from '../../middlewares/check-resources-exis
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { ERRORS, PARTICIPATION_MODE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { ChallengeI } from "../../models/situation.challenges";
 import GroupValidatorService from "../../services/GroupValidator.service";
+import * as _ from 'lodash'; 
+import ConfigurationService from "../../services/Configuration.service";
+
+router.get("/challenge/default-configuration", [
+],async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const challengeController = new ChallengeController()
+    const challengeConfiguration =  await challengeController.getChallengeDefaultConfiguration()
+    res
+    .json(challengeConfiguration)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
+
+router.post("/challenge/default-configuration",[
+  authentication,
+  acl(RULES.IS_LEADER),
+  check("", 'challenge configuration already exist').custom((value:string, {req}): Promise<void>=> {
+    return new Promise(async (resolve, reject)=> {
+      const currentConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
+      if (currentConfiguration){
+        return reject()
+      }
+      return resolve()
+    })
+  }),
+  body("can_show_disagreement").isBoolean(),
+  body("disagreement_default").isBoolean(),
+  body("can_fix_desapproved_idea").isBoolean(),
+  body("can_choose_scope").isBoolean(),
+  body("is_private_default").isBoolean(),
+  body("can_choose_WSALevel").isBoolean(),
+  check("WSALevel_available", "WSALevel_available invalid").custom((value: string[], {req}): Promise<void>=> {
+    return new Promise(async (resolve, reject)=> {
+      const WSALevel: string [] = _.sortedUniq(value)
+      WSALevel.forEach(value => {
+        if(![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
+          return reject("WSALevel_available invalid")
+        }
+      })
+      return resolve()
+    })     
+  }),
+  body("WSALevel_default").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
+  body("community_can_see_reactions").isBoolean(),
+  body("maximun_dont_understand").isInt({min:0}),
+  body("minimun_likes").isInt({min:0}),
+  body("reaction_filter").isBoolean(),
+  body("external_contribution_available_for_generators").isBoolean(),
+  body("external_contribution_available_for_committee").isBoolean(),
+  body("participation_mode_available").isIn([PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP]),
+  check("participation_mode_available", 'participation_mode_available invalid').custom((value: string[], {req}): Promise<void>=> {
+    return new Promise(async (resolve, reject)=> {
+      const participationModeAvailable: string [] = _.sortedUniq(value)
+      participationModeAvailable.forEach(value => {
+        if(![PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(value)){
+          return reject("participation_mode_available invalid")
+        }
+      })
+      return resolve()
+    })     
+  }),
+  body("time_in_park").isInt(),
+  body("time_expert_feedback").isInt(),
+  body("time_idea_fix").isInt(),
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.CHALLENGE_CONFIGURATION)
+
+    const challengeController = new ChallengeController()
+    const challengeConfiguration =  challengeController.setChallengeDefaultConfiguration(req.body)
+    res
+    .json(challengeConfiguration)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
 
 router.post(
   "/challenge",
@@ -308,18 +390,5 @@ router.post('/challenge/:challengeId/reaction',[
     }
 })
 
-router.post('/challenge/default-configuration',[
-], (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
-  try{
-    const challengeController = new ChallengeController()
-    const challengeConfiguration = challengeController.setChallengeDefaultConfiguration(req.body)
-    res
-    .json(challengeConfiguration)
-    .status(200)
-    .send()
-  }catch(error){
-    next(error)
-  }
-})
 const challengeRouter = router
 export default challengeRouter;

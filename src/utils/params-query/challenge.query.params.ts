@@ -1,13 +1,14 @@
+import { PARTICIPATION_MODE } from "../../constants";
 import { QuerySituationForm, formatSitutationQuery } from "./situation.query.params";
 
 function modalitySwitch(modality:string){
     switch(modality){
         case '0': 
-            return ["TEAM"]
+            return [PARTICIPATION_MODE.TEAM]
         case '1':
-            return ["INDIVIDUAL_WITH_COAUTHORSHIP"]
+            return [PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP]
         default:
-            return ["TEAM","INDIVIDUAL_WITH_COAUTHORSHIP"]
+            return [PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP]
     }
 }
 

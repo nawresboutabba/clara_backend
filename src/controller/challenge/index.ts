@@ -9,9 +9,10 @@ import { SolutionBody, SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';
-import { ChallengeConfigurationI } from '../../models/configuration.challenge';
-import { setDefaultChallengeConfiguration } from '../../repository/repository.configuration-challenge';
-import { ChallengeConfigurationBody } from '../configuration';
+import { getChallengeConfiguration, setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
+import { ConfigurationBody } from '../configuration';
+import { ConfigurationBaseI } from '../../models/configuration.default';
+import { RESOURCE } from '../../constants';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -116,7 +117,11 @@ export default class ChallengeController extends Controller {
         return newReaction(challengeId, reaction, user)
     }
     @Post('/default-configuration')
-    public async setChallengeDefaultConfiguration(@Body() body: ChallengeConfigurationBody): Promise<ChallengeConfigurationI>{
-        return setDefaultChallengeConfiguration(body)
+    public async setChallengeDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI>{
+        return setDefaultConfiguration(body, RESOURCE.CHALLENGE)
+    }
+    @Get('/default-configuration')
+    public async getChallengeDefaultConfiguration(): Promise<ConfigurationBaseI>{
+        return getChallengeConfiguration()
     }
 }

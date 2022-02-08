@@ -9,9 +9,14 @@ import { validationResult, body , check} from "express-validator";
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import SolutionController from '../../controller/solution/index'
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, PARTICIPATION_MODE, RESOURCE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
+import TeamService from "../../services/Team.service";
+import { isCompositionUsersValid } from "../../utils/configuration-rules/participation";
+import UserService from "../../services/User.service";
+import ConfigurationService from "../../services/Configuration.service";
+import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 router.post("/solution/default-configuration",[
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -31,50 +36,129 @@ router.post(
   "/solution",
   [
     authentication,
-    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
-    body("author", VALIDATIONS_MESSAGE_ERROR.SOLUTION.AUTHOR_EMPTY).notEmpty(),
-    check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
-    /**
-     * @see SituationI for details about the combination between WSALevel and areas_available
-     */
-    check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
+    body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
       return new Promise(async (resolve, reject)=> {
-        if([WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
-          if (value == WSALEVEL.AREA){
-            const areas = await AreaService.getAreasById(req.body.areas_available)
-            if(areas.length == req.body.areas_available.length){
-              return resolve()
-            }
-            return reject("Array area invalid")
+        try{
+          const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
+          if(!defaultSolutionConfiguration){
+            return reject(ERRORS.ROUTING.DEFAULT_CONFIGURATION_NOT_FOUND)
           }
+          req.utils = {defaultSolutionConfiguration, ...req.utils}
           return resolve()
+        }catch(error){
+          return reject(error)
         }
-        return reject("WSALevel invalid")
-      })     
+      })
     }),
-    body("author").custom((value:string , {req}): Promise<void>=> {
-      return new Promise((resolve, reject)=> {
-        if(!(req.body.author || req.body.team)){
-          return reject(ERRORS.ROUTING.TEAM_AND_AUTHOR_NOT_EXIST)
+    check("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    body("images", "images does not valid").isArray(),
+
+    body("department_affected").isArray(),
+    body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          const departmentAffected = await AreaService.getAreasById(value)       
+          if(departmentAffected.length == value.length){
+            req.utils = {departmentAffected, ...req.utils}
+            return resolve()
+          }
+          return reject("department_affected does not valid")
+        }catch(error){
+          return reject("department_affected does not valid")
         }
-        return resolve()
+      })
+    }),
+
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).notEmpty().escape().isIn([true, false]),
+    body("WSALevel_chosed").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          /**
+           * Check that user can choose WSALevel, otherwise ignore decision. 
+           */
+          if(req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
+            /**
+             * If user can choose WSALevel, check that WSALevel is valid.
+             */
+            if(!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)){
+              return reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
+            }
+            return resolve()
+          }
+          /**
+           * Ignore decision because user can not choose WSALevel. Taking default configuration. 
+           */
+          return resolve()
+        }catch(error){
+          return reject(error)
+        }
+      })
+    }),
+    
+    /**
+     * participation.mode_chosed is like participation_mode_chosed
+     */
+     body("participation.chosed_mode", "participation.mode_chosed invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          /**
+           * Check that participation chosed by user is available
+           */
+          if(req.utils.defaultSolutionConfiguration.participationModeAvailable.includes(value)){
+            return resolve()
+          }
+          return reject("participation.chosed_mode invalid")
+        }catch(error){
+          return reject(error)
+        }
+      })
+    }),
+    body("participation.chosed_mode" ).custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          const creator = await UserService.getUserActiveByUserId(req.body.participation.creator)
+          const guests = await UserService.getUsersById(req.body.participation.guests)
+          /**
+           * if any of the members who are going to participate does not exist.
+           */
+          if( !guests.length == req.body.participation.guests.length || !creator){
+            return reject("participation integrants is not valid")
+          }
+          const validComposition = isCompositionUsersValid(creator, guests, req.challenge)
+          if(value == PARTICIPATION_MODE.TEAM && !req.body.participation.team_name){
+            return reject("participation.team_name is required")
+          }
+          /**
+           * Check that team_name does not exist
+           */
+          if(value == PARTICIPATION_MODE.TEAM && req.body.participation.team_name){
+            const team = await TeamService.getTeamByName(req.body.participation.team_name)
+            if(team){
+              return reject("team_with this name already exist")
+            }
+          }
+  
+          /**
+           * Check if all users are allowed
+           */
+          if(validComposition){
+            req.utils = {creator, guests, ...req.utils}
+            return resolve()
+          }
+          return reject("invalid composition. Invitations to externals users not availible for this user")
+        }catch(error){
+          return reject("participation.chosed_mode invalid")
+        }
       })
     }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next:NextFunction) => {
     try {
-      const errors = validationResult(req).array();
-      if (errors.length > 0) {
-        const customError = new RoutingError(
-          ERRORS.ROUTING.ADD_SOLUTION,
-          HTTP_RESPONSE._400,
-          errors
-          )
-        throw customError;
-      } 
+      await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_SOLUTION)
+
       const solutionController = new SolutionController()
-      const solution = await solutionController.newSolution(req.body, req.user)
+      const solution = await solutionController.newSolution(req.body, req.user, req.utils)
       res
         .status(200)
         .json(solution)

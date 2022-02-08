@@ -1,13 +1,17 @@
 import { DateTime } from 'luxon'
 
-export default function checkISOData (date?: Date ): boolean {
+export default function toISOData (date?: Date ): Date {
     try{
         if(date){
-            return DateTime.fromISO(date).toISO() == date
+            return DateTime.fromISO(date).toISODate()
         }
-        return false
+        throw new Error("Date is not defined")
     }catch(error){
-        return false
+        return error
     }
 
 } 
+
+export function getCurrentDate (): Date {
+    return DateTime.local().toISODate()
+}

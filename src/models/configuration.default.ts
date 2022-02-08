@@ -1,11 +1,6 @@
 import { Schema, model } from "mongoose";
 
 export interface ConfigurationBaseI {
-    updated: Date,
-    /**
-     * Could be CHALLENGE, SOLUTION or PROBLEM
-     */
-    situationConfig: string,
     /**
      * Can those responsible express their disagreement? 
      * Affects an attribute in the Scale that indicates 
@@ -13,11 +8,6 @@ export interface ConfigurationBaseI {
      * or disagrees with the rating.
      */
     canShowDisagreement: boolean,
-    /**
-     * Default value. In case the user cannot choose, 
-     * this attribute is taken as the chosen value
-     */
-    disagreementDefault: boolean,
     /**
      * ¿Pueden los responsables hacer correcciones 
      * después de desaprobar una idea? 
@@ -32,11 +22,6 @@ export interface ConfigurationBaseI {
      * (otherwise, the default value goes)
      */
     canChooseScope: boolean,
-    /**
-     * Default value. In case the user cannot choose, 
-     * this attribute is taken as the chosen value
-     */
-    isPrivateDefault: boolean,
      /**
       * Determines if the user can choose the WSALevel_chosed.
       */
@@ -48,12 +33,6 @@ export interface ConfigurationBaseI {
       * and problem statement
       */
     WSALevelAvailable: string[],
-     /**
-      * Default value. 
-      * In case the user cannot choose, 
-      * this attribute is taken as the chosen value
-      */
-    WSALevelDefault: string,
     /**
      * The number of reactions a solution has can be seen. 
      * Affects the solution: the reactions achieved can be seen
@@ -63,11 +42,11 @@ export interface ConfigurationBaseI {
      * What is the maximum number of negative 
      * reactions of this type that can be had?
      */
-    maximunDontUnderstand: number,
+    maximumDontUnderstand: number,
     /**
      * What is the minimum number of likes you must have to continue?
      */
-    minimunLikes: number,
+    minimumLikes: number,
     /**
      * Used in the square, it indicates 
      * if a limit is established on the reactions. 
@@ -110,6 +89,40 @@ export interface ConfigurationBaseI {
      */
     timeIdeaFix: number     
 }
+
+export interface ConfigurationSettingI extends ConfigurationBaseI {
+  isPrivated: boolean,
+  participationModeChosed: string,
+  WSALevelChosed: string,
+}
+
+export interface ConfigurationDefaultI extends ConfigurationBaseI {
+    updated: Date,
+    /**
+     * Could be CHALLENGE, SOLUTION or PROBLEM
+     */
+    situationConfig: string,
+    /**
+     * Default value. In case the user cannot choose, 
+     * this attribute is taken as the chosen value
+     */
+    disagreementDefault: boolean,
+    /**
+     * Default value. In case the user cannot choose, 
+     * this attribute is taken as the chosen value
+     */
+    isPrivateDefault: boolean,
+    /**
+     * Default value. 
+     * In case the user cannot choose, 
+     * this attribute is taken as the chosen value
+     */
+    WSALevelDefault: string,
+}
+
+/**
+ * Configuration Default Model
+ */
 const configurationBase = new Schema ({
   updated: Date,
   situationConfig: {
@@ -125,8 +138,8 @@ const configurationBase = new Schema ({
   WSALevelAvailable: [String],
   WSALevelDefault: String,
   communityCanSeeReactions: Boolean,
-  maximunDontUnderstand: Number,
-  minimunLikes: Number,
+  maximumDontUnderstand: Number,
+  minimumLikes: Number,
   reactionFilter: Boolean,
   externalContributionAvailableForGenerators: Boolean,
   externalContributionAvailableForCommittee: Boolean,

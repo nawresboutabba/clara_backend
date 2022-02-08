@@ -4,102 +4,94 @@ import { SolutionBody, SolutionResponse } from "../controller/solution";
 import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { PARTICIPATION_MODE, SOLUTION, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { PARTICIPATION_MODE, RESOURCE, SOLUTION, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
-import AreaService from "../services/Area.service";
-import { AreaI } from "../models/organization.area";
 import { newTeam } from "./repository.team"
 import { TeamI } from "../models/team";
 import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation } from "./repository.invitation";
-import { ConfigurationBody } from "../controller/configuration";
-import { ConfigurationBaseI } from "../models/configuration.default";
+import ConfigurationService from "../services/Configuration.service";
+import {  ConfigurationSettingI } from "../models/configuration.default";
 
-export const newSolution = async (body:SolutionBody,  user: UserRequest, challengeId?: string):Promise<SolutionResponse> => {
+export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: any, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
         try {
-          const guests = await UserService.getUsersById(body.participation.guest)
+          const guests = utils.guests
           const insertedBy = await UserService.getUserActiveByUserId(user.userId)
           /**
            * Solution have to have setted `author` or `team`.
            * If both are undefined or null, then throw error
            */
-          const creator = await UserService.getUserActiveByUserId(body.participation.creator)
+          const creator = utils.creator
 
-          const created = new Date();
-          const {
-            description,
-            file_complementary: fileComplementary,
-            images,
-            is_private: isPrivate,
-            title,
-            WSALevel,
-            areas_available
-          } = body;
-          let areasAvailable: Array<AreaI>
-
-          if (WSALevel == WSALEVEL.AREA){
-             areasAvailable = await AreaService.getAreasById(areas_available)
-          }
+          let challenge: ChallengeI
           let data: SolutionI
+          if (challengeId){
+            challenge = await ChallengeService.getChallengeActiveById(challengeId)
+          }
+          const created = new Date();
+
+          let configuration: ConfigurationSettingI
+          if(challengeId){
+            configuration = getConfigurationFromChallenge(body, challenge)
+          } else {
+            const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
+            configuration = getConfigurationFromDefaultSolution(body, defaultSolutionConfiguration)
+          }      
+          /**
+           * If the challenge's solution, 
+           * then title is the same that challenge. 
+           * For this reason, is undefined in the solution.
+           */
+          const title = challengeId ? undefined : body.title
+          const groupValidator = challengeId ? challenge.groupValidator: undefined
+
           data = {
             insertedBy,
             solutionId: nanoid(),
-            title: title,
+            title,
+            challengeId,
+            challenge,
+            description: body.description,
+            departmentAffected: utils.departmentAffected,
             created: created,
-            updated: created,
-            canChooseScope: SOLUTION.CAN_CHOOSE_SCOPE,
-            status: SOLUTION_STATUS.LAUNCHED,
-            timeInPark: SOLUTION.TIME_IN_PARK,
-            isPrivate:false,
             active: true,
-            description,
-            fileComplementary: fileComplementary,
-            images: images,
-            WSALevel,
-            areasAvailable,
-            participationModeChosen: body.participation.chosen_mode,
-            filterReactionFilter: false,
-            filterMinimunLikes: 0,
-            filterMaximunDontUnderstand:1000,
-            communityCanSeeReactions: true,
-            filterCanShowDisagreement: true,
-            filterCanFixDesapprovedIdea: true,
-            timeExpertFeedback: 3000,
-            timeIdeaFix:3000
+            updated: created,
+            status: SOLUTION_STATUS.LAUNCHED,
+            fileComplementary: body.file_complementary,
+            images: body.images,
+            groupValidator,
+            ...configuration,
           }
 
-          let challenge: ChallengeI
-          if (challengeId){
-            data.challengeId =challengeId
-            challenge = await ChallengeService.getChallengeActiveById(challengeId)
-            data.challenge = challenge
-          }
+          if (data.WSALevelChosed == WSALEVEL.AREA){
+             data.areasAvailable = challenge.areasAvailable
+            }
           
           /**
            * Participation Mode Choosed
            */
-          if (body.participation.chosen_mode == PARTICIPATION_MODE.TEAM){
+          if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
             const team : TeamI  = await newTeam(creator, body.participation.team_name)
             data.team = team
-          }else if (body.participation.chosen_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+          }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
             data.author = creator
             data.coauthor = guests
           }
 
-            const solution = await SolutionService.newSolution(data, challenge);   
-            /**
+             const solution = await SolutionService.newSolution(data, challenge);   
+             /**
              * Create invitations
              */
-            if (body.participation.chosen_mode = PARTICIPATION_MODE.TEAM){
+            if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
               generateSolutionTeamInvitation(creator, guests, solution, solution.team)
-            }else if (body.participation.chosen_mode = PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+            }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
               generateSolutionCoauthorshipInvitation(creator, guests, solution)
             }
-
+            
             const resp = genericSolutionFilter(solution)
             return resolve(resp)  
         }catch (error) {
@@ -154,4 +146,77 @@ export const listSolutions = async (query: QuerySolutionForm,challengeId?: strin
       return reject(error)
     }
   })
+}
+
+const getConfigurationFromChallenge  = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {
+  const configuration = {
+    canShowDisagreement: challenge.canShowDisagreement,
+    canFixDisapprovedIdea: challenge.canFixDisapprovedIdea,
+    canChooseScope: challenge.canChooseScope,
+    /**
+     * attribute that can be set by the person responsible 
+     * for the solution or the committee, 
+     * depending on the permission granted
+     */    
+    isPrivated: challenge.canChooseScope == true ? body.is_privated : challenge.isPrivated,
+    canChooseWSALevel: challenge.canChooseWSALevel,
+    WSALevelAvailable: challenge.WSALevelAvailable,
+    WSALevelChosed: challenge.WSALevelChosed ,
+    communityCanSeeReactions: challenge.communityCanSeeReactions,
+    minimumLikes: challenge.minimumLikes,
+    maximumDontUnderstand: challenge.maximumDontUnderstand,
+    reactionFilter: challenge.reactionFilter,
+    participationModeAvailable: challenge.participationModeAvailable,
+    /**
+     * attribute that can be set by the person responsible 
+     * for the solution or the committee, 
+     * depending on the permission granted
+     */    
+    participationModeChosed: challenge.participationModeAvailable.includes(body.participation.chosed_mode)? body.participation.chosed_mode : challenge.participationModeChosed,
+    timeInPark: challenge.timeInPark,
+    timeExpertFeedback: challenge.timeExpertFeedback,
+    timeIdeaFix: challenge.timeIdeaFix,
+    externalContributionAvailableForGenerators: challenge.externalContributionAvailableForGenerators,
+    externalContributionAvailableForCommittee: challenge.externalContributionAvailableForCommittee,
+  }
+  return configuration
+}
+
+const getConfigurationFromDefaultSolution = (body: SolutionBody, defaultSolutionConfiguration: any): ConfigurationSettingI => {
+  const configuration = {
+    canShowDisagreement: defaultSolutionConfiguration.canShowDisagreement,
+    canFixDisapprovedIdea: defaultSolutionConfiguration.canFixDisapprovedIdea,
+    canChooseScope: defaultSolutionConfiguration.canChooseScope,
+    /**
+     * attribute that can be set by the person responsible 
+     * for the solution or the committee, 
+     * depending on the permission granted
+     */    
+    isPrivated: defaultSolutionConfiguration.canChooseScope == true ? body.is_privated : defaultSolutionConfiguration.isPrivated,    
+    canChooseWSALevel: defaultSolutionConfiguration.canChooseWSALevel,
+    WSALevelAvailable: defaultSolutionConfiguration.WSALevelAvailable,
+    /**
+     * attribute that can be set by the person responsible 
+     * for the solution or the committee, 
+     * depending on the permission granted
+     */
+    WSALevelChosed: defaultSolutionConfiguration.canChooseWSALevel == true? body.WSALevel_chosed : defaultSolutionConfiguration.WSALevel_chosed,    
+    communityCanSeeReactions: defaultSolutionConfiguration.communityCanSeeReactions,
+    minimumLikes: defaultSolutionConfiguration.minimumLikes,
+    maximumDontUnderstand: defaultSolutionConfiguration.maximumDontUnderstand,
+    reactionFilter: defaultSolutionConfiguration.reactionFilter,
+    participationModeAvailable: defaultSolutionConfiguration.participationModeAvailable,
+    /**
+     * attribute that can be set by the person responsible 
+     * for the solution or the committee, 
+     * depending on the permission granted
+     */    
+    participationModeChosed: defaultSolutionConfiguration.participationModeAvailable.includes(body.participation_mode_chosed)? body.participation_mode_chosed : defaultSolutionConfiguration.participationModeChosed,    
+    timeInPark: defaultSolutionConfiguration.timeInPark,
+    timeExpertFeedback: defaultSolutionConfiguration.timeExpertFeedback,
+    timeIdeaFix: defaultSolutionConfiguration.timeIdeaFix,
+    externalContributionAvailableForGenerators: defaultSolutionConfiguration.externalContributionAvailableForGenerators,
+    externalContributionAvailableForCommittee: defaultSolutionConfiguration.externalContributionAvailableForCommittee,
+  }
+  return configuration
 }

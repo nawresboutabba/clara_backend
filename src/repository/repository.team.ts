@@ -16,31 +16,6 @@ import { TeamI } from "../models/team";
  * @param name 
  * @returns 
  */
-/* export const newTeam = async (creator: string, members: Array<string>, teamName: string): Promise<TeamResponse> => {
-    return new Promise(async (resolve, reject)=> {
-        try{
-            const creatorUser = await UserService.getUserActiveByUserId(creator)
-            const membersUser = await UserService.getUsers(members)
-            const id = nanoid()
-            const team = await TeamService.newTeam(creatorUser, membersUser, teamName, id)
-        
-            const {name, created, teamId} = team
-
-            const integrantsFiltered = await genericArrayUserFilter(team.members)
-            const creatorFiltered = await genericUserFilter(team.creator)
-
-            return resolve({
-                team_id: teamId,
-                name, 
-                created, 
-                members: integrantsFiltered,
-                creator: creatorFiltered
-            })
-        }catch(error){
-            return reject(error)
-        }
-    })
-} */
 
 export const newTeam = async (creator: UserI, name: string): Promise<TeamI> => {
     return new Promise(async (resolve, reject)=> {

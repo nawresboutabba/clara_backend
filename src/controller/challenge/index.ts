@@ -11,29 +11,32 @@ import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';
 import { getChallengeConfiguration, setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { ConfigurationBody } from '../configuration';
-import { ConfigurationBaseI } from '../../models/configuration.default';
+import { ConfigurationDefaultI } from '../../models/configuration.default';
 import { RESOURCE } from '../../constants';
+import { GroupValidatorResponse } from '../../repository/repository.group-validator';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
  */
 export interface ChallengeBody extends SituationBody {
     /**
-     * author is required for a challenge
+     * author is required for a challenge creation
      */
     author: string,
     is_strategic: boolean,
-    file_complementary: string,
-    participation_mode: string[],
-    group_validator: string
+    /**
+     * Required for challenge
+     */
+    group_validator: string,
+    finalization: Date
 }
 
 
 export interface ChallengeResponse extends SituationResponse {
-    is_strategic: boolean,
-    time_period: number,
-    participation_mode: Array<string>,
     challenge_id: string
+    is_strategic: boolean,
+    finalization: Date,
+    group_validator: GroupValidatorResponse
 }
 
 @Route('challenge')
@@ -49,8 +52,8 @@ export default class ChallengeController extends Controller {
         return newChallenge(body, user)
     }
     @Post(':challengeId/solution')
-    public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string): Promise<SolutionResponse>{
-        return newSolution(body, user, challengeId)
+    public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string , @Inject() utils : any): Promise<SolutionResponse>{
+        return newSolution(body, user, utils,  challengeId)
     }
     /**
      * Challenge listing
@@ -117,11 +120,11 @@ export default class ChallengeController extends Controller {
         return newReaction(challengeId, reaction, user)
     }
     @Post('/default-configuration')
-    public async setChallengeDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI>{
+    public async setChallengeDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationDefaultI>{
         return setDefaultConfiguration(body, RESOURCE.CHALLENGE)
     }
     @Get('/default-configuration')
-    public async getChallengeDefaultConfiguration(): Promise<ConfigurationBaseI>{
+    public async getChallengeDefaultConfiguration(): Promise<ConfigurationDefaultI>{
         return getChallengeConfiguration()
     }
 }

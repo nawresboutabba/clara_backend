@@ -1,11 +1,11 @@
 import { RESOURCE } from "../constants"
 import { ConfigurationBody } from "../controller/configuration"
-import { ConfigurationBaseI } from "../models/configuration.default"
+import { ConfigurationDefaultI } from "../models/configuration.default"
 import ConfigurationService from "../services/Configuration.service"
 import { toCamelCase } from "../utils/general/to-camel-case"
 
 
-export const getChallengeConfiguration = async (): Promise<ConfigurationBaseI> => {
+export const getChallengeConfiguration = async (): Promise<ConfigurationDefaultI> => {
     return new Promise(async (resolve, reject)=> {
         try{
             const configuration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
@@ -16,14 +16,14 @@ export const getChallengeConfiguration = async (): Promise<ConfigurationBaseI> =
     })
 }
 
-  export const setDefaultConfiguration = async (configuration: ConfigurationBody, situation: string): Promise<ConfigurationBaseI> => {
+  export const setDefaultConfiguration = async (configuration: ConfigurationBody, situation: string): Promise<ConfigurationDefaultI> => {
       return new Promise(async (resolve, reject)=> {
           try{
             const configurationDefault = await ConfigurationService.getConfigurationDefault(situation) 
             let configurationCamelCase = toCamelCase(configuration)
             configurationCamelCase.situationConfig = situation,
             configurationCamelCase.updated = new Date() 
-            console.log(configurationCamelCase)
+            
             if(configurationDefault){
                 const configurationResp = await ConfigurationService.updateConfigurationDefault(situation, configurationCamelCase)
                 return resolve(configurationResp)

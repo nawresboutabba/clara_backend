@@ -31,8 +31,8 @@ export function formatSitutationQuery(query: any): Promise<QuerySituationForm> {
          let { created_lt: $lte, created_gt: $gte }= query
 
          let created: createdFilter ={}
-         if(checkISOData($gte)){created.$gte= $gte}
-         if(checkISOData($lte)){created.$lte = $lte}
+         created.$gte= $gte
+         created.$lte = $lte
 
          /**
           * String filters

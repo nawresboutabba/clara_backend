@@ -18,60 +18,51 @@ export interface SituationBaseI {
    * a Functionality for add generator's challenge)
    */
   insertedBy: UserI,
-    /**
-     * Generator that create the solution. 
-     * This field exclusive with team configuration
-     */  
+  /**
+   * Generator that create the solution. 
+   * This field exclusive with team configuration
+   */  
   author?: UserI,
   /**
    * field that is combined with author 
    * when participationModeChosen = "INDIVIDUAL_WITH_COAUTHORSHIP"
    */
   coauthor?: Array<UserI>,
-    /**
-     * Field that is filled when participationModeChosen = "TEAM"
-     * This field exclusive with author and coauthor configuration
-     */
+  /**
+   * Field that is filled when participationModeChosen = "TEAM"
+   * This field exclusive with author and coauthor configuration
+   */
   team?: TeamI,
-     /**
-     * Solution creation date
-     */
+  /**
+   * Solution creation date
+   */
   created: Date,
-    /**
-     * Solution update date
-     */
+  /**
+   * Solution update date
+   */
   updated?: Date,
   /**
-   * Situation title
+   * Situation title. 
+   * If a challenge's solution, title is not required.
    */
-  title: string,
-    /**
-     * Solution description
-     */
+  title?: string,
+  /**
+   * Solution description
+   */
   description: string,
-    /**
-     * Flag that indicate if a solution is active.
-     * When a challenge is delete, the flag is false
-     */
+  /**
+   * Flag that indicate if a solution is active.
+   * When a challenge is delete, the flag is false
+   */
   active: boolean,
-    /**
-     * Solution images
-     */
+  /**
+   * Solution images
+   */
   images: Array<string>,
-  /**
-   * WorkSpaceAvailable.
-   * If the situation is available for all company or just for some areas. 
-   * @TODO convert description to constants
-   */
-  WSALevel: "COMPANY" | "AREA",
-  /**
-   * Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas.
-   */
-  areasAvailable?: Array<AreaI>,
   /**
    * Departments Affected
    */
-  departmentAffected?: Array<AreaI>
+  departmentAffected?: Array<AreaI>,
   /**
    * Group that do the analysis about the situation
    */
@@ -79,19 +70,105 @@ export interface SituationBaseI {
   /**
   * Challenge | Problem | Solution Status: @TODO define situation challenge
   */
-  status: string,
+   status: string,
   /**
    * Complementary files to challenge, solution or problem
    */
-  fileComplementary: string,
+   fileComplementary: string,
+  /**
+   * ---------------------------------
+   * Configuration Section
+   * ---------------------------------
+   */
+  /**
+   * Can those responsible express their disagreement? 
+   * It affects an attribute in the Barema that indicates 
+   * if the person responsible for the solution agrees or 
+   * disagrees with the rating.
+   */
+  canShowDisagreement: boolean,
+  /**
+   * Can managers make corrections after disapproving an idea? 
+   * Affects the ability to update the solution for a solution 
+   * status = REJECTED
+   */
+  canFixDisapprovedIdea: boolean,
+  /**
+   * Can the generator choose the privacy of the solution 
+   * (if it goes to the park or directly to the committee)?
+   * Affects the scope_chosed attribute.
+   * If can_chosose_scope = true, then the maintainer 
+   * can edit is_privated (otherwise, the default value goes)
+   */
+  canChooseScope: boolean,
+  /**
+   * if committee allow to user choose solution privacity
+   */
+  isPrivated: boolean,  
+  /**
+   * Determines if the user can edit the WSALevel_chosed.
+   */
+  canChooseWSALevel: boolean,
+  /**
+   * WorkSpaceAvailable.
+   * If the situation is available for all company or just for some areas. 
+   * @TODO convert description to constants
+   */
+  WSALevelAvailable: string []
+  /**
+   * Space for which the resource is available. 
+   * It can be One. 
+   * It is chosen by the person in charge of the situation
+   */
+  WSALevelChosed: string,
+  /**
+   * Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas.
+   */
+  areasAvailable?: Array<AreaI>,
   /**
    * Reactions in park
    */
-  reactions?: {
-    likes: number,
-    confused: number,
-    comments: number
-  },
+  communityCanSeeReactions: boolean,
+  minimumLikes: number,
+  maximumDontUnderstand: number,
+  reactionFilter: boolean
+  /**
+   * How can you participate in the proposal of a solution?
+   * - INDIVIDUAL_WITH_COAUTHORSHIP - TEAM
+   */
+  participationModeAvailable: string[],
+  /**
+   * How does the person in charge participate? 
+   * Works in combination with 
+   * participation_mode_available
+   */
+  participationModeChosed: string
+
+  timeInPark: number,
+  timeExpertFeedback: number,
+  timeIdeaFix: number,
+
+  /**
+   * Are invitations to external contributors 
+   * by generators allowed? 
+   * affects whether authors, co-authors, 
+   * and teams can be made up of externals. 
+   * If the scope is at the COMPANY level, 
+   * and this option is equal to true, 
+   * then the author or creator of the team can 
+   * invite people from outside the organization.
+   */
+  externalContributionAvailableForGenerators: boolean,
+  /**
+   * Are invitations to external contributors 
+   * by the committee allowed? affects whether authors, 
+   * co-authors, and teams can be made up of externals. 
+   * If the scope is at the COMPANY level, 
+   * and this option is equal to true, 
+   * then the author or creator of the team can invite 
+   * people from outside the organization.
+   */
+  externalContributionAvailableForCommittee: boolean,
 }
 
 const situationBase = new Schema({
@@ -118,7 +195,7 @@ const situationBase = new Schema({
     updated: Date,
     title: {
       type: String,
-      required: true
+      required: false
     },
     description: String,
     active: {
@@ -130,29 +207,43 @@ const situationBase = new Schema({
           type: String,
         },
       ],
-    WSALevel: {
-      type: String,
-      required: true
-    },
-    areasAvailable:  [{ 
-      type: Schema.Types.ObjectId,
-      ref: 'Area'
-     }],
-     departmentAffected: [{
-       type: Schema.Types.ObjectId,
-       ref: 'Area'
-     }],
-     groupValidator: {
-       type: Schema.Types.ObjectId,
-       ref: 'GroupValidator'
-     },
-     status: String,
-     fileComplementary: String,
-     reactions: {
-      likes: Number,
-      confused: Number,
-      comments: Number
-    },
+    departmentAffected: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Area'
+      }],
+    groupValidator: {
+        type: Schema.Types.ObjectId,
+        ref: 'GroupValidator'
+      },
+    status: String,
+    fileComplementary: String,
+  /**
+   * ---------------------------------
+   * Configuration Section
+   * ---------------------------------
+   */
+  canShowDisagreement: Boolean,
+  canFixDisapprovedIdea: Boolean,
+  canChooseScope: Boolean,
+  isPrivated: Boolean,
+  canChooseWSALevel: Boolean,
+  WSALevelAvailable: [String],
+  WSALevelChosed: String,
+  areasAvailable: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Area'
+  }],
+  communityCanSeeReactions: Boolean,
+  minimumLikes: Number,
+  maximumDontUnderstand: Number,
+  reactionFilter: Boolean,
+  participationModeAvailable: [String],
+  participationModeChosed: String,
+  timeInPark: Number,
+  timeExpertFeedback: Number,
+  timeIdeaFix: Number,
+  externalContributionAvailableForGenerators: Boolean,
+  externalContributionAvailableForCommittee: Boolean,
 }, options)
 
 export default model("SituationBase", situationBase);

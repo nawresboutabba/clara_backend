@@ -12,10 +12,12 @@ import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
-import { ChallengeI } from "../../models/situation.challenges";
 import GroupValidatorService from "../../services/GroupValidator.service";
 import * as _ from 'lodash'; 
-import ConfigurationService from "../../services/Configuration.service";
+import toISOData,{ getCurrentDate } from "../../utils/date";
+import { isCompositionUsersValid } from "../../utils/configuration-rules/participation";
+import UserService from "../../services/User.service";
+import TeamService from "../../services/Team.service";
 
 router.get("/challenge/default-configuration", [
 ],async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
@@ -34,7 +36,7 @@ router.get("/challenge/default-configuration", [
 router.post("/challenge/default-configuration",[
   authentication,
   acl(RULES.IS_LEADER),
-  check("", 'challenge configuration already exist').custom((value:string, {req}): Promise<void>=> {
+/*   check("", 'challenge configuration already exist').custom((value:string, {req}): Promise<void>=> {
     return new Promise(async (resolve, reject)=> {
       const currentConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
       if (currentConfiguration){
@@ -42,7 +44,7 @@ router.post("/challenge/default-configuration",[
       }
       return resolve()
     })
-  }),
+  }), */
   body("can_show_disagreement").isBoolean(),
   body("disagreement_default").isBoolean(),
   body("can_fix_desapproved_idea").isBoolean(),
@@ -87,7 +89,7 @@ router.post("/challenge/default-configuration",[
     await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.CHALLENGE_CONFIGURATION)
 
     const challengeController = new ChallengeController()
-    const challengeConfiguration =  challengeController.setChallengeDefaultConfiguration(req.body)
+    const challengeConfiguration =  await challengeController.setChallengeDefaultConfiguration(req.body)
     res
     .json(challengeConfiguration)
     .status(200)
@@ -104,52 +106,82 @@ router.post(
     acl(
       RULES.IS_COMMITTE_MEMBER
     ),
-    body("description", "description can not be empty").notEmpty(),
-    body("title", "title can not be empty").notEmpty(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("images", "images does not valid").isArray(),
+    body("department_affected").isArray(),
+    body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        const departmentAffected = await AreaService.getAreasById(body.department_affected)       
+        if(departmentAffected.length == value.length){
+          req.utils = departmentAffected
+          return resolve()
+        }
+        return reject("department_affected does not valid")
+      })
+    }),
     check("group_validator", "group_validator invalid").custom((value: string, {req}): Promise<void>=> {
       return new Promise(async(resolve, reject)=> {
         const groupValidator = await GroupValidatorService.getGroupValidatorById(req.body.group_validator)
         if(groupValidator){
+          req.utils = groupValidator
           return resolve()
         }
         return reject()
       })
     }),
+    body("is_strategic", "is_strategic invalid").notEmpty().escape().isIn([true, false]),
+    body("finalization", "finalization invalid").notEmpty(),
+    body("finalization").custom((value: Date, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        if(toISOData(value) > getCurrentDate()){
+          return resolve()
+        }
+        return reject("Date does not valid. Finalization must be greater than current date")
+      })
+    }),
     /**
      * Checking the configuration of allowed solutions.
      */
-    body("can_choose_scope", "can_choose_scope invalid").notEmpty().escape().isIn([true, false]),
-    body("is_private", "is_private invalid").notEmpty().escape().isIn([true, false]),
-    body("filter_reaction_filter", "filter_reaction invalid").notEmpty().escape().isIn([true, false]),
-    body("filter_minimun_likes", "filter_minimun_likes invalid").notEmpty().escape().isInt(),
-    body("filter_maximum_dont_understand", "filter_maximum_dont_understand invalid").notEmpty().escape().isInt(),
-    body("community_can_see_reactions", "community_can_see_reactions invalid").notEmpty().escape().isIn([true, false]),
     body("can_show_disagreement", "can_show_disagreement invalid").notEmpty().escape().isIn([true, false]),
     body("can_fix_disapproved_idea", "can_fix_disapproved_idea invalid").notEmpty().escape().isIn([true, false]),
-    body("time_in_park", "time_in_park invalid").notEmpty().escape().isInt(),
-    body("time_expert_feedback", "time_expert_feedback invalid").notEmpty().escape().isInt(),
-    body("time_idea_fix", "time_idea_fix invalid").notEmpty().escape().isInt(),
-    /**
-     * @see SituationI for details about the combination between WSALevel and areas_available
-     */
-     check("WSALevel", "WSALevel invalid").custom((value: string, {req}): Promise<void>=> {
-      return new Promise(async (resolve, reject)=> {
-        if([WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
-          if (value == WSALEVEL.AREA){
-            const areas = await AreaService.getAreasById(req.body.areas_available)
-            if(areas.length == req.body.areas_available.length){
-              return resolve()
-            }
-            return reject("Array area invalid")
+    
+    body("can_choose_scope", "can_choose_scope invalid").notEmpty().escape().isIn([true, false]),
+    body("is_privated", "is_privated invalid").notEmpty().escape().isIn([true, false]),
+    
+    body("can_choose_WSALevel", "can_choose_WSALevel invalid").notEmpty().escape().isIn([true, false]),
+    body("WSALevel_available", "WSALevel_available invalid").custom((value: string[], {req}): Promise<void>=> {
+      return new Promise((resolve, reject)=> {
+        const WSALevel: string [] = _.sortedUniq(value)
+        WSALevel.forEach(value => {
+          if(![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
+            return reject("WSALevel_available invalid")
           }
-          return resolve()
-        }
-        return reject("WSALevel invalid")
-      })     
+        })
+        return resolve()
+      })
     }),
-    /**
-     * participation could be TEAM OR INDIVIDUAL_WITH_COAUTHORSHIP or both
-     */
+    body("WSALevel_chosed", "WSALevel_chosed invalid").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
+    
+    body("areas_available", "areas_available invalid").custom((value: string[], {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        if(req.body.WSALevel_chosed == WSALEVEL.AREA){
+          const areasAvailable = await AreaService.getAreasById(_.sortedUniq(value))       
+
+          if(areasAvailable.length > 0){
+            req.utils = areasAvailable
+            return resolve()
+          }else {
+            return reject("areas_available can not be empty when WSALevel_chosed = AREA")          
+          }
+        }
+        return resolve()
+      })
+    }),
+    body("community_can_see_reactions", "community_can_see_reactions invalid").notEmpty().escape().isIn([true, false]),
+    body("minimun_likes", "minimun_likes invalid").notEmpty().escape().isInt(),
+    body("maximum_dont_understand", "maximum_dont_understand invalid").notEmpty().escape().isInt(),
+    body("reaction_filter", "reaction_filter invalid").notEmpty().escape().isIn([true, false]),
     body("participation_mode_available").custom((value:Array<string> , {req}): Promise<void>=> {
       return new Promise((resolve, reject)=> {
         value.forEach(element => {
@@ -163,8 +195,19 @@ router.post(
           return reject("participation_mode_available invalid")
       })
     }),
-    body("is_strategic", "is_strategic invalid").notEmpty().escape().isIn([true, false]),
-    body("external_contribution_available", "external_contribution_available invalid").notEmpty().escape().isIn([true, false]),
+    body("participation_mode_chosed", "participation_mode_chosed invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        if(req.body.participation_mode_available.includes(value)){
+          return resolve()
+        }
+        return reject("participation_mode_chosed invalid")
+      })
+    }),
+    body("time_in_park", "time_in_park invalid").notEmpty().escape().isInt(),
+    body("time_expert_feedback", "time_expert_feedback invalid").notEmpty().escape().isInt(),
+    body("time_idea_fix", "time_idea_fix invalid").notEmpty().escape().isInt(),
+    body("external_contribution_available_for_generators", "external_contribution_available_for_generators invalid").notEmpty().escape().isIn([true, false]),
+    body("external_contribution_available_for_committee", "external_contribution_available_for_committee invalid").notEmpty().escape().isIn([true, false]),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
@@ -190,31 +233,79 @@ router.post(
       RULES.CAN_VIEW_CHALLENGE
     ),
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
-    check("is_private", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isIn(["true", "false"]),
-    /**
-     * WorkSpaceAvailable depends on Challenge.WSA
-     */
-    //check("WSALevel", VALIDATIONS_MESSAGE_ERROR.SOLUTION.WSALEVEL_INVALID).isIn([WSALEVEL.AREA,WSALEVEL.COMPANY]),
-    /**
-     * Check that solution participation modality according to challenge participation modality
-     */
-    check("participation.chosen_mode","PARTICIPATION_MODE_INVALID").custom((value: string, {req}): Promise<void>=> {
+    body("images", "images does not valid").isArray(),
+    body("department_affected").isArray(),
+    body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
       return new Promise(async (resolve, reject)=> {
-        const challenge: ChallengeI = req.resources.challenge
-        if (challenge.participationMode.includes(value)){
+        try{
+          const departmentAffected = await AreaService.getAreasById(value)       
+          if(departmentAffected.length == value.length){
+            req.utils = {departmentAffected, ...req.utils}
+            return resolve()
+          }
+          return reject("department_affected does not valid")
+        }catch(error){
+          return reject("department_affected does not valid")
+        }
+
+      })
+    }),
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).notEmpty().escape().isIn([true, false]),
+    /**
+     * participation.mode_chosed is like participation_mode_chosed
+     */
+    body("participation.chosed_mode", "participation.mode_chosed invalid").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        /**
+         * Check that participation chosed by user is available
+         */
+        if(req.resources.challenge.participationModeAvailable.includes(value)){
           return resolve()
         }
-        return reject()
+        return reject("participation.chosed_mode invalid")
       })
-    })
+    }),
+    body("participation.chosed_mode" ).custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        const creator = await UserService.getUserActiveByUserId(req.body.participation.creator)
+        const guests = await UserService.getUsersById(req.body.participation.guests)
+        /**
+         * if any of the members who are going to participate does not exist.
+         */
+        if( !guests.length == req.body.participation.guests.length || !creator){
+          return reject("participation integrants is not valid")
+        }
+        const validComposition = isCompositionUsersValid(creator, guests, req.challenge)
+        if(value == PARTICIPATION_MODE.TEAM && !req.body.participation.team_name){
+          return reject("participation.team_name is required")
+        }
+        /**
+         * Check that team_name does not exist
+         */
+        if(value == PARTICIPATION_MODE.TEAM && req.body.participation.team_name){
+          const team = await TeamService.getTeamByName(req.body.participation.team_name)
+          if(team){
+            return reject("team_with this name already exist")
+          }
+        }
+
+        /**
+         * Check if all users are allowed
+         */
+        if(validComposition){
+          req.utils = {creator, guests, ...req.utils}
+          return resolve()
+        }
+        return reject("invalid composition. Invitations to externals users not availible for this user")
+      })
+    }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
 
       await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_SOLUTION)
       const challengeController = new ChallengeController();
-      const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId)
+      const solution = await challengeController.newSolution(req.body, req.user,  req.params.challengeId , req.utils)
       res
       .status(200)
       .json(solution)

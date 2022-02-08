@@ -1,5 +1,7 @@
 import { UserI } from "../models/users";
 import Team, { TeamI } from "../models/team";
+import ServiceError from "../handle-error/error.service";
+import { ERRORS, HTTP_RESPONSE } from "../constants";
 
 const TeamService = {
     async newTeam (team: TeamI): Promise<TeamI>{
@@ -14,25 +16,6 @@ const TeamService = {
             
         })
     },
-  /*   async newTeam(creator: UserI, members: Array<UserI>, name: string, teamId: string): Promise<TeamI>{
-        return new Promise(async (resolve, reject)=> {
-            await Team
-            .create({
-                teamId,
-                creator,
-                members,
-                name,
-                created: new Date()
-            })
-            .then(result => {
-                return resolve(result)
-            })
-            .catch(error => {
-                // @TODO set error
-                return reject(error)
-            })
-        })
-    }, */
     async getTeamById(teamId: string): Promise<TeamI> {
         return new Promise(async (resolve, reject)=> {
             await Team
@@ -43,6 +26,22 @@ const TeamService = {
             .catch(error=> {
                 // @TODO set error
                 return reject(error)
+            })
+        })
+    },
+    async getTeamByName(name: string): Promise<TeamI> {
+        return new Promise (async (resolve, reject)=> {
+            await Team
+            .findOne({name: name})
+            .then(result => {
+                return resolve(result)
+            })
+            .catch(error=> {
+                return reject(new ServiceError(
+                    ERRORS.SERVICE.GET_TEAM_BY_NAME,
+                    HTTP_RESPONSE._500,
+                    error
+                ))
             })
         })
     }

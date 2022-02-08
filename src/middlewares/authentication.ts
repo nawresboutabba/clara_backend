@@ -1,9 +1,7 @@
 import { verify } from 'jsonwebtoken'
 import { NextFunction} from "express"
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
-import UserController from '../controller/users';
 import UserService from '../services/User.service';
-import { decode } from 'punycode';
 
 export default async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {

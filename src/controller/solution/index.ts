@@ -1,24 +1,17 @@
-import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Query, Example} from 'tsoa'
+import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Query, Example, Inject} from 'tsoa'
 import { RESOURCE } from '../../constants';
 import { ConfigurationBaseI } from '../../models/configuration.default';
 import { SolutionI } from '../../models/situation.solutions';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
+import { ChallengeResponse } from '../challenge';
 import { ConfigurationBody } from '../configuration';
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { UserRequest } from '../users';
 
 
 export interface SolutionBody extends SituationBody {
-    /**
-     * Challenge could be undefined if the solution doesn't have a challenge associated
-     */
-    challenge?: string,
-    /**
-     * if committee allow to user choose solution privacity
-     */
-    is_private?: boolean,
     /**
      * Participation defines the type of intervention 
      * that the creator chose to make the proposal.
@@ -27,7 +20,10 @@ export interface SolutionBody extends SituationBody {
      * the interpretation depends on the value in chosen_mode
      */
      participation : {
-        chosen_mode: string,
+         /**
+          * ParticipationModeChosed
+          */
+        chosed_mode: string,
         creator: string,
         guest: Array<string>
         /**
@@ -38,38 +34,20 @@ export interface SolutionBody extends SituationBody {
 }
 
 export interface SolutionResponse extends SituationResponse{
+    solution_id: string,
     /**
      * challenge associated
      */
     challenge_id?: string,
-    /**
-     * Always is setting this attribute. Could be setting by user or committe.
-     * Depends on solution configuration
-     */
-    is_private: boolean,
-    /**
-     * Always is setting this attribute. Depends on solution configuration
-     */
-    time_in_park: number,
-    /**
-     * Solution ID
-     */
-    solution_id: string,
-    /**
-     * If participation is equal to INDIVIDUAL_WITH_COAUTHORSHIP, 
-     * then the valid fields for reading are "author" and "coauthors"
-     * If participation is equal to TEAM,
-     * then the valid field for reading is "team"
-     */
-    participation_mode_choosed: string
+    challenge?: ChallengeResponse,
 }
 
 
 @Route('solution')
 export default class SolutionController extends Controller {
     @Post()
-    public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest): Promise<SolutionResponse> {
-        return newSolution(body, user)
+    public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
+        return newSolution(body, user, utils)
     }
     @Patch(':solutionId')
     public async updateSolutionPartially(@Body() body:SolutionBody, @Path('solutionId') solutionId: string): Promise<SolutionI>{

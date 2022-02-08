@@ -26,53 +26,55 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
     return new Promise (async (resolve, reject)=> {
         try{
             const created = new Date();
-            const {
-              author,
-              title,
-              description,
-              images,
-              WSALevel,
-              group_validator,
-              is_strategic,
-              file_complementary,
-              participation_mode,
-              areas_available
-            } = body;
 
             const insertedBy = await UserService.getUserActiveByUserId(user.userId)
-            const authorEntity = await UserService.getUserActiveByUserId(author)
-            const groupValidator = await GroupValidatorService.getGroupValidatorById(group_validator)
+            const authorEntity = await UserService.getUserActiveByUserId(user.userId)
+            const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
             
-            let areasAvailable: Array<AreaI>
-
-            if (WSALevel == WSALEVEL.AREA){
-               areasAvailable = await AreaService.getAreasById(areas_available)
-            }
-
-
-            const challenge = await ChallengeService.newChallenge({
+            let data: ChallengeI = {
               insertedBy: insertedBy,
               author: authorEntity, 
               created,
               challengeId: nanoid(),
-              title,
-              description,
-              images,
-              WSALevel,
+              title: body.title,
+              description: body.description,
+              images: body.images,
               groupValidator,
-              /**
-               * @TODO use de machine state
-               */
               status: "LAUNCHED",
               active: true, 
+              fileComplementary: body.file_complementary,
+              isStrategic: body.is_strategic,
               /**
-               * Get to global configuration?
+               * Configuration section
                */
-              timePeriod: 3000,
-              fileComplementary: file_complementary,
-              isStrategic: is_strategic,
-              participationMode: participation_mode,
-              areasAvailable
+              canShowDisagreement: body.can_show_disagreement,
+              canFixDisapprovedIdea: body.can_fix_disapproved_idea,
+              canChooseScope: body.can_choose_scope,
+              isPrivated: body.is_privated,
+              canChooseWSALevel: body.can_choose_WSALevel,
+              WSALevelAvailable: body.WSALevel_available,
+              WSALevelChosed: body.WSALevel_chosed,
+              communityCanSeeReactions: body.community_can_see_reactions,
+              minimumLikes: body.minimum_likes,
+              maximumDontUnderstand: body.maximum_dont_understand,
+              reactionFilter: body.reaction_filter,
+              participationModeAvailable: body.participation_mode_available,
+              participationModeChosed: body.participation_mode_chosed,
+              timeInPark: body.time_in_park,
+              timeExpertFeedback: body.time_expert_feedback,
+              timeIdeaFix: body.time_idea_fix,
+              externalContributionAvailableForCommittee: body.external_contribution_available_for_committee,
+              externalContributionAvailableForGenerators: body.external_contribution_available_for_generators,
+              finalization: body.finalization,
+            }
+
+            if (data.WSALevelChosed == WSALEVEL.AREA){
+               let areasAvailable: Array<AreaI> = await AreaService.getAreasById(body.areas_available)
+               data.areasAvailable = areasAvailable
+            }
+
+            const challenge = await ChallengeService.newChallenge({
+              ...data
             });
             const resp = genericChallengeFilter(challenge)
             return resolve(resp)          

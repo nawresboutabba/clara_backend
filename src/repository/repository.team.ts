@@ -1,7 +1,4 @@
-import { TeamResponse } from "../controller/team";
 import TeamService from "../services/Team.service";
-import UserService from "../services/User.service";
-import { genericUserFilter, genericArrayUserFilter } from "../utils/field-filters/user";
 import { nanoid } from 'nanoid'
 import { UserI } from "../models/users";
 import { TeamI } from "../models/team";

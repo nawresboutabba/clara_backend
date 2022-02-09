@@ -82,7 +82,6 @@ export const generateSolutionCoauthorshipInvitation= async (creator: UserI, gues
         Promise
         .all(invitations)
         .then(result => {
-            console.log(result)
             return resolve(result) 
         })
         .catch(error=> {

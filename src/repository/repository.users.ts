@@ -7,6 +7,9 @@ import { UserBody, Login, UserResponse, UserRequest } from '../controller/users'
 import { ERRORS, HTTP_RESPONSE } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
+import SolutionService from '../services/Solution.service';
+import { genericArraySolutionsFilter } from '../utils/field-filters/solution';
+import TeamService from '../services/Team.service';
 
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
@@ -124,6 +127,20 @@ export const getUserInformation = async (userInformation: UserRequest): Promise<
       const resp = await genericUserFilter(user)
 
       return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
+  })
+}
+
+export const getParticipation = (userRequest: UserRequest): Promise<any> => {
+  return new Promise(async(resolve, reject)=> {
+    try{
+      const user = await UserService.getUserActiveByUserId(userRequest.userId)
+      const teams = await TeamService.getUsersTeam(user)
+      const solutions = await SolutionService.getParticipations(user, teams)
+      const rest = await genericArraySolutionsFilter(solutions)
+      return resolve(rest)
     }catch(error){
       return reject(error)
     }

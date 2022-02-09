@@ -90,5 +90,20 @@ router.get('/user/info',[
     next(error)
   }
 })
+
+router.get('/user/participation',[
+  authentication
+],async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=>{
+  try{
+    const userController = new UserController()
+    const userParticipation = await userController.getParticipation(req.user)
+    res
+    .json(userParticipation)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
 const userRouter = router
 export default userRouter;

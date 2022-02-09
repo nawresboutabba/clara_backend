@@ -26,7 +26,21 @@ const { HTTP_RESPONSE } = require("@root/src/constants");
   })
  */
 
-
+/**
+ * 
+ * @param collection DEPRECATED
+ * @returns 
+ */
+/**
+ * 
+ * @param collection DEPRECATED
+ * @returns 
+ */
+/**
+ * 
+ * @param collection DEPRECATED
+ * @returns 
+ */
 function checkResourceExistFromParams(collection:string) {
   return async function middleware(req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) {
     req.resources = {};

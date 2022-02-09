@@ -7,6 +7,8 @@ import * as _ from 'lodash';
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
+import { UserI } from "../models/users";
+import { TeamI } from "../models/team";
 
 export type editOneParams = {
     description?: string,
@@ -148,6 +150,46 @@ const SolutionService = {
           ))
         }
       })    
+    },
+    async getParticipations(user: UserI, teams: TeamI []): Promise<any>{
+      return new Promise(async (resolve, reject)=> {
+        try{
+          const solutions = await Solution.find({
+            active: true,
+            $and:[
+              {
+                $or:[
+                  {
+                    insertedBy: user
+                  },
+                  {
+                    author: user
+                  },
+                  {
+                    coauthor:{$in: user}
+                  },
+                  {
+                    team: {$in: teams}
+                  }
+                ]
+              }
+            ],
+          })
+          .populate('insertedBy')
+          .populate('areasAvailable')
+          .populate('author')
+          .populate('coauthor')
+          .populate("team")
+
+          return resolve(solutions)
+        }catch(error){
+          return reject( new ServiceError(
+            ERRORS.SERVICE.SOLUTION_USER_PARTICIPATIONS,
+            HTTP_RESPONSE._500,
+            error
+          ))
+        }
+      })
     }    
 }
 export default SolutionService;

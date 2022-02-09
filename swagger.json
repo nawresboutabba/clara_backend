@@ -146,6 +146,99 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"GroupValidatorBody": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"integrants": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"integrants"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"GroupValidatorResponse": {
+				"properties": {
+					"group_validator_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"group_validator_id",
+					"name",
+					"created"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IntegrantResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"integrant_id": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"last_change_position": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"finished": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"group_validator": {
+						"$ref": "#/components/schemas/GroupValidatorResponse"
+					},
+					"role": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"integrant_id",
+					"active",
+					"created",
+					"last_change_position",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IntegrantBody": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"TeamResponse": {
 				"properties": {
 					"team_id": {
@@ -177,6 +270,329 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ChallengeResponse": {
+				"properties": {
+					"inserted_by": {
+						"$ref": "#/components/schemas/UserResponse",
+						"description": "User that inserted the solution"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamResponse"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"department_affected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"group_validator": {
+						"$ref": "#/components/schemas/GroupValidatorResponse"
+					},
+					"status": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"can_show_disagreement": {
+						"type": "boolean",
+						"description": "Configuration Section"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_privated": {
+						"type": "boolean"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel_chosed": {
+						"type": "string"
+					},
+					"areas_available": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"participation_mode_chosed": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
+					},
+					"challenge_id": {
+						"type": "string"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					},
+					"finalization": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"inserted_by",
+					"created",
+					"updated",
+					"title",
+					"description",
+					"active",
+					"images",
+					"department_affected",
+					"status",
+					"file_complementary",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"can_choose_scope",
+					"is_privated",
+					"can_choose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_chosed",
+					"areas_available",
+					"community_can_see_reactions",
+					"minimum_likes",
+					"maximum_dont_understand",
+					"reaction_filter",
+					"participation_mode_available",
+					"participation_mode_chosed",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
+					"challenge_id",
+					"is_strategic",
+					"finalization",
+					"group_validator"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ChallengeBody": {
+				"description": "Data that can be edited or inserted. Other are edited by \nanother endpoints",
+				"properties": {
+					"author": {
+						"type": "string",
+						"description": "author is required for a challenge creation"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"department_affected": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"group_validator": {
+						"type": "string",
+						"description": "Required for challenge"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"can_show_disagreement": {
+						"type": "boolean",
+						"description": "Configuration Section"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_privated": {
+						"type": "boolean",
+						"description": "if committee allow to user choose solution privacity"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel_chosed": {
+						"type": "string"
+					},
+					"areas_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"participation_mode_chosed": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					},
+					"finalization": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"title",
+					"description",
+					"images",
+					"department_affected",
+					"file_complementary",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"can_choose_scope",
+					"is_privated",
+					"can_choose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_chosed",
+					"areas_available",
+					"community_can_see_reactions",
+					"minimum_likes",
+					"maximum_dont_understand",
+					"reaction_filter",
+					"participation_mode_available",
+					"participation_mode_chosed",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
+					"author",
+					"is_strategic",
+					"group_validator",
+					"finalization"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"SolutionResponse": {
 				"properties": {
 					"inserted_by": {
@@ -199,9 +615,6 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"status": {
-						"type": "string"
-					},
 					"updated": {
 						"type": "string",
 						"format": "date-time"
@@ -212,39 +625,54 @@
 					"description": {
 						"type": "string"
 					},
+					"active": {
+						"type": "boolean"
+					},
 					"images": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array"
 					},
-					"WSALevel": {
+					"department_affected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"group_validator": {
+						"$ref": "#/components/schemas/GroupValidatorResponse"
+					},
+					"status": {
 						"type": "string"
 					},
 					"file_complementary": {
 						"type": "string"
 					},
-					"reactions": {
-						"properties": {
-							"comments": {
-								"type": "number",
-								"format": "double"
-							},
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
+					"can_show_disagreement": {
+						"type": "boolean",
+						"description": "Configuration Section"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_privated": {
+						"type": "boolean"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
 						},
-						"required": [
-							"comments",
-							"confused",
-							"likes"
-						],
-						"type": "object"
+						"type": "array"
+					},
+					"WSALevel_chosed": {
+						"type": "string"
 					},
 					"areas_available": {
 						"items": {
@@ -252,44 +680,89 @@
 						},
 						"type": "array"
 					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"participation_mode_chosed": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
+					},
+					"solution_id": {
+						"type": "string"
+					},
 					"challenge_id": {
 						"type": "string",
 						"description": "challenge associated"
 					},
-					"is_private": {
-						"type": "boolean",
-						"description": "Always is setting this attribute. Could be setting by user or committe.\nDepends on solution configuration"
-					},
-					"time_in_park": {
-						"type": "number",
-						"format": "double",
-						"description": "Always is setting this attribute. Depends on solution configuration"
-					},
-					"solution_id": {
-						"type": "string",
-						"description": "Solution ID"
-					},
-					"participation_mode_choosed": {
-						"type": "string",
-						"description": "If participation is equal to INDIVIDUAL_WITH_COAUTHORSHIP, \nthen the valid fields for reading are \"author\" and \"coauthors\"\nIf participation is equal to TEAM,\nthen the valid field for reading is \"team\""
+					"challenge": {
+						"$ref": "#/components/schemas/ChallengeResponse"
 					}
 				},
 				"required": [
 					"inserted_by",
 					"created",
-					"status",
 					"updated",
 					"title",
 					"description",
+					"active",
 					"images",
-					"WSALevel",
+					"department_affected",
+					"status",
 					"file_complementary",
-					"reactions",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"can_choose_scope",
+					"is_privated",
+					"can_choose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_chosed",
 					"areas_available",
-					"is_private",
+					"community_can_see_reactions",
+					"minimum_likes",
+					"maximum_dont_understand",
+					"reaction_filter",
+					"participation_mode_available",
+					"participation_mode_chosed",
 					"time_in_park",
-					"solution_id",
-					"participation_mode_choosed"
+					"time_expert_feedback",
+					"time_idea_fix",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
+					"solution_id"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -311,17 +784,43 @@
 						},
 						"type": "array"
 					},
-					"WSALevel": {
-						"type": "string",
-						"enum": [
-							"COMPANY",
-							"AREA"
-						]
+					"department_affected": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					},
 					"group_validator": {
-						"type": "string"
+						"type": "string",
+						"description": "Group Validat Id"
 					},
 					"file_complementary": {
+						"type": "string"
+					},
+					"can_show_disagreement": {
+						"type": "boolean",
+						"description": "Configuration Section"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_privated": {
+						"type": "boolean",
+						"description": "if committee allow to user choose solution privacity"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel_chosed": {
 						"type": "string"
 					},
 					"areas_available": {
@@ -330,13 +829,46 @@
 						},
 						"type": "array"
 					},
-					"challenge": {
-						"type": "string",
-						"description": "Challenge could be undefined if the solution doesn't have a challenge associated"
+					"community_can_see_reactions": {
+						"type": "boolean"
 					},
-					"is_private": {
-						"type": "boolean",
-						"description": "if committee allow to user choose solution privacity"
+					"minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"participation_mode_chosed": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
 					},
 					"participation": {
 						"properties": {
@@ -353,14 +885,15 @@
 							"creator": {
 								"type": "string"
 							},
-							"chosen_mode": {
-								"type": "string"
+							"chosed_mode": {
+								"type": "string",
+								"description": "ParticipationModeChosed"
 							}
 						},
 						"required": [
 							"guest",
 							"creator",
-							"chosen_mode"
+							"chosed_mode"
 						],
 						"type": "object",
 						"description": "Participation defines the type of intervention \nthat the creator chose to make the proposal.\n- It can be TEAM: then the creator plus the guests, form a team\n- It can be INDIVIDUAL_WITH_COAUTHORSHIP: then the creator will be the author and the guests will be co-authors\nthe interpretation depends on the value in chosen_mode"
@@ -370,9 +903,27 @@
 					"title",
 					"description",
 					"images",
-					"WSALevel",
+					"department_affected",
 					"file_complementary",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"can_choose_scope",
+					"is_privated",
+					"can_choose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_chosed",
 					"areas_available",
+					"community_can_see_reactions",
+					"minimum_likes",
+					"maximum_dont_understand",
+					"reaction_filter",
+					"participation_mode_available",
+					"participation_mode_chosed",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
 					"participation"
 				],
 				"type": "object",
@@ -567,21 +1118,6 @@
 						"type": "array",
 						"description": "Solution images"
 					},
-					"WSALevel": {
-						"type": "string",
-						"enum": [
-							"COMPANY",
-							"AREA"
-						],
-						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
-					},
-					"areasAvailable": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
-					},
 					"departmentAffected": {
 						"items": {
 							"$ref": "#/components/schemas/AreaI"
@@ -601,28 +1137,89 @@
 						"type": "string",
 						"description": "Complementary files to challenge, solution or problem"
 					},
-					"reactions": {
-						"properties": {
-							"comments": {
-								"type": "number",
-								"format": "double"
-							},
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
+					"canShowDisagreement": {
+						"type": "boolean",
+						"description": "Can those responsible express their disagreement? \nIt affects an attribute in the Barema that indicates \nif the person responsible for the solution agrees or \ndisagrees with the rating."
+					},
+					"canFixDisapprovedIdea": {
+						"type": "boolean",
+						"description": "Can managers make corrections after disapproving an idea? \nAffects the ability to update the solution for a solution \nstatus = REJECTED"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "Can the generator choose the privacy of the solution \n(if it goes to the park or directly to the committee)?\nAffects the scope_chosed attribute.\nIf can_chosose_scope = true, then the maintainer \ncan edit is_privated (otherwise, the default value goes)"
+					},
+					"isPrivated": {
+						"type": "boolean",
+						"description": "if committee allow to user choose solution privacity"
+					},
+					"canChooseWSALevel": {
+						"type": "boolean",
+						"description": "Determines if the user can edit the WSALevel_chosed."
+					},
+					"WSALevelAvailable": {
+						"items": {
+							"type": "string"
 						},
-						"required": [
-							"comments",
-							"confused",
-							"likes"
-						],
-						"type": "object",
+						"type": "array",
+						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
+					},
+					"WSALevelChosed": {
+						"type": "string",
+						"description": "Space for which the resource is available. \nIt can be One. \nIt is chosen by the person in charge of the situation"
+					},
+					"areasAvailable": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
 						"description": "Reactions in park"
+					},
+					"minimumLikes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximumDontUnderstand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reactionFilter": {
+						"type": "boolean"
+					},
+					"participationModeAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "How can you participate in the proposal of a solution?\n- INDIVIDUAL_WITH_COAUTHORSHIP - TEAM"
+					},
+					"participationModeChosed": {
+						"type": "string",
+						"description": "How does the person in charge participate? \nWorks in combination with \nparticipation_mode_available"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double"
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double"
+					},
+					"externalContributionAvailableForGenerators": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors \nby generators allowed? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can \ninvite people from outside the organization."
+					},
+					"externalContributionAvailableForCommittee": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors \nby the committee allowed? affects whether authors, \nco-authors, and teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can invite \npeople from outside the organization."
 					},
 					"challengeId": {
 						"type": "string",
@@ -632,627 +1229,42 @@
 						"type": "boolean",
 						"description": "If challenge response to strategic organization need."
 					},
-					"timePeriod": {
-						"type": "number",
-						"format": "double",
-						"description": "TimePeriod that challenge is in a Park for discussion. Dimenention is in hours. \nThen a challenge will be in a park Challenge create + timePeriod"
-					},
-					"participationMode": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Participation mode accepted: could be INDIVIDUAL_WITH_COAUTHORSHIP and/or TEAM"
+					"finalization": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Challenge finalization. Time limit for submit Ideas."
 					}
 				},
 				"required": [
 					"insertedBy",
 					"created",
-					"title",
 					"description",
 					"active",
 					"images",
-					"WSALevel",
 					"status",
 					"fileComplementary",
-					"challengeId",
-					"isStrategic",
-					"timePeriod",
-					"participationMode"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"SolutionI": {
-				"properties": {
-					"_id": {},
-					"insertedBy": {
-						"$ref": "#/components/schemas/UserI",
-						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
-					},
-					"author": {
-						"$ref": "#/components/schemas/UserI",
-						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
-					},
-					"coauthor": {
-						"items": {
-							"$ref": "#/components/schemas/UserI"
-						},
-						"type": "array",
-						"description": "field that is combined with author \nwhen participationModeChosen = \"INDIVIDUAL_WITH_COAUTHORSHIP\""
-					},
-					"team": {
-						"$ref": "#/components/schemas/TeamI",
-						"description": "Field that is filled when participationModeChosen = \"TEAM\"\nThis field exclusive with author and coauthor configuration"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution creation date"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution update date"
-					},
-					"title": {
-						"type": "string",
-						"description": "Situation title"
-					},
-					"description": {
-						"type": "string",
-						"description": "Solution description"
-					},
-					"active": {
-						"type": "boolean",
-						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Solution images"
-					},
-					"WSALevel": {
-						"type": "string",
-						"enum": [
-							"COMPANY",
-							"AREA"
-						],
-						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
-					},
-					"areasAvailable": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
-					},
-					"departmentAffected": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Departments Affected"
-					},
-					"groupValidator": {
-						"$ref": "#/components/schemas/GroupValidatorI",
-						"description": "Group that do the analysis about the situation"
-					},
-					"status": {
-						"type": "string",
-						"description": "Challenge | Problem | Solution Status: @TODO define situation challenge"
-					},
-					"fileComplementary": {
-						"type": "string",
-						"description": "Complementary files to challenge, solution or problem"
-					},
-					"reactions": {
-						"properties": {
-							"comments": {
-								"type": "number",
-								"format": "double"
-							},
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"comments",
-							"confused",
-							"likes"
-						],
-						"type": "object",
-						"description": "Reactions in park"
-					},
-					"solutionId": {
-						"type": "string",
-						"description": "Id that uniquely identifies a solution"
-					},
-					"challengeId": {
-						"type": "string",
-						"description": "Id that identify the challenge associated. If undefinedn then solution\nwas an initiative of a generator"
-					},
-					"challenge": {
-						"$ref": "#/components/schemas/ChallengeI",
-						"description": "Challenge Object. challengeId refer to challenge attribute. \nThe redundace is for performance lookup (for example Solutions with a particular challengeId)"
-					},
-					"canChooseScope": {
-						"type": "boolean",
-						"description": "If true, solution's generator can choose if the \nsolution is shared with the community"
-					},
-					"isPrivate": {
-						"type": "boolean",
-						"description": "Solution is shared with the community in the Park.\nIs combined with the canChooseScope attribute. \neither obtained from the challenger configuration \nor from the general configuration, it depends on the situation."
-					},
-					"participationModeChosen": {
-						"type": "string",
-						"description": "Single value. Election between availables in Challenge.participationMode"
-					},
-					"filterReactionFilter": {
-						"type": "boolean",
-						"description": "variable that indicates if \nthe automatic filtering options are enabled in the Park"
-					},
-					"filterMinimunLikes": {
-						"type": "number",
-						"format": "double",
-						"description": "Valid if filterReactionFilter == true"
-					},
-					"filterMaximunDontUnderstand": {
-						"type": "number",
-						"format": "double",
-						"description": "Valid if filterReactionFilter == true"
-					},
-					"communityCanSeeReactions": {
-						"type": "boolean",
-						"description": "The visualization of the occurred reactions can be disabled"
-					},
-					"filterCanShowDisagreement": {
-						"type": "boolean",
-						"description": "If an idea is rejected, those responsible for \nthe idea can show disagreement with the result"
-					},
-					"filterCanFixDesapprovedIdea": {
-						"type": "boolean",
-						"description": "The user can make corrections to his idea when it is rejected."
-					},
-					"timeInPark": {
-						"type": "number",
-						"format": "double",
-						"description": "TimePeriod that challenge is in a Park for discussion\nIs used if isPrivate == false"
-					},
-					"timeExpertFeedback": {
-						"type": "number",
-						"format": "double",
-						"description": "Time limit that the expert has to give his evaluation"
-					},
-					"timeIdeaFix": {
-						"type": "number",
-						"format": "double",
-						"description": "Time limit for those responsible for the idea to \nmake a new delivery of the corrected solution.\nIs used if filterCanFixDesapprovedIdea == true"
-					}
-				},
-				"required": [
-					"insertedBy",
-					"created",
-					"title",
-					"description",
-					"active",
-					"images",
-					"WSALevel",
-					"status",
-					"fileComplementary",
-					"solutionId",
-					"canChooseScope",
-					"isPrivate",
-					"participationModeChosen",
-					"filterReactionFilter",
-					"filterMinimunLikes",
-					"filterMaximunDontUnderstand",
-					"communityCanSeeReactions",
-					"filterCanShowDisagreement",
-					"filterCanFixDesapprovedIdea",
-					"timeInPark",
-					"timeExpertFeedback",
-					"timeIdeaFix"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ConfigurationBaseI": {
-				"properties": {
-					"updated": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"situationConfig": {
-						"type": "string",
-						"description": "Could be CHALLENGE, SOLUTION or PROBLEM"
-					},
-					"canShowDisagreement": {
-						"type": "boolean",
-						"description": "Can those responsible express their disagreement? \nAffects an attribute in the Scale that indicates \nif the person responsible for the solution agrees \nor disagrees with the rating."
-					},
-					"disagreementDefault": {
-						"type": "boolean",
-						"description": "Default value. In case the user cannot choose, \nthis attribute is taken as the chosen value"
-					},
-					"canFixDisapprovedIdea": {
-						"type": "boolean",
-						"description": "¿Pueden los responsables hacer correcciones \ndespués de desaprobar una idea? \nAfecta a la posibilidad de hacer un update sobre la \nsolucion para el estado de solucion = REJECTED"
-					},
-					"canChooseScope": {
-						"type": "boolean",
-						"description": "Can the generator choose the privacy of the solution? \nAffects the scope_chosed attribute. If can_chosose_scope = true, \nthen the maintainer can edit is_privated \n(otherwise, the default value goes)"
-					},
-					"isPrivateDefault": {
-						"type": "boolean",
-						"description": "Default value. In case the user cannot choose, \nthis attribute is taken as the chosen value"
-					},
-					"canChooseWSALevel": {
-						"type": "boolean",
-						"description": "Determines if the user can choose the WSALevel_chosed."
-					},
-					"WSALevelAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Space that the user can have to propose a resource. \nAffects the WSALevel_chosed (the user selects among those allowed).\nAffects the publication of the challenge, solutions \nand problem statement"
-					},
-					"WSALevelDefault": {
-						"type": "string",
-						"description": "Default value. \nIn case the user cannot choose, \nthis attribute is taken as the chosen value"
-					},
-					"communityCanSeeReactions": {
-						"type": "boolean",
-						"description": "The number of reactions a solution has can be seen. \nAffects the solution: the reactions achieved can be seen"
-					},
-					"maximunDontUnderstand": {
-						"type": "number",
-						"format": "double",
-						"description": "What is the maximum number of negative \nreactions of this type that can be had?"
-					},
-					"minimunLikes": {
-						"type": "number",
-						"format": "double",
-						"description": "What is the minimum number of likes you must have to continue?"
-					},
-					"reactionFilter": {
-						"type": "boolean",
-						"description": "Used in the square, it indicates \nif a limit is established on the reactions. \nEnable choices made: minimum_likes, \nmaximum_dont_understand"
-					},
-					"externalContributionAvailableForGenerators": {
-						"type": "boolean",
-						"description": "Are invitations to external contributors allowed by generators? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, and this option is equal to true, \nthen the author or creator of the team can invite people \nfrom outside the organization."
-					},
-					"externalContributionAvailableForCommittee": {
-						"type": "boolean",
-						"description": "¿Están permitidas invitaciones a contribuidores externos \npor parte del comite? afecta si autores, \ncoautores y equipos pueden estar conformados por externos. \nSi el alcance en a nivel de COMPANY, y esta opcion es igual a true, \nentonces el autor o creador del equipo, puede invitar \npersonas de afuera de la organización."
-					},
-					"participationModeAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "How can you participate in the proposal of a solution?"
-					},
-					"timeInPark": {
-						"type": "number",
-						"format": "double",
-						"description": "Time In Park"
-					},
-					"timeExpertFeedback": {
-						"type": "number",
-						"format": "double",
-						"description": "Time Expert Feedback"
-					},
-					"timeIdeaFix": {
-						"type": "number",
-						"format": "double",
-						"description": "Time Idea Fix"
-					}
-				},
-				"required": [
-					"updated",
-					"situationConfig",
 					"canShowDisagreement",
-					"disagreementDefault",
 					"canFixDisapprovedIdea",
 					"canChooseScope",
-					"isPrivateDefault",
+					"isPrivated",
 					"canChooseWSALevel",
 					"WSALevelAvailable",
-					"WSALevelDefault",
+					"WSALevelChosed",
 					"communityCanSeeReactions",
-					"maximunDontUnderstand",
-					"minimunLikes",
+					"minimumLikes",
+					"maximumDontUnderstand",
 					"reactionFilter",
-					"externalContributionAvailableForGenerators",
-					"externalContributionAvailableForCommittee",
 					"participationModeAvailable",
+					"participationModeChosed",
 					"timeInPark",
 					"timeExpertFeedback",
-					"timeIdeaFix"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ConfigurationBody": {
-				"properties": {
-					"situation_config": {
-						"type": "string"
-					},
-					"can_show_disagreement": {
-						"type": "boolean"
-					},
-					"disagreement_default": {
-						"type": "boolean"
-					},
-					"can_fix_desapproved_idea": {
-						"type": "boolean"
-					},
-					"can_choose_scope": {
-						"type": "boolean"
-					},
-					"can_choose_WSALevel": {
-						"type": "boolean"
-					},
-					"is_private_default": {
-						"type": "boolean"
-					},
-					"can_chose_WSALevel": {
-						"type": "boolean"
-					},
-					"WSALevel_available": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"WSALevel_default": {
-						"type": "string"
-					},
-					"community_can_see_reactions": {
-						"type": "boolean"
-					},
-					"maximun_dont_understand": {
-						"type": "number",
-						"format": "double"
-					},
-					"minimun_likes": {
-						"type": "number",
-						"format": "double"
-					},
-					"reaction_filter": {
-						"type": "boolean"
-					},
-					"external_contribution_available_for_generators": {
-						"type": "boolean"
-					},
-					"external_contribution_available_for_committee": {
-						"type": "boolean"
-					},
-					"participation_mode_available": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"time_in_park": {
-						"type": "number",
-						"format": "double"
-					},
-					"time_expert_feedback": {
-						"type": "number",
-						"format": "double"
-					},
-					"time_idea_fix": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"situation_config",
-					"can_show_disagreement",
-					"disagreement_default",
-					"can_fix_desapproved_idea",
-					"can_choose_scope",
-					"can_choose_WSALevel",
-					"is_private_default",
-					"can_chose_WSALevel",
-					"WSALevel_available",
-					"WSALevel_default",
-					"community_can_see_reactions",
-					"maximun_dont_understand",
-					"minimun_likes",
-					"reaction_filter",
-					"external_contribution_available_for_generators",
-					"external_contribution_available_for_committee",
-					"participation_mode_available",
-					"time_in_park",
-					"time_expert_feedback",
-					"time_idea_fix"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ChallengeResponse": {
-				"properties": {
-					"inserted_by": {
-						"$ref": "#/components/schemas/UserResponse",
-						"description": "User that inserted the solution"
-					},
-					"author": {
-						"$ref": "#/components/schemas/UserResponse"
-					},
-					"coauthor": {
-						"items": {
-							"$ref": "#/components/schemas/UserResponse"
-						},
-						"type": "array"
-					},
-					"team": {
-						"$ref": "#/components/schemas/TeamResponse"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"status": {
-						"type": "string"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"WSALevel": {
-						"type": "string"
-					},
-					"file_complementary": {
-						"type": "string"
-					},
-					"reactions": {
-						"properties": {
-							"comments": {
-								"type": "number",
-								"format": "double"
-							},
-							"confused": {
-								"type": "number",
-								"format": "double"
-							},
-							"likes": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"comments",
-							"confused",
-							"likes"
-						],
-						"type": "object"
-					},
-					"areas_available": {
-						"items": {
-							"$ref": "#/components/schemas/AreaResponse"
-						},
-						"type": "array"
-					},
-					"is_strategic": {
-						"type": "boolean"
-					},
-					"time_period": {
-						"type": "number",
-						"format": "double"
-					},
-					"participation_mode": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"challenge_id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"inserted_by",
-					"created",
-					"status",
-					"updated",
+					"timeIdeaFix",
+					"externalContributionAvailableForGenerators",
+					"externalContributionAvailableForCommittee",
+					"challengeId",
 					"title",
-					"description",
-					"images",
-					"WSALevel",
-					"file_complementary",
-					"reactions",
-					"areas_available",
-					"is_strategic",
-					"time_period",
-					"participation_mode",
-					"challenge_id"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ChallengeBody": {
-				"description": "Data that can be edited or inserted. Other are edited by \nanother endpoints",
-				"properties": {
-					"author": {
-						"type": "string",
-						"description": "author is required for a challenge"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"WSALevel": {
-						"type": "string",
-						"enum": [
-							"COMPANY",
-							"AREA"
-						]
-					},
-					"group_validator": {
-						"type": "string"
-					},
-					"file_complementary": {
-						"type": "string"
-					},
-					"areas_available": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"is_strategic": {
-						"type": "boolean"
-					},
-					"participation_mode": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"title",
-					"description",
-					"images",
-					"WSALevel",
-					"file_complementary",
-					"areas_available",
-					"author",
-					"is_strategic",
-					"participation_mode",
-					"group_validator"
+					"isStrategic",
+					"finalization"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1357,6 +1369,516 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ConfigurationDefaultI": {
+				"properties": {
+					"canShowDisagreement": {
+						"type": "boolean",
+						"description": "Can those responsible express their disagreement? \nAffects an attribute in the Scale that indicates \nif the person responsible for the solution agrees \nor disagrees with the rating."
+					},
+					"canFixDisapprovedIdea": {
+						"type": "boolean",
+						"description": "¿Pueden los responsables hacer correcciones \ndespués de desaprobar una idea? \nAfecta a la posibilidad de hacer un update sobre la \nsolucion para el estado de solucion = REJECTED"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "Can the generator choose the privacy of the solution? \nAffects the scope_chosed attribute. If can_chosose_scope = true, \nthen the maintainer can edit is_privated \n(otherwise, the default value goes)"
+					},
+					"canChooseWSALevel": {
+						"type": "boolean",
+						"description": "Determines if the user can choose the WSALevel_chosed."
+					},
+					"WSALevelAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Space that the user can have to propose a resource. \nAffects the WSALevel_chosed (the user selects among those allowed).\nAffects the publication of the challenge, solutions \nand problem statement"
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
+						"description": "The number of reactions a solution has can be seen. \nAffects the solution: the reactions achieved can be seen"
+					},
+					"maximumDontUnderstand": {
+						"type": "number",
+						"format": "double",
+						"description": "What is the maximum number of negative \nreactions of this type that can be had?"
+					},
+					"minimumLikes": {
+						"type": "number",
+						"format": "double",
+						"description": "What is the minimum number of likes you must have to continue?"
+					},
+					"reactionFilter": {
+						"type": "boolean",
+						"description": "Used in the square, it indicates \nif a limit is established on the reactions. \nEnable choices made: minimum_likes, \nmaximum_dont_understand"
+					},
+					"externalContributionAvailableForGenerators": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors allowed by generators? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, and this option is equal to true, \nthen the author or creator of the team can invite people \nfrom outside the organization."
+					},
+					"externalContributionAvailableForCommittee": {
+						"type": "boolean",
+						"description": "¿Están permitidas invitaciones a contribuidores externos \npor parte del comite? afecta si autores, \ncoautores y equipos pueden estar conformados por externos. \nSi el alcance en a nivel de COMPANY, y esta opcion es igual a true, \nentonces el autor o creador del equipo, puede invitar \npersonas de afuera de la organización."
+					},
+					"participationModeAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "How can you participate in the proposal of a solution?"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double",
+						"description": "Time In Park"
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double",
+						"description": "Time Expert Feedback"
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double",
+						"description": "Time Idea Fix"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"situationConfig": {
+						"type": "string",
+						"description": "Could be CHALLENGE, SOLUTION or PROBLEM"
+					},
+					"disagreementDefault": {
+						"type": "boolean",
+						"description": "Default value. In case the user cannot choose, \nthis attribute is taken as the chosen value"
+					},
+					"isPrivateDefault": {
+						"type": "boolean",
+						"description": "Default value. In case the user cannot choose, \nthis attribute is taken as the chosen value"
+					},
+					"WSALevelDefault": {
+						"type": "string",
+						"description": "Default value. \nIn case the user cannot choose, \nthis attribute is taken as the chosen value"
+					}
+				},
+				"required": [
+					"canShowDisagreement",
+					"canFixDisapprovedIdea",
+					"canChooseScope",
+					"canChooseWSALevel",
+					"WSALevelAvailable",
+					"communityCanSeeReactions",
+					"maximumDontUnderstand",
+					"minimumLikes",
+					"reactionFilter",
+					"externalContributionAvailableForGenerators",
+					"externalContributionAvailableForCommittee",
+					"participationModeAvailable",
+					"timeInPark",
+					"timeExpertFeedback",
+					"timeIdeaFix",
+					"updated",
+					"situationConfig",
+					"disagreementDefault",
+					"isPrivateDefault",
+					"WSALevelDefault"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ConfigurationBody": {
+				"properties": {
+					"situation_config": {
+						"type": "string"
+					},
+					"can_show_disagreement": {
+						"type": "boolean"
+					},
+					"disagreement_default": {
+						"type": "boolean"
+					},
+					"can_fix_desapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"is_private_default": {
+						"type": "boolean"
+					},
+					"can_chose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel_default": {
+						"type": "string"
+					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"maximun_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"minimun_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"situation_config",
+					"can_show_disagreement",
+					"disagreement_default",
+					"can_fix_desapproved_idea",
+					"can_choose_scope",
+					"can_choose_WSALevel",
+					"is_private_default",
+					"can_chose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_default",
+					"community_can_see_reactions",
+					"maximun_dont_understand",
+					"minimun_likes",
+					"reaction_filter",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
+					"participation_mode_available",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SolutionI": {
+				"properties": {
+					"_id": {},
+					"insertedBy": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
+					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserI"
+						},
+						"type": "array",
+						"description": "field that is combined with author \nwhen participationModeChosen = \"INDIVIDUAL_WITH_COAUTHORSHIP\""
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamI",
+						"description": "Field that is filled when participationModeChosen = \"TEAM\"\nThis field exclusive with author and coauthor configuration"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution creation date"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Solution update date"
+					},
+					"title": {
+						"type": "string",
+						"description": "Situation title. \nIf a challenge's solution, title is not required."
+					},
+					"description": {
+						"type": "string",
+						"description": "Solution description"
+					},
+					"active": {
+						"type": "boolean",
+						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Solution images"
+					},
+					"departmentAffected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Departments Affected"
+					},
+					"groupValidator": {
+						"$ref": "#/components/schemas/GroupValidatorI",
+						"description": "Group that do the analysis about the situation"
+					},
+					"status": {
+						"type": "string",
+						"description": "Challenge | Problem | Solution Status: @TODO define situation challenge"
+					},
+					"fileComplementary": {
+						"type": "string",
+						"description": "Complementary files to challenge, solution or problem"
+					},
+					"canShowDisagreement": {
+						"type": "boolean",
+						"description": "Can those responsible express their disagreement? \nIt affects an attribute in the Barema that indicates \nif the person responsible for the solution agrees or \ndisagrees with the rating."
+					},
+					"canFixDisapprovedIdea": {
+						"type": "boolean",
+						"description": "Can managers make corrections after disapproving an idea? \nAffects the ability to update the solution for a solution \nstatus = REJECTED"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "Can the generator choose the privacy of the solution \n(if it goes to the park or directly to the committee)?\nAffects the scope_chosed attribute.\nIf can_chosose_scope = true, then the maintainer \ncan edit is_privated (otherwise, the default value goes)"
+					},
+					"isPrivated": {
+						"type": "boolean",
+						"description": "if committee allow to user choose solution privacity"
+					},
+					"canChooseWSALevel": {
+						"type": "boolean",
+						"description": "Determines if the user can edit the WSALevel_chosed."
+					},
+					"WSALevelAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
+					},
+					"WSALevelChosed": {
+						"type": "string",
+						"description": "Space for which the resource is available. \nIt can be One. \nIt is chosen by the person in charge of the situation"
+					},
+					"areasAvailable": {
+						"items": {
+							"$ref": "#/components/schemas/AreaI"
+						},
+						"type": "array",
+						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
+						"description": "Reactions in park"
+					},
+					"minimumLikes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximumDontUnderstand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reactionFilter": {
+						"type": "boolean"
+					},
+					"participationModeAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "How can you participate in the proposal of a solution?\n- INDIVIDUAL_WITH_COAUTHORSHIP - TEAM"
+					},
+					"participationModeChosed": {
+						"type": "string",
+						"description": "How does the person in charge participate? \nWorks in combination with \nparticipation_mode_available"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double"
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double"
+					},
+					"externalContributionAvailableForGenerators": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors \nby generators allowed? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can \ninvite people from outside the organization."
+					},
+					"externalContributionAvailableForCommittee": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors \nby the committee allowed? affects whether authors, \nco-authors, and teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can invite \npeople from outside the organization."
+					},
+					"solutionId": {
+						"type": "string",
+						"description": "Id that uniquely identifies a solution"
+					},
+					"challengeId": {
+						"type": "string",
+						"description": "Id Challenge associated to solution."
+					},
+					"challenge": {
+						"$ref": "#/components/schemas/ChallengeI",
+						"description": "Challenge Object. challengeId refer to challenge attribute. \nThe redundace is for performance lookup (for example Solutions with a particular challengeId)"
+					}
+				},
+				"required": [
+					"insertedBy",
+					"created",
+					"description",
+					"active",
+					"images",
+					"status",
+					"fileComplementary",
+					"canShowDisagreement",
+					"canFixDisapprovedIdea",
+					"canChooseScope",
+					"isPrivated",
+					"canChooseWSALevel",
+					"WSALevelAvailable",
+					"WSALevelChosed",
+					"communityCanSeeReactions",
+					"minimumLikes",
+					"maximumDontUnderstand",
+					"reactionFilter",
+					"participationModeAvailable",
+					"participationModeChosed",
+					"timeInPark",
+					"timeExpertFeedback",
+					"timeIdeaFix",
+					"externalContributionAvailableForGenerators",
+					"externalContributionAvailableForCommittee",
+					"solutionId"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ConfigurationBaseI": {
+				"properties": {
+					"canShowDisagreement": {
+						"type": "boolean",
+						"description": "Can those responsible express their disagreement? \nAffects an attribute in the Scale that indicates \nif the person responsible for the solution agrees \nor disagrees with the rating."
+					},
+					"canFixDisapprovedIdea": {
+						"type": "boolean",
+						"description": "¿Pueden los responsables hacer correcciones \ndespués de desaprobar una idea? \nAfecta a la posibilidad de hacer un update sobre la \nsolucion para el estado de solucion = REJECTED"
+					},
+					"canChooseScope": {
+						"type": "boolean",
+						"description": "Can the generator choose the privacy of the solution? \nAffects the scope_chosed attribute. If can_chosose_scope = true, \nthen the maintainer can edit is_privated \n(otherwise, the default value goes)"
+					},
+					"canChooseWSALevel": {
+						"type": "boolean",
+						"description": "Determines if the user can choose the WSALevel_chosed."
+					},
+					"WSALevelAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Space that the user can have to propose a resource. \nAffects the WSALevel_chosed (the user selects among those allowed).\nAffects the publication of the challenge, solutions \nand problem statement"
+					},
+					"communityCanSeeReactions": {
+						"type": "boolean",
+						"description": "The number of reactions a solution has can be seen. \nAffects the solution: the reactions achieved can be seen"
+					},
+					"maximumDontUnderstand": {
+						"type": "number",
+						"format": "double",
+						"description": "What is the maximum number of negative \nreactions of this type that can be had?"
+					},
+					"minimumLikes": {
+						"type": "number",
+						"format": "double",
+						"description": "What is the minimum number of likes you must have to continue?"
+					},
+					"reactionFilter": {
+						"type": "boolean",
+						"description": "Used in the square, it indicates \nif a limit is established on the reactions. \nEnable choices made: minimum_likes, \nmaximum_dont_understand"
+					},
+					"externalContributionAvailableForGenerators": {
+						"type": "boolean",
+						"description": "Are invitations to external contributors allowed by generators? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, and this option is equal to true, \nthen the author or creator of the team can invite people \nfrom outside the organization."
+					},
+					"externalContributionAvailableForCommittee": {
+						"type": "boolean",
+						"description": "¿Están permitidas invitaciones a contribuidores externos \npor parte del comite? afecta si autores, \ncoautores y equipos pueden estar conformados por externos. \nSi el alcance en a nivel de COMPANY, y esta opcion es igual a true, \nentonces el autor o creador del equipo, puede invitar \npersonas de afuera de la organización."
+					},
+					"participationModeAvailable": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "How can you participate in the proposal of a solution?"
+					},
+					"timeInPark": {
+						"type": "number",
+						"format": "double",
+						"description": "Time In Park"
+					},
+					"timeExpertFeedback": {
+						"type": "number",
+						"format": "double",
+						"description": "Time Expert Feedback"
+					},
+					"timeIdeaFix": {
+						"type": "number",
+						"format": "double",
+						"description": "Time Idea Fix"
+					}
+				},
+				"required": [
+					"canShowDisagreement",
+					"canFixDisapprovedIdea",
+					"canChooseScope",
+					"canChooseWSALevel",
+					"WSALevelAvailable",
+					"communityCanSeeReactions",
+					"maximumDontUnderstand",
+					"minimumLikes",
+					"reactionFilter",
+					"externalContributionAvailableForGenerators",
+					"externalContributionAvailableForCommittee",
+					"participationModeAvailable",
+					"timeInPark",
+					"timeExpertFeedback",
+					"timeIdeaFix"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"CompanyI": {
 				"properties": {
 					"_id": {},
@@ -1395,99 +1917,6 @@
 				"required": [
 					"name",
 					"CNPJ"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"GroupValidatorResponse": {
-				"properties": {
-					"group_validator_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"group_validator_id",
-					"name",
-					"created"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"IntegrantResponse": {
-				"properties": {
-					"user": {
-						"$ref": "#/components/schemas/UserResponse"
-					},
-					"integrant_id": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"last_change_position": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"finished": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"group_validator": {
-						"$ref": "#/components/schemas/GroupValidatorResponse"
-					},
-					"role": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"user",
-					"integrant_id",
-					"active",
-					"created",
-					"last_change_position",
-					"role"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"IntegrantBody": {
-				"properties": {
-					"userId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"userId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"GroupValidatorBody": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"integrants": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"name",
-					"integrants"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1719,21 +2148,20 @@
 				}
 			}
 		},
-		"/solution": {
+		"/group-validator": {
 			"post": {
-				"operationId": "NewSolution",
+				"operationId": "NewGroupValidator",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SolutionResponse"
-								}
+								"schema": {}
 							}
 						}
 					}
 				},
+				"description": "Fix response",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -1741,36 +2169,50 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SolutionBody"
+								"$ref": "#/components/schemas/GroupValidatorBody"
 							}
 						}
 					}
 				}
 			},
 			"get": {
-				"operationId": "ListSolutions",
+				"operationId": "GetAllGroupValidatorsDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/integrant/leader/{integrantId}": {
+			"post": {
+				"operationId": "NewLeader",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/SolutionResponse"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/IntegrantResponse"
 								}
 							}
 						}
 					}
 				},
-				"description": "Solutions Listing without challenge associated",
+				"description": "Endpoint for add or reeplace a leader of committe.\nThe new leader have to be a `general commite` user first",
 				"security": [],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "query",
-						"required": false,
+						"in": "path",
+						"name": "integrantId",
+						"required": true,
 						"schema": {
 							"type": "string"
 						}
@@ -1778,45 +2220,61 @@
 				]
 			}
 		},
-		"/solution/{solutionId}": {
-			"patch": {
-				"operationId": "UpdateSolutionPartially",
+		"/integrant/general": {
+			"post": {
+				"operationId": "NewIntegrant",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SolutionI"
+									"$ref": "#/components/schemas/IntegrantResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint used for add a new integrant to committe. \nUser could be a new integrant or old integrant with active=false",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IntegrantBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrant": {
+			"get": {
+				"operationId": "GetGeneralMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IntegrantResponse"
+									},
+									"type": "array"
 								}
 							}
 						}
 					}
 				},
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "solutionId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SolutionBody"
-							}
-						}
-					}
-				}
-			},
+				"parameters": []
+			}
+		},
+		"/integrant/general/{integrantId}": {
 			"delete": {
-				"operationId": "DeleteSolution",
+				"operationId": "DeleteGeneralMember",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1833,68 +2291,13 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "solutionId",
+						"name": "integrantId",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
 					}
 				]
-			},
-			"get": {
-				"operationId": "GetSolution",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SolutionResponse"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "solutionId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/solution/default-configuration": {
-			"post": {
-				"operationId": "SetSolutionDefaultConfiguration",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ConfigurationBaseI"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ConfigurationBody"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/challenge": {
@@ -2243,7 +2646,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ConfigurationBaseI"
+									"$ref": "#/components/schemas/ConfigurationDefaultI"
 								}
 							}
 						}
@@ -2270,7 +2673,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ConfigurationBaseI"
+									"$ref": "#/components/schemas/ConfigurationDefaultI"
 								}
 							}
 						}
@@ -2278,9 +2681,160 @@
 				},
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/solution": {
+			"post": {
+				"operationId": "NewSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SolutionResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SolutionBody"
+							}
+						}
+					}
+				}
 			},
+			"get": {
+				"operationId": "ListSolutions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SolutionResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Solutions Listing without challenge associated",
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/solution/{solutionId}": {
 			"patch": {
-				"operationId": "UpdateChallengeDefaultConfiguration",
+				"operationId": "UpdateSolutionPartially",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SolutionI"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SolutionBody"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "GetSolution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SolutionResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "solutionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/solution/default-configuration": {
+			"post": {
+				"operationId": "SetSolutionDefaultConfiguration",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2334,158 +2888,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/integrant/leader/{integrantId}": {
-			"post": {
-				"operationId": "NewLeader",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IntegrantResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint for add or reeplace a leader of committe.\nThe new leader have to be a `general commite` user first",
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "integrantId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/integrant/general": {
-			"post": {
-				"operationId": "NewIntegrant",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IntegrantResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint used for add a new integrant to committe. \nUser could be a new integrant or old integrant with active=false",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/IntegrantBody"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/integrant": {
-			"get": {
-				"operationId": "GetGeneralMembers",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/IntegrantResponse"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/integrant/general/{integrantId}": {
-			"delete": {
-				"operationId": "DeleteGeneralMember",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "integrantId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/group-validator": {
-			"post": {
-				"operationId": "NewGroupValidator",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"description": "Fix response",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GroupValidatorBody"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetAllGroupValidatorsDetails",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
 			}
 		}
 	},

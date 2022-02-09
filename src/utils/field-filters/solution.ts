@@ -4,7 +4,7 @@ import { TeamResponse } from "../../controller/team";
 import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import { genericArrayAreaFilter } from "./area";
-import { genericTeamFilter } from "./team";
+import { lightTeamFilter } from "./team";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async(solution: SolutionI ): Promise<SolutionResponse> => {  
@@ -48,7 +48,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
         if(solution.participationModeChosed == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
             coauthor = await genericArrayUserFilter(solution.coauthor)
         }else if (solution.participationModeChosed == PARTICIPATION_MODE.TEAM){
-            team = await genericTeamFilter(solution.team)
+            team = await lightTeamFilter(solution.team)
         }
         const author = await genericUserFilter(solution.author)
         const inserted_by = await genericUserFilter(solution.insertedBy)

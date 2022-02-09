@@ -19,7 +19,6 @@ router.post('/group-validator',[
         return new Promise(async (resolve, reject)=> {
             const groupValidators = await GroupValidatorService.getAllGroupValidators();
             groupValidators.forEach(groupValidator => {
-                console.log(groupValidator.name)
                 if(groupValidator.name === value){
                     return reject()
                 }

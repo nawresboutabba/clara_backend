@@ -20,3 +20,16 @@ export const genericTeamFilter= async (team: TeamI): Promise<TeamResponse> => {
         })
     })
 }
+
+export const lightTeamFilter = async (team: TeamI): Promise<any> => {
+    return new Promise(async (resolve, reject)=> {
+        let {
+            teamId,
+            name,
+        } = team
+        return resolve({
+            team_id: teamId,
+            name,
+        })
+    })
+}

@@ -1,5 +1,6 @@
 import { NextFunction } from "express";
 import { RULES, OWNER } from "../constants";
+import { CAN_EDIT_SOLUTION } from "../utils/acl/acl.can_edit_solution";
 import { CAN_VIEW_CHALLENGE } from "../utils/acl/acl.can_view_challenge";
 import { IS_ADMIN } from "../utils/acl/acl.is_admin";
 import { IS_COMMITTE_MEMBER } from "../utils/acl/acl.is_committe";
@@ -27,6 +28,9 @@ export function acl(rule:string){
                     break;
                 case RULES.IS_ADMIN: 
                     await IS_ADMIN(req)
+                    break;
+                case RULES.CAN_EDIT_SOLUTION:
+                    await CAN_EDIT_SOLUTION(req)
                     break;
             }
 

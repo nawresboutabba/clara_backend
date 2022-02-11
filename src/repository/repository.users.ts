@@ -137,7 +137,7 @@ export const getParticipation = (userRequest: UserRequest): Promise<any> => {
   return new Promise(async(resolve, reject)=> {
     try{
       const user = await UserService.getUserActiveByUserId(userRequest.userId)
-      const teams = await TeamService.getUsersTeam(user)
+      const teams = await TeamService.getTeamsUser(user)
       const solutions = await SolutionService.getParticipations(user, teams)
       const rest = await genericArraySolutionsFilter(solutions)
       return resolve(rest)

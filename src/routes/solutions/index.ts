@@ -9,7 +9,7 @@ import { validationResult, body , check} from "express-validator";
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import SolutionController from '../../controller/solution/index'
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, PARTICIPATION_MODE, RESOURCE, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, PARTICIPATION_MODE, RESOURCE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -17,8 +17,47 @@ import { isCompositionUsersValid } from "../../utils/configuration-rules/partici
 import UserService from "../../services/User.service";
 import ConfigurationService from "../../services/Configuration.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import { acl } from "../../middlewares/acl";
 
 router.post("/solution/default-configuration",[
+  body("can_show_disagreement").isBoolean(),
+  body("disagreement_default").isBoolean(),
+  body("can_fix_desapproved_idea").isBoolean(),
+  body("can_choose_scope").isBoolean(),
+  body("is_private_default").isBoolean(),
+  body("can_choose_WSALevel").isBoolean(),
+  check("WSALevel_available", "WSALevel_available invalid").custom((value: string[], {req}): Promise<void>=> {
+    return new Promise(async (resolve, reject)=> {
+      const WSALevel: string [] = _.sortedUniq(value)
+      WSALevel.forEach(value => {
+        if(![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)){
+          return reject("WSALevel_available invalid")
+        }
+      })
+      return resolve()
+    })     
+  }),
+  body("WSALevel_default").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
+  body("community_can_see_reactions").isBoolean(),
+  body("maximun_dont_understand").isInt({min:0}),
+  body("minimun_likes").isInt({min:0}),
+  body("reaction_filter").isBoolean(),
+  body("external_contribution_available_for_generators").isBoolean(),
+  body("external_contribution_available_for_committee").isBoolean(),
+  body("participation_mode_available", 'participation_mode_available invalid').custom((value: string[], {req}): Promise<void>=> {
+    return new Promise(async (resolve, reject)=> {
+      const participationModeAvailable: string [] = _.sortedUniq(value)
+      participationModeAvailable.forEach(value => {
+        if(![PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(value)){
+          return reject("participation_mode_available invalid")
+        }
+      })
+      return resolve()
+    })     
+  }),
+  body("time_in_park").isInt(),
+  body("time_expert_feedback").isInt(),
+  body("time_idea_fix").isInt(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try{
     const solutionController = new SolutionController()
@@ -50,7 +89,7 @@ router.post(
         }
       })
     }),
-    check("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
 
@@ -211,25 +250,20 @@ router.get(
 
 
 router.patch(
-  "/solution/:solutionId",
-  // @TODO patch control: Something have to be editable
-  [checkResourceExistFromParams("solutions"), 
-  authentication
+  "/solution/:solutionId",[
+  authentication,
+  acl(RULES.CAN_EDIT_SOLUTION)
 ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
-      const errors = validationResult(req).array();
-      if (errors.length > 0) {
-        const customError = new RoutingError(
-          ERRORS.ROUTING.PATCH_SOLUTION,
-          HTTP_RESPONSE._400,
-          errors
-          )
-        throw customError;
-      } 
-      const solutionController = new SolutionController()
-      const solution = await solutionController.updateSolutionPartially(req.body, req.params.solutionId)
-      res.status(200).json(solution).send();
+      await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.PATCH_SOLUTION)
+
+/*       const solutionController = new SolutionController()
+      const solution = await solutionController.updateSolutionPartially(req.body, req.params.solutionId) */
+      res
+        .status(200)
+        .json("wep")
+        .send();
       next();
     } catch (error) {
       next(error);

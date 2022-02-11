@@ -1,4 +1,4 @@
-import { ERRORS, HTTP_RESPONSE } from "../../constants";
+import { HTTP_RESPONSE } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 

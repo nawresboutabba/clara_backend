@@ -18,6 +18,7 @@ import toISOData,{ getCurrentDate } from "../../utils/date";
 import { isCompositionUsersValid } from "../../utils/configuration-rules/participation";
 import UserService from "../../services/User.service";
 import TeamService from "../../services/Team.service";
+import ConfigurationService from "../../services/Configuration.service";
 
 router.get("/challenge/default-configuration", [
 ],async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
@@ -69,8 +70,7 @@ router.post("/challenge/default-configuration",[
   body("reaction_filter").isBoolean(),
   body("external_contribution_available_for_generators").isBoolean(),
   body("external_contribution_available_for_committee").isBoolean(),
-  body("participation_mode_available").isIn([PARTICIPATION_MODE.TEAM,PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP]),
-  check("participation_mode_available", 'participation_mode_available invalid').custom((value: string[], {req}): Promise<void>=> {
+  body("participation_mode_available", 'participation_mode_available invalid').custom((value: string[], {req}): Promise<void>=> {
     return new Promise(async (resolve, reject)=> {
       const participationModeAvailable: string [] = _.sortedUniq(value)
       participationModeAvailable.forEach(value => {

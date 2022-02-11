@@ -66,7 +66,6 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
             groupValidator,
             ...configuration,
           }
-
           if (data.WSALevelChosed == WSALEVEL.AREA){
              data.areasAvailable = challenge.areasAvailable
             }
@@ -211,7 +210,7 @@ const getConfigurationFromDefaultSolution = (body: SolutionBody, defaultSolution
      * for the solution or the committee, 
      * depending on the permission granted
      */    
-    participationModeChosed: defaultSolutionConfiguration.participationModeAvailable.includes(body.participation_mode_chosed)? body.participation_mode_chosed : defaultSolutionConfiguration.participationModeChosed,    
+    participationModeChosed: defaultSolutionConfiguration.participationModeAvailable.includes(body.participation.chosed_mode) == true? body.participation.chosed_mode : defaultSolutionConfiguration.participationModeChosed,    
     timeInPark: defaultSolutionConfiguration.timeInPark,
     timeExpertFeedback: defaultSolutionConfiguration.timeExpertFeedback,
     timeIdeaFix: defaultSolutionConfiguration.timeIdeaFix,

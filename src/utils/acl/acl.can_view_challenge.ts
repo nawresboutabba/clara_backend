@@ -22,7 +22,7 @@ export function CAN_VIEW_CHALLENGE (req: RequestMiddleware): Promise<void> {
                 const challenge: ChallengeI = await ChallengeService.getChallengeActiveById(req.params.challengeId)
                 if(challenge == null){
                     return reject(new RoutingError(
-                        ERRORS.REPOSITORY.CHALLENGE_FORBIDDEN,
+                        ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
                         HTTP_RESPONSE._500
                     ))                    
                 }
@@ -35,7 +35,7 @@ export function CAN_VIEW_CHALLENGE (req: RequestMiddleware): Promise<void> {
                  * @TODO create a whitelist for manage external users
                  */
                 return reject(new RoutingError(
-                    ERRORS.REPOSITORY.CHALLENGE_FORBIDDEN,
+                    ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
                     HTTP_RESPONSE._500
                 ))
             } else {
@@ -48,7 +48,7 @@ export function CAN_VIEW_CHALLENGE (req: RequestMiddleware): Promise<void> {
                         return resolve()
                     }
                     return reject(new RoutingError(
-                        ERRORS.REPOSITORY.CHALLENGE_FORBIDDEN,
+                        ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
                         HTTP_RESPONSE._500
                     ))
                 }else{

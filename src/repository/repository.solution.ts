@@ -15,6 +15,7 @@ import { TeamI } from "../models/team";
 import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation } from "./repository.invitation";
 import ConfigurationService from "../services/Configuration.service";
 import {  ConfigurationSettingI } from "../models/configuration.default";
+import { UserI } from "../models/users";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: any, challengeId?: string):Promise<SolutionResponse> => {
     return new Promise (async (resolve, reject)=> {
@@ -51,6 +52,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
 
           data = {
             insertedBy,
+            updatedBy: insertedBy,
             solutionId: nanoid(),
             title,
             challengeId,
@@ -64,6 +66,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
             fileComplementary: body.file_complementary,
             images: body.images,
             groupValidator,
+            proposedSolution: body.proposed_solution,
             ...configuration,
           }
           if (data.WSALevelChosed == WSALEVEL.AREA){
@@ -99,12 +102,25 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
     }) 
 }
 
-export const updateSolutionPartially = async (body: SolutionBody, solutionId: string ): Promise<SolutionI> =>  {
+export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI ,utils: any ): Promise<SolutionResponse> =>  {
   return new Promise (async (resolve, reject)=> {
     try{
-      const solutionChanges = _.mapKeys(body, (v: any, k:any) => _.camelCase(k));
-      const solution = await SolutionService.updateWithLog(solutionId, solutionChanges);
-      return resolve(solution)
+      const currentSolution = resources.solution
+      const change = {
+        updatedBy: user,
+        title: body.title != currentSolution.title ? body.title : undefined,
+        description: body.description != currentSolution.description ? body.description : undefined,
+        images: body.images != currentSolution.images ? body.images : undefined,
+        departmentAffected: utils.departmentAffected != currentSolution.departmentAffected ? utils.departmentAffected : undefined,
+        isPrivated: body.is_privated != currentSolution.isPrivated ? body.is_privated : undefined,
+        WSALevelChosed: body.WSALevel_chosed != currentSolution.WSALevelChosed ? body.WSALevel_chosed : undefined,
+      }
+
+      const solution = await SolutionService.updateWithLog(currentSolution.solutionId, change);
+      
+      const resp = genericSolutionFilter(solution)
+
+      return resolve(resp)
     }catch (error){
       return reject(error)
     }

@@ -34,6 +34,29 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"TeamBody": {
+				"properties": {
+					"creator": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"creator",
+					"members",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"UserResponse": {
 				"properties": {
 					"area_visible": {
@@ -119,29 +142,6 @@
 				"required": [
 					"email",
 					"password"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"TeamBody": {
-				"properties": {
-					"creator": {
-						"type": "string"
-					},
-					"members": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"creator",
-					"members",
-					"name"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -724,6 +724,9 @@
 					"solution_id": {
 						"type": "string"
 					},
+					"proposed_solution": {
+						"type": "string"
+					},
 					"challenge_id": {
 						"type": "string",
 						"description": "challenge associated"
@@ -762,7 +765,8 @@
 					"time_idea_fix",
 					"external_contribution_available_for_generators",
 					"external_contribution_available_for_committee",
-					"solution_id"
+					"solution_id",
+					"proposed_solution"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -870,6 +874,9 @@
 					"external_contribution_available_for_committee": {
 						"type": "boolean"
 					},
+					"proposed_solution": {
+						"type": "string"
+					},
 					"participation": {
 						"properties": {
 							"team_name": {
@@ -924,6 +931,7 @@
 					"time_idea_fix",
 					"external_contribution_available_for_generators",
 					"external_contribution_available_for_committee",
+					"proposed_solution",
 					"participation"
 				],
 				"type": "object",
@@ -1074,6 +1082,10 @@
 						"$ref": "#/components/schemas/UserI",
 						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
 					},
+					"updatedBy": {
+						"$ref": "#/components/schemas/UserI",
+						"description": "User that did the last change"
+					},
 					"author": {
 						"$ref": "#/components/schemas/UserI",
 						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
@@ -1105,7 +1117,7 @@
 					},
 					"description": {
 						"type": "string",
-						"description": "Solution description"
+						"description": "Situation description. Could be a challenge or description of an identified problem."
 					},
 					"active": {
 						"type": "boolean",
@@ -1237,7 +1249,9 @@
 				},
 				"required": [
 					"insertedBy",
+					"updatedBy",
 					"created",
+					"title",
 					"description",
 					"active",
 					"images",
@@ -1262,7 +1276,6 @@
 					"externalContributionAvailableForGenerators",
 					"externalContributionAvailableForCommittee",
 					"challengeId",
-					"title",
 					"isStrategic",
 					"finalization"
 				],
@@ -1587,204 +1600,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"SolutionI": {
-				"properties": {
-					"_id": {},
-					"insertedBy": {
-						"$ref": "#/components/schemas/UserI",
-						"description": "When the inserted user is not same that author user. \nUsed for committe (Committe integrants has \na Functionality for add generator's challenge)"
-					},
-					"author": {
-						"$ref": "#/components/schemas/UserI",
-						"description": "Generator that create the solution. \nThis field exclusive with team configuration"
-					},
-					"coauthor": {
-						"items": {
-							"$ref": "#/components/schemas/UserI"
-						},
-						"type": "array",
-						"description": "field that is combined with author \nwhen participationModeChosen = \"INDIVIDUAL_WITH_COAUTHORSHIP\""
-					},
-					"team": {
-						"$ref": "#/components/schemas/TeamI",
-						"description": "Field that is filled when participationModeChosen = \"TEAM\"\nThis field exclusive with author and coauthor configuration"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution creation date"
-					},
-					"updated": {
-						"type": "string",
-						"format": "date-time",
-						"description": "Solution update date"
-					},
-					"title": {
-						"type": "string",
-						"description": "Situation title. \nIf a challenge's solution, title is not required."
-					},
-					"description": {
-						"type": "string",
-						"description": "Solution description"
-					},
-					"active": {
-						"type": "boolean",
-						"description": "Flag that indicate if a solution is active.\nWhen a challenge is delete, the flag is false"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "Solution images"
-					},
-					"departmentAffected": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Departments Affected"
-					},
-					"groupValidator": {
-						"$ref": "#/components/schemas/GroupValidatorI",
-						"description": "Group that do the analysis about the situation"
-					},
-					"status": {
-						"type": "string",
-						"description": "Challenge | Problem | Solution Status: @TODO define situation challenge"
-					},
-					"fileComplementary": {
-						"type": "string",
-						"description": "Complementary files to challenge, solution or problem"
-					},
-					"canShowDisagreement": {
-						"type": "boolean",
-						"description": "Can those responsible express their disagreement? \nIt affects an attribute in the Barema that indicates \nif the person responsible for the solution agrees or \ndisagrees with the rating."
-					},
-					"canFixDisapprovedIdea": {
-						"type": "boolean",
-						"description": "Can managers make corrections after disapproving an idea? \nAffects the ability to update the solution for a solution \nstatus = REJECTED"
-					},
-					"canChooseScope": {
-						"type": "boolean",
-						"description": "Can the generator choose the privacy of the solution \n(if it goes to the park or directly to the committee)?\nAffects the scope_chosed attribute.\nIf can_chosose_scope = true, then the maintainer \ncan edit is_privated (otherwise, the default value goes)"
-					},
-					"isPrivated": {
-						"type": "boolean",
-						"description": "if committee allow to user choose solution privacity"
-					},
-					"canChooseWSALevel": {
-						"type": "boolean",
-						"description": "Determines if the user can edit the WSALevel_chosed."
-					},
-					"WSALevelAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "WorkSpaceAvailable.\nIf the situation is available for all company or just for some areas."
-					},
-					"WSALevelChosed": {
-						"type": "string",
-						"description": "Space for which the resource is available. \nIt can be One. \nIt is chosen by the person in charge of the situation"
-					},
-					"areasAvailable": {
-						"items": {
-							"$ref": "#/components/schemas/AreaI"
-						},
-						"type": "array",
-						"description": "Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas."
-					},
-					"communityCanSeeReactions": {
-						"type": "boolean",
-						"description": "Reactions in park"
-					},
-					"minimumLikes": {
-						"type": "number",
-						"format": "double"
-					},
-					"maximumDontUnderstand": {
-						"type": "number",
-						"format": "double"
-					},
-					"reactionFilter": {
-						"type": "boolean"
-					},
-					"participationModeAvailable": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"description": "How can you participate in the proposal of a solution?\n- INDIVIDUAL_WITH_COAUTHORSHIP - TEAM"
-					},
-					"participationModeChosed": {
-						"type": "string",
-						"description": "How does the person in charge participate? \nWorks in combination with \nparticipation_mode_available"
-					},
-					"timeInPark": {
-						"type": "number",
-						"format": "double"
-					},
-					"timeExpertFeedback": {
-						"type": "number",
-						"format": "double"
-					},
-					"timeIdeaFix": {
-						"type": "number",
-						"format": "double"
-					},
-					"externalContributionAvailableForGenerators": {
-						"type": "boolean",
-						"description": "Are invitations to external contributors \nby generators allowed? \naffects whether authors, co-authors, \nand teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can \ninvite people from outside the organization."
-					},
-					"externalContributionAvailableForCommittee": {
-						"type": "boolean",
-						"description": "Are invitations to external contributors \nby the committee allowed? affects whether authors, \nco-authors, and teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can invite \npeople from outside the organization."
-					},
-					"solutionId": {
-						"type": "string",
-						"description": "Id that uniquely identifies a solution"
-					},
-					"challengeId": {
-						"type": "string",
-						"description": "Id Challenge associated to solution."
-					},
-					"challenge": {
-						"$ref": "#/components/schemas/ChallengeI",
-						"description": "Challenge Object. challengeId refer to challenge attribute. \nThe redundace is for performance lookup (for example Solutions with a particular challengeId)"
-					}
-				},
-				"required": [
-					"insertedBy",
-					"created",
-					"description",
-					"active",
-					"images",
-					"status",
-					"fileComplementary",
-					"canShowDisagreement",
-					"canFixDisapprovedIdea",
-					"canChooseScope",
-					"isPrivated",
-					"canChooseWSALevel",
-					"WSALevelAvailable",
-					"WSALevelChosed",
-					"communityCanSeeReactions",
-					"minimumLikes",
-					"maximumDontUnderstand",
-					"reactionFilter",
-					"participationModeAvailable",
-					"participationModeChosed",
-					"timeInPark",
-					"timeExpertFeedback",
-					"timeIdeaFix",
-					"externalContributionAvailableForGenerators",
-					"externalContributionAvailableForCommittee",
-					"solutionId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"ConfigurationBaseI": {
 				"properties": {
 					"canShowDisagreement": {
@@ -2014,6 +1829,34 @@
 				]
 			}
 		},
+		"/team": {
+			"post": {
+				"operationId": "NewTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Create a new Team for a challenge or situation",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TeamBody"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/signup": {
 			"post": {
 				"operationId": "SignUp",
@@ -2120,9 +1963,9 @@
 				"parameters": []
 			}
 		},
-		"/team": {
-			"post": {
-				"operationId": "NewTeam",
+		"/user/participation": {
+			"get": {
+				"operationId": "GetParticipation",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2133,19 +1976,8 @@
 						}
 					}
 				},
-				"description": "Create a new Team for a challenge or situation",
 				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamBody"
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
 		"/group-validator": {
@@ -2751,7 +2583,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SolutionI"
+									"$ref": "#/components/schemas/SolutionResponse"
 								}
 							}
 						}

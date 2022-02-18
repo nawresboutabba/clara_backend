@@ -16,6 +16,10 @@ export interface SolutionI extends SituationBaseI {
      * The redundace is for performance lookup (for example Solutions with a particular challengeId)
      */
     challenge?: ChallengeI,
+    /**
+     * Solution description
+     */
+    proposedSolution: string,
   }
 
 
@@ -26,6 +30,10 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
       type: Schema.Types.ObjectId, 
       ref: 'Challenge' 
     },
+    proposedSolution: String,
 }))
+
+
+
 
 export default Solution;

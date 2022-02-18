@@ -3,7 +3,9 @@ import { GroupValidatorI } from './group-validator';
 import { AreaI } from './organization.area';
 import { UserI } from './users';
 import { TeamI } from './team';
-  
+import Log from './log';
+import historicalSolutions from './historical-solutions';
+import * as _ from 'lodash';  
 
 export const options = { 
   discriminatorKey: 'itemtype', 
@@ -18,6 +20,10 @@ export interface SituationBaseI {
    * a Functionality for add generator's challenge)
    */
   insertedBy: UserI,
+  /**
+   * User that did the last change
+   */
+  updatedBy: UserI,
   /**
    * Generator that create the solution. 
    * This field exclusive with team configuration
@@ -45,10 +51,10 @@ export interface SituationBaseI {
    * Situation title. 
    * If a challenge's solution, title is not required.
    */
-  title?: string,
+  title: string,
   /**
-   * Solution description
-   */
+   * Situation description. Could be a challenge or description of an identified problem.
+    */
   description: string,
   /**
    * Flag that indicate if a solution is active.
@@ -175,6 +181,10 @@ const situationBase = new Schema({
     insertedBy: {
       type: Schema.Types.ObjectId,
       ref: 'User'
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     },  
     author: {
       type: Schema.Types.ObjectId,
@@ -246,4 +256,32 @@ const situationBase = new Schema({
   externalContributionAvailableForCommittee: Boolean,
 }, options)
 
-export default model("SituationBase", situationBase);
+
+situationBase.post('findOneAndUpdate', async(document)=> {
+  try{
+      let solution = _.omit(document.toJSON(),['_id','__v'])
+      solution.updated = new Date()
+      await historicalSolutions.create(solution)
+  }catch(error){
+      console.log(`Error with log integrants changes. Document:${document} . Error: ${error}`)
+  }
+})
+
+const SituationModel = model('SituationBase', situationBase);
+
+
+SituationModel.watch().
+/**
+ * @TODO add document audit
+ */
+on('change', data => {
+  try{
+    let log = _.omit(data,['_id','__v'])
+    Log.create(log)
+  }catch(error){
+    console.log(`Error with log event ${data}. Error: ${error}`)
+  }
+});
+
+
+export default SituationModel;

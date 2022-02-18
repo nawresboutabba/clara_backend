@@ -4,7 +4,7 @@ import { SolutionBody, SolutionResponse } from "../controller/solution";
 import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { PARTICIPATION_MODE, RESOURCE, SOLUTION, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
@@ -62,7 +62,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
             created: created,
             active: true,
             updated: created,
-            status: SOLUTION_STATUS.LAUNCHED,
+            status: SOLUTION_STATUS.DRAFT,
             fileComplementary: body.file_complementary,
             images: body.images,
             groupValidator,

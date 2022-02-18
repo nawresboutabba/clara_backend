@@ -32,7 +32,8 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
             const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
             
             let data: ChallengeI = {
-              insertedBy: insertedBy,
+              insertedBy,
+              updatedBy: insertedBy,
               author: authorEntity, 
               created,
               challengeId: nanoid(),

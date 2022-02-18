@@ -8,7 +8,7 @@ import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlew
 import { validationResult, body , check} from "express-validator";
 import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import SolutionController from '../../controller/solution/index'
-import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -258,6 +258,7 @@ router.get(
 router.patch(
   "/solution/:solutionId",[
   authentication,
+  acl(RULES.CAN_EDIT_SOLUTION),
   body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
     return new Promise(async (resolve, reject)=> {
       try{
@@ -272,11 +273,22 @@ router.patch(
       }
     })
   }),
-  acl(RULES.CAN_EDIT_SOLUTION),
+  body("status", "status invalid").notEmpty(),
+  body("status","CAN_NOT_EDIT_SOLUTION").isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION]),
+  body("status").custom(async (value, { req }): Promise<void> => {
+    return new Promise(async (resolve, reject)=> {
+      if(req.resources.solution.status == value){
+        return resolve()
+      }
+      /**
+       * @TODO add state machine
+       */
+      return reject("CAN_NOT_EDIT_SOLUTION")
+    })
+  }),
   body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
   body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
   body("images", "images does not valid").isArray(),
-
   body("department_affected").isArray(),
   body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
     return new Promise(async (resolve, reject)=> {
@@ -323,7 +335,7 @@ router.patch(
       await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.PATCH_SOLUTION)
 
       const solutionController = new SolutionController()
-      const solution = await solutionController.updateSolutionPartially(req.body, req.resources, req.user, req.utils)
+      const solution = await solutionController.updateSolutionPartially(req.params.solutionId, req.body, req.resources, req.user, req.utils)
       res
         .status(200)
         .json(solution)

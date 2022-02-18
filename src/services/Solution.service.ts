@@ -1,36 +1,32 @@
 //import Solution, { SolutionI } from "../models/solutions";
 import Solution, { SolutionI } from "../models/situation.solutions"
 import { ChallengeI } from "../models/situation.challenges";
-import { startSession } from 'mongoose';
-import HistoricalSolution from "../models/historical-solutions";
 import * as _ from 'lodash'; 
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { TeamI } from "../models/team";
+import { AreaI } from "../models/organization.area";
 
 export type editOneParams = {
-    description?: string,
-    images?: Array<string>,
-    canChooseScope?:boolean,
-    isPrivate?:boolean,
-    status?: string,
-    timeInPark?: number,
-    baremoValidator?: Array<String>,
-    baremoReferrer?: String,
-    fileName?: String
-    WSALevel?: string
+  title: string,
+  description?: string,
+  images?: Array<string>,
+  departmentAffected?:Array<AreaI>,
+  isPrivated?:boolean,
+  WSALevelChosed?: string
 }
 
 const SolutionService = {
     async getSolutionActiveById (id: String): Promise <any> {
-        return new Promise((resolve, reject) =>
-          Solution.findOne({
+        return new Promise(async (resolve, reject) =>
+          await Solution.findOne({
             solutionId: id,
             active: true,
           })
           .populate('challenge')
+          .populate('author')
             .then((result) => {
               return resolve(result);
             })
@@ -51,31 +47,31 @@ const SolutionService = {
             return error
         }
       },
-      async updateWithLog (solutionId: string, solutionChanges: editOneParams): Promise<SolutionI> {
+      async updateWithLog (solutionId: string, solutionChanges: editOneParams): Promise<any> {
         return new Promise(async (resolve, reject)=> {
-          const session = await startSession();
           try {
-            const solution = await this.getSolutionActiveById(solutionId)
-            const oldData = _.omit(solution.toJSON(), ["_id", "__v"])
-            Object.assign(solution, solutionChanges);
-  
-            session.startTransaction();
-            await Promise.all([
-              HistoricalSolution.create([oldData], { session: session }),
-              solution.save({ session: session }),
-            ]);
-            await session.commitTransaction();
-            session.endSession();
-  
+            const solution = await Solution.findOneAndUpdate({
+              solutionId: solutionId,
+              active: true,
+            }, 
+            {
+              ...solutionChanges
+            }, 
+            {
+              new: true
+            })
+          .populate('team')
+          .populate('insertedBy')
+          .populate('areasAvailable')
+          .populate('author')
+          .populate('coauthor')
             return resolve(solution);
-          } catch (error) {
-            await session.abortTransaction();
-            session.endSession();
-            const customError = new ServiceError(
+          } catch (error) {          
+            return reject( new ServiceError(
               ERRORS.SERVICE.DELETE_USER, 
               HTTP_RESPONSE._500,
-              error)            
-            return reject(customError);
+              error)   
+            );
           }
         })
       },

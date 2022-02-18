@@ -13,18 +13,19 @@ export function CAN_EDIT_SOLUTION (req: RequestMiddleware): Promise<void> {
         try{
             const solution: SolutionI = await SolutionService.getSolutionActiveById(req.params.solutionId)
             if(solution){
-                req.resources = solution
+                req.resources = {...req.resources, solution}
             }else {
                 return reject(
                     new RoutingError(
                         ERRORS.ROUTING.SOLUTION_FORBIDDEN,
-                        HTTP_RESPONSE._500
+                        HTTP_RESPONSE._400
                     )
                 )
             }
             const user: UserI = await UserService.getUserActiveByUserId(req.user.userId)
+          
             if (PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
-                if (user == solution.author){
+                if (user.userId == solution.author.userId){
                     /**
                      * Check that user is author of solution
                      */

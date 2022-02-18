@@ -2,6 +2,7 @@ import { Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Qu
 import { RESOURCE } from '../../constants';
 import { ConfigurationBaseI } from '../../models/configuration.default';
 import { SolutionI } from '../../models/situation.solutions';
+import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, updateSolutionPartially, deleteSolution, getSolution} from '../../repository/repository.solution';
@@ -12,6 +13,7 @@ import { UserRequest } from '../users';
 
 
 export interface SolutionBody extends SituationBody {
+    proposed_solution: string;
     /**
      * Participation defines the type of intervention 
      * that the creator chose to make the proposal.
@@ -35,6 +37,7 @@ export interface SolutionBody extends SituationBody {
 
 export interface SolutionResponse extends SituationResponse{
     solution_id: string,
+    proposed_solution: string,
     /**
      * challenge associated
      */
@@ -50,8 +53,8 @@ export default class SolutionController extends Controller {
         return newSolution(body, user, utils)
     }
     @Patch(':solutionId')
-    public async updateSolutionPartially(@Body() body:SolutionBody, @Path('solutionId') solutionId: string): Promise<SolutionI>{
-        return updateSolutionPartially(body, solutionId)
+    public async updateSolutionPartially(@Path('solutionId') solutionId: string,@Body() body:SolutionBody, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any): Promise<SolutionResponse>{
+        return updateSolutionPartially(body, resources, user ,utils)
     }
     @Delete(':solutionId')
     public async deleteSolution(@Path('solutionId') solutionId: string): Promise <boolean> {

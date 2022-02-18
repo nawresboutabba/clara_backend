@@ -40,7 +40,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             timeExpertFeedback,
             timeIdeaFix,
             externalContributionAvailableForGenerators,
-            externalContributionAvailableForCommittee
+            externalContributionAvailableForCommittee,
+            proposedSolution
         } = solution
 
         let coauthor : UserResponse[]
@@ -68,6 +69,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
             file_complementary:fileComplementary,
             title,
             description,
+            proposed_solution: proposedSolution,
             images,
             department_affected:departmentAffected,
             /**

@@ -58,8 +58,6 @@ export function CAN_VIEW_CHALLENGE (req: RequestMiddleware): Promise<void> {
                     return resolve()
                 }
             }
-
- 
         }catch(error){
             return reject(error)
         }

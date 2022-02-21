@@ -47,7 +47,8 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
            * then title is the same that challenge. 
            * For this reason, is undefined in the solution.
            */
-          const title = challengeId ? undefined : body.title
+          const title = challengeId ? challenge.title : body.title
+          const description = challengeId ? challenge.description : body.description
           const groupValidator = challengeId ? challenge.groupValidator: undefined
 
           data = {
@@ -57,7 +58,7 @@ export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: 
             title,
             challengeId,
             challenge,
-            description: body.description,
+            description: description,
             departmentAffected: utils.departmentAffected,
             created: created,
             active: true,

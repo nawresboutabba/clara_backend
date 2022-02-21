@@ -1,4 +1,4 @@
-import { ChallengeBody, ChallengeResponse } from "../controller/challenge";
+import { ChallengeBody, ChallengeProposalResponse, ChallengeResponse } from "../controller/challenge";
 import { ChallengeI } from "../models/situation.challenges";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
@@ -21,58 +21,16 @@ import { isReaction } from "./repository.reaction";
 import { genericReactionFilter } from "../utils/field-filters/reaction";
 import AreaService from "../services/Area.service";
 import { AreaI } from "../models/organization.area";
+import ChallengeProposalService from "../services/Proposal.service";
+import { ChallengeProposalI } from "../models/challenge-proposal";
+import { getCurrentDate } from "../utils/date";
+import { genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
 
 export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
     return new Promise (async (resolve, reject)=> {
         try{
-            const created = new Date();
 
-            const insertedBy = await UserService.getUserActiveByUserId(user.userId)
-            const authorEntity = await UserService.getUserActiveByUserId(user.userId)
-            const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
-            
-            let data: ChallengeI = {
-              insertedBy,
-              updatedBy: insertedBy,
-              author: authorEntity, 
-              created,
-              challengeId: nanoid(),
-              title: body.title,
-              description: body.description,
-              images: body.images,
-              groupValidator,
-              status: "LAUNCHED",
-              active: true, 
-              fileComplementary: body.file_complementary,
-              isStrategic: body.is_strategic,
-              /**
-               * Configuration section
-               */
-              canShowDisagreement: body.can_show_disagreement,
-              canFixDisapprovedIdea: body.can_fix_disapproved_idea,
-              canChooseScope: body.can_choose_scope,
-              isPrivated: body.is_privated,
-              canChooseWSALevel: body.can_choose_WSALevel,
-              WSALevelAvailable: body.WSALevel_available,
-              WSALevelChosed: body.WSALevel_chosed,
-              communityCanSeeReactions: body.community_can_see_reactions,
-              minimumLikes: body.minimum_likes,
-              maximumDontUnderstand: body.maximum_dont_understand,
-              reactionFilter: body.reaction_filter,
-              participationModeAvailable: body.participation_mode_available,
-              participationModeChosed: body.participation_mode_chosed,
-              timeInPark: body.time_in_park,
-              timeExpertFeedback: body.time_expert_feedback,
-              timeIdeaFix: body.time_idea_fix,
-              externalContributionAvailableForCommittee: body.external_contribution_available_for_committee,
-              externalContributionAvailableForGenerators: body.external_contribution_available_for_generators,
-              finalization: body.finalization,
-            }
-
-            if (data.WSALevelChosed == WSALEVEL.AREA){
-               let areasAvailable: Array<AreaI> = await AreaService.getAreasById(body.areas_available)
-               data.areasAvailable = areasAvailable
-            }
+            const data: ChallengeI = await composeChallenge(body, user)
 
             const challenge = await ChallengeService.newChallenge({
               ...data
@@ -83,6 +41,77 @@ export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promis
             return reject(error)
         }
     })
+}
+
+export const newChallengeProposal = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeProposalResponse> => {
+  return new Promise(async (resolve, reject)=> {
+    try{
+      const challenge: ChallengeI = await composeChallenge(body, user)
+      const proposalId = nanoid()
+      const dateProposal = getCurrentDate()
+      const data : ChallengeProposalI = {...challenge,proposalId,dateProposal }
+      const proposal: ChallengeProposalI = await ChallengeProposalService.newProposal(data)
+      const resp: ChallengeProposalResponse = await genericChallengeProposalFilter(proposal)
+      return resolve(resp)
+    } catch(error){
+      return reject(error)
+    }
+  })
+}
+
+const composeChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeI> => {
+  return new Promise(async (resolve, reject)=> {
+    const created = new Date();
+
+    const insertedBy = await UserService.getUserActiveByUserId(user.userId)
+    const authorEntity = await UserService.getUserActiveByUserId(user.userId)
+    const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
+    
+    let data: ChallengeI = {
+      insertedBy,
+      updatedBy: insertedBy,
+      author: authorEntity, 
+      created,
+      challengeId: nanoid(),
+      title: body.title,
+      description: body.description,
+      images: body.images,
+      groupValidator,
+      status: "LAUNCHED",
+      active: true, 
+      fileComplementary: body.file_complementary,
+      isStrategic: body.is_strategic,
+      /**
+       * Configuration section
+       */
+      canShowDisagreement: body.can_show_disagreement,
+      canFixDisapprovedIdea: body.can_fix_disapproved_idea,
+      canChooseScope: body.can_choose_scope,
+      isPrivated: body.is_privated,
+      canChooseWSALevel: body.can_choose_WSALevel,
+      WSALevelAvailable: body.WSALevel_available,
+      WSALevelChosed: body.WSALevel_chosed,
+      communityCanSeeReactions: body.community_can_see_reactions,
+      minimumLikes: body.minimum_likes,
+      maximumDontUnderstand: body.maximum_dont_understand,
+      reactionFilter: body.reaction_filter,
+      participationModeAvailable: body.participation_mode_available,
+      participationModeChosed: body.participation_mode_chosed,
+      timeInPark: body.time_in_park,
+      timeExpertFeedback: body.time_expert_feedback,
+      timeIdeaFix: body.time_idea_fix,
+      externalContributionAvailableForCommittee: body.external_contribution_available_for_committee,
+      externalContributionAvailableForGenerators: body.external_contribution_available_for_generators,
+      finalization: body.finalization,
+    }
+
+    if (data.WSALevelChosed == WSALEVEL.AREA){
+       let areasAvailable: Array<AreaI> = await AreaService.getAreasById(body.areas_available)
+       data.areasAvailable = areasAvailable
+    }
+
+    return resolve(data)
+  })
 }
 
 export const getChallenge = async (challenge: ChallengeI ): Promise<ChallengeResponse> => {
@@ -221,6 +250,29 @@ export const newReaction = async (challengeId: string, reaction: ReactionBody, u
       return resolve(resp)
     }catch(error){
       return reject(error)
+    }
+  })
+}
+
+export const getChallengeProposal = async (proposalId: string): Promise<any>=> {
+  return new Promise(async (resolve, reject)=> {
+    try{
+      const proposal = await ChallengeProposalService.getChallengeProposal(proposalId)
+      return resolve(proposal)
+    }catch(error){
+      return reject(error)
+    }
+  })
+}
+export const acceptChallengeProposal = async (proposalId: string): Promise<ChallengeResponse>=> {
+  return new Promise(async (resolve, reject )=> {
+    try{
+      const proposal: ChallengeProposalI = await ChallengeProposalService.getChallengeProposal(proposalId)
+      const challenge = await ChallengeService.newChallenge(_.omit(proposal, ["_id", "__v"]))
+      const resp = await genericChallengeFilter(challenge)
+      return resolve(resp)
+    }catch(error){
+      return reject (error)
     }
   })
 }

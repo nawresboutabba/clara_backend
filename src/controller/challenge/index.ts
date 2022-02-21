@@ -1,7 +1,17 @@
 import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Request, Inject} from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
-import { newChallenge, getChallenge, updateChallengePartially, deleteChallenge, listChallenges, newChallengeComment, getComments, newReaction } from '../../repository/repository.challenge';
+import { 
+    newChallenge, 
+    getChallenge, 
+    updateChallengePartially, 
+    deleteChallenge, listChallenges, 
+    newChallengeComment, 
+    getComments, 
+    newReaction, 
+    newChallengeProposal, 
+    getChallengeProposal, 
+    acceptChallengeProposal } from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
@@ -39,6 +49,11 @@ export interface ChallengeResponse extends SituationResponse {
     group_validator: GroupValidatorResponse
 }
 
+export interface ChallengeProposalResponse extends ChallengeResponse {
+    proposal_id: string
+    date_proposal: Date
+}
+
 @Route('challenge')
 export default class ChallengeController extends Controller {
     /**
@@ -51,6 +66,17 @@ export default class ChallengeController extends Controller {
     public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
         return newChallenge(body, user)
     }
+    /**
+     * New Challenge Proposal method
+     * @param body Challenge definition according to ChallengeBody
+     * @param user User that insert the challenge
+     * @returns 
+     */
+     @Post()
+     public async newChallengeProposal(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
+         return newChallengeProposal(body, user)
+     }
+
     @Post(':challengeId/solution')
     public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string , @Inject() utils : any): Promise<SolutionResponse>{
         return newSolution(body, user, utils,  challengeId)
@@ -126,5 +152,13 @@ export default class ChallengeController extends Controller {
     @Get('/default-configuration')
     public async getChallengeDefaultConfiguration(): Promise<ConfigurationDefaultI>{
         return getChallengeConfiguration()
+    }
+    @Get('/proposal/:proposalId')
+    public async getChallengeProposal(@Path('proposalId') proposalId: string): Promise<any>{
+        return getChallengeProposal(proposalId)
+    }
+    @Post('/proposal/:proposeId/accept')
+    public async acceptChallengeProposal(@Path('proposeId') proposeId: string): Promise<any>{
+        return acceptChallengeProposal(proposeId)
     }
 }

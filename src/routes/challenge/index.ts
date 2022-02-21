@@ -7,7 +7,7 @@ import checkResourceExistFromParams from '../../middlewares/check-resources-exis
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body,check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
@@ -99,12 +99,31 @@ router.post("/challenge/default-configuration",[
   }
 })
 
+router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE_PROPOSEID,[
+  authentication,
+  acl(RULES.IS_COMMITTE_MEMBER)
+], (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const challengeController = new ChallengeController()
+    const proposal = challengeController.getChallengeProposal(req.params.proposeId)
+    res
+    .json(proposal)
+    .status(200)
+    .send()
+  }catch(error){
+    next(error)
+  }
+})
+
 router.post(
-  "/challenge",
+  [
+    URLS.CHALLENGE.CHALLENGE, 
+    URLS.CHALLENGE.CHALLENGE_PROPOSE,
+  ],
   [
     authentication,
     acl(
-      RULES.IS_COMMITTE_MEMBER
+      RULES.CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL
     ),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
@@ -214,16 +233,40 @@ router.post(
       await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.ADD_CHALLENGE)
 
       const challengeController = new ChallengeController();
-      const challenge = await challengeController.newChallenge(req.body, req.user)
-      res
-      .status(200)
-      .json(challenge)
-      .send();
+      if(req.url == URLS.CHALLENGE.CHALLENGE){
+        const challenge = await challengeController.newChallenge(req.body, req.user)
+        res
+        .status(200)
+        .json(challenge)
+        .send();
+      } else if (req.url == URLS.CHALLENGE.CHALLENGE_PROPOSE){
+        const challenge = await challengeController.newChallengeProposal(req.body, req.user)
+        res
+        .status(200)
+        .json(challenge)
+        .send();        
+      }
     } catch (error) {
       next(error);
     }
   }
 );
+
+router.post (URLS.CHALLENGE.CHALLENGE_PROPOSE_PROPOSEID_ACCEPT,[
+  authentication,
+  acl(RULES.IS_LEADER)
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try{
+    const challengeController = new ChallengeController();
+    const challenge = await challengeController.acceptChallengeProposal(req.params.proposeId)
+    res
+    .status(200)
+    .json(challenge)
+    .send(); 
+  }catch(error){
+    next(error)
+  }
+})
 
 router.post(
   "/challenge/:challengeId/solution",
@@ -362,9 +405,10 @@ router.get(
 
 router.patch(
   "/challenge/:challengeId",
-  [checkResourceExistFromParams("challenges"), 
-  authentication
-],
+  [
+    authentication,
+  ]
+  ,
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
 

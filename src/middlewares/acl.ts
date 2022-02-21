@@ -1,6 +1,7 @@
 import { NextFunction } from "express";
 import { RULES, OWNER } from "../constants";
 import { CAN_EDIT_SOLUTION } from "../utils/acl/acl.can_edit_solution";
+import { CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL } from "../utils/acl/acl.can_insert_challenge_or_challenge_proposal";
 import { CAN_VIEW_CHALLENGE } from "../utils/acl/acl.can_view_challenge";
 import { CAN_VIEW_SOLUTION } from "../utils/acl/acl.can_view_solution";
 import { IS_ADMIN } from "../utils/acl/acl.is_admin";
@@ -35,6 +36,9 @@ export function acl(rule:string){
                     break;
                 case RULES.CAN_EDIT_SOLUTION:
                     await CAN_EDIT_SOLUTION(req)
+                    break;
+                case RULES.CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL:
+                    await CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL(req)
                     break;
             }
 

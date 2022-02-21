@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
+import { ChallengeProposalI } from "../models/challenge-proposal";
 
 type editOneParams = {
     description?:string,
@@ -37,15 +38,18 @@ const ChallengeService = {
             })
         );
     },
-    async newChallenge (challenge : ChallengeI): Promise<any>{
+    async newChallenge (challenge : ChallengeI ): Promise<any>{
         return new Promise((resolve, reject) => {
           Challenge.create(challenge)
-            .then((response) => {
-                //_.omit(resp.toJSON(), ["_id", "__v"])
+          .then((response) => {
               resolve(response);
             })
             .catch((err) => {
-              reject(err);
+              reject(
+                new ServiceError(
+                  ERRORS.SERVICE.NEW_CHALLENGE,
+                  HTTP_RESPONSE._404, 
+                  err));
             });
         });  
     },

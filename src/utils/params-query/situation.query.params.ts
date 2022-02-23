@@ -23,8 +23,8 @@ export async function formatSitutationQuery(query: any): Promise<QuerySituationF
       * Pagination extraction and cleaning
       */
     let { init, offset } = query
-    init = parseInt(query.init.toString()) || 0;
-    offset = parseInt(query.offset.toString()) || 10;
+    init = query.init ? parseInt(query.init.toString()) : 0;
+    offset = query.offset? parseInt(query.offset.toString()) : 10;
     /**
       * Date filter
       */

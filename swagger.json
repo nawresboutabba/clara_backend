@@ -227,18 +227,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"IntegrantBody": {
-				"properties": {
-					"userId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"userId"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"TeamResponse": {
 				"properties": {
 					"team_id": {
@@ -1600,6 +1588,192 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ChallengeProposalResponse": {
+				"properties": {
+					"inserted_by": {
+						"$ref": "#/components/schemas/UserResponse",
+						"description": "User that inserted the solution"
+					},
+					"author": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"coauthor": {
+						"items": {
+							"$ref": "#/components/schemas/UserResponse"
+						},
+						"type": "array"
+					},
+					"team": {
+						"$ref": "#/components/schemas/TeamResponse"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"department_affected": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"group_validator": {
+						"$ref": "#/components/schemas/GroupValidatorResponse"
+					},
+					"status": {
+						"type": "string"
+					},
+					"file_complementary": {
+						"type": "string"
+					},
+					"can_show_disagreement": {
+						"type": "boolean",
+						"description": "Configuration Section"
+					},
+					"can_fix_disapproved_idea": {
+						"type": "boolean"
+					},
+					"can_choose_scope": {
+						"type": "boolean"
+					},
+					"is_privated": {
+						"type": "boolean"
+					},
+					"can_choose_WSALevel": {
+						"type": "boolean"
+					},
+					"WSALevel_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"WSALevel_chosed": {
+						"type": "string"
+					},
+					"areas_available": {
+						"items": {
+							"$ref": "#/components/schemas/AreaResponse"
+						},
+						"type": "array"
+					},
+					"community_can_see_reactions": {
+						"type": "boolean"
+					},
+					"minimum_likes": {
+						"type": "number",
+						"format": "double"
+					},
+					"maximum_dont_understand": {
+						"type": "number",
+						"format": "double"
+					},
+					"reaction_filter": {
+						"type": "boolean"
+					},
+					"participation_mode_available": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"participation_mode_chosed": {
+						"type": "string"
+					},
+					"time_in_park": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_expert_feedback": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_idea_fix": {
+						"type": "number",
+						"format": "double"
+					},
+					"external_contribution_available_for_generators": {
+						"type": "boolean"
+					},
+					"external_contribution_available_for_committee": {
+						"type": "boolean"
+					},
+					"challenge_id": {
+						"type": "string"
+					},
+					"is_strategic": {
+						"type": "boolean"
+					},
+					"finalization": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"proposal_id": {
+						"type": "string"
+					},
+					"date_proposal": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"inserted_by",
+					"created",
+					"updated",
+					"title",
+					"description",
+					"active",
+					"images",
+					"department_affected",
+					"status",
+					"file_complementary",
+					"can_show_disagreement",
+					"can_fix_disapproved_idea",
+					"can_choose_scope",
+					"is_privated",
+					"can_choose_WSALevel",
+					"WSALevel_available",
+					"WSALevel_chosed",
+					"areas_available",
+					"community_can_see_reactions",
+					"minimum_likes",
+					"maximum_dont_understand",
+					"reaction_filter",
+					"participation_mode_available",
+					"participation_mode_chosed",
+					"time_in_park",
+					"time_expert_feedback",
+					"time_idea_fix",
+					"external_contribution_available_for_generators",
+					"external_contribution_available_for_committee",
+					"challenge_id",
+					"is_strategic",
+					"finalization",
+					"group_validator",
+					"proposal_id",
+					"date_proposal"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"ConfigurationBaseI": {
 				"properties": {
 					"canShowDisagreement": {
@@ -2071,11 +2245,12 @@
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "user that will be converted from generator to commite (GENERAL)",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IntegrantBody"
+								"type": "string"
 							}
 						}
 					}
@@ -2180,6 +2355,66 @@
 					}
 				},
 				"description": "Challenge listing",
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/challenge/proposal": {
+			"post": {
+				"operationId": "NewChallengeProposal",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChallengeResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "New Challenge Proposal method",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "Challenge definition according to ChallengeBody",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChallengeBody"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListChallengeProposal",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ChallengeProposalResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
 				"security": [],
 				"parameters": [
 					{
@@ -2513,6 +2748,58 @@
 				},
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/challenge/proposal/{proposalId}": {
+			"get": {
+				"operationId": "GetChallengeProposal",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "proposalId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/challenge/proposal/{proposeId}/accept": {
+			"post": {
+				"operationId": "AcceptChallengeProposal",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "proposeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/solution": {

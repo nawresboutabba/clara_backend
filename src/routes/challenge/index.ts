@@ -101,7 +101,7 @@ router.post("/challenge/default-configuration", [
     next(error)
   }
 })
-router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE,[
+router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE, [
   authentication,
   acl(RULES.IS_COMMITTE_MEMBER)
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -495,27 +495,26 @@ router.delete(
 router.get('/challenge/:challengeId/solution', [
   check('init').escape(),
   check('offset').escape(),
-],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try {
 
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)
+    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)
 
-      const challengeController = new ChallengeController();
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query)
+    const challengeController = new ChallengeController();
+    const query: QuerySolutionForm = await formatSolutionQuery(req.query)
 
-      const solutions = await challengeController.listSolutions(
-        req.params.challengeId,
-        query
-      )
-      res
-        .json(solutions)
-        .status(200)
-        .send()
-    } catch (error) {
-      next(error)
-    }
-  })
+    const solutions = await challengeController.listSolutions(
+      req.params.challengeId,
+      query
+    )
+    res
+      .json(solutions)
+      .status(200)
+      .send()
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.post('/challenge/:challengeId/comment', [
   authentication,

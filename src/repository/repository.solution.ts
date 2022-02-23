@@ -18,89 +18,89 @@ import {  ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 
 export const newSolution = async (body:SolutionBody,  user: UserRequest, utils: any, challengeId?: string):Promise<SolutionResponse> => {
-    return new Promise (async (resolve, reject)=> {
-        try {
-          const guests = utils.guests
-          const insertedBy = await UserService.getUserActiveByUserId(user.userId)
-          /**
+  return new Promise (async (resolve, reject)=> {
+    try {
+      const guests = utils.guests
+      const insertedBy = await UserService.getUserActiveByUserId(user.userId)
+      /**
            * Solution have to have setted `author` or `team`.
            * If both are undefined or null, then throw error
            */
-          const creator = utils.creator
+      const creator = utils.creator
 
-          let challenge: ChallengeI
-          let data: SolutionI
-          if (challengeId){
-            challenge = await ChallengeService.getChallengeActiveById(challengeId)
-          }
-          const created = new Date();
+      let challenge: ChallengeI
+      let data: SolutionI
+      if (challengeId){
+        challenge = await ChallengeService.getChallengeActiveById(challengeId)
+      }
+      const created = new Date();
 
-          let configuration: ConfigurationSettingI
-          if(challengeId){
-            configuration = getConfigurationFromChallenge(body, challenge)
-          } else {
-            const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
-            configuration = getConfigurationFromDefaultSolution(body, defaultSolutionConfiguration)
-          }      
-          /**
+      let configuration: ConfigurationSettingI
+      if(challengeId){
+        configuration = getConfigurationFromChallenge(body, challenge)
+      } else {
+        const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
+        configuration = getConfigurationFromDefaultSolution(body, defaultSolutionConfiguration)
+      }      
+      /**
            * If the challenge's solution, 
            * then title is the same that challenge. 
            * For this reason, is undefined in the solution.
            */
-          const title = challengeId ? challenge.title : body.title
-          const description = challengeId ? challenge.description : body.description
-          const groupValidator = challengeId ? challenge.groupValidator: undefined
+      const title = challengeId ? challenge.title : body.title
+      const description = challengeId ? challenge.description : body.description
+      const groupValidator = challengeId ? challenge.groupValidator: undefined
 
-          data = {
-            insertedBy,
-            updatedBy: insertedBy,
-            solutionId: nanoid(),
-            title,
-            challengeId,
-            challenge,
-            description: description,
-            departmentAffected: utils.departmentAffected,
-            created: created,
-            active: true,
-            updated: created,
-            status: SOLUTION_STATUS.DRAFT,
-            fileComplementary: body.file_complementary,
-            images: body.images,
-            groupValidator,
-            proposedSolution: body.proposed_solution,
-            ...configuration,
-          }
-          if (data.WSALevelChosed == WSALEVEL.AREA){
-             data.areasAvailable = challenge.areasAvailable
-            }
+      data = {
+        insertedBy,
+        updatedBy: insertedBy,
+        solutionId: nanoid(),
+        title,
+        challengeId,
+        challenge,
+        description: description,
+        departmentAffected: utils.departmentAffected,
+        created: created,
+        active: true,
+        updated: created,
+        status: SOLUTION_STATUS.DRAFT,
+        fileComplementary: body.file_complementary,
+        images: body.images,
+        groupValidator,
+        proposedSolution: body.proposed_solution,
+        ...configuration,
+      }
+      if (data.WSALevelChosed == WSALEVEL.AREA){
+        data.areasAvailable = challenge.areasAvailable
+      }
           
-          /**
+      /**
            * Participation Mode Choosed
            */
-          if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
-            const team : TeamI  = await newTeam(creator, body.participation.team_name)
-            data.team = team
-          }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
-            data.author = creator
-            data.coauthor = guests
-          }
+      if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
+        const team : TeamI  = await newTeam(creator, body.participation.team_name)
+        data.team = team
+      }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+        data.author = creator
+        data.coauthor = guests
+      }
 
-             const solution = await SolutionService.newSolution(data, challenge);   
-             /**
+      const solution = await SolutionService.newSolution(data, challenge);   
+      /**
              * Create invitations
              */
-            if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
-              generateSolutionTeamInvitation(creator, guests, solution, solution.team)
-            }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
-              generateSolutionCoauthorshipInvitation(creator, guests, solution)
-            }
+      if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM){
+        generateSolutionTeamInvitation(creator, guests, solution, solution.team)
+      }else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
+        generateSolutionCoauthorshipInvitation(creator, guests, solution)
+      }
             
-            const resp = genericSolutionFilter(solution)
-            return resolve(resp)  
-        }catch (error) {
-            return reject (error)
-        }
-    }) 
+      const resp = genericSolutionFilter(solution)
+      return resolve(resp)  
+    }catch (error) {
+      return reject (error)
+    }
+  }) 
 }
 
 export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI ,utils: any ): Promise<SolutionResponse> =>  {

@@ -5,11 +5,11 @@ import { UserI } from './users';
 import { TeamI } from './team';
 import Log from './log';
 import historicalSolutions from './historical-solutions';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 
-export const options = { 
-  discriminatorKey: 'itemtype', 
-  collection: 'situations' 
+export const options = {
+  discriminatorKey: 'itemtype',
+  collection: 'situations'
 };
 
 export interface SituationBaseI {
@@ -27,7 +27,7 @@ export interface SituationBaseI {
   /**
    * Generator that create the solution. 
    * This field exclusive with team configuration
-   */  
+   */
   author?: UserI,
   /**
    * field that is combined with author 
@@ -76,11 +76,11 @@ export interface SituationBaseI {
   /**
   * Challenge | Problem | Solution Status: @TODO define situation challenge
   */
-   status: string,
+  status: string,
   /**
    * Complementary files to challenge, solution or problem
    */
-   fileComplementary: string,
+  fileComplementary: string,
   /**
    * ---------------------------------
    * Configuration Section
@@ -110,7 +110,7 @@ export interface SituationBaseI {
   /**
    * if committee allow to user choose solution privacity
    */
-  isPrivated: boolean,  
+  isPrivated: boolean,
   /**
    * Determines if the user can edit the WSALevel_chosed.
    */
@@ -120,7 +120,7 @@ export interface SituationBaseI {
    * If the situation is available for all company or just for some areas. 
    * @TODO convert description to constants
    */
-  WSALevelAvailable: string []
+  WSALevelAvailable: string[]
   /**
    * Space for which the resource is available. 
    * It can be One. 
@@ -177,56 +177,56 @@ export interface SituationBaseI {
   externalContributionAvailableForCommittee: boolean,
 }
 
-const situationBase = new Schema({
-    insertedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    updatedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },  
-    author: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    coauthor:[ {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    team: {
-      type: Schema.Types.ObjectId, 
-      ref: 'Team' 
-    },
-    created: {
-        type: Date,
-        default: Date.now,
-    },
-    updated: Date,
-    title: {
+export const situationBaseModel = {
+  insertedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  updatedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  coauthor: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  team: {
+    type: Schema.Types.ObjectId,
+    ref: 'Team'
+  },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
+  updated: Date,
+  title: {
+    type: String,
+    required: false
+  },
+  description: String,
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  images: [
+    {
       type: String,
-      required: false
     },
-    description: String,
-    active: {
-        type: Boolean,
-        default: true,
-      },
-    images: [
-        {
-          type: String,
-        },
-      ],
-    departmentAffected: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Area'
-      }],
-    groupValidator: {
-        type: Schema.Types.ObjectId,
-        ref: 'GroupValidator'
-      },
-    status: String,
-    fileComplementary: String,
+  ],
+  departmentAffected: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Area'
+  }],
+  groupValidator: {
+    type: Schema.Types.ObjectId,
+    ref: 'GroupValidator'
+  },
+  status: String,
+  fileComplementary: String,
   /**
    * ---------------------------------
    * Configuration Section
@@ -254,16 +254,20 @@ const situationBase = new Schema({
   timeIdeaFix: Number,
   externalContributionAvailableForGenerators: Boolean,
   externalContributionAvailableForCommittee: Boolean,
+}
+
+const situationBase = new Schema({
+  ...situationBaseModel
 }, options)
 
 
-situationBase.post('findOneAndUpdate', async(document)=> {
-  try{
-      let solution = _.omit(document.toJSON(),['_id','__v'])
-      solution.updated = new Date()
-      await historicalSolutions.create(solution)
-  }catch(error){
-      console.log(`Error with log integrants changes. Document:${document} . Error: ${error}`)
+situationBase.post('findOneAndUpdate', async (document) => {
+  try {
+    const solution = _.omit(document.toJSON(), ['_id', '__v'])
+    solution.updated = new Date()
+    await historicalSolutions.create(solution)
+  } catch (error) {
+    console.log(`Error with log integrants changes. Document:${document} . Error: ${error}`)
   }
 })
 
@@ -271,17 +275,17 @@ const SituationModel = model('SituationBase', situationBase);
 
 
 SituationModel.watch().
-/**
- * @TODO add document audit
- */
-on('change', data => {
-  try{
-    let log = _.omit(data,['_id','__v'])
-    Log.create(log)
-  }catch(error){
-    console.log(`Error with log event ${data}. Error: ${error}`)
-  }
-});
+  /**
+   * @TODO add document audit
+   */
+  on('change', data => {
+    try {
+      const log = _.omit(data, ['_id', '__v'])
+      Log.create(log)
+    } catch (error) {
+      console.log(`Error with log event ${data}. Error: ${error}`)
+    }
+  });
 
 
 export default SituationModel;

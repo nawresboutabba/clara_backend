@@ -6,15 +6,15 @@ export interface AreaI {
 }
 
 const area =  new Schema({
-    areaId: {
-        type: String,
-        required: true, 
-    },
-    name: {
-        type:String,
-        required: true,
-        unique: true
-    }
+  areaId: {
+    type: String,
+    required: true, 
+  },
+  name: {
+    type:String,
+    required: true,
+    unique: true
+  }
 })
 
 export default model('Area', area)

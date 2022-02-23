@@ -7,7 +7,7 @@ export interface ReactionI extends InteractionBaseI{
 }
 
 const Reaction = InteractionBase.discriminator('Reaction',new Schema({
-    type: String
-  }, options));
+  type: String
+}, options));
 
-  export default Reaction
+export default Reaction

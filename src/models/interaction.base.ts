@@ -4,9 +4,9 @@ import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
 export const options = { 
-    discriminatorKey: 'itemtype', 
-    collection: 'interactions' 
-  };
+  discriminatorKey: 'itemtype', 
+  collection: 'interactions' 
+};
 
 export interface InteractionBaseI {
     insertedBy: UserI,
@@ -17,23 +17,23 @@ export interface InteractionBaseI {
 }
 
 const interactionBase = new Schema({
-    insertedBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    date: Date,
-    challenge: {
-        type: Schema.Types.ObjectId,
-        ref: 'Challenge'
-    },
-    solution: {
-        type: Schema.Types.ObjectId,
-        ref: 'Solution'
-    },
+  insertedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  date: Date,
+  challenge: {
+    type: Schema.Types.ObjectId,
+    ref: 'Challenge'
+  },
+  solution: {
+    type: Schema.Types.ObjectId,
+    ref: 'Solution'
+  },
 },options)
 
 export default model("InteractionBase", interactionBase);

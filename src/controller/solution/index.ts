@@ -49,20 +49,20 @@ export interface SolutionResponse extends SituationResponse{
 @Route('solution')
 export default class SolutionController extends Controller {
     @Post()
-    public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
-        return newSolution(body, user, utils)
-    }
+  public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
+    return newSolution(body, user, utils)
+  }
     @Patch(':solutionId')
     public async updateSolutionPartially(@Path('solutionId') solutionId: string,@Body() body:SolutionBody, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any): Promise<SolutionResponse>{
-        return updateSolutionPartially(body, resources, user ,utils)
+      return updateSolutionPartially(body, resources, user ,utils)
     }
     @Delete(':solutionId')
     public async deleteSolution(@Path('solutionId') solutionId: string): Promise <boolean> {
-        return deleteSolution(solutionId)
+      return deleteSolution(solutionId)
     }
     @Get(':solutionId')
     public async getSolution(@Path('solutionId') solutionId:string ,@Request() solution: SolutionI): Promise<SolutionResponse> {
-        return getSolution(solutionId, solution)
+      return getSolution(solutionId, solution)
     }
 
     /**
@@ -73,10 +73,10 @@ export default class SolutionController extends Controller {
      */
     @Get()
     public async listSolutions(@Query() query?: any): Promise<SolutionResponse []> {
-        return listSolutions(query, undefined)
+      return listSolutions(query, undefined)
     }
     @Post('/default-configuration')
     public async setSolutionDefaultConfiguration(@Body() body:ConfigurationBody): Promise<ConfigurationBaseI> {
-        return setDefaultConfiguration(body, RESOURCE.SOLUTION)
+      return setDefaultConfiguration(body, RESOURCE.SOLUTION)
     }
 }

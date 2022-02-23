@@ -40,14 +40,14 @@ const DB_NAME = 'PINC-SE'
 
 mongoose.connect(`mongodb+srv://dev-enviroment:0Q5ryUinCQ0pOeiT@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
 })
-    .then(db => console.log(`DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`))
-    .catch(err => console.log(err))
+  .then(db => console.log(`DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`))
+  .catch(err => console.log(err))
 
 
 app.listen(PORT, () =>
-    console.log(
-        `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
-    )
+  console.log(
+    `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
+  )
 );
 //app.use(session)
 app.use('/', solutionsRouter);

@@ -24,13 +24,13 @@ export interface SolutionI extends SituationBaseI {
 
 
 const Solution = SituationBase.discriminator('Solution',new Schema({
-    solutionId: String,
-    challengeId: String,
-    challenge: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'Challenge' 
-    },
-    proposedSolution: String,
+  solutionId: String,
+  challengeId: String,
+  challenge: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'Challenge' 
+  },
+  proposedSolution: String,
 }))
 
 

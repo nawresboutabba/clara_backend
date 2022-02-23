@@ -1,11 +1,8 @@
-import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
+import { Post , Controller, Route, Body, Delete , Path, Get, Inject} from 'tsoa'
+import { UserI } from '../../models/users';
 import { GroupValidatorResponse } from '../../repository/repository.group-validator';
 import { newIntegrant , newLeader, getGeneralMembers, deleteGeneralMember } from '../../repository/repository.integrants'
 import { UserResponse } from '../users';
-
-export interface IntegrantBody{
-    userId: string
-}
 
 export interface IntegrantResponse {
     user: UserResponse,
@@ -31,9 +28,9 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/leader/:integrantId')
-    public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
-        return newLeader(integrantId)
-    }
+  public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
+    return newLeader(integrantId)
+  }
     /**
      * Endpoint used for add a new integrant to committe. 
      * User could be a new integrant or old integrant with active=false
@@ -41,16 +38,16 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/general')
-    public async newIntegrant(@Body() user: IntegrantBody): Promise<IntegrantResponse>{
-        return newIntegrant(user)
+    public async newIntegrant(@Body() userId: string, @Inject() user: UserI): Promise<IntegrantResponse>{
+      return newIntegrant(user)
     }
     @Get()
     public async getGeneralMembers():Promise<Array<IntegrantResponse>> {
-        return getGeneralMembers()
+      return getGeneralMembers()
     }
     @Delete('/general/:integrantId')
     public async deleteGeneralMember(@Path('integrantId') integrantId: string): Promise<boolean>{
-        return deleteGeneralMember(integrantId)
+      return deleteGeneralMember(integrantId)
     }
     /**
      * Return all committe: LEADER + GENERAL

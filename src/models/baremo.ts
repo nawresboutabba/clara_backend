@@ -7,17 +7,17 @@ import { SpecialistInterventionI } from "./specialist-intervention";
 export interface BaremoI {
     intervention: IntegrantI | SpecialistInterventionI,
     situation: ChallengeI | SolutionI,
-    comment: String
+    comment: string
 }
 
 const baremo = new Schema({
-    intervention: {
-        type: Schema.Types.Mixed,
-    },
-    situation: {
-        type: Schema.Types.Mixed,
-    },
-    comment: String
+  intervention: {
+    type: Schema.Types.Mixed,
+  },
+  situation: {
+    type: Schema.Types.Mixed,
+  },
+  comment: String
 })
 
 baremo.index({intervention:1, situation:1}, {unique:true})

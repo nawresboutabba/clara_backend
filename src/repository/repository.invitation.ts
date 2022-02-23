@@ -36,59 +36,59 @@ import UserService from "../services/User.service";
  * @returns 
  */
 export const generateSolutionTeamInvitation= async (creator: UserI, guests: Array<UserI> , solution:SolutionI, team: TeamI): Promise<InvitationI[]> => {
-    return new Promise((resolve, reject)=> {
-        let invitations = []
-        const creationDate = new Date()
-        guests.forEach(guest => {
-            const invitation : SolutionTeamInvitationI = {
-                to: creator,
-                from: guest,
-                creationDate,
-                type: INVITATIONS.TEAM_PARTICIPATION,
-                team,
-                solution               
-            }
-            invitations.push(InvitationService.newInvitation(invitation))
-        })
-        Promise
-        .all(invitations)
-        .then(result => {
-            return resolve(result) 
-        })
-        .catch(error=> {
-            /**
+  return new Promise((resolve, reject)=> {
+    const invitations = []
+    const creationDate = new Date()
+    guests.forEach(guest => {
+      const invitation : SolutionTeamInvitationI = {
+        to: creator,
+        from: guest,
+        creationDate,
+        type: INVITATIONS.TEAM_PARTICIPATION,
+        team,
+        solution               
+      }
+      invitations.push(InvitationService.newInvitation(invitation))
+    })
+    Promise
+      .all(invitations)
+      .then(result => {
+        return resolve(result) 
+      })
+      .catch(error=> {
+        /**
              * @TODO manage error
              */
-            return reject()
-        }) 
-    })
+        return reject()
+      }) 
+  })
 }
 
 export const generateSolutionCoauthorshipInvitation= async (creator: UserI, guests: Array<UserI> , solution:SolutionI): Promise<Array<InvitationI>>=> {
-    return new Promise((resolve, reject)=>{
-        let invitations = []
-        const creationDate = new Date()
-        guests.forEach(guest => {
-            const invitation: SolutionCoauthorshipInvitationI = {
-                to: creator,
-                from: guest,
-                creationDate,
-                type: INVITATIONS.COAUTHORSHIP_PARTICIPATION,
-                solution                
-            }
+  return new Promise((resolve, reject)=>{
+    const invitations = []
+    const creationDate = new Date()
+    guests.forEach(guest => {
+      const invitation: SolutionCoauthorshipInvitationI = {
+        to: creator,
+        from: guest,
+        creationDate,
+        type: INVITATIONS.COAUTHORSHIP_PARTICIPATION,
+        solution                
+      }
 
-            invitations.push(InvitationService.newInvitation(invitation))
-        }) 
-        Promise
-        .all(invitations)
-        .then(result => {
-            return resolve(result) 
-        })
-        .catch(error=> {
-            /**
+      invitations.push(InvitationService.newInvitation(invitation))
+    }) 
+    Promise
+      .all(invitations)
+      .then(result => {
+        return resolve(result) 
+      })
+      .catch(error=> {
+        /**
              * @TODO manage error
              */
-            return reject()
-        })   
-    })
+        return reject()
+      })   
+  })
 }

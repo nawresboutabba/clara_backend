@@ -14,51 +14,51 @@ import TeamService from '../services/Team.service';
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
     await UserService
-    .getUserActiveByEmail(body.email)
-    .then(async user => {
-      if (user) {
-        return  reject (new RepositoryError(ERRORS.REPOSITORY.USER_EXIST, HTTP_RESPONSE._409));
-      }
+      .getUserActiveByEmail(body.email)
+      .then(async user => {
+        if (user) {
+          return  reject (new RepositoryError(ERRORS.REPOSITORY.USER_EXIST, HTTP_RESPONSE._409));
+        }
         await hash(body.password, 10, async (err: Error, hash: string) => {
-              if (err) {
-                return reject(new RepositoryError(
-                  ERRORS.REPOSITORY.PASSWORD_GENERATION, 
-                  HTTP_RESPONSE._500,
-                  err));
-              }
-              await UserService.newGenericUser({
-                userId: nanoid(),
-                username: body.username,
-                email: body.email,
-                password: hash,
-                firstName: body.first_name,
-                lastName: body.last_name,
-                active: true,
-                externalUser: false,
-                points: 0,
-              })
-              .then(async user => {
-                const resp = await genericUserFilter(user)
-                return resolve(resp)
-              })
-              .catch(error => {
-                return reject(error)
-              });
+          if (err) {
+            return reject(new RepositoryError(
+              ERRORS.REPOSITORY.PASSWORD_GENERATION, 
+              HTTP_RESPONSE._500,
+              err));
+          }
+          await UserService.newGenericUser({
+            userId: nanoid(),
+            username: body.username,
+            email: body.email,
+            password: hash,
+            firstName: body.first_name,
+            lastName: body.last_name,
+            active: true,
+            externalUser: false,
+            points: 0,
+          })
+            .then(async user => {
+              const resp = await genericUserFilter(user)
+              return resolve(resp)
             })
-    })
-    .catch(error => {
-      const customError = new RepositoryError(
-        ERRORS.REPOSITORY.USER_CREATION, 
-        HTTP_RESPONSE._500, 
-        error)
+            .catch(error => {
+              return reject(error)
+            });
+        })
+      })
+      .catch(error => {
+        const customError = new RepositoryError(
+          ERRORS.REPOSITORY.USER_CREATION, 
+          HTTP_RESPONSE._500, 
+          error)
         return reject(customError)
-    });
+      });
   })
 }
 
 export const login = async (body: Login ) : Promise<string> => {
   return new Promise (async (resolve, reject )=> {
-      UserService
+    UserService
       .getUserActiveByEmail(body.email)
       .then(async (user: UserI) => {
         if (user == null) {
@@ -66,10 +66,10 @@ export const login = async (body: Login ) : Promise<string> => {
            * User does not exist
            */
           return reject (new RepositoryError (ERRORS.REPOSITORY.AUTH_FAILED, HTTP_RESPONSE._500))
-      }  
-      await compare(body.password, user.password, async (err: Error, result: boolean) => {
-        try {
-          if (err || result == false) {
+        }  
+        await compare(body.password, user.password, async (err: Error, result: boolean) => {
+          try {
+            if (err || result == false) {
             /**
              * Comparation error
              */
@@ -89,13 +89,13 @@ export const login = async (body: Login ) : Promise<string> => {
             /**
              * Generic error for this case: Creation token failed
              */
-              const errorCustom = new RepositoryError(
-                ERRORS.REPOSITORY.CREATE_TOKEN, 
-                HTTP_RESPONSE._500,
-                error)
+            const errorCustom = new RepositoryError(
+              ERRORS.REPOSITORY.CREATE_TOKEN, 
+              HTTP_RESPONSE._500,
+              error)
             return reject(errorCustom)
           }
-      })       
+        })       
       })
       .catch(error => {
         return reject(error)
@@ -104,8 +104,8 @@ export const login = async (body: Login ) : Promise<string> => {
 }
 
 export const deleteUser = async (userId : string): Promise <boolean> => {
-    return new Promise (async (resolve, reject)=> {
-      await UserService
+  return new Promise (async (resolve, reject)=> {
+    await UserService
       .deleteUserWithLog(userId)
       .then(resp => {
 
@@ -117,7 +117,7 @@ export const deleteUser = async (userId : string): Promise <boolean> => {
          */
         return reject(error)
       })
-    })
+  })
 }
 
 export const getUserInformation = async (userInformation: UserRequest): Promise<UserResponse> => {

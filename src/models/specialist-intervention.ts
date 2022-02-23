@@ -13,21 +13,21 @@ export interface SpecialistInterventionI {
 }
 
 const specialistIntervention = new Schema({
-    groupValidator: {
-        type: Schema.Types.ObjectId,
-        ref: 'GroupValidator'
-    },
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    baremo: {
-        type: Schema.Types.ObjectId,
-        ref: 'Baremo'
-    },
-    situation: {
-        type: Schema.Types.Mixed
-    }
+  groupValidator: {
+    type: Schema.Types.ObjectId,
+    ref: 'GroupValidator'
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  baremo: {
+    type: Schema.Types.ObjectId,
+    ref: 'Baremo'
+  },
+  situation: {
+    type: Schema.Types.Mixed
+  }
 })
 
 specialistIntervention.index({situation:1, user:1}, {unique:true})

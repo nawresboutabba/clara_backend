@@ -41,26 +41,26 @@ export interface SolutionCoauthorshipInvitationI extends InvitationI {
 }
 
 const invitation = new Schema({
-    to:{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    from:{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    creationDate: Date,
-    invitationAccepted: Boolean,
-    decisionDate: Date,
-    type: String,
-    team: {
-        type: Schema.Types.ObjectId,
-        ref: 'Team'
-    },
-    solution:{
-        type: Schema.Types.ObjectId,
-        ref: 'Solution'
-    },
+  to:{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  from:{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  creationDate: Date,
+  invitationAccepted: Boolean,
+  decisionDate: Date,
+  type: String,
+  team: {
+    type: Schema.Types.ObjectId,
+    ref: 'Team'
+  },
+  solution:{
+    type: Schema.Types.ObjectId,
+    ref: 'Solution'
+  },
 })
 
 export default model('Invitation', invitation);

@@ -7,15 +7,15 @@ export interface GroupValidatorI {
 }
 
 const groupValidator = new Schema({
-    groupValidatorId: String,
-    name: {
-        type: String,
-        required: true
-    },
-    created: {
-        type: Date,
-        required: true
-    },
+  groupValidatorId: String,
+  name: {
+    type: String,
+    required: true
+  },
+  created: {
+    type: Date,
+    required: true
+  },
 })
 
 export default model('GroupValidator', groupValidator);

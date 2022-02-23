@@ -10,21 +10,21 @@ export interface TeamI {
 }
 
 const team = new Schema({
-    teamId: String,
-    creator: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    members: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    created: Date,
-    name: {
-        type: Schema.Types.String,
-        unique: true,
-        required: true
-    }
+  teamId: String,
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  members: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  created: Date,
+  name: {
+    type: Schema.Types.String,
+    unique: true,
+    required: true
+  }
 })
 /**
  * @TODO check unique team name

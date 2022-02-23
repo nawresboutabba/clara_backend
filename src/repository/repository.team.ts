@@ -15,19 +15,19 @@ import { TeamI } from "../models/team";
  */
 
 export const newTeam = async (creator: UserI, name: string): Promise<TeamI> => {
-    return new Promise(async (resolve, reject)=> {
-        try{
+  return new Promise(async (resolve, reject)=> {
+    try{
 
-            const newTeam: TeamI = {
-                teamId: nanoid(),
-                creator,
-                created: new Date(),
-                name
-            }
-            const team = await TeamService.newTeam(newTeam)
-            return resolve(team)
-        }catch(error){
-            return reject(error)
-        }
-    })
+      const newTeam: TeamI = {
+        teamId: nanoid(),
+        creator,
+        created: new Date(),
+        name
+      }
+      const team = await TeamService.newTeam(newTeam)
+      return resolve(team)
+    }catch(error){
+      return reject(error)
+    }
+  })
 } 

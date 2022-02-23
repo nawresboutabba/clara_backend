@@ -1,4 +1,9 @@
-import { ChallengeBody, ChallengeProposalResponse, ChallengeResponse } from "../controller/challenge";
+import {
+  ChallengeBody,
+  ChallengeProposalResponse,
+  ChallengeResponse
+} from "../controller/challenge";
+
 import { ChallengeI } from "../models/situation.challenges";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
@@ -6,7 +11,10 @@ import { nanoid } from 'nanoid'
 import { UserRequest } from "../controller/users";
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
-import { genericArrayChallengeFilter, genericChallengeFilter } from "../utils/field-filters/challenge";
+import {
+  genericArrayChallengeFilter,
+  genericChallengeFilter
+} from "../utils/field-filters/challenge";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { UserI } from "../models/users";
@@ -24,53 +32,50 @@ import { AreaI } from "../models/organization.area";
 import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { getCurrentDate } from "../utils/date";
-import { genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
+import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
 
-export const newChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeResponse> => {
-    return new Promise (async (resolve, reject)=> {
-        try{
+export const newChallenge = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeResponse> => {
+  try {
 
-            const data: ChallengeI = await composeChallenge(body, user)
+    const data: ChallengeI = await composeChallenge(body, user)
 
-            const challenge = await ChallengeService.newChallenge({
-              ...data
-            });
-            const resp = genericChallengeFilter(challenge)
-            return resolve(resp)          
-        }catch (error){
-            return reject(error)
-        }
-    })
+    const challenge = await ChallengeService.newChallenge({
+      ...data
+    });
+    const resp = await genericChallengeFilter(challenge)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-export const newChallengeProposal = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeProposalResponse> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const challenge: ChallengeI = await composeChallenge(body, user)
-      const proposalId = nanoid()
-      const dateProposal = getCurrentDate()
-      const data : ChallengeProposalI = {...challenge,proposalId,dateProposal }
-      const proposal: ChallengeProposalI = await ChallengeProposalService.newProposal(data)
-      const resp: ChallengeProposalResponse = await genericChallengeProposalFilter(proposal)
-      return resolve(resp)
-    } catch(error){
-      return reject(error)
-    }
-  })
+export const newChallengeProposal = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeProposalResponse> => {
+  try {
+    const challenge: ChallengeI = await composeChallenge(body, user)
+    const proposalId = nanoid()
+    const dateProposal = getCurrentDate()
+    const data: ChallengeProposalI = { ...challenge, proposalId, dateProposal }
+    const proposal: ChallengeProposalI = await ChallengeProposalService.newProposal(data)
+    const resp: ChallengeProposalResponse = await genericChallengeProposalFilter(proposal)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-const composeChallenge = async (body:ChallengeBody, user:UserRequest): Promise<ChallengeI> => {
-  return new Promise(async (resolve, reject)=> {
+
+const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeI> => {
+  try {
     const created = new Date();
 
     const insertedBy = await UserService.getUserActiveByUserId(user.userId)
     const authorEntity = await UserService.getUserActiveByUserId(user.userId)
     const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
-    
-    let data: ChallengeI = {
+
+    const data: ChallengeI = {
       insertedBy,
       updatedBy: insertedBy,
-      author: authorEntity, 
+      author: authorEntity,
       created,
       challengeId: nanoid(),
       title: body.title,
@@ -78,12 +83,14 @@ const composeChallenge = async (body:ChallengeBody, user:UserRequest): Promise<C
       images: body.images,
       groupValidator,
       status: "LAUNCHED",
-      active: true, 
+      active: true,
       fileComplementary: body.file_complementary,
       isStrategic: body.is_strategic,
+
       /**
-       * Configuration section
-       */
+         * Configuration section
+         */
+
       canShowDisagreement: body.can_show_disagreement,
       canFixDisapprovedIdea: body.can_fix_disapproved_idea,
       canChooseScope: body.can_choose_scope,
@@ -105,174 +112,171 @@ const composeChallenge = async (body:ChallengeBody, user:UserRequest): Promise<C
       finalization: body.finalization,
     }
 
-    if (data.WSALevelChosed == WSALEVEL.AREA){
-       let areasAvailable: Array<AreaI> = await AreaService.getAreasById(body.areas_available)
-       data.areasAvailable = areasAvailable
+    if (data.WSALevelChosed == WSALEVEL.AREA) {
+      const areasAvailable: Array<AreaI> = await AreaService.getAreasById(body.areas_available)
+      data.areasAvailable = areasAvailable
     }
 
-    return resolve(data)
-  })
+    return data
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-export const getChallenge = async (challenge: ChallengeI ): Promise<ChallengeResponse> => {
-  return new Promise ((resolve, reject)=> {
-    const resp = genericChallengeFilter(challenge)
-      return resolve(resp)
-  })
+export const getChallenge = async (challenge: ChallengeI): Promise<ChallengeResponse> => {
+  try {
+    const resp = await genericChallengeFilter(challenge);
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 export const updateChallengePartially = async (body: ChallengeBody, challengeId: string): Promise<ChallengeI> => {
-  return new Promise (async(resolve, reject)=> {
-    try{
-      const challengeChanges = _.mapKeys(body, (v: any, k:any) => _.camelCase(k));
+  try {
+    const challengeChanges = _.mapKeys(body, (v: any, k: any) => _.camelCase(k));
+    const challenge = await ChallengeService.updateWithLog(challengeId, challengeChanges);
+    return challenge
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
 
-      const challenge = await ChallengeService.updateWithLog(challengeId, challengeChanges);
-      return resolve(challenge)
-    }catch (error){
-      return reject(error)
+export const deleteChallenge = async (challengeId: string): Promise<boolean> => {
+  try {
+    await ChallengeService.deactivateChallenge(challengeId);
+    return true
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+
+export const listChallenges = async (query: QueryChallengeForm): Promise<ChallengeResponse[]> => {
+  try {
+    const challenges = await ChallengeService.listChallenges(query)
+    const resp = await genericArrayChallengeFilter(challenges)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+export const listChallengeProposal = async (query: QueryChallengeForm): Promise<ChallengeProposalResponse[]> => {
+  try {
+    const challenges = await ChallengeProposalService.listProposals(query)
+    const resp = await genericArrayChallengeProposalFilter(challenges)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+export const newChallengeComment = async (challengeId: string, commentBody: CommentBody, user: UserI): Promise<CommentResponse> => {
+  try {
+    let insertedBy: UserI
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const author = await UserService.getUserActiveByUserId(commentBody.author)
+
+    if (!(challenge && author)) {
+      throw new RepositoryError(
+        ERRORS.REPOSITORY.CHALLENGE_OR_AUTHOR_NOT_VALID,
+        HTTP_RESPONSE._500
+      )
     }
-  })
-}
 
-export const deleteChallenge = async (challengeId : string): Promise<boolean> => {
-  return new Promise (async (resolve, reject)=>{
-    try{
-      await ChallengeService.deactivateChallenge(challengeId);
-      return resolve(true)
-    }catch(error){
-      return reject(error)
-    }
-  })
-}
-
-
-export const listChallenges = async (query: QueryChallengeForm):Promise<ChallengeResponse []> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const challenges = await ChallengeService.listChallenges(query)
-      const resp = await genericArrayChallengeFilter(challenges)
-      return resolve(resp)
-    }catch(error){
-      return reject(error)
+    if (commentBody.author == user.userId) {
+      insertedBy = author
+    } else {
+      insertedBy = await UserService.getUserActiveByUserId(user.userId)
     }
 
-  })
+    const commentChallenge = {
+      insertedBy,
+      author,
+      isPrivate: commentBody.is_private,
+      comment: commentBody.comment,
+      date: new Date(),
+      challenge
+    }
+
+    const comment = await newComment(commentChallenge)
+    const resp = await genericCommentFilter(comment)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-export const newChallengeComment = async (challengeId: string, commentBody:CommentBody, user: UserI): Promise<CommentResponse> => {
-    return new Promise(async (resolve, reject)=> {
-      try{
-        let insertedBy: UserI
-        const challenge = await ChallengeService.getChallengeActiveById(challengeId)
-        const author = await UserService.getUserActiveByUserId(commentBody.author)
-        
-        if ( !(challenge && author)){
-          throw new RepositoryError(
-            ERRORS.REPOSITORY.CHALLENGE_OR_AUTHOR_NOT_VALID,
-            HTTP_RESPONSE._500
-          )
-        }
-
-        if (commentBody.author == user.userId){
-          insertedBy = author
-        } else {
-          insertedBy = await UserService.getUserActiveByUserId(user.userId)
-        }
-        
-        const commentChallenge = {
-          insertedBy,
-          author,
-          isPrivate: commentBody.is_private,
-          comment: commentBody.comment,
-          date: new Date(),
-          challenge
-        }
-  
-        const comment = await newComment(commentChallenge)
-        const resp = await genericCommentFilter(comment)
-        return resolve(resp)
-      }catch(error){
-        return reject(error)
-      }
-    })
-}
-
-export const getComments = async (challengeId: string, user: UserI): Promise <CommentResponse[]> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
+export const getComments = async (challengeId: string, user: UserI): Promise<CommentResponse[]> => {
+  try {
 
     /**
-     * Poner los comentarios privados a true si:
-     * - El usuario es dueño de los comentarios 
-     * - Es parte del comite
-     * - Participa de alguna forma como creador del challenge
-     * @TODO hacer una funcion para esto
-     */
+   * Poner los comentarios privados a true si:
+   * - El usuario es dueño de los comentarios 
+   * - Es parte del comite
+   * - Participa de alguna forma como creador del challenge
+   * @TODO hacer una funcion para esto
+   */
 
-     const challenge = await ChallengeService.getChallengeActiveById(challengeId)
-     const userEntity = await UserService.getUserActiveByUserId(user.userId)
-     const comments = await CommentService.getComments(challenge, userEntity)
-     const resp = await genericArrayCommentFilter(comments)
-     return resolve(resp)
-    }catch(error){
-      return reject(error)
-    }
-  })
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const userEntity = await UserService.getUserActiveByUserId(user.userId)
+    const comments = await CommentService.getComments(challenge, userEntity)
+    const resp = await genericArrayCommentFilter(comments)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const challenge = await ChallengeService.getChallengeActiveById(challengeId)
-      const author = await UserService.getUserActiveByUserId(user.userId)  
+  try {
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const author = await UserService.getUserActiveByUserId(user.userId)
 
-      if (!(isReaction(reaction.type))){
-        throw new RepositoryError(
-          ERRORS.REPOSITORY.REACTION_INVALID,
-          HTTP_RESPONSE._500
-        )
-      }
+    if (!(isReaction(reaction.type))) {
+      throw new RepositoryError(
+        ERRORS.REPOSITORY.REACTION_INVALID,
+        HTTP_RESPONSE._500
+      )
+    }
 
-      /**
+    /**
        * For reactions insertedBy and author is the same user
        */
-      const newReaction = {
-        insertedBy: author,
-        author,
-        challenge,
-        type: reaction.type,
-        date: new Date()
-      }
-  
-      const reactionEntity = await ReactionService.newReaction(newReaction) 
-      
-      const resp = genericReactionFilter(reactionEntity)
-      return resolve(resp)
-    }catch(error){
-      return reject(error)
+
+    const newReaction = {
+      insertedBy: author,
+      author,
+      challenge,
+      type: reaction.type,
+      date: new Date()
     }
-  })
+
+    const reactionEntity = await ReactionService.newReaction(newReaction)
+
+    const resp = genericReactionFilter(reactionEntity)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-export const getChallengeProposal = async (proposalId: string): Promise<any>=> {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const proposal = await ChallengeProposalService.getChallengeProposal(proposalId)
-      return resolve(proposal)
-    }catch(error){
-      return reject(error)
-    }
-  })
+export const getChallengeProposal = async (proposalId: string): Promise<any> => {
+  try {
+    const proposal = await ChallengeProposalService.getChallengeProposal(proposalId)
+    return proposal
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
-export const acceptChallengeProposal = async (proposalId: string): Promise<ChallengeResponse>=> {
-  return new Promise(async (resolve, reject )=> {
-    try{
-      const proposal: ChallengeProposalI = await ChallengeProposalService.getChallengeProposal(proposalId)
-      const challenge = await ChallengeService.newChallenge(_.omit(proposal, ["_id", "__v"]))
-      const resp = await genericChallengeFilter(challenge)
-      return resolve(resp)
-    }catch(error){
-      return reject (error)
-    }
-  })
+export const acceptChallengeProposal = async (proposalId: string): Promise<ChallengeResponse> => {
+  try {
+    const proposal: ChallengeProposalI = await ChallengeProposalService.getChallengeProposal(proposalId)
+    const challenge = await ChallengeService.newChallenge(_.omit(proposal, ["_id", "__v"]))
+    const resp = await genericChallengeFilter(challenge)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }

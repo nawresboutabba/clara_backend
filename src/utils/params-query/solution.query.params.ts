@@ -1,13 +1,13 @@
-import * as _ from 'lodash'
 import { QuerySituationForm, formatSitutationQuery } from "./situation.query.params";
 
-export interface QuerySolutionForm extends QuerySituationForm{
-}
+export type QuerySolutionForm = QuerySituationForm
 
 
-export function formatSolutionQuery(query: any): Promise<QuerySolutionForm> {
-    return new Promise(async (resolve, reject)=> {
-        const querySolutionForm: QuerySolutionForm = await formatSitutationQuery(query)
-          return resolve(querySolutionForm)
-    })
+export async function formatSolutionQuery(query: any): Promise<QuerySolutionForm> {
+  try{
+    const querySolutionForm: QuerySolutionForm = await formatSitutationQuery(query)
+    return querySolutionForm
+  }catch(error){
+    return Promise.reject(error)
+  }
 }

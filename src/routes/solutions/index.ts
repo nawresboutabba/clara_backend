@@ -61,10 +61,10 @@ router.post("/solution/default-configuration",[
   try{
     const solutionController = new SolutionController()
     const solutionConfiguration = await solutionController.setSolutionDefaultConfiguration(req.body)
-  res
-  .json(solutionConfiguration)
-  .status(200)
-  .send()
+    res
+      .json(solutionConfiguration)
+      .status(200)
+      .send()
   }catch(error){
     next(error)
   }
@@ -142,7 +142,7 @@ router.post(
     /**
      * participation.mode_chosed is like participation_mode_chosed
      */
-     body("participation.chosed_mode", "participation.mode_chosed invalid").custom((value: string, {req}): Promise<void>=> {
+    body("participation.chosed_mode", "participation.mode_chosed invalid").custom((value: string, {req}): Promise<void>=> {
       return new Promise(async (resolve, reject)=> {
         try{
           /**
@@ -224,9 +224,9 @@ router.get(
       const query: QuerySolutionForm = await formatSolutionQuery(req.query)
       const solutions = await solutionController.listSolutions(query)
       res
-      .json(solutions)
-      .status(200)
-      .send();
+        .json(solutions)
+        .status(200)
+        .send();
       next();
     } catch (e) {
       next(e);
@@ -241,7 +241,7 @@ router.get(
     authentication,
     acl(RULES.CAN_VIEW_SOLUTION)
   ]
-,
+  ,
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const solutionController = new SolutionController()
@@ -257,79 +257,79 @@ router.get(
 
 router.patch(
   "/solution/:solutionId",[
-  authentication,
-  acl(RULES.CAN_EDIT_SOLUTION),
-  body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
-        if(!defaultSolutionConfiguration){
-          return reject(ERRORS.ROUTING.DEFAULT_CONFIGURATION_NOT_FOUND)
+    authentication,
+    acl(RULES.CAN_EDIT_SOLUTION),
+    body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
+          if(!defaultSolutionConfiguration){
+            return reject(ERRORS.ROUTING.DEFAULT_CONFIGURATION_NOT_FOUND)
+          }
+          req.utils = {defaultSolutionConfiguration, ...req.utils}
+          return resolve()
+        }catch(error){
+          return reject(error)
         }
-        req.utils = {defaultSolutionConfiguration, ...req.utils}
-        return resolve()
-      }catch(error){
-        return reject(error)
-      }
-    })
-  }),
-  body("status", "status invalid").notEmpty(),
-  body("status","CAN_NOT_EDIT_SOLUTION").isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION]),
-  body("status").custom(async (value, { req }): Promise<void> => {
-    return new Promise(async (resolve, reject)=> {
-      if(req.resources.solution.status == value){
-        return resolve()
-      }
-      /**
-       * @TODO add state machine
-       */
-      return reject("CAN_NOT_EDIT_SOLUTION")
-    })
-  }),
-  body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
-  body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
-  body("images", "images does not valid").isArray(),
-  body("department_affected").isArray(),
-  body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const departmentAffected = await AreaService.getAreasById(value)       
-        if(departmentAffected.length == value.length){
-          req.utils = {departmentAffected, ...req.utils}
+      })
+    }),
+    body("status", "status invalid").notEmpty(),
+    body("status","CAN_NOT_EDIT_SOLUTION").isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION]),
+    body("status").custom(async (value, { req }): Promise<void> => {
+      return new Promise(async (resolve, reject)=> {
+        if(req.resources.solution.status == value){
           return resolve()
         }
-        return reject("department_affected does not valid")
-      }catch(error){
-        return reject("department_affected does not valid")
-      }
-    })
-  }),
-  body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isBoolean(),
-  body("WSALevel_chosed").custom((value: string, {req}): Promise<void>=> {
-    return new Promise(async (resolve, reject)=> {
-      try{
+        /**
+       * @TODO add state machine
+       */
+        return reject("CAN_NOT_EDIT_SOLUTION")
+      })
+    }),
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    body("images", "images does not valid").isArray(),
+    body("department_affected").isArray(),
+    body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
+          const departmentAffected = await AreaService.getAreasById(value)       
+          if(departmentAffected.length == value.length){
+            req.utils = {departmentAffected, ...req.utils}
+            return resolve()
+          }
+          return reject("department_affected does not valid")
+        }catch(error){
+          return reject("department_affected does not valid")
+        }
+      })
+    }),
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isBoolean(),
+    body("WSALevel_chosed").custom((value: string, {req}): Promise<void>=> {
+      return new Promise(async (resolve, reject)=> {
+        try{
         /**
          * Check that user can choose WSALevel, otherwise ignore decision. 
          */
-        if(req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
+          if(req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
           /**
            * If user can choose WSALevel, check that WSALevel is valid.
            */
-          if(!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)){
-            return reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
+            if(!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)){
+              return reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
+            }
+            return resolve()
           }
-          return resolve()
-        }
-        /**
+          /**
          * Ignore decision because user can not choose WSALevel. Taking default configuration. 
          */
-        return resolve()
-      }catch(error){
-        return reject(error)
-      }
-    })
-  }),
-],
+          return resolve()
+        }catch(error){
+          return reject(error)
+        }
+      })
+    }),
+  ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.PATCH_SOLUTION)
@@ -353,8 +353,8 @@ router.delete(
    * @TODO Check that the user can delete the solution
    */
   [checkResourceExistFromParams("solutions"),
-  authentication
-],
+    authentication
+  ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const solutionController = new SolutionController()

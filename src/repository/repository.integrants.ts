@@ -17,7 +17,7 @@ import { UserI } from "../models/users";
  * @returns 
  */
 
-export const newIntegrant = async (user: UserI): Promise<IntegrantResponse> => {
+export const newIntegrant = async (user: UserI, functionDescription: string): Promise<IntegrantResponse> => {
   return new Promise (async (resolve, reject)=> {
     try{
       /**
@@ -64,7 +64,8 @@ export const newIntegrant = async (user: UserI): Promise<IntegrantResponse> => {
             active: true,
             created: currentDate,
             lastChangePosition: currentDate,
-            role: COMMITTE_ROLE.GENERAL
+            role: COMMITTE_ROLE.GENERAL,
+            functionDescription
           }
           const integrant = await IntegrantService.newIntegrant(integrantNew)
           const resp = genericIntegrantFilter(integrant)

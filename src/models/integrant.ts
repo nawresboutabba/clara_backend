@@ -40,6 +40,10 @@ export interface IntegrantI {
      * What is the role? Committe General or Committe Leader
      */
     role: string
+    /**
+     * Functions description 
+     */
+    functionDescription: string
 }
 
 export interface IntegrantStatusI {
@@ -84,7 +88,8 @@ const integrant = new Schema({
   role: {
     type: String,
     enum: ["LEADER", "GENERAL"]
-  }
+  },
+  functionDescription: String
 })
 
 integrant.post('findOneAndUpdate', async(document)=> {

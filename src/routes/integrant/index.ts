@@ -1,5 +1,5 @@
 import { NextFunction } from "express";
-import { check, validationResult } from "express-validator";
+import { body, check, validationResult } from "express-validator";
 import { ERRORS, RULES } from "../../constants";
 import IntegrantController from "../../controller/integrant";
 import { acl } from "../../middlewares/acl";
@@ -42,12 +42,13 @@ router.post('/integrant/general',[
     }catch(error){
       return Promise.reject()
     }
-  })
+  }),
+  body('functions_description',"functions_description is required").not().isEmpty(),
 ],async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
   try{
     await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.SIGNUP_USER)
     const integrantController = new IntegrantController()
-    const integrant = await integrantController.newIntegrant(req.utils.user.userId, req.utils.user) 
+    const integrant = await integrantController.newIntegrant({user: req.utils.user.userId, functionsDescription: req.body.functions_description}, req.utils.user) 
     res
       .json(integrant)
       .status(200)

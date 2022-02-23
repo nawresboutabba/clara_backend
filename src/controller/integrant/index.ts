@@ -38,8 +38,8 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/general')
-    public async newIntegrant(@Body() userId: string, @Inject() user: UserI): Promise<IntegrantResponse>{
-      return newIntegrant(user)
+    public async newIntegrant(@Body() information:  {user: string, functionsDescription: string },@Inject() user: UserI): Promise<IntegrantResponse>{
+      return newIntegrant(user, information.functionsDescription)
     }
     @Get()
     public async getGeneralMembers():Promise<Array<IntegrantResponse>> {

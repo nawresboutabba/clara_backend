@@ -1,5 +1,4 @@
 import * as _ from 'lodash'
-import { getCurrentDate } from '../date';
 
 export interface QuerySituationForm {
   created?: createdFilter,

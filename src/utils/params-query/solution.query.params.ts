@@ -5,6 +5,7 @@ export type QuerySolutionForm = QuerySituationForm
 
 export async function formatSolutionQuery(query: any): Promise<QuerySolutionForm> {
   try{
+    
     const querySolutionForm: QuerySolutionForm = await formatSitutationQuery(query)
     return querySolutionForm
   }catch(error){

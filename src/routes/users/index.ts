@@ -25,9 +25,9 @@ router.post("/user/signup", [
     const userController = new UserController()
     const response = await userController.signUp(req.body)
     res
-    .json(response)
-    .status(200)
-    .send()
+      .json(response)
+      .status(200)
+      .send()
   } catch (err) {
     next(err);
   }
@@ -44,18 +44,18 @@ router.post("/user/login",[
         ERRORS.ROUTING.ADD_SOLUTION,
         HTTP_RESPONSE._400,
         errors
-        )
+      )
       throw customError;
     } 
     const userController = new UserController()
     const response = await userController.login(req.body)
     res
-    .status(200)
-    .json({
-      message: "Auth successful",
-      token: response,
-    })
-    .send();
+      .status(200)
+      .json({
+        message: "Auth successful",
+        token: response,
+      })
+      .send();
   } catch (error){
     next(error)
   }
@@ -68,8 +68,8 @@ router.delete("/user/:userId", [
     const userController = new UserController()
     await userController.delete(req.params.userId)
     res
-    .status(204)
-    .send();
+      .status(204)
+      .send();
   } catch (err) {
     next(err);
   }
@@ -83,9 +83,9 @@ router.get('/user/info',[
 
     const userInformation = await userController.getInformation(req.user)
     res
-    .json(userInformation)
-    .status(200)
-    .send()
+      .json(userInformation)
+      .status(200)
+      .send()
   }catch(error){
     next(error)
   }
@@ -98,9 +98,9 @@ router.get('/user/participation',[
     const userController = new UserController()
     const userParticipation = await userController.getParticipation(req.user)
     res
-    .json(userParticipation)
-    .status(200)
-    .send()
+      .json(userParticipation)
+      .status(200)
+      .send()
   }catch(error){
     next(error)
   }

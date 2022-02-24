@@ -1,46 +1,68 @@
-/**
- * Reference: https://gist.github.com/prof3ssorSt3v3/9eb833677b8aa05282d72f0b3c120f03
- */
+import { ERRORS, SOLUTION_STATUS } from "../../constants";
 
 const machine = {
-  state: "DRAFT",
+  state: SOLUTION_STATUS.DRAFT,
   transitions: {
+    /**
+       * When a Solution is created, it is in the draft state.
+       * Committee can then edit the challenge. But the challenge is saved in 
+       * ChallengeProposal Collection
+       */
     DRAFT: {
       confirm: function () {
-        this.changeState("PROPOSED");
+        this.changeState(SOLUTION_STATUS.PROPOSED);
       }
     },
+    /**
+     * Solution is ready for init. Initialización is triggered by TIMER
+     */
     PROPOSED: {
       published: function () {
-        this.changeState("ANALYZING");
+        this.changeState(SOLUTION_STATUS.APROVED_FOR_DISCUSSION);
       }
     },
+    /**
+     * Solution in the park
+     */
+    APPOVED_FOR_DISCUSSION : {
+      evaluate: function() {
+        this.changeState(SOLUTION_STATUS.ANALYZING);
+      }
+    },
+    /**
+     * Challenge under committee analysis
+     */
     ANALYZING: {
       build: function () {
-        this.changeState("APROVED_FOR_CONSTRUCTION");
+        this.changeState(SOLUTION_STATUS.ANALYZING);
       },
       review: function () {
-        this.changeState("REVIEW");
+        this.changeState(SOLUTION_STATUS.REVIEW);
       },
       reject: function () {
-        this.changeState("REJECTED");
+        this.changeState(SOLUTION_STATUS.REJECTED);
       },
     },
     APROVED_FOR_CONSTRUCTION: {
+      /**
+        * One of possible final for a solution
+        */
     },
     REVIEW: {
-      openeyes: function () {
-        console.log("current state", this.state);
-        console.log("\tTurn off the sun please");
-      },
       reject: function () {
-        this.changeState("REJECTED");
+        this.changeState(SOLUTION_STATUS.REJECTED);
+      },
+      evaluate: function() {
+        this.changeState(SOLUTION_STATUS.ANALYZING);
       }
     },
     REJECTED: {
+      /**
+        * One of possible final for a solution
+        */
     }
   },
-  dispatch(actualStatus: string, actionName:string, ...payload:any) {
+  dispatch(actualStatus: string, actionName: string, ...payload: any) {
 
     const action = this.transitions[actualStatus][actionName];
 
@@ -49,17 +71,20 @@ const machine = {
       return this.state
     } else {
       /**
-       * Combination actualState and actionName is not valid
-       */
-      throw "Action not found";
+        * Combination actualState and actionName is not valid
+        */
+      throw ERRORS.STATE_MACHINE.ACTION_NOT_FOUND;
     }
 
   },
-  changeState(newState:string) {
+  changeState(newState: string) {
     /**
      * validate that newState actually exists
      */
     this.state = newState;
+  },
+  init() {
+    return this.state
   }
 };
 
@@ -70,16 +95,5 @@ const SolutionStateMachine = Object.create(machine, {
     value: "SolutionStateMachine"
   }
 });
-
-/**
- * Estado Actual, transicion
- */
-/* try {
-	const resp = Jeff.dispatch("DRAFT", "confirmo");
-	console.log(resp)
-	console.log(Jeff.state);
-} catch (error) {
-	console.log(error)
-} */
 
 export default SolutionStateMachine;

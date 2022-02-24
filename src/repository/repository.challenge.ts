@@ -4,6 +4,7 @@ import {
   ChallengeResponse
 } from "../controller/challenge";
 
+import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
 import { ChallengeI } from "../models/situation.challenges";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
@@ -82,7 +83,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise
       description: body.description,
       images: body.images,
       groupValidator,
-      status: "LAUNCHED",
+      status: SolutionStateMachine.ready(),
       active: true,
       fileComplementary: body.file_complementary,
       isStrategic: body.is_strategic,

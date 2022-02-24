@@ -19,7 +19,7 @@
         "curly": ["error", "all"],
         "max-len": ["error", {"code": 1000, "ignoreUrls": true}],
         "indent": ["error", 
-            2, 
+            "tab", 
             {"CallExpression": {"arguments": "first"},
             "ObjectExpression": "first" }
             ]

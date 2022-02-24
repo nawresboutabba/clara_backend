@@ -17,15 +17,15 @@ export interface AreaResponse {
 @Route('area')
 export default class AreaController extends Controller {
     @Post()
-  public async newArea(@Body() body: AreaBody):Promise<AreaResponse>{
-    return newArea(body)
-  }
+	public async newArea(@Body() body: AreaBody):Promise<AreaResponse>{
+		return newArea(body)
+	}
     @Get('/:areaId')
     public async getArea(@Path('areaId') areaId: string): Promise<AreaResponse>{
-      return getAreaById(areaId)
+    	return getAreaById(areaId)
     }
     @Get()
     public async getAllAreas(): Promise<AreaResponse[]>{
-      return getAllAreas()
+    	return getAllAreas()
     }
 }

@@ -17,46 +17,46 @@ export interface createdFilter {
 }
 
 export async function formatSitutationQuery(query: any): Promise<QuerySituationForm> {
-  try {
-    /**
+	try {
+		/**
       * Pagination extraction and cleaning
       */
-    let { init, offset } = query
-    init = query.init ? parseInt(query.init.toString()) : 0;
-    offset = query.offset? parseInt(query.offset.toString()) : 10;
-    /**
+		let { init, offset } = query
+		init = query.init ? parseInt(query.init.toString()) : 0;
+		offset = query.offset? parseInt(query.offset.toString()) : 10;
+		/**
       * Date filter
       */
-    const { created_lt: $lte, created_gt: $gte } = query
+		const { created_lt: $lte, created_gt: $gte } = query
 
-    const created: createdFilter = {}
-    created.$gte = $gte 
-    created.$lte = $lte
+		const created: createdFilter = {}
+		created.$gte = $gte 
+		created.$lte = $lte
 
-    /**
+		/**
       * String filters
       */
-    const { title } = query
-    /**
+		const { title } = query
+		/**
       * Order filter
       */
-    const { created_order, title_order } = query
+		const { created_order, title_order } = query
 
-    let queryForm: QuerySituationForm = {
-      init,
-      offset,
-      sort: {
-        title: title_order,
-        created: created_order
-      },
-    }
+		let queryForm: QuerySituationForm = {
+			init,
+			offset,
+			sort: {
+				title: title_order,
+				created: created_order
+			},
+		}
 
-    queryForm.title = title ? title : ''
+		queryForm.title = title ? title : ''
 
-    queryForm = JSON.parse(JSON.stringify(queryForm))
+		queryForm = JSON.parse(JSON.stringify(queryForm))
 
-    return queryForm
-  } catch (error) {
-    return Promise.reject(error)
-  }
+		return queryForm
+	} catch (error) {
+		return Promise.reject(error)
+	}
 }

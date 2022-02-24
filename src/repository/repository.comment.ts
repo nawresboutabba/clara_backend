@@ -7,13 +7,13 @@ import CommentService from "../services/Comment.service";
  * @returns 
  */
 export const newComment = async (comment: CommentI): Promise<CommentI> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const resp = await CommentService.newComment(comment)
-      return resolve(resp)
-    }catch(error){
-      return reject(error)
-    }
+	return new Promise(async (resolve, reject)=> {
+		try{
+			const resp = await CommentService.newComment(comment)
+			return resolve(resp)
+		}catch(error){
+			return reject(error)
+		}
 
-  })
+	})
 }

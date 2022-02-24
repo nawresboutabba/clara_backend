@@ -10,14 +10,14 @@ export interface ChallengeProposalI extends ChallengeI{
 }
 
 const challengeProposalModel = {
-  ...situationBaseModel,
-  ...challengeModel,
-  proposalId: String,
-  dateProposal: Date,
+	...situationBaseModel,
+	...challengeModel,
+	proposalId: String,
+	dateProposal: Date,
 }
 
 const challengeProposal  = new Schema({
-  ...challengeProposalModel,
+	...challengeProposalModel,
 },{ strict: false });
 
 export default model("ChallengeProposal", challengeProposal);

@@ -2,17 +2,17 @@ import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Req
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
 import { 
-  newChallenge, 
-  getChallenge, 
-  updateChallengePartially, 
-  deleteChallenge, listChallenges, 
-  newChallengeComment, 
-  getComments, 
-  newReaction, 
-  newChallengeProposal, 
-  getChallengeProposal, 
-  acceptChallengeProposal, 
-  listChallengeProposal} from '../../repository/repository.challenge';
+	newChallenge, 
+	getChallenge, 
+	updateChallengePartially, 
+	deleteChallenge, listChallenges, 
+	newChallengeComment, 
+	getComments, 
+	newReaction, 
+	newChallengeProposal, 
+	getChallengeProposal, 
+	acceptChallengeProposal, 
+	listChallengeProposal} from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
@@ -64,9 +64,9 @@ export default class ChallengeController extends Controller {
      * @returns 
      */
     @Post()
-  public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
-    return newChallenge(body, user)
-  }
+	public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
+		return newChallenge(body, user)
+	}
     /**
      * New Challenge Proposal method
      * @param body Challenge definition according to ChallengeBody
@@ -75,12 +75,12 @@ export default class ChallengeController extends Controller {
      */
      @Post('/proposal')
     public async newChallengeProposal(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
-      return newChallengeProposal(body, user)
+    	return newChallengeProposal(body, user)
     }
 
     @Post(':challengeId/solution')
      public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string , @Inject() utils : any): Promise<SolutionResponse>{
-       return newSolution(body, user, utils,  challengeId)
+     	return newSolution(body, user, utils,  challengeId)
      }
     /**
      * Challenge listing
@@ -89,12 +89,12 @@ export default class ChallengeController extends Controller {
      */
     @Get()
     public async listChallenges(@Query() query: any): Promise<ChallengeResponse[]>{
-      return listChallenges(query)
+    	return listChallenges(query)
     }
 
     @Get(':challengeId')
     public async getChallenge(@Request() challenge: ChallengeI, @Path('challengeId') challengeId: string): Promise<ChallengeResponse> {
-      return getChallenge(challenge)
+    	return getChallenge(challenge)
     }
 
     /**
@@ -109,16 +109,16 @@ export default class ChallengeController extends Controller {
          @Path('challengeId') challengeId: string, 
          @Query() query: any
     ): Promise<SolutionResponse []> {
-      return listSolutions( query, challengeId)
+    	return listSolutions( query, challengeId)
     }
 
     @Patch(':challengeId')
      public async updateChallengePartially(@Body() body:ChallengeBody, @Path('challengeId') challengeId: string): Promise<ChallengeI> {
-       return updateChallengePartially(body, challengeId)
+     	return updateChallengePartially(body, challengeId)
      }
     @Delete(':challengeId')
     public async deleteChallenge(challengeId: string): Promise<boolean>{
-      return deleteChallenge(challengeId)
+    	return deleteChallenge(challengeId)
     }
     /**
      * Challenge comment operation
@@ -129,11 +129,11 @@ export default class ChallengeController extends Controller {
      */
     @Post('/:challengeId/comment')
     public async newComment (@Path('challengeId') challengeId: string , @Body() comment: CommentBody, @Inject() user: UserI): Promise<CommentResponse>{
-      return newChallengeComment(challengeId, comment, user)
+    	return newChallengeComment(challengeId, comment, user)
     }
     @Get('/:challengeId/comment')
     public async getComments (@Path('challengeId') challengeId: string, @Inject() user: UserI): Promise<CommentResponse[]>{
-      return getComments(challengeId, user)
+    	return getComments(challengeId, user)
     }
     /**
      * New Reacion
@@ -144,26 +144,26 @@ export default class ChallengeController extends Controller {
      */
     @Post('/:challengeId/reaction')
     public async newReaction(@Path('challengeId') challengeId: string, @Body() reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse>{
-      return newReaction(challengeId, reaction, user)
+    	return newReaction(challengeId, reaction, user)
     }
     @Post('/default-configuration')
     public async setChallengeDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationDefaultI>{
-      return setDefaultConfiguration(body, RESOURCE.CHALLENGE)
+    	return setDefaultConfiguration(body, RESOURCE.CHALLENGE)
     }
     @Get('/default-configuration')
     public async getChallengeDefaultConfiguration(): Promise<ConfigurationDefaultI>{
-      return getChallengeConfiguration()
+    	return getChallengeConfiguration()
     }
     @Get('/proposal')
     public async listChallengeProposal(@Query() query: any): Promise<ChallengeProposalResponse[]>{
-      return listChallengeProposal(query)
+    	return listChallengeProposal(query)
     }
     @Get('/proposal/:proposalId')
     public async getChallengeProposal(@Path('proposalId') proposalId: string): Promise<any>{
-      return getChallengeProposal(proposalId)
+    	return getChallengeProposal(proposalId)
     }
     @Post('/proposal/:proposeId/accept')
     public async acceptChallengeProposal(@Path('proposeId') proposeId: string): Promise<any>{
-      return acceptChallengeProposal(proposeId)
+    	return acceptChallengeProposal(proposeId)
     }
 }

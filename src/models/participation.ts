@@ -21,21 +21,21 @@ export interface ParticipationI {
 }
 
 const user = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  actionDescription: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  points: {
-    type: Number,
-    required: true
-  }
+	user: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	actionDescription: {
+		type: String,
+		required: true
+	},
+	date: {
+		type: Date,
+		required: true
+	},
+	points: {
+		type: Number,
+		required: true
+	}
 });
 export default model("User", user);

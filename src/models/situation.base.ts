@@ -8,8 +8,8 @@ import historicalSolutions from './historical-solutions';
 import * as _ from 'lodash';
 
 export const options = {
-  discriminatorKey: 'itemtype',
-  collection: 'situations'
+	discriminatorKey: 'itemtype',
+	collection: 'situations'
 };
 
 export interface SituationBaseI {
@@ -178,114 +178,114 @@ export interface SituationBaseI {
 }
 
 export const situationBaseModel = {
-  insertedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  updatedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  coauthor: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  team: {
-    type: Schema.Types.ObjectId,
-    ref: 'Team'
-  },
-  created: {
-    type: Date,
-    default: Date.now,
-  },
-  updated: Date,
-  title: {
-    type: String,
-    required: false
-  },
-  description: String,
-  active: {
-    type: Boolean,
-    default: true,
-  },
-  images: [
-    {
-      type: String,
-    },
-  ],
-  departmentAffected: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Area'
-  }],
-  groupValidator: {
-    type: Schema.Types.ObjectId,
-    ref: 'GroupValidator'
-  },
-  status: String,
-  fileComplementary: String,
-  /**
+	insertedBy: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	updatedBy: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	author: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	coauthor: [{
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	}],
+	team: {
+		type: Schema.Types.ObjectId,
+		ref: 'Team'
+	},
+	created: {
+		type: Date,
+		default: Date.now,
+	},
+	updated: Date,
+	title: {
+		type: String,
+		required: false
+	},
+	description: String,
+	active: {
+		type: Boolean,
+		default: true,
+	},
+	images: [
+		{
+			type: String,
+		},
+	],
+	departmentAffected: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Area'
+	}],
+	groupValidator: {
+		type: Schema.Types.ObjectId,
+		ref: 'GroupValidator'
+	},
+	status: String,
+	fileComplementary: String,
+	/**
    * ---------------------------------
    * Configuration Section
    * ---------------------------------
    */
-  canShowDisagreement: Boolean,
-  canFixDisapprovedIdea: Boolean,
-  canChooseScope: Boolean,
-  isPrivated: Boolean,
-  canChooseWSALevel: Boolean,
-  WSALevelAvailable: [String],
-  WSALevelChosed: String,
-  areasAvailable: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Area'
-  }],
-  communityCanSeeReactions: Boolean,
-  minimumLikes: Number,
-  maximumDontUnderstand: Number,
-  reactionFilter: Boolean,
-  participationModeAvailable: [String],
-  participationModeChosed: String,
-  timeInPark: Number,
-  timeExpertFeedback: Number,
-  timeIdeaFix: Number,
-  externalContributionAvailableForGenerators: Boolean,
-  externalContributionAvailableForCommittee: Boolean,
+	canShowDisagreement: Boolean,
+	canFixDisapprovedIdea: Boolean,
+	canChooseScope: Boolean,
+	isPrivated: Boolean,
+	canChooseWSALevel: Boolean,
+	WSALevelAvailable: [String],
+	WSALevelChosed: String,
+	areasAvailable: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Area'
+	}],
+	communityCanSeeReactions: Boolean,
+	minimumLikes: Number,
+	maximumDontUnderstand: Number,
+	reactionFilter: Boolean,
+	participationModeAvailable: [String],
+	participationModeChosed: String,
+	timeInPark: Number,
+	timeExpertFeedback: Number,
+	timeIdeaFix: Number,
+	externalContributionAvailableForGenerators: Boolean,
+	externalContributionAvailableForCommittee: Boolean,
 }
 
 const situationBase = new Schema({
-  ...situationBaseModel
+	...situationBaseModel
 }, options)
 
 
 situationBase.post('findOneAndUpdate', async (document) => {
-  try {
-    const solution = _.omit(document.toJSON(), ['_id', '__v'])
-    solution.updated = new Date()
-    await historicalSolutions.create(solution)
-  } catch (error) {
-    console.log(`Error with log integrants changes. Document:${document} . Error: ${error}`)
-  }
+	try {
+		const solution = _.omit(document.toJSON(), ['_id', '__v'])
+		solution.updated = new Date()
+		await historicalSolutions.create(solution)
+	} catch (error) {
+		console.log(`Error with log integrants changes. Document:${document} . Error: ${error}`)
+	}
 })
 
 const SituationModel = model('SituationBase', situationBase);
 
 
 SituationModel.watch().
-  /**
+/**
    * @TODO add document audit
    */
-  on('change', data => {
-    try {
-      const log = _.omit(data, ['_id', '__v'])
-      Log.create(log)
-    } catch (error) {
-      console.log(`Error with log event ${data}. Error: ${error}`)
-    }
-  });
+	on('change', data => {
+		try {
+			const log = _.omit(data, ['_id', '__v'])
+			Log.create(log)
+		} catch (error) {
+			console.log(`Error with log event ${data}. Error: ${error}`)
+		}
+	});
 
 
 export default SituationModel;

@@ -63,43 +63,43 @@ export interface IntegrantStatusI {
 } 
 
 const integrant = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  integrantId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  active:{
-    type:Boolean,
-    default: true,
-    required:true
-  },
-  created: Date,
-  updated: Date,
-  lastChangePosition: Date,
-  finished: Date,
-  groupValidator: {
-    type: Schema.Types.ObjectId,
-    ref: 'GroupValidator'
-  },
-  role: {
-    type: String,
-    enum: ["LEADER", "GENERAL"]
-  },
-  functionDescription: String
+	user: {
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	integrantId: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	active:{
+		type:Boolean,
+		default: true,
+		required:true
+	},
+	created: Date,
+	updated: Date,
+	lastChangePosition: Date,
+	finished: Date,
+	groupValidator: {
+		type: Schema.Types.ObjectId,
+		ref: 'GroupValidator'
+	},
+	role: {
+		type: String,
+		enum: ["LEADER", "GENERAL"]
+	},
+	functionDescription: String
 })
 
 integrant.post('findOneAndUpdate', async(document)=> {
-  try{
-    const integrant = _.omit(document.toJSON(),['_id','__v'])
-    integrant.updated=new Date()
-    await historicalIntegrants.create(integrant)
-  }catch(error){
-    console.log(`Error with log integrants changes. Document:${integrant} . Error: ${error}`)
-  }
+	try{
+		const integrant = _.omit(document.toJSON(),['_id','__v'])
+		integrant.updated=new Date()
+		await historicalIntegrants.create(integrant)
+	}catch(error){
+		console.log(`Error with log integrants changes. Document:${integrant} . Error: ${error}`)
+	}
 })
 
 const integrantModel = model('Integrant', integrant);
@@ -108,6 +108,6 @@ integrantModel.watch().
 /**
  * @TODO add document audit
  */
-  on('change', data => console.log(new Date(), data));
+	on('change', data => console.log(new Date(), data));
 
 export default integrantModel

@@ -11,7 +11,7 @@ export interface CompanyBody {
 @Route('company')
 export default class CompanyController extends Controller {
     @Post()
-  public async newCompany(@Body() body:CompanyBody):Promise<CompanyI>{
-    return newCompany(body)
-  }
+	public async newCompany(@Body() body:CompanyBody):Promise<CompanyI>{
+		return newCompany(body)
+	}
 }

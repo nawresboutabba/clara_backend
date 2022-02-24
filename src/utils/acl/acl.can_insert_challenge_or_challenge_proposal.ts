@@ -14,33 +14,33 @@ import { isCommitteMember } from "./function.is_committe_member";
  * @returns 
  */
 export function CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL(req: RequestMiddleware): Promise<void>{
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const url = req.url
-      const committe: IntegrantStatusI = await isCommitteMember(req.user)
-      /**
+	return new Promise(async (resolve, reject)=> {
+		try{
+			const url = req.url
+			const committe: IntegrantStatusI = await isCommitteMember(req.user)
+			/**
              * Leader can insert a challenge or proposal challenge. 
              * 
              */
-      if(committe.isActive && committe.role === COMMITTE_ROLE.LEADER){
-        return resolve()
-      }else if (
-      /**
+			if(committe.isActive && committe.role === COMMITTE_ROLE.LEADER){
+				return resolve()
+			}else if (
+			/**
                  * If user isn't leader but is a committee member 
                  * just can insert a proposal challenge.
                  */
-        committe.isActive 
+				committe.isActive 
                 && committe.role === COMMITTE_ROLE.GENERAL
                 && url == URLS.CHALLENGE.CHALLENGE_PROPOSE){
-        return resolve()
-      } else {
-        return reject(new RoutingError(
-          ERRORS.ROUTING.OPERATION_NOT_AVAILABLE,
-          HTTP_RESPONSE._500
-        ))
-      }
-    }catch(error){
-      return reject(error)
-    }
-  })
+				return resolve()
+			} else {
+				return reject(new RoutingError(
+					ERRORS.ROUTING.OPERATION_NOT_AVAILABLE,
+					HTTP_RESPONSE._500
+				))
+			}
+		}catch(error){
+			return reject(error)
+		}
+	})
 }

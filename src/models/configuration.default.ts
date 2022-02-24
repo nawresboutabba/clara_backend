@@ -124,29 +124,29 @@ export interface ConfigurationDefaultI extends ConfigurationBaseI {
  * Configuration Default Model
  */
 const configurationBase = new Schema ({
-  updated: Date,
-  situationConfig: {
-    unique: true,
-    type: String
-  },
-  canShowDisagreement: Boolean,
-  disagreementDefault: Boolean,
-  canFixDisapprovedIdea: Boolean,
-  canChooseScope: Boolean,
-  isPrivateDefault: Boolean,
-  canChooseWSALevel: Boolean,
-  WSALevelAvailable: [String],
-  WSALevelDefault: String,
-  communityCanSeeReactions: Boolean,
-  maximumDontUnderstand: Number,
-  minimumLikes: Number,
-  reactionFilter: Boolean,
-  externalContributionAvailableForGenerators: Boolean,
-  externalContributionAvailableForCommittee: Boolean,
-  participationModeAvailable: [String],
-  timeInPark: Number,
-  timeExpertFeedback: Number,
-  timeIdeaFix: Number   
+	updated: Date,
+	situationConfig: {
+		unique: true,
+		type: String
+	},
+	canShowDisagreement: Boolean,
+	disagreementDefault: Boolean,
+	canFixDisapprovedIdea: Boolean,
+	canChooseScope: Boolean,
+	isPrivateDefault: Boolean,
+	canChooseWSALevel: Boolean,
+	WSALevelAvailable: [String],
+	WSALevelDefault: String,
+	communityCanSeeReactions: Boolean,
+	maximumDontUnderstand: Number,
+	minimumLikes: Number,
+	reactionFilter: Boolean,
+	externalContributionAvailableForGenerators: Boolean,
+	externalContributionAvailableForCommittee: Boolean,
+	participationModeAvailable: [String],
+	timeInPark: Number,
+	timeExpertFeedback: Number,
+	timeIdeaFix: Number   
 });
 
 export default model('Configuration', configurationBase);

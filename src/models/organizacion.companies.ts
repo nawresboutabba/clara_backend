@@ -10,25 +10,25 @@ export interface CompanyI {
 }
 
 const company = new Schema({
-  companyId: {
-    type:String,
-    required: true,
-    unique: true
-  }, 
-  name: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  CNPJ: {
-    type:String,
-    required: true,
-    unique:true
-  },
-  committe: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }]
+	companyId: {
+		type:String,
+		required: true,
+		unique: true
+	}, 
+	name: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	CNPJ: {
+		type:String,
+		required: true,
+		unique:true
+	},
+	committe: [{
+		type: Schema.Types.ObjectId,
+		ref: 'User'
+	}]
 })
 
 export default model('Company', company);

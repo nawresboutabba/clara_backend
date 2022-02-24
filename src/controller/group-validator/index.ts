@@ -14,14 +14,14 @@ export default class GroupValidatorController extends Controller{
      * @returns 
      */
     @Post()
-  public async newGroupValidator (@Body() body: GroupValidatorBody ):Promise<any>{
-    return newGroupValidator(body)
-  }
+	public async newGroupValidator (@Body() body: GroupValidatorBody ):Promise<any>{
+		return newGroupValidator(body)
+	}
     /**
      * 
      */
     @Get()
     public async getAllGroupValidatorsDetails ():Promise<any>{
-      return getAllGroupValidatorsDetails()
+    	return getAllGroupValidatorsDetails()
     }
 }

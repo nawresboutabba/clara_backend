@@ -49,16 +49,16 @@ export interface UserInformationResponse extends UserResponse {
 @Route("user")
 export default class UserController extends Controller {
   @Post("signup")
-  public async signUp(@Body() body: UserBody): Promise<UserResponse> {
-    return signUp(body)
-  }
+	public async signUp(@Body() body: UserBody): Promise<UserResponse> {
+		return signUp(body)
+	}
   @Post("login")
   public async login(@Body() body: Login ): Promise<string>{
-    return login(body)
+  	return login(body)
   }
   @Delete(':userId')
   public async delete(@Path('userId') userId: string): Promise<boolean>{
-    return deleteUser(userId)
+  	return deleteUser(userId)
 
   }
   /**
@@ -68,12 +68,12 @@ export default class UserController extends Controller {
    */
   @Get('info')
   public async getInformation( @Inject() user:UserRequest ): Promise<UserResponse>{
-    return getUserInformation(user)
+  	return getUserInformation(user)
   }
 
   @Get('participation')
   public async getParticipation( @Inject() user:UserRequest ): Promise<any>{
-    return getParticipation(user)
+  	return getParticipation(user)
   }
 
 }

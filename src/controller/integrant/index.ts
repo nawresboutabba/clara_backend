@@ -28,9 +28,9 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/leader/:integrantId')
-  public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
-    return newLeader(integrantId)
-  }
+	public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
+		return newLeader(integrantId)
+	}
     /**
      * Endpoint used for add a new integrant to committe. 
      * User could be a new integrant or old integrant with active=false
@@ -39,15 +39,15 @@ export default class IntegrantController extends Controller {
      */
     @Post('/general')
     public async newIntegrant(@Body() information:  {user: string, functionsDescription: string },@Inject() user: UserI): Promise<IntegrantResponse>{
-      return newIntegrant(user, information.functionsDescription)
+    	return newIntegrant(user, information.functionsDescription)
     }
     @Get()
     public async getGeneralMembers():Promise<Array<IntegrantResponse>> {
-      return getGeneralMembers()
+    	return getGeneralMembers()
     }
     @Delete('/general/:integrantId')
     public async deleteGeneralMember(@Path('integrantId') integrantId: string): Promise<boolean>{
-      return deleteGeneralMember(integrantId)
+    	return deleteGeneralMember(integrantId)
     }
     /**
      * Return all committe: LEADER + GENERAL

@@ -28,9 +28,9 @@ export default class IntegrantController extends Controller {
      * @returns 
      */
     @Post('/leader/:integrantId')
-	public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
-		return newLeader(integrantId)
-	}
+  public async newLeader(@Path('integrantId') integrantId: string): Promise<IntegrantResponse>{
+    return newLeader(integrantId)
+  }
     /**
      * Endpoint used for add a new integrant to committe. 
      * User could be a new integrant or old integrant with active=false

@@ -16,34 +16,34 @@ export interface GroupValidatorResponse {
 }
 
 export const newGroupValidator = async (body:GroupValidatorBody)=> {
-	return new Promise(async (resolve, reject)=> {
-		try{
-			/**
+  return new Promise(async (resolve, reject)=> {
+    try{
+      /**
              * Create new group validator variable
              */
-			const groupValidator: GroupValidatorI = {
-				groupValidatorId: nanoid(),
-				name: body.name,
-				created: new Date(),
-			}
-			/**
+      const groupValidator: GroupValidatorI = {
+        groupValidatorId: nanoid(),
+        name: body.name,
+        created: new Date(),
+      }
+      /**
             * Get integrants for new Group Validator
             */
-			const integrants: IntegrantI [] = await IntegrantService.getAllIntegrantsListById(body.integrants)
+      const integrants: IntegrantI [] = await IntegrantService.getAllIntegrantsListById(body.integrants)
 
-			const groupValidatorDocs = await GroupValidatorService.newGroupValidator(groupValidator)
+      const groupValidatorDocs = await GroupValidatorService.newGroupValidator(groupValidator)
             
-			/**
+      /**
             * Insert integrants to group validator
             */
-			await IntegrantService.insertIntegrantsToGroupValidator(integrants, groupValidatorDocs)            
+      await IntegrantService.insertIntegrantsToGroupValidator(integrants, groupValidatorDocs)            
 
-			const resp = genericGroupValidatorFilter(groupValidatorDocs)
-			return resolve(resp)
-		}catch(error){
-			return reject(error)
-		}
-	})
+      const resp = genericGroupValidatorFilter(groupValidatorDocs)
+      return resolve(resp)
+    }catch(error){
+      return reject(error)
+    }
+  })
 }
 
 /**
@@ -51,19 +51,19 @@ export const newGroupValidator = async (body:GroupValidatorBody)=> {
  * @returns 
  */
 export const getAllGroupValidatorsDetails = async(): Promise<any> => {
-	return new Promise(async (resolve, reject)=> {
-		const groupValidators : IntegrantI[] = await IntegrantService.getAllActiveMembers()
+  return new Promise(async (resolve, reject)=> {
+    const groupValidators : IntegrantI[] = await IntegrantService.getAllActiveMembers()
 
-		const grouping = groupValidators.reduce((groupingGV, item): any => {
-			if(item.groupValidator){
-				const groupValidatorId = item.groupValidator.groupValidatorId
-				const groupDetails = {"name": item.groupValidator.name, "created": item.groupValidator.created}
-				groupingGV[groupValidatorId] = groupingGV[groupValidatorId] || {"details": groupDetails, "integrants": []}
-				const user = lightUserFilter(item.user)
-				groupingGV[groupValidatorId].integrants.push(user)     
-			}
-			return groupingGV
-		}, {})
-		return resolve(grouping)
-	})
+    const grouping = groupValidators.reduce((groupingGV, item): any => {
+      if(item.groupValidator){
+        const groupValidatorId = item.groupValidator.groupValidatorId
+        const groupDetails = {"name": item.groupValidator.name, "created": item.groupValidator.created}
+        groupingGV[groupValidatorId] = groupingGV[groupValidatorId] || {"details": groupDetails, "integrants": []}
+        const user = lightUserFilter(item.user)
+        groupingGV[groupValidatorId].integrants.push(user)     
+      }
+      return groupingGV
+    }, {})
+    return resolve(grouping)
+  })
 }

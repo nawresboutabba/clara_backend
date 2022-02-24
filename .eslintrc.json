@@ -19,9 +19,20 @@
         "curly": ["error", "all"],
         "max-len": ["error", {"code": 1000, "ignoreUrls": true}],
         "indent": ["error", 
-            "tab", 
+            2, 
             {"CallExpression": {"arguments": "first"},
             "ObjectExpression": "first" }
-            ]
+            ],
+            "spaced-comment": ["error", "always", {
+                "line": {
+                    "markers": ["/"],
+                    "exceptions": ["-", "+"]
+                },
+                "block": {
+                    "markers": ["!"],
+                    "exceptions": ["*"],
+                    "balanced": true
+                }
+            }]
     }
 }

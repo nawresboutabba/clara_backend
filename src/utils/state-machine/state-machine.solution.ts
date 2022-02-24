@@ -3,70 +3,72 @@
  */
 
 const machine = {
-	state: "DRAFT",
-	transitions: {
-		DRAFT: {
-			confirm: function () {
-				this.changeState("PROPOSED");
-			}
-		},
-		PROPOSED: {
-			published: function () {
-				this.changeState("ANALYZING");
-			}
-		},
-		ANALYZING: {
-			build: function () {
-				this.changeState("APROVED_FOR_CONSTRUCTION");
-			},
-			review: function () {
-				this.changeState("REVIEW");
-			},
-			reject: function () {
-				this.changeState("REJECTED");
-			},
-		},
-		APROVED_FOR_CONSTRUCTION: {
-		},
-		REVIEW: {
-			openeyes: function () {
-				console.log("current state", this.state);
-				console.log("\tTurn off the sun please");
-			},
-			reject: function () {
-				this.changeState("REJECTED");
-			}
-		},
-		REJECTED: {
-		}
-	},
-	dispatch(actualStatus, actionName, ...payload) {
+  state: "DRAFT",
+  transitions: {
+    DRAFT: {
+      confirm: function () {
+        this.changeState("PROPOSED");
+      }
+    },
+    PROPOSED: {
+      published: function () {
+        this.changeState("ANALYZING");
+      }
+    },
+    ANALYZING: {
+      build: function () {
+        this.changeState("APROVED_FOR_CONSTRUCTION");
+      },
+      review: function () {
+        this.changeState("REVIEW");
+      },
+      reject: function () {
+        this.changeState("REJECTED");
+      },
+    },
+    APROVED_FOR_CONSTRUCTION: {
+    },
+    REVIEW: {
+      openeyes: function () {
+        console.log("current state", this.state);
+        console.log("\tTurn off the sun please");
+      },
+      reject: function () {
+        this.changeState("REJECTED");
+      }
+    },
+    REJECTED: {
+    }
+  },
+  dispatch(actualStatus, actionName, ...payload) {
 
-		const action = this.transitions[actualStatus][actionName];
+    const action = this.transitions[actualStatus][actionName];
 
-		if (action) {
-			action.apply(machine, ...payload);
-			return this.state
-		} else {
-			/**
-             * Combination actualState and actionName is not valid
-             */
-			throw "Action not found";
-		}
+    if (action) {
+      action.apply(machine, ...payload);
+      return this.state
+    } else {
+      /**
+       * Combination actualState and actionName is not valid
+       */
+      throw "Action not found";
+    }
 
-	},
-	changeState(newState) {
-		//validate that newState actually exists
-		this.state = newState;
-	}
+  },
+  changeState(newState) {
+    /**
+     * validate that newState actually exists
+     */
+    this.state = newState;
+  }
 };
 
 const SolutionStateMachine = Object.create(machine, {
-	name: {
-		writable: false,
-		enumerable: true,
-		value: "SolutionStateMachine"
-	}
+  name: {
+    writable: false,
+    enumerable: true,
+    value: "SolutionStateMachine"
+  }
 });
 
 /**

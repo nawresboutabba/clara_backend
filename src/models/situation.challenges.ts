@@ -23,13 +23,13 @@ export interface ChallengeI extends SituationBaseI {
 }
 
 export const challengeModel = {
-	challengeId: String,
-	isStrategic: Boolean,
-	finalization: Date,
+  challengeId: String,
+  isStrategic: Boolean,
+  finalization: Date,
 }
 
 const Challenge = SituationBase.discriminator('Challenge', new Schema({
-	...challengeModel,
+  ...challengeModel,
 }, options));
 
 export default Challenge

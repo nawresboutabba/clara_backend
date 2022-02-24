@@ -2,17 +2,17 @@ import { Query , Post , Controller, Route, Body, Delete , Path, Patch, Get , Req
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
 import { 
-	newChallenge, 
-	getChallenge, 
-	updateChallengePartially, 
-	deleteChallenge, listChallenges, 
-	newChallengeComment, 
-	getComments, 
-	newReaction, 
-	newChallengeProposal, 
-	getChallengeProposal, 
-	acceptChallengeProposal, 
-	listChallengeProposal} from '../../repository/repository.challenge';
+  newChallenge, 
+  getChallenge, 
+  updateChallengePartially, 
+  deleteChallenge, listChallenges, 
+  newChallengeComment, 
+  getComments, 
+  newReaction, 
+  newChallengeProposal, 
+  getChallengeProposal, 
+  acceptChallengeProposal, 
+  listChallengeProposal} from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
@@ -64,9 +64,9 @@ export default class ChallengeController extends Controller {
      * @returns 
      */
     @Post()
-	public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
-		return newChallenge(body, user)
-	}
+  public async newChallenge(@Body() body:ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
+    return newChallenge(body, user)
+  }
     /**
      * New Challenge Proposal method
      * @param body Challenge definition according to ChallengeBody

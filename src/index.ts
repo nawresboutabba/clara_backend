@@ -6,11 +6,11 @@ const mongoose = require('mongoose');
 const morgan = require("morgan");
 require('dotenv').config();
 const swaggerDocument =require( '../swagger.json')
-//const cookieParser = require('cookie-parser');
-//const cors = require('cors');
-//global.repositoryError = require('./handle-error/error.repository')
-//app.use(cors());
-//app.use(cookieParser());
+// const cookieParser = require('cookie-parser');
+// const cors = require('cors');
+// global.repositoryError = require('./handle-error/error.repository')
+// app.use(cors());
+// app.use(cookieParser());
 
 app.use(express.json());
 
@@ -26,7 +26,7 @@ import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
 import invitationRouter from './routes/invitation'
 
-//import session from './middlewares/session'
+// import session from './middlewares/session'
 
 import { logError } from './handle-error/middleware.log-error';
 import { clientErrorHandler } from './handle-error/middleware.client-error-handler';
@@ -40,16 +40,16 @@ const DB_NAME = 'PINC-SE'
 
 mongoose.connect(`mongodb+srv://dev-enviroment:0Q5ryUinCQ0pOeiT@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
 })
-	.then(db => console.log(`DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`))
-	.catch(err => console.log(err))
+  .then(db => console.log(`DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`))
+  .catch(err => console.log(err))
 
 
 app.listen(PORT, () =>
-	console.log(
-		`¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
-	)
+  console.log(
+    `¡Aplicación de ejemplo escuchando en el puerto ${PORT}`
+  )
 );
-//app.use(session)
+// app.use(session)
 app.use('/', solutionsRouter);
 app.use('/',userRouter);
 app.use('/', challengeRouter);

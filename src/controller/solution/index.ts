@@ -49,9 +49,9 @@ export interface SolutionResponse extends SituationResponse{
 @Route('solution')
 export default class SolutionController extends Controller {
     @Post()
-	public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
-		return newSolution(body, user, utils)
-	}
+  public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
+    return newSolution(body, user, utils)
+  }
     @Patch(':solutionId')
     public async updateSolutionPartially(@Path('solutionId') solutionId: string,@Body() body:SolutionBody, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any): Promise<SolutionResponse>{
     	return updateSolutionPartially(body, resources, user ,utils)

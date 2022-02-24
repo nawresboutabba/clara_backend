@@ -53,32 +53,32 @@ export interface UserI {
 }
 
 const user = new Schema({
-	username: String, 
-	email: {
-		type: String,
-		required: true,
-		unique: true,
-		match:
+  username: String, 
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match:
       /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-	},
-	userId: {
-		type: String,
-		require: true,
-		unique: true,
-	},
-	password: { type: String, required: true },
-	firstName: String,
-	lastName: String, 
-	active: Boolean,
-	externalUser: Boolean,
-	areaVisible: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Area'
-	}],
-	updated: Date,
-	points: {
-		type: Number,
-		default: 0
-	}
+  },
+  userId: {
+    type: String,
+    require: true,
+    unique: true,
+  },
+  password: { type: String, required: true },
+  firstName: String,
+  lastName: String, 
+  active: Boolean,
+  externalUser: Boolean,
+  areaVisible: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Area'
+  }],
+  updated: Date,
+  points: {
+    type: Number,
+    default: 0
+  }
 });
 export default model("User", user);

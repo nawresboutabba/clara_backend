@@ -28,11 +28,11 @@ export default class TeamController extends Controller {
      * @returns
      */
     @Post()
-	public async newTeam(@Body() body: TeamBody): Promise<any>{
-		/**
+  public async newTeam(@Body() body: TeamBody): Promise<any>{
+    /**
          * @TODO check endpoint
          */
-		/* return newTeam(body.creator , body.name) */
-		return true
-	}
+    /* return newTeam(body.creator , body.name) */
+    return true
+  }
 }

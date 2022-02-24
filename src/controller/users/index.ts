@@ -49,9 +49,9 @@ export interface UserInformationResponse extends UserResponse {
 @Route("user")
 export default class UserController extends Controller {
   @Post("signup")
-	public async signUp(@Body() body: UserBody): Promise<UserResponse> {
-		return signUp(body)
-	}
+  public async signUp(@Body() body: UserBody): Promise<UserResponse> {
+    return signUp(body)
+  }
   @Post("login")
   public async login(@Body() body: Login ): Promise<string>{
   	return login(body)

@@ -9,11 +9,11 @@ export interface CommentI extends InteractionBaseI{
 
 
 const Comment = InteractionBase.discriminator('Comment',new Schema({
-	comment: String,
-	isPrivate: {
-		type: Boolean,
-		default: false
-	},
+  comment: String,
+  isPrivate: {
+    type: Boolean,
+    default: false
+  },
 }, options));
 
 export default Comment

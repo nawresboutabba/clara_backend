@@ -11,13 +11,13 @@ export interface BaremoI {
 }
 
 const baremo = new Schema({
-	intervention: {
-		type: Schema.Types.Mixed,
-	},
-	situation: {
-		type: Schema.Types.Mixed,
-	},
-	comment: String
+  intervention: {
+    type: Schema.Types.Mixed,
+  },
+  situation: {
+    type: Schema.Types.Mixed,
+  },
+  comment: String
 })
 
 baremo.index({intervention:1, situation:1}, {unique:true})

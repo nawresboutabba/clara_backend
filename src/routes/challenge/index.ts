@@ -40,31 +40,27 @@ router.get("/challenge/default-configuration", [
 router.post("/challenge/default-configuration", [
   authentication,
   acl(RULES.IS_LEADER),
-  /*   check("", 'challenge configuration already exist').custom((value:string, {req}): Promise<void>=> {
-    return new Promise(async (resolve, reject)=> {
-      const currentConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
-      if (currentConfiguration){
-        return reject()
-      }
-      return resolve()
-    })
-  }), */
+  check("", 'challenge configuration already exist').custom(async (): Promise<void> => {
+    const currentConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.CHALLENGE)
+    if (currentConfiguration) {
+      return Promise.reject()
+    }
+    return Promise.resolve()
+  }),
   body("can_show_disagreement").isBoolean(),
   body("disagreement_default").isBoolean(),
   body("can_fix_desapproved_idea").isBoolean(),
   body("can_choose_scope").isBoolean(),
   body("is_private_default").isBoolean(),
   body("can_choose_WSALevel").isBoolean(),
-  check("WSALevel_available", "WSALevel_available invalid").custom((value: string[], { req }): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const WSALevel: string[] = _.sortedUniq(value)
-      WSALevel.forEach(value => {
-        if (![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)) {
-          return reject("WSALevel_available invalid")
-        }
-      })
-      return resolve()
+  check("WSALevel_available", "WSALevel_available invalid").custom(async (value: string[]): Promise<void> => {
+    const WSALevel: string[] = _.sortedUniq(value)
+    WSALevel.forEach(value => {
+      if (![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)) {
+        return Promise.reject()
+      }
     })
+    return Promise.resolve()
   }),
   body("WSALevel_default").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
   body("community_can_see_reactions").isBoolean(),
@@ -73,16 +69,14 @@ router.post("/challenge/default-configuration", [
   body("reaction_filter").isBoolean(),
   body("external_contribution_available_for_generators").isBoolean(),
   body("external_contribution_available_for_committee").isBoolean(),
-  body("participation_mode_available", 'participation_mode_available invalid').custom((value: string[], { req }): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const participationModeAvailable: string[] = _.sortedUniq(value)
-      participationModeAvailable.forEach(value => {
-        if (![PARTICIPATION_MODE.TEAM, PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(value)) {
-          return reject("participation_mode_available invalid")
-        }
-      })
-      return resolve()
+  body("participation_mode_available", 'participation_mode_available invalid').custom(async (value: string[]): Promise<void> => {
+    const participationModeAvailable: string[] = _.sortedUniq(value)
+    participationModeAvailable.forEach(value => {
+      if (![PARTICIPATION_MODE.TEAM, PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(value)) {
+        return Promise.reject()
+      }
     })
+    return Promise.resolve()
   }),
   body("time_in_park").isInt(),
   body("time_expert_feedback").isInt(),
@@ -148,21 +142,6 @@ router.post(
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
     body("department_affected").isArray(),
-    /*     body("department_affected" ).custom((value: string[], {req}): Promise<void>=> {
-          return new Promise((resolve, reject)=> {
-            AreaService
-              .getAreasById(body.department_affected)
-              .then(departmentAffected=> {
-                if(departmentAffected.length == value.length){
-                  req.utils = departmentAffected
-                  return resolve(req)
-                }
-                return reject("department_affected does not valid")          
-              })
-              .catch(error=> {
-                return reject(error)
-              })
-          })}), */
     body("department_affected").custom(async (value: string[], { req }): Promise<void> => {
       try {
         const departmentAffected = await AreaService.getAreasById(value)
@@ -223,20 +202,18 @@ router.post(
     }),
     body("WSALevel_chosed", "WSALevel_chosed invalid").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
 
-    body("areas_available", "areas_available invalid").custom((value: string[], { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        if (req.body.WSALevel_chosed == WSALEVEL.AREA) {
-          const areasAvailable = await AreaService.getAreasById(_.sortedUniq(value))
+    body("areas_available", "areas_available invalid").custom(async (value: string[], { req }): Promise<void> => {
+      if (req.body.WSALevel_chosed == WSALEVEL.AREA) {
+        const areasAvailable = await AreaService.getAreasById(_.sortedUniq(value))
 
-          if (areasAvailable.length > 0) {
-            req.utils = areasAvailable
-            return resolve()
-          } else {
-            return reject("areas_available can not be empty when WSALevel_chosed = AREA")
-          }
+        if (areasAvailable.length > 0) {
+          req.utils = areasAvailable
+          return Promise.resolve()
+        } else {
+          return Promise.reject("areas_available can not be empty when WSALevel_chosed = AREA")
         }
-        return resolve()
-      })
+      }
+      return Promise.resolve()
     }),
     body("community_can_see_reactions", "community_can_see_reactions invalid").notEmpty().escape().isIn([true, false]),
     body("minimun_likes", "minimun_likes invalid").notEmpty().escape().isInt(),
@@ -320,73 +297,66 @@ router.post(
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
     body("department_affected").isArray(),
-    body("department_affected").custom((value: string[], { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const departmentAffected = await AreaService.getAreasById(value)
-          if (departmentAffected.length == value.length) {
-            req.utils = { departmentAffected, ...req.utils }
-            return resolve()
-          }
-          return reject("department_affected does not valid")
-        } catch (error) {
-          return reject("department_affected does not valid")
+    body("department_affected").custom(async (value: string[], { req }): Promise<void> => {
+      try {
+        const departmentAffected = await AreaService.getAreasById(value)
+        if (departmentAffected.length == value.length) {
+          req.utils = { departmentAffected, ...req.utils }
+          return Promise.resolve()
         }
-
-      })
+        return Promise.reject("department_affected does not valid")
+      } catch (error) {
+        return Promise.reject("department_affected does not valid")
+      }
     }),
     body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).notEmpty().escape().isIn([true, false]),
     /**
      * participation.mode_chosed is like participation_mode_chosed
      */
-    body("participation.chosed_mode", "participation.mode_chosed invalid").custom((value: string, { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        /**
-         * Check that participation chosed by user is available
-         */
-        if (req.resources.challenge.participationModeAvailable.includes(value)) {
-          return resolve()
-        }
-        return reject("participation.chosed_mode invalid")
-      })
+    body("participation.chosed_mode", "participation.mode_chosed invalid").custom(async (value: string, { req }): Promise<void> => {
+      /**
+       * Check that participation chosed by user is available
+       */
+      if (req.resources.challenge.participationModeAvailable.includes(value)) {
+        return Promise.resolve()
+      }
+      return Promise.reject("participation.chosed_mode invalid")
     }),
-    body("participation.chosed_mode").custom((value: string, { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const creator = await UserService.getUserActiveByUserId(req.body.participation.creator)
-          const guests = await UserService.getUsersById(req.body.participation.guests)
-          /**
-           * if any of the members who are going to participate does not exist.
-           */
-          if (!guests.length == req.body.participation.guests.length || !creator) {
-            return reject("participation integrants is not valid")
-          }
-          const validComposition = isCompositionUsersValid(creator, guests, req.challenge)
-          if (value == PARTICIPATION_MODE.TEAM && !req.body.participation.team_name) {
-            return reject("participation.team_name is required")
-          }
-          /**
-           * Check that team_name does not exist
-           */
-          if (value == PARTICIPATION_MODE.TEAM && req.body.participation.team_name) {
-            const team = await TeamService.getTeamByName(req.body.participation.team_name)
-            if (team) {
-              return reject("team_with this name already exist")
-            }
-          }
-
-          /**
-           * Check if all users are allowed
-           */
-          if (validComposition) {
-            req.utils = { creator, guests, ...req.utils }
-            return resolve()
-          }
-          return reject("invalid composition. Invitations to externals users not availible for this user")
-        } catch (error) {
-          reject()
+    body("participation.chosed_mode").custom(async (value: string, { req }): Promise<void> => {
+      try {
+        const creator = await UserService.getUserActiveByUserId(req.body.participation.creator)
+        const guests = await UserService.getUsersById(req.body.participation.guests)
+        /**
+         * if any of the members who are going to participate does not exist.
+         */
+        if (!guests.length == req.body.participation.guests.length || !creator) {
+          return Promise.reject("participation integrants is not valid")
         }
-      })
+        const validComposition = isCompositionUsersValid(creator, guests, req.challenge)
+        if (value == PARTICIPATION_MODE.TEAM && !req.body.participation.team_name) {
+          return Promise.reject("participation.team_name is required")
+        }
+        /**
+         * Check that team_name does not exist
+         */
+        if (value == PARTICIPATION_MODE.TEAM && req.body.participation.team_name) {
+          const team = await TeamService.getTeamByName(req.body.participation.team_name)
+          if (team) {
+            return Promise.reject("team_with this name already exist")
+          }
+        }
+
+        /**
+         * Check if all users are allowed
+         */
+        if (validComposition) {
+          req.utils = { creator, guests, ...req.utils }
+          return Promise.resolve()
+        }
+        return Promise.reject("invalid composition. Invitations to externals users not availible for this user")
+      } catch (error) {
+        return Promise.reject()
+      }
     }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

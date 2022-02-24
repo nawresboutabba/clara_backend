@@ -40,7 +40,7 @@ const machine = {
     REJECTED: {
     }
   },
-  dispatch(actualStatus, actionName, ...payload) {
+  dispatch(actualStatus: string, actionName:string, ...payload:any) {
 
     const action = this.transitions[actualStatus][actionName];
 
@@ -55,7 +55,7 @@ const machine = {
     }
 
   },
-  changeState(newState) {
+  changeState(newState:string) {
     /**
      * validate that newState actually exists
      */

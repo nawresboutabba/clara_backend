@@ -12,7 +12,7 @@ import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.er
 const router = require("express").Router();
 
 router.get('/integrant/general', [
-  authentication
+  authentication,
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     const integrantController = new IntegrantController()

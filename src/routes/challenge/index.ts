@@ -3,7 +3,6 @@ const router = require("express").Router();
 import authentication from "../../middlewares/authentication";
 import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
-import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body, check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
@@ -446,7 +445,7 @@ router.patch(
 
 router.delete(
   "/challenge/:challengeId",
-  [checkResourceExistFromParams("challenges"),
+  [
     authentication
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

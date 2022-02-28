@@ -1,43 +1,113 @@
 import Challenge, { ChallengeI } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalChallenge from "../models/historical-challenges";
-import * as _ from 'lodash'; 
+import * as _ from 'lodash';
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
+import { UserI } from "../models/users";
 
 type editOneParams = {
-    description?:string,
-    images?: Array<string>,
-    timePeriod?: number,
-    status?: string,
-    validators?: Array<string>,
-    referrer?: string,
-    workSpaceAvailable?: Array<string>
+  description?: string,
+  images?: Array<string>,
+  timePeriod?: number,
+  status?: string,
+  validators?: Array<string>,
+  referrer?: string,
+  workSpaceAvailable?: Array<string>
 }
 
 const ChallengeService = {
-  async getChallengeActiveById  (id: string): Promise<any> {
-    return new Promise((resolve, reject) =>
-      Challenge.findOne({
-        challengeId: id,
-        active: true,
-      })
-        .populate("areasAvailable")
-        .then((result) => {
-          return resolve(result);
-        })
-        .catch((err) => {
-          const customError = new ServiceError(
-            ERRORS.SERVICE.GET_CHALLENGE_ACTIVE_BY_ID,
-            HTTP_RESPONSE._404,
-            err
-          )
-          return reject(customError);
-        })
-    );
+  async getChallengeActiveById(id: string, user: UserI): Promise<any> {
+    try {
+      const resp = await Challenge.aggregate([
+        {
+          $match: { $and: [{ challengeId: id, active: true }] },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "insertedBy",
+            foreignField: "_id",
+            as: "insertedBy"
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "_id",
+            as: "author"
+          },
+        },
+        {
+          $lookup: {
+            from: "groupvalidators",
+            localField: "groupValidator",
+            foreignField: "_id",
+            as: "groupValidator"
+          },
+        },
+        {
+          $lookup: {
+            from: "areas",
+            localField: "departmentAffected",
+            foreignField: "_id",
+            as: "departmentAffected"
+          },
+        },
+        {
+          $lookup: {
+            from: 'interactions',
+            localField: "_id",    // field in the orders collection
+            foreignField: "challenge",  // field in the items collection
+            pipeline: [
+              {
+                $match: {
+                  $or: [{
+                    $or: [
+                      { isPrivate: true },
+                      { author: user },
+                      { insertedBy: user }
+                    ]
+                  },
+                  { isPrivate: false },
+                  ]
+                }
+              }
+            ],
+            as: 'interactions'
+          }
+        },
+        {
+          $unwind: {
+            path: "$groupValidator",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $unwind: {
+            path: "$author",
+            preserveNullAndEmptyArrays: true
+          },
+        },
+        {
+          $unwind: {
+            path: "$insertedBy",
+            preserveNullAndEmptyArrays: true
+          },
+        }
+      ])
+      return resp[0]
+    } catch (error) {
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_CHALLENGE_ACTIVE_BY_ID,
+        HTTP_RESPONSE._404,
+        error))
+    }
   },
-  async newChallenge (challenge : ChallengeI ): Promise<any>{
+
+  async newChallenge(challenge: ChallengeI): Promise<any> {
     return new Promise((resolve, reject) => {
       Challenge.create(challenge)
         .then((response) => {
@@ -47,12 +117,12 @@ const ChallengeService = {
           reject(
             new ServiceError(
               ERRORS.SERVICE.NEW_CHALLENGE,
-              HTTP_RESPONSE._404, 
+              HTTP_RESPONSE._404,
               err));
         });
-    });  
+    });
   },
-  async updateWithLog  (challengeId: string ,challengeChanges: editOneParams): Promise<ChallengeI> {
+  async updateWithLog(challengeId: string, challengeChanges: editOneParams): Promise<ChallengeI> {
     const challenge = await this.getChallengeActiveById(challengeId)
     const oldData = _.omit(challenge.toJSON(), ["_id", "__v"]);
     Object.assign(challenge, challengeChanges);
@@ -73,54 +143,52 @@ const ChallengeService = {
       return error;
     }
   },
-  async deactivateChallenge (challengeId: string): Promise<boolean> {
+  async deactivateChallenge(challengeId: string): Promise<boolean> {
     const challenge = await this.getChallengeActiveById(challengeId)
-    try{
+    try {
       challenge.updated = new Date()
       challenge.active = false;
       await challenge.save()
       return true
-    }catch(error){
+    } catch (error) {
       return error
     }
   },
-  async listChallenges (query: QueryChallengeForm): Promise<Array<any>>{
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const findQuery = {
-          ..._.pickBy({
-            created: query.created,
-            active:true,
-            title:{
-              $regex : `.*${query.title}.*`, 
-            },
-            participationMode: query.participationMode
-          }, _.identity)
-        } 
+  async listChallenges(query: QueryChallengeForm): Promise<Array<any>> {
+    try {
+      const findQuery = {
+        ..._.pickBy({
+          created: query.created,
+          active: true,
+          title: {
+            $regex: `.*${query.title}.*`,
+          },
+          participationMode: query.participationMode
+        }, _.identity)
+      }
 
-        if(query.isStrategic != undefined){
-          findQuery.isStrategic = query.isStrategic
-        }
+      if (query.isStrategic != undefined) {
+        findQuery.isStrategic = query.isStrategic
+      }
 
-        const challenges = await Challenge
-          .find({...findQuery})
-          .skip(query.init)
-          .limit(query.offset)
+      const challenges = await Challenge
+        .find({ ...findQuery })
+        .skip(query.init)
+        .limit(query.offset)
         /**
            * Filter order criteria unused
            */
-          .sort(_.pickBy(query.sort,_.identity))
-          
-        return resolve(challenges)
-      }catch(error){
-        return reject(new ServiceError(
-          ERRORS.SERVICE.CHALLENGE_LISTING,
-          HTTP_RESPONSE._500,
-          error
-        ))
-      }
-    })
-  }
+        .sort(_.pickBy(query.sort, _.identity))
+
+      return challenges
+    } catch (error) {
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.CHALLENGE_LISTING,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+  },
 }
 
 export default ChallengeService;

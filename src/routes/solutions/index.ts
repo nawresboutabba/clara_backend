@@ -6,7 +6,6 @@ import * as _ from 'lodash';
 import { NextFunction} from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body , check} from "express-validator";
-import checkResourceExistFromParams from '../../middlewares/check-resources-exist';
 import SolutionController from '../../controller/solution/index'
 import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
@@ -352,7 +351,7 @@ router.delete(
   /**
    * @TODO Check that the user can delete the solution
    */
-  [checkResourceExistFromParams("solutions"),
+  [
     authentication
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

@@ -17,7 +17,7 @@ import ConfigurationService from "../services/Configuration.service";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 
-export const newSolution = async (body: SolutionBody, user: UserRequest, utils: any, challengeId?: string): Promise<SolutionResponse> => {
+export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
   try {
     const guests = utils.guests
     const insertedBy = await UserService.getUserActiveByUserId(user.userId)
@@ -29,7 +29,7 @@ export const newSolution = async (body: SolutionBody, user: UserRequest, utils: 
 
     let challenge: ChallengeI
     if (challengeId) {
-      challenge = await ChallengeService.getChallengeActiveById(challengeId)
+      challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
     }
     const created = new Date();
 

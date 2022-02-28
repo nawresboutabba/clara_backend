@@ -12,7 +12,7 @@ import {
   newChallengeProposal,
   getChallengeProposal,
   acceptChallengeProposal,
-  listChallengeProposal
+  listChallengeProposal,
 } from '../../repository/repository.challenge';
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
@@ -65,7 +65,7 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
   @Post()
-  public async newChallenge(@Body() body: ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
+  public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI): Promise<ChallengeResponse> {
     return newChallenge(body, user)
   }
   /**
@@ -80,7 +80,7 @@ export default class ChallengeController extends Controller {
   }
 
   @Post(':challengeId/solution')
-  public async newSolution(@Body() body: SolutionBody, @Request() user: UserRequest, @Path('challengeId') challengeId: string, @Inject() utils: any): Promise<SolutionResponse> {
+  public async newSolution(@Body() body: SolutionBody, @Inject() user: UserI, @Path('challengeId') challengeId: string, @Inject() utils: any): Promise<SolutionResponse> {
     return newSolution(body, user, utils, challengeId)
   }
   /**

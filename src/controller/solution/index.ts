@@ -49,7 +49,7 @@ export interface SolutionResponse extends SituationResponse{
 @Route('solution')
 export default class SolutionController extends Controller {
     @Post()
-  public async newSolution (@Body() body:SolutionBody, @Request() user: UserRequest, @Inject() utils: any): Promise<SolutionResponse> {
+  public async newSolution (@Body() body:SolutionBody, @Request() user: UserI, @Inject() utils: any): Promise<SolutionResponse> {
     return newSolution(body, user, utils)
   }
     @Patch(':solutionId')

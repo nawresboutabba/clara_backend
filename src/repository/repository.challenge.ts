@@ -34,8 +34,10 @@ import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { getCurrentDate } from "../utils/date";
 import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
+import SolutionService from "../services/Solution.service";
+import TeamService from "../services/Team.service";
 
-export const newChallenge = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeResponse> => {
+export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
   try {
 
     const data: ChallengeI = await composeChallenge(body, user)
@@ -176,7 +178,7 @@ export const listChallengeProposal = async (query: QueryChallengeForm): Promise<
 export const newChallengeComment = async (challengeId: string, commentBody: CommentBody, user: UserI): Promise<CommentResponse> => {
   try {
     let insertedBy: UserI
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
     const author = await UserService.getUserActiveByUserId(commentBody.author)
 
     if (!(challenge && author)) {
@@ -220,7 +222,7 @@ export const getComments = async (challengeId: string, user: UserI): Promise<Com
    * @TODO hacer una funcion para esto
    */
 
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
     const userEntity = await UserService.getUserActiveByUserId(user.userId)
     const comments = await CommentService.getComments(challenge, userEntity)
     const resp = await genericArrayCommentFilter(comments)
@@ -232,7 +234,7 @@ export const getComments = async (challengeId: string, user: UserI): Promise<Com
 
 export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
   try {
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId)
+    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
     const author = await UserService.getUserActiveByUserId(user.userId)
 
     if (!(isReaction(reaction.type))) {

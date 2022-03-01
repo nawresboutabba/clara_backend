@@ -34,8 +34,6 @@ import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { getCurrentDate } from "../utils/date";
 import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
-import SolutionService from "../services/Solution.service";
-import TeamService from "../services/Team.service";
 
 export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
   try {

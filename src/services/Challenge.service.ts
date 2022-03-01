@@ -18,7 +18,7 @@ type editOneParams = {
 }
 
 const ChallengeService = {
-  async getChallengeActiveById(id: string, user: UserI): Promise<any> {
+  async getChallengeActiveById(id: string, user: UserI): Promise<ChallengeI> {
     try {
       const resp = await Challenge.aggregate([
         {

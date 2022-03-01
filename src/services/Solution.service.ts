@@ -8,6 +8,7 @@ import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { TeamI } from "../models/team";
 import { AreaI } from "../models/organization.area";
+import { getCurrentDate } from "../utils/date";
 
 export type editOneParams = {
   title: string,
@@ -20,90 +21,54 @@ export type editOneParams = {
 
 const SolutionService = {
   async getSolutionActiveById (id: string): Promise <any> {
-    return new Promise(async (resolve, reject) =>
-      await Solution.findOne({
+    try{
+      const solution = await Solution.findOne({
         solutionId: id,
         active: true,
       })
+        .populate('updatedBy')
         .populate('challenge')
         .populate('author')
-        .then((result) => {
-          return resolve(result);
-        })
-        .catch((err) => {
-          return reject(err);
-        })
-    );
+      return solution
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.SOLUTION_DOES_NOT_EXIST,
+        HTTP_RESPONSE._404,
+        error))
+    }
   },
-  async deactivateSolution (id: string): Promise<boolean> {
-        
-    const solution = await this.getSolutionActiveById(id)
+  async deactivateSolution (solution: any, update: any): Promise<boolean> {
     try{
-      solution.updated = new Date()
-      solution.active = false;
-      await solution.save()
+      await Solution.findOneAndUpdate({
+        ...solution
+      },{
+        ...update
+      })
       return true
     }catch(error){
       return error
     }
   },
-  async updateWithLog (solutionId: string, solutionChanges: editOneParams): Promise<any> {
-    return new Promise(async (resolve, reject)=> {
-      try {
-        const solution = await Solution.findOneAndUpdate({
-          solutionId: solutionId,
-          active: true,
-        }, 
-                                                         {
-                                                           ...solutionChanges
-                                                         }, 
-                                                         {
-                                                           new: true
-                                                         })
-          .populate('team')
-          .populate('insertedBy')
-          .populate('areasAvailable')
-          .populate('author')
-          .populate('coauthor')
-        return resolve(solution);
-      } catch (error) {          
-        return reject( new ServiceError(
-          ERRORS.SERVICE.DELETE_USER, 
-          HTTP_RESPONSE._500,
-          error)   
-        );
-      }
-    })
-  },
   async newSolution  (data: SolutionI, challenge?: ChallengeI): Promise<any> {
-    // Check that solution exist
-    return new Promise(async (resolve, reject) => {
-      try{
-        if(data.challengeId){
-          if(!challenge){
-            const customError = new ServiceError(
-              ERRORS.SERVICE.NEW_SOLUTION,
-              HTTP_RESPONSE._500,
-            )
-            throw customError
-          }
-          data.challenge = challenge
+    try{
+      if(data.challengeId){
+        if(!challenge){
+          const customError = new ServiceError(
+            ERRORS.SERVICE.NEW_SOLUTION,
+            HTTP_RESPONSE._500,
+          )
+          throw customError
         }
-        await Solution.create(data)
-          .then((resp) => {
-            return resolve(resp);
-          })
-          .catch((err) => {
-            const customError = new ServiceError(
-              ERRORS.SERVICE.NEW_SOLUTION,
-              HTTP_RESPONSE._500,
-              err)
-            return reject(customError);
-          });
-      }catch (error){
-        return resolve(error)
+        data.challenge = challenge
       }
-    })
+      const solution = await Solution.create(data)
+      return solution
+    }catch (error){
+      return Promise.resolve(new ServiceError(
+        ERRORS.SERVICE.NEW_SOLUTION,
+        HTTP_RESPONSE._500,
+        error))
+    }
   },
   /**
      * Solution List. Is used for solution without challenge associated too.

@@ -1,7 +1,6 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { SolutionBody, SolutionResponse } from "../controller/solution";
-import { UserRequest } from "../controller/users";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
 import { PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
@@ -16,15 +15,16 @@ import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation 
 import ConfigurationService from "../services/Configuration.service";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
+import { getCurrentDate } from "../utils/date";
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
   try {
     const guests = utils.guests
     const insertedBy = await UserService.getUserActiveByUserId(user.userId)
     /**
-         * Solution have to have setted `author` or `team`.
-         * If both are undefined or null, then throw error
-         */
+      * Solution have to have setted `author` or `team`.
+      * If both are undefined or null, then throw error
+      */
     const creator = utils.creator
 
     let challenge: ChallengeI
@@ -41,17 +41,20 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       configuration = getConfigurationFromDefaultSolution(body, defaultSolutionConfiguration)
     }
     /**
-         * If the challenge's solution, 
-         * then title is the same that challenge. 
-         * For this reason, is undefined in the solution.
-         */
+      * If the challenge's solution, 
+      * then title and description is the same that challenge. 
+      */
     const title = challengeId ? challenge.title : body.title
     const description = challengeId ? challenge.description : body.description
     const groupValidator = challengeId ? challenge.groupValidator : undefined
 
-    const data:SolutionI = {
+    const data: SolutionI = {
       insertedBy,
       updatedBy: insertedBy,
+      /**
+       * This field has reference to the creator team or author solution, depends on the PARTICIPATION_MODE_CHOSED
+       */
+      author: creator,
       solutionId: nanoid(),
       title,
       challengeId,
@@ -68,39 +71,38 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       proposedSolution: body.proposed_solution,
       ...configuration,
     }
-    if (data.WSALevelChosed == WSALEVEL.AREA) {
+    if (challengeId && data.WSALevelChosed == WSALEVEL.AREA) {
       data.areasAvailable = challenge.areasAvailable
+    } else if (body.WSALevel_chosed == WSALEVEL.AREA) {
+      data.areasAvailable = utils.areas_available
     }
 
     /**
-         * Participation Mode Choosed
-         */
+      * Participation Mode Choosed
+      */
     if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM) {
-      const team: TeamI = await newTeam(creator, body.participation.team_name)
+      const team: TeamI = await newTeam(body.participation.team_name)
       data.team = team
-    } else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP) {
-      data.author = creator
-      data.coauthor = guests
     }
 
     const solution = await SolutionService.newSolution(data, challenge);
     /**
-           * Create invitations
-           */
+      * Create invitations. Members are added when invitation is accepted.
+      */
     if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM) {
       generateSolutionTeamInvitation(creator, guests, solution, solution.team)
     } else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP) {
       generateSolutionCoauthorshipInvitation(creator, guests, solution)
     }
 
-    const resp = genericSolutionFilter(solution)
+    const resp = await genericSolutionFilter(solution)
     return resp
   } catch (error) {
     return Promise.reject(error)
   }
 }
 
-export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
+/* export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
   return new Promise(async (resolve, reject) => {
     try {
       const currentSolution = resources.solution
@@ -123,42 +125,47 @@ export const updateSolutionPartially = async (body: SolutionBody, resources: any
       return reject(error)
     }
   })
-}
+} */
 
-export const deleteSolution = async (solutionId: string): Promise<boolean> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await SolutionService.deactivateSolution(solutionId);
-      return resolve(true)
-    } catch (error) {
-      /**
-       * @TODO set error
-       */
-      return reject("ERROR_ELIMINAR_SOLUTION")
+export const deleteSolution = async (solutionId: string, user: UserI): Promise<boolean> => {
+  try {
+    const solution = {
+      solutionId: solutionId,
+      active: true,
     }
-  })
+    const update = {
+      active: false,
+      updatedBy: user,
+      updatedAt: getCurrentDate()
+    }
+    await SolutionService.deactivateSolution(solution, update);
+    return Promise.resolve(true)
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
-export const getSolution = (solutionId: string, solution: SolutionI): Promise<SolutionResponse> => {
-  return new Promise(async (resolve, reject) => {
-    const resp = genericSolutionFilter(solution)
-    return resolve(resp)
-  })
+export const getSolution = async (solutionId: string, solution: SolutionI): Promise<SolutionResponse> => {
+  try {
+    const resp = await genericSolutionFilter(solution)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+
+  }
 }
 
 export const listSolutions = async (query: QuerySolutionForm, challengeId?: string): Promise<SolutionResponse[]> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const listSolutions = await SolutionService.listSolutions(query, challengeId)
-      /**
-       * @TODO list solutions filter with minimal data
-       */
-      const resp = await genericArraySolutionsFilter(listSolutions)
-      return resolve(resp)
-    } catch (error) {
-      return reject(error)
-    }
-  })
+  try {
+    const listSolutions = await SolutionService.listSolutions(query, challengeId)
+    /**
+     * @TODO list solutions filter with minimal data
+     */
+    const resp = await genericArraySolutionsFilter(listSolutions)
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {

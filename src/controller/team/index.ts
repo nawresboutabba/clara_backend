@@ -12,8 +12,6 @@ export interface TeamBody {
 
 export interface TeamResponse {
     team_id: string,
-    creator: UserResponse,
-    members?: Array<UserResponse>,
     name: string,
     created: Date
 }

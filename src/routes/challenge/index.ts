@@ -1,5 +1,5 @@
-const router = require("express").Router();
-
+import * as express from "express";
+const router = express.Router();
 import authentication from "../../middlewares/authentication";
 import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
@@ -19,8 +19,6 @@ import UserService from "../../services/User.service";
 import TeamService from "../../services/Team.service";
 import ConfigurationService from "../../services/Configuration.service";
 import { GroupValidatorI } from "../../models/group-validator";
-
-
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

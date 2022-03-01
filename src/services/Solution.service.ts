@@ -64,7 +64,7 @@ const SolutionService = {
       const solution = await Solution.create(data)
       return solution
     }catch (error){
-      return Promise.resolve(new ServiceError(
+      return Promise.reject(new ServiceError(
         ERRORS.SERVICE.NEW_SOLUTION,
         HTTP_RESPONSE._500,
         error))

@@ -48,12 +48,16 @@ export interface ChallengeResponse extends SituationResponse {
   challenge_id: string
   is_strategic: boolean,
   finalization: Date,
-  group_validator: GroupValidatorResponse
+  group_validator: GroupValidatorResponse,
+  interactions?: {
+    interaction: string,
+    count: number
+  }
 }
 
 export interface ChallengeProposalResponse extends ChallengeResponse {
   proposal_id: string
-  date_proposal: Date
+  date_proposal: Date,
 }
 
 @Route('challenge')
@@ -89,8 +93,8 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
   @Get()
-  public async listChallenges(@Query() query: any): Promise<ChallengeResponse[]> {
-    return listChallenges(query)
+  public async listChallenges(@Query() query: any, @Inject() user: UserI): Promise<ChallengeResponse[]> {
+    return listChallenges(query, user)
   }
 
   @Get(':challengeId')

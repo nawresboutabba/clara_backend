@@ -96,22 +96,57 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
   }catch(error){
     return Promise.reject(error)
   }        
- 
 }
 
-export const genericArrayChallengeFilter = async (challenges: Array<ChallengeI>): Promise<Array<ChallengeResponse>> =>  {
-  return new Promise(async (resolve, reject)=> {
+export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any> => {
+  try{
+    const {
+      created,
+      status,
+      title, 
+      description , 
+      active,
+      images,
+      isStrategic,
+      finalization,
+      interactions
+    } = challenge
+    const areas_available = await genericArrayAreaFilter(challenge.areasAvailable)
+    const department_affected = await genericArrayAreaFilter(challenge.departmentAffected)
+    const group_validator = await genericGroupValidatorFilter(challenge.groupValidator)
+    return {
+      created,
+      status,
+      title, 
+      description , 
+      active,
+      images,
+      is_strategic: isStrategic,
+      finalization,
+      areas_available,
+      department_affected,
+      group_validator,
+      interactions,
+    }
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const genericArrayChallengeFilter = async (challenges: Array<ChallengeI>): Promise<Array<any>> =>  {
+  try{
     const arrayChallenge: Array<Promise<ChallengeResponse>>= []
     challenges.forEach(challenge => {
-      arrayChallenge.push(genericChallengeFilter(challenge))
+      arrayChallenge.push(lightChallengeFilter(challenge))
     })
-    await Promise
-      .all(arrayChallenge)
+    return await Promise.all(arrayChallenge)
       .then(result => {
-        return resolve(result)
+        return result
       })
       .catch(error=> {
-        return reject(error)
-      })        
-  })
+        return Promise.reject(error)
+      })  
+  }catch(error){
+    return Promise.reject(error)
+  }
 }

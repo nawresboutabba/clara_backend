@@ -34,29 +34,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"TeamBody": {
-				"properties": {
-					"creator": {
-						"type": "string"
-					},
-					"members": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"creator",
-					"members",
-					"name"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"UserResponse": {
 				"properties": {
 					"area_visible": {
@@ -146,6 +123,29 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"TeamBody": {
+				"properties": {
+					"creator": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"creator",
+					"members",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"GroupValidatorBody": {
 				"properties": {
 					"name": {
@@ -186,60 +186,10 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"IntegrantResponse": {
-				"properties": {
-					"user": {
-						"$ref": "#/components/schemas/UserResponse"
-					},
-					"integrant_id": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"created": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"last_change_position": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"finished": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"group_validator": {
-						"$ref": "#/components/schemas/GroupValidatorResponse"
-					},
-					"role": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"user",
-					"integrant_id",
-					"active",
-					"created",
-					"last_change_position",
-					"role"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
 			"TeamResponse": {
 				"properties": {
 					"team_id": {
 						"type": "string"
-					},
-					"creator": {
-						"$ref": "#/components/schemas/UserResponse"
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/UserResponse"
-						},
-						"type": "array"
 					},
 					"name": {
 						"type": "string"
@@ -251,7 +201,6 @@
 				},
 				"required": [
 					"team_id",
-					"creator",
 					"name",
 					"created"
 				],
@@ -395,6 +344,22 @@
 					"finalization": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"interactions": {
+						"properties": {
+							"count": {
+								"type": "number",
+								"format": "double"
+							},
+							"interaction": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"count",
+							"interaction"
+						],
+						"type": "object"
 					}
 				},
 				"required": [
@@ -1016,15 +981,6 @@
 					"teamId": {
 						"type": "string"
 					},
-					"creator": {
-						"$ref": "#/components/schemas/UserI"
-					},
-					"members": {
-						"items": {
-							"$ref": "#/components/schemas/UserI"
-						},
-						"type": "array"
-					},
 					"created": {
 						"type": "string",
 						"format": "date-time"
@@ -1035,7 +991,6 @@
 				},
 				"required": [
 					"teamId",
-					"creator",
 					"created",
 					"name"
 				],
@@ -1220,6 +1175,23 @@
 					"externalContributionAvailableForCommittee": {
 						"type": "boolean",
 						"description": "Are invitations to external contributors \nby the committee allowed? affects whether authors, \nco-authors, and teams can be made up of externals. \nIf the scope is at the COMPANY level, \nand this option is equal to true, \nthen the author or creator of the team can invite \npeople from outside the organization."
+					},
+					"interactions": {
+						"properties": {
+							"count": {
+								"type": "number",
+								"format": "double"
+							},
+							"interaction": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"count",
+							"interaction"
+						],
+						"type": "object",
+						"description": "Calculated field"
 					},
 					"challengeId": {
 						"type": "string",
@@ -1726,6 +1698,22 @@
 						"type": "string",
 						"format": "date-time"
 					},
+					"interactions": {
+						"properties": {
+							"count": {
+								"type": "number",
+								"format": "double"
+							},
+							"interaction": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"count",
+							"interaction"
+						],
+						"type": "object"
+					},
 					"proposal_id": {
 						"type": "string"
 					},
@@ -1909,6 +1897,47 @@
 				],
 				"type": "object",
 				"additionalProperties": true
+			},
+			"IntegrantResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/UserResponse"
+					},
+					"integrant_id": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					},
+					"created": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"last_change_position": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"finished": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"group_validator": {
+						"$ref": "#/components/schemas/GroupValidatorResponse"
+					},
+					"role": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"integrant_id",
+					"active",
+					"created",
+					"last_change_position",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": true
 			}
 		},
 		"securitySchemes": {}
@@ -2001,34 +2030,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/team": {
-			"post": {
-				"operationId": "NewTeam",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"description": "Create a new Team for a challenge or situation",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TeamBody"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/user/signup": {
@@ -2154,6 +2155,34 @@
 				"parameters": []
 			}
 		},
+		"/team": {
+			"post": {
+				"operationId": "NewTeam",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Create a new Team for a challenge or situation",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TeamBody"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/group-validator": {
 			"post": {
 				"operationId": "NewGroupValidator",
@@ -2195,116 +2224,6 @@
 				},
 				"security": [],
 				"parameters": []
-			}
-		},
-		"/integrant/leader/{integrantId}": {
-			"post": {
-				"operationId": "NewLeader",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IntegrantResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint for add or reeplace a leader of committe.\nThe new leader have to be a `general commite` user first",
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "integrantId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/integrant/general": {
-			"post": {
-				"operationId": "NewIntegrant",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IntegrantResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Endpoint used for add a new integrant to committe. \nUser could be a new integrant or old integrant with active=false",
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"description": "user that will be converted from generator to commite (GENERAL)",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "string"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/integrant": {
-			"get": {
-				"operationId": "GetGeneralMembers",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/IntegrantResponse"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/integrant/general/{integrantId}": {
-			"delete": {
-				"operationId": "DeleteGeneralMember",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "integrantId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/challenge": {
@@ -2862,42 +2781,6 @@
 			}
 		},
 		"/solution/{solutionId}": {
-			"patch": {
-				"operationId": "UpdateSolutionPartially",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SolutionResponse"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "solutionId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SolutionBody"
-							}
-						}
-					}
-				}
-			},
 			"delete": {
 				"operationId": "DeleteSolution",
 				"responses": {
@@ -3007,6 +2890,127 @@
 						}
 					}
 				}
+			}
+		},
+		"/integrant/leader/{integrantId}": {
+			"post": {
+				"operationId": "NewLeader",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IntegrantResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint for add or reeplace a leader of committe.\nThe new leader have to be a `general commite` user first",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "integrantId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/integrant/general": {
+			"post": {
+				"operationId": "NewIntegrant",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IntegrantResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint used for add a new integrant to committe. \nUser could be a new integrant or old integrant with active=false",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"functionsDescription": {
+										"type": "string"
+									},
+									"user": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"functionsDescription",
+									"user"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/integrant": {
+			"get": {
+				"operationId": "GetGeneralMembers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IntegrantResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/integrant/general/{integrantId}": {
+			"delete": {
+				"operationId": "DeleteGeneralMember",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "integrantId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},

@@ -271,7 +271,6 @@ router.patch(
     authentication,
     acl(RULES.CAN_EDIT_SOLUTION),
     body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
-
       try {
         const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
         if (!defaultSolutionConfiguration) {
@@ -283,59 +282,56 @@ router.patch(
         return Promise.reject(error)
       }
     }),
-    body("status", "status invalid").notEmpty(),
-    body("status", "CAN_NOT_EDIT_SOLUTION").isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION]),
-    body("status").custom(async (value, { req }): Promise<void> => {
-      if (req.resources.solution.status == value) {
-        return Promise.resolve()
-      }
-      /**
-        * @TODO add state machine
-        */
-      return Promise.reject("CAN_NOT_EDIT_SOLUTION")
-    }),
+    /**
+     * Status have to be changed trought particular endpoint.
+     */
+    body("status", "status invalid").notEmpty()
+      .isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION])
+      .custom(async (value, { req }): Promise<void> => {
+        if (req.resources.solution.status == value) {
+          return Promise.resolve()
+        }
+        return Promise.reject("CAN_NOT_EDIT_SOLUTION")
+      }),
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
     body("department_affected").isArray(),
-    body("department_affected").custom((value: string[], { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const departmentAffected = await AreaService.getAreasById(value)
-          if (departmentAffected.length == value.length) {
-            req.utils = { departmentAffected, ...req.utils }
-            return resolve()
-          }
-          return reject("department_affected does not valid")
-        } catch (error) {
-          return reject("department_affected does not valid")
+    body("department_affected").custom(async (value: string[], { req }): Promise<void> => {
+      try {
+        const departmentAffected = await AreaService.getAreasById(value)
+        if (departmentAffected.length == value.length) {
+          req.utils = { departmentAffected, ...req.utils }
+          return Promise.resolve()
         }
-      })
+        return Promise.reject("department_affected does not valid")
+      } catch (error) {
+        return Promise.reject("department_affected does not valid")
+      }
+
     }),
     body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isBoolean(),
     body("WSALevel_chosed").custom((value: string, { req }): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        try {
+      try {
         /**
        * Check that user can choose WSALevel, otherwise ignore decision. 
        */
-          if (req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
+        if (req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
           /**
          * If user can choose WSALevel, check that WSALevel is valid.
          */
-            if (!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)) {
-              return reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
-            }
-            return resolve()
+          if (!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)) {
+            return Promise.reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
           }
-          /**
+          return Promise.resolve()
+        }
+        /**
        * Ignore decision because user can not choose WSALevel. Taking default configuration. 
        */
-          return resolve()
-        } catch (error) {
-          return reject(error)
-        }
-      })
+        return Promise.resolve()
+      } catch (error) {
+        return Promise.reject(error)
+      }
     }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

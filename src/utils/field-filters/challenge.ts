@@ -46,7 +46,8 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       timeExpertFeedback,
       timeIdeaFix,
       externalContributionAvailableForGenerators,
-      externalContributionAvailableForCommittee
+      externalContributionAvailableForCommittee,
+      interactions
     } = challenge
     const author = await genericUserFilter(challenge.author)
     const inserted_by = await genericUserFilter(challenge.insertedBy)
@@ -91,7 +92,8 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       time_expert_feedback: timeExpertFeedback,
       time_idea_fix: timeIdeaFix,
       external_contribution_available_for_generators: externalContributionAvailableForGenerators,
-      external_contribution_available_for_committee: externalContributionAvailableForCommittee
+      external_contribution_available_for_committee: externalContributionAvailableForCommittee,
+      interactions
     }
   }catch(error){
     return Promise.reject(error)

@@ -175,10 +175,6 @@ export const WSALEVEL = {
   AREA: "AREA"
 }
 
-export const REACTIONS = {
-  LIKE: "LIKE",
-  DONT_UNDERTAND: "DONT_UNDERSTAND"
-}
 
 export const RULES = {
   CAN_EDIT_SOLUTION: "CAN_EDIT_SOLUTION",
@@ -199,6 +195,14 @@ export const PARTICIPATION_MODE = {
 export const INVITATIONS = {
   TEAM_PARTICIPATION : "TEAM_PARTICIPATION",
   COAUTHORSHIP_PARTICIPATION : "COAUTHORSHIP_PARTICIPATION"
+}
+
+export const INTERACTION = {
+  COMMENT: "COMMENT",
+  REACTIONS :{
+    LIKE: "LIKE",
+    DONT_UNDERTAND: "DONT_UNDERSTAND"
+  }
 }
 
 export const OWNER = "owner@gmail.com"

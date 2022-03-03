@@ -22,7 +22,7 @@ import { UserI } from "../models/users";
 import { newComment } from "./repository.comment";
 import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 import RepositoryError from "../handle-error/error.repository";
-import { ERRORS, HTTP_RESPONSE, WSALEVEL } from "../constants";
+import { ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
 import CommentService from "../services/Comment.service";
 import { ReactionBody, ReactionResponse } from "../controller/reaction";
 import ReactionService from "../services/Reaction.service";
@@ -34,6 +34,10 @@ import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { getCurrentDate } from "../utils/date";
 import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
+import TeamService from "../services/Team.service";
+import SolutionService from "../services/Solution.service";
+import { interactionResume } from "../utils/general/interaction-resume";
+import { SolutionI } from "../models/situation.solutions";
 
 export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
   try {
@@ -153,11 +157,36 @@ export const deleteChallenge = async (challengeId: string): Promise<boolean> => 
 }
 
 
-export const listChallenges = async (query: QueryChallengeForm): Promise<ChallengeResponse[]> => {
+export const listChallenges = async (query: QueryChallengeForm, user: UserI): Promise<ChallengeResponse[]> => {
   try {
-    const challenges = await ChallengeService.listChallenges(query)
-    const resp = await genericArrayChallengeFilter(challenges)
-    return resp
+    /**
+     * Listing for user internals and external is not the same. 
+     * The externals users just can see challenge what was invited.
+     * The internals users can see all challenges.
+     */
+    if(user.externalUser){
+      const mySolutions : SolutionI[]= await SolutionService.getParticipations(user)
+      const myChallenge : ChallengeI []= mySolutions.filter((solution) => {
+        if (solution.challenge){
+          return solution
+        }
+      }).map(solution =>solution.challenge)
+      const challenges = await ChallengeService.listChallengeForExternals(query, myChallenge, user);
+      /**
+       * @TODO reactions resume
+       */
+      challenges.forEach(challenge => {
+        challenge.interactions = interactionResume(challenge.interactions)
+      })
+
+      const resp = await genericArrayChallengeFilter(challenges);
+      return resp
+    }else{
+      const challenges = await ChallengeService.listChallenges(query, user)
+      const resp = await genericArrayChallengeFilter(challenges)
+      return resp
+    }
+
   } catch (error) {
     return Promise.reject(error)
   }
@@ -195,6 +224,7 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
     const commentChallenge = {
       insertedBy,
       author,
+      type: INTERACTION.COMMENT,
       isPrivate: commentBody.is_private,
       comment: commentBody.comment,
       date: new Date(),

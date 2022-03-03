@@ -373,14 +373,14 @@ router.post(
   }
 );
 
-router.get('/challenge', [
+router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     const challengeController = new ChallengeController()
 
     const query: QueryChallengeForm = await formatChallengeQuery(req.query)
-    const challenges = await challengeController.listChallenges(query)
+    const challenges = await challengeController.listChallenges(query, req.user)
 
     res
       .json(challenges)

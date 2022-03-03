@@ -112,45 +112,43 @@ const SolutionService = {
       }
     })    
   },
-  async getParticipations(user: UserI, teams: TeamI []): Promise<any>{
-    return new Promise(async (resolve, reject)=> {
-      try{
-        const solutions = await Solution.find({
-          active: true,
-          $and:[
-            {
-              $or:[
-                {
-                  insertedBy: user
-                },
-                {
-                  author: user
-                },
-                {
-                  coauthor:{$in: user}
-                },
-                {
-                  team: {$in: teams}
-                }
-              ]
-            }
-          ],
-        })
-          .populate('insertedBy')
-          .populate('areasAvailable')
-          .populate('author')
-          .populate('coauthor')
-          .populate("team")
+  async getParticipations(user: UserI): Promise<any>{
+    try{
+      const solutions = await Solution.find({
+        $and:[
+          {
+            active:true
+          },
+          {
+            $or:[
+              {
+                insertedBy: user
+              },
+              {
+                author: user
+              },
+              {
+                coauthor:{$in: user}
+              },
+            ]
+          }
+        ],
+      })
+        .populate('insertedBy')
+        .populate('areasAvailable')
+        .populate('author')
+        .populate('coauthor')
+        .populate('team')
+        .populate('challenge')
 
-        return resolve(solutions)
-      }catch(error){
-        return reject( new ServiceError(
-          ERRORS.SERVICE.SOLUTION_USER_PARTICIPATIONS,
-          HTTP_RESPONSE._500,
-          error
-        ))
-      }
-    })
+      return solutions
+    }catch(error){
+      return Promise.reject( new ServiceError(
+        ERRORS.SERVICE.SOLUTION_USER_PARTICIPATIONS,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
   }    
 }
 export default SolutionService;

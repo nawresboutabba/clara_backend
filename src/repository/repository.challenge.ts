@@ -34,7 +34,6 @@ import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { getCurrentDate } from "../utils/date";
 import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
-import TeamService from "../services/Team.service";
 import SolutionService from "../services/Solution.service";
 import { interactionResume } from "../utils/general/interaction-resume";
 import { SolutionI } from "../models/situation.solutions";

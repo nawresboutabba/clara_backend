@@ -6,9 +6,8 @@ import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
-import { TeamI } from "../models/team";
 import { AreaI } from "../models/organization.area";
-import { getCurrentDate } from "../utils/date";
+import { updateSolutionPartially } from "../repository/repository.solution";
 
 export type editOneParams = {
   title: string,
@@ -66,6 +65,21 @@ const SolutionService = {
     }catch (error){
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.NEW_SOLUTION,
+        HTTP_RESPONSE._500,
+        error))
+    }
+  },
+  async updateSolutionPartially (id: string, data: editOneParams): Promise<any> {
+    try{
+      const solution = await Solution.findOneAndUpdate({
+        solutionId: id
+      },{
+        ...data
+      })
+      return solution
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.UPDATE_SOLUTION,
         HTTP_RESPONSE._500,
         error))
     }

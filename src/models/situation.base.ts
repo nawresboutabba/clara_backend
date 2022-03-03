@@ -175,6 +175,13 @@ export interface SituationBaseI {
    * people from outside the organization.
    */
   externalContributionAvailableForCommittee: boolean,
+  /**
+   * Calculated field
+   */
+  interactions?: {
+    interaction: string,
+    count: number
+  }
 }
 
 export const situationBaseModel = {

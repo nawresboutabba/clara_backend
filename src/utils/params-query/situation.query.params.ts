@@ -47,7 +47,7 @@ export async function formatSitutationQuery(query: any): Promise<QuerySituationF
       offset,
       sort: {
         title: title_order,
-        created: created_order
+        created: created_order? created_order: -1
       },
     }
 

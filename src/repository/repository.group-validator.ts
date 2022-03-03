@@ -6,8 +6,7 @@ import { GroupValidatorI } from "../models/group-validator";
 import { nanoid } from "nanoid";
 import { IntegrantI } from "../models/integrant";
 import { genericGroupValidatorFilter } from "../utils/field-filters/group-validator";
-import { genericUserFilter, lightUserFilter } from "../utils/field-filters/user";
-import { genericIntegrantFilter } from "../utils/field-filters/integrant";
+import { lightUserFilter } from "../utils/field-filters/user";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,

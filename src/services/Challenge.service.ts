@@ -66,7 +66,6 @@ const ChallengeService = {
                 $match: {
                   $or: [{
                     $or: [
-                      { isPrivate: true },
                       { author: user },
                       { insertedBy: user }
                     ]
@@ -154,33 +153,59 @@ const ChallengeService = {
       return error
     }
   },
-  async listChallenges(query: QueryChallengeForm): Promise<Array<any>> {
+  /**
+   * List Challenge for Internal Employee
+   * @param query 
+   * @param user
+   * @returns 
+   */
+  async listChallenges(query: QueryChallengeForm, user: UserI): Promise<Array<any>> {
     try {
-      const findQuery = {
-        ..._.pickBy({
-          created: query.created,
-          active: true,
-          title: {
-            $regex: `.*${query.title}.*`,
-          },
-          participationMode: query.participationMode
-        }, _.identity)
+      const matchQuery = {
+        $and: [
+          {$or:[
+            {title:{$regex:`.*${query.title}.*`}},
+          ]},
+          {active:true},
+          { participationModeAvailable: {$in: query.participationMode}},
+        ]
       }
-
-      if (query.isStrategic != undefined) {
-        findQuery.isStrategic = query.isStrategic
-      }
-
-      const challenges = await Challenge
-        .find({ ...findQuery })
+      
+      const resp = await Challenge.aggregate([
+        {
+          $match: {
+            ...matchQuery
+          }
+        },
+        {
+          $lookup: {
+            from: 'interactions',
+            localField: "_id",    // field in the orders collection
+            foreignField: "challenge",  // field in the items collection
+            pipeline: [
+              {
+                $match: {
+                  $or: [{
+                    $or: [
+                      { isPrivate: true },
+                      { author: user },
+                      { insertedBy: user }
+                    ]
+                  },
+                  { isPrivate: false },
+                  ]
+                }
+              }
+            ],
+            as: 'interactions'
+          }
+        },
+      ])
         .skip(query.init)
         .limit(query.offset)
-        /**
-           * Filter order criteria unused
-           */
         .sort(_.pickBy(query.sort, _.identity))
 
-      return challenges
+      return resp
     } catch (error) {
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.CHALLENGE_LISTING,
@@ -189,6 +214,67 @@ const ChallengeService = {
       ))
     }
   },
+  /**
+   * List Challenge for externals users
+   * @param query 
+   * @param challengesParticipations 
+   * @param user 
+   * @returns 
+   */
+  async listChallengeForExternals(query: QueryChallengeForm, challengesParticipations: ChallengeI[], user: UserI): Promise<Array<any>> {
+    try{
+      const matchQuery = {
+        $and: [
+          {_id: { $in: challengesParticipations.map(c => c._id) }},
+          {$or:[
+            {title:{$regex:`.*${query.title}.*`}},
+          ]},
+          {active:true},
+          { participationModeAvailable: {$in: query.participationMode}},
+        ]
+      }
+      const resp = await Challenge.aggregate([
+        {
+          $match: {
+            ...matchQuery
+          }
+        },
+        {
+          $lookup: {
+            from: 'interactions',
+            localField: "_id",  
+            foreignField: "challenge",
+            pipeline: [
+              {
+                $match: {
+                  $or: [{
+                    $or: [
+                      { author: user },
+                      { insertedBy: user }
+                    ]
+                  },
+                  { isPrivate: false },
+                  ]
+                }
+              }
+            ],
+            as: 'interactions'
+          }
+        },
+      ])
+        .skip(query.init)
+        .limit(query.offset)
+        .sort(_.pickBy(query.sort, _.identity))
+
+      return resp
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.CHALLENGE_LISTING,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+  }
 }
 
 export default ChallengeService;

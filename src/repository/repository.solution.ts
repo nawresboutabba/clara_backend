@@ -102,30 +102,28 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
   }
 }
 
-/* export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const currentSolution = resources.solution
-      const change = {
-        updatedBy: user,
-        title: body.title != currentSolution.title ? body.title : undefined,
-        description: body.description != currentSolution.description ? body.description : undefined,
-        images: body.images != currentSolution.images ? body.images : undefined,
-        departmentAffected: utils.departmentAffected != currentSolution.departmentAffected ? utils.departmentAffected : undefined,
-        isPrivated: body.is_privated != currentSolution.isPrivated ? body.is_privated : undefined,
-        WSALevelChosed: body.WSALevel_chosed != currentSolution.WSALevelChosed ? body.WSALevel_chosed : undefined,
-      }
-
-      const solution = await SolutionService.updateWithLog(currentSolution.solutionId, change);
-
-      const resp = genericSolutionFilter(solution)
-
-      return resolve(resp)
-    } catch (error) {
-      return reject(error)
+export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
+  try {
+    const currentSolution = resources.solution
+    const change = {
+      updatedBy: user,
+      title: body.title != currentSolution.title ? body.title : undefined,
+      description: body.description != currentSolution.description ? body.description : undefined,
+      images: body.images != currentSolution.images ? body.images : undefined,
+      departmentAffected: utils.departmentAffected != currentSolution.departmentAffected ? utils.departmentAffected : undefined,
+      isPrivated: body.is_privated != currentSolution.isPrivated ? body.is_privated : undefined,
+      WSALevelChosed: body.WSALevel_chosed != currentSolution.WSALevelChosed ? body.WSALevel_chosed : undefined,
     }
-  })
-} */
+
+    const solution = await SolutionService.updateSolutionPartially(currentSolution.solutionId, change);
+
+    const resp = genericSolutionFilter(solution)
+
+    return resp
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
 
 export const deleteSolution = async (solutionId: string, user: UserI): Promise<boolean> => {
   try {

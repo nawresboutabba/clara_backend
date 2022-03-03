@@ -1,10 +1,10 @@
-import { REACTIONS } from "../constants"
+import { INTERACTION } from "../constants"
 
 export const isReaction = async  (type:string): Promise<boolean> => {
   return new Promise((resolve, reject)=> {
     const reactions = [
-      REACTIONS.LIKE,
-      REACTIONS.DONT_UNDERTAND
+      INTERACTION.REACTIONS.LIKE,
+      INTERACTION.REACTIONS.DONT_UNDERTAND
     ]
     return resolve(reactions.includes(type))
   })

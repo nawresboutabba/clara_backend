@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 import { options } from './situation.base';
-import SituationBase, { SituationBaseI, situationBaseModel } from './situation.base';
+import SituationBase, { SituationBaseI } from './situation.base';
 
 
 export interface ChallengeI extends SituationBaseI {

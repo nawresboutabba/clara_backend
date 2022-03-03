@@ -93,8 +93,8 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise
       isStrategic: body.is_strategic,
 
       /**
-         * Configuration section
-         */
+        * Configuration section
+        */
 
       canShowDisagreement: body.can_show_disagreement,
       canFixDisapprovedIdea: body.can_fix_disapproved_idea,

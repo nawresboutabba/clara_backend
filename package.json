@@ -7,7 +7,7 @@
     "test": "mocha",
     "start": "node dist/src/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc -p - ",
+    "build": "tsc -p .",
     "generate": "tsoa swagger",
     "lint": "eslint .  --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix"

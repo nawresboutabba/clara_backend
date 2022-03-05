@@ -20,3 +20,5 @@ If you want to run testing, review *Makefile* . There you can see all the test r
 Execution example: 
 
     make challenge
+## Docker
+run  *docker-compose up* or *docker-compose up --build*

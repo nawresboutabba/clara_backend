@@ -29,6 +29,7 @@
   "homepage": "https://github.com/SARQUIS-BOUTROS/IDEATION_BACKEND#readme",
   "dependencies": {
     "-": "0.0.1",
+    "aws-sdk": "^2.1092.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",

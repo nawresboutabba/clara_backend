@@ -1,10 +1,12 @@
 'use strict';
 import 'module-alias/register'
+import * as dotenv from 'dotenv';
+dotenv.config();
 const express = require ('express')
 const app = require('express')();
 const mongoose = require('mongoose');
 const morgan = require("morgan");
-require('dotenv').config();
+
 const swaggerDocument =require( '../swagger.json')
 // const cookieParser = require('cookie-parser');
 // const cors = require('cors');
@@ -25,6 +27,7 @@ import groupValidatorRouter from './routes/group-validator';
 import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
 import invitationRouter from './routes/invitation'
+import imageRouter from './routes/image-service';
 
 // import session from './middlewares/session'
 
@@ -35,8 +38,8 @@ import { errorHandler } from './handle-error/middleware.error-handler';
 import swaggerUi = require('swagger-ui-express');
 
 const PORT = 3000
-const DB_CONNECTION = 'localhost:27017'
-const DB_NAME = 'PINC-SE'
+/* const DB_CONNECTION = 'localhost:27017'
+const DB_NAME = 'PINC-SE' */
 
 mongoose.connect(`mongodb+srv://dev-enviroment:0Q5ryUinCQ0pOeiT@pinc-se.ni0pt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
 })
@@ -59,6 +62,7 @@ app.use('/', groupValidatorRouter);
 app.use('/', integrantRouter);
 app.use('/', teamRouter);
 app.use('/', invitationRouter);
+app.use('/', imageRouter);
 app.use(logError)
 app.use(clientErrorHandler)
 app.use(errorHandler)

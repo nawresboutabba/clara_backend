@@ -32,11 +32,12 @@ import AreaService from "../services/Area.service";
 import { AreaI } from "../models/organization.area";
 import ChallengeProposalService from "../services/Proposal.service";
 import { ChallengeProposalI } from "../models/challenge-proposal";
-import { getCurrentDate } from "../utils/date";
 import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } from "../utils/field-filters/challenge-proposal";
 import SolutionService from "../services/Solution.service";
 import { interactionResume } from "../utils/general/interaction-resume";
 import { SolutionI } from "../models/situation.solutions";
+import { getCurrentDate } from "../utils/date";
+import { logVisit } from "../utils/general/log-visit";
 
 export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
   try {
@@ -127,8 +128,9 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise
   }
 }
 
-export const getChallenge = async (challenge: ChallengeI): Promise<ChallengeResponse> => {
+export const getChallenge = async (challenge: ChallengeI, user: UserI): Promise<ChallengeResponse> => {
   try {
+    logVisit(user, challenge)
     const resp = await genericChallengeFilter(challenge);
     return resp
   } catch (error) {

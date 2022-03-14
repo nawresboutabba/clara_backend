@@ -16,6 +16,7 @@ import ConfigurationService from "../services/Configuration.service";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
+import { logVisit } from "../utils/general/log-visit";
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
   try {
@@ -143,8 +144,9 @@ export const deleteSolution = async (solutionId: string, user: UserI): Promise<b
   }
 }
 
-export const getSolution = async (solutionId: string, solution: SolutionI): Promise<SolutionResponse> => {
+export const getSolution = async (solutionId: string, solution: SolutionI, user: UserI): Promise<SolutionResponse> => {
   try {
+    logVisit(user, solution)
     const resp = await genericSolutionFilter(solution)
     return resp
   } catch (error) {

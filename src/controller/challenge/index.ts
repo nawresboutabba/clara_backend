@@ -119,8 +119,8 @@ export default class ChallengeController extends Controller {
   }
 
   @Get(':challengeId')
-  public async getChallenge(@Path('challengeId') challengeId: string, @Inject() challenge: ChallengeI, ): Promise<ChallengeResponse> {
-    return getChallenge(challenge)
+  public async getChallenge(@Path('challengeId') challengeId: string, @Inject() challenge: ChallengeI, @Inject() user: UserI): Promise<ChallengeResponse> {
+    return getChallenge(challenge, user)
   }
 
   /**

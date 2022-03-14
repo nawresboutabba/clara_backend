@@ -13,5 +13,5 @@ export default function toISOData (date?: Date ): Date {
 } 
 
 export function getCurrentDate (): Date {
-  return DateTime.local().toISODate()
+  return DateTime.now()
 }

@@ -1,4 +1,4 @@
-import { Post , Controller, Route, Body, Delete , Path, Get, Query, Header, Inject} from 'tsoa'
+import { Post , Controller, Route, Body, Delete , Path, Get, Inject} from 'tsoa'
 import { deleteUser, getParticipation, getUserInformation, login, signUp } from '../../repository/repository.users'
 import { AreaResponse } from '../area/area'
 

@@ -403,7 +403,7 @@ router.get(
     try {
 
       const challengeController = new ChallengeController();
-      const challenge = await challengeController.getChallenge(req.params.challengeId, req.resources.challenge)
+      const challenge = await challengeController.getChallenge(req.params.challengeId, req.resources.challenge, req.user)
 
       res
         .json(challenge)

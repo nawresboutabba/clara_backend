@@ -56,8 +56,8 @@ export default class SolutionController extends Controller {
     return deleteSolution(solutionId, user)
   }
   @Get(':solutionId')
-  public async getSolution(@Path('solutionId') solutionId: string, @Request() solution: SolutionI): Promise<SolutionResponse> {
-    return getSolution(solutionId, solution)
+  public async getSolution(@Path('solutionId') solutionId: string, @Request() solution: SolutionI, @Inject() user: UserI): Promise<SolutionResponse> {
+    return getSolution(solutionId, solution, user)
   }
 
   /**

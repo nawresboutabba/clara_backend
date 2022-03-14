@@ -256,7 +256,7 @@ router.get(
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       const solutionController = new SolutionController()
-      const solution = await solutionController.getSolution(req.params.solutionId, req.resources.solution)
+      const solution = await solutionController.getSolution(req.params.solutionId, req.resources.solution, req.user)
       res.status(200).json(solution).send();
       next();
     } catch (e) {
@@ -339,7 +339,7 @@ router.patch(
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
 
       const solutionController = new SolutionController()
-      //const solution = await solutionController.updateSolutionPartially(req.params.solutionId, req.body, req.resources, req.user, req.utils)
+      // const solution = await solutionController.updateSolutionPartially(req.params.solutionId, req.body, req.resources, req.user, req.utils)
       res
         .status(200)
         .json()

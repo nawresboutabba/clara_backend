@@ -133,15 +133,12 @@ export const getUserInformation = async (userInformation: UserRequest): Promise<
   })
 }
 
-export const getParticipation = (userRequest: UserRequest): Promise<any> => {
-  return new Promise(async(resolve, reject)=> {
-    try{
-      const user = await UserService.getUserActiveByUserId(userRequest.userId)
-      const solutions = await SolutionService.getParticipations(user)
-      const rest = await genericArraySolutionsFilter(solutions)
-      return resolve(rest)
-    }catch(error){
-      return reject(error)
-    }
-  })
+export const getParticipation = async (user: UserI): Promise<any> => {
+  try{
+    const solutions = await SolutionService.getParticipations(user)
+    const rest = await genericArraySolutionsFilter(solutions)
+    return rest
+  }catch(error){
+    return Promise.reject(error)
+  }
 }

@@ -1,6 +1,6 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
-import { SolutionBody, SolutionResponse } from "../controller/solution";
+import { LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
 import { PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
@@ -155,7 +155,7 @@ export const getSolution = async (solutionId: string, solution: SolutionI, user:
   }
 }
 
-export const listSolutions = async (query: QuerySolutionForm, challengeId?: string): Promise<SolutionResponse[]> => {
+export const listSolutions = async (query: QuerySolutionForm, challengeId?: string): Promise<LightSolutionResponse[]> => {
   try {
     const listSolutions = await SolutionService.listSolutions(query, challengeId)
     /**

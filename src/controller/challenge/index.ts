@@ -17,7 +17,7 @@ import {
 import { listSolutions } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
-import { SolutionBody, SolutionResponse } from '../solution';
+import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';
@@ -134,7 +134,7 @@ export default class ChallengeController extends Controller {
   public async listSolutions(
     @Path('challengeId') challengeId: string,
     @Query() query: any
-  ): Promise<SolutionResponse[]> {
+  ): Promise<LightSolutionResponse[]> {
     return listSolutions(query, challengeId)
   }
 

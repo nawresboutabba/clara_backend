@@ -41,24 +41,26 @@ export interface SituationBody {
     external_contribution_available_for_committee: boolean,
 }
 
-
-export interface SituationResponse {
-    /**
+export interface LightSituationResponse {
+   /**
      * User that inserted the solution
-    */
+     */
     inserted_by: UserResponse,
     author?: UserResponse,
     coauthor?: UserResponse[],
     team?: TeamResponse,
     created: Date,
-    updated: Date,
     title: string,
     description: string,
-    active: boolean,
     images: Array<string>,
+    status: string,
+}
+
+export interface SituationResponse extends LightSituationResponse {
+    active: boolean,
+    updated: Date,
     department_affected: Array<AreaResponse>,
     group_validator?: GroupValidatorResponse,
-    status: string,
     file_complementary: string,
     /**
      * Configuration Section

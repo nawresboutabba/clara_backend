@@ -1,4 +1,3 @@
-// import Solution, { SolutionI } from "../models/solutions";
 import Solution, { SolutionI } from "../models/situation.solutions"
 import { ChallengeI } from "../models/situation.challenges";
 import * as _ from 'lodash'; 
@@ -7,7 +6,6 @@ import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { AreaI } from "../models/organization.area";
-import { updateSolutionPartially } from "../repository/repository.solution";
 
 export type editOneParams = {
   title: string,
@@ -28,6 +26,9 @@ const SolutionService = {
         .populate('updatedBy')
         .populate('challenge')
         .populate('author')
+        .populate('team')
+        .populate('insertedBy')
+        .populate('areasAvailable')
       return solution
     }catch(error){
       return Promise.reject(new ServiceError(
@@ -91,40 +92,38 @@ const SolutionService = {
      * @returns 
      */
   async listSolutions(query: QuerySolutionForm ,challengeId: string): Promise<any>{
-    return new Promise (async (resolve, reject)=> {
-      try{
-        const solutions = await Solution
-          .find(
-            {..._.pickBy({
-              created: query.created,
-              active:true,
-              title:{
-                $regex : `.*${query.title}.*`, 
-              }
-            }, _.identity),
-             challengeId
+    try{
+      const solutions = await Solution
+        .find(
+          {..._.pickBy({
+            created: query.created,
+            active:true,
+            title:{
+              $regex : `.*${query.title}.*`, 
             }
-          )
-          .skip(query.init)
-          .limit(query.offset)
+          }, _.identity),
+           challengeId
+          }
+        )
+        .skip(query.init)
+        .limit(query.offset)
         /**
-           * Filter order criteria unused
-           */
-          .sort(_.pickBy(query.sort,_.identity))
-          .populate('team')
-          .populate('insertedBy')
-          .populate('areasAvailable')
-          .populate('author')
-          .populate('coauthor')
-        return resolve(solutions)
-      }catch(error){
-        return reject( new ServiceError(
-          ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
-          HTTP_RESPONSE._500,
-          error
-        ))
-      }
-    })    
+          * Filter order criteria unused
+          */
+        .sort(_.pickBy(query.sort,_.identity))
+        .populate('team')
+        .populate('insertedBy')
+        .populate('areasAvailable')
+        .populate('author')
+        .populate('coauthor')
+      return solutions
+    }catch(error){
+      return Promise.reject( new ServiceError(
+        ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }   
   },
   async getParticipations(user: UserI): Promise<any>{
     try{

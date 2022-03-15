@@ -1,4 +1,4 @@
-import { Post, Controller, Route, Body, Delete, Path, Patch, Get, Request, Query, Example, Inject } from 'tsoa'
+import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject } from 'tsoa'
 import { RESOURCE } from '../../constants';
 import { ConfigurationBaseI } from '../../models/configuration.default';
 import { SolutionI } from '../../models/situation.solutions';
@@ -8,7 +8,8 @@ import { listSolutions } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { ChallengeResponse } from '../challenge';
 import { ConfigurationBody } from '../configuration';
-import { SituationBody, SituationResponse } from '../situation/situation';
+import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
+import { LightUserInterface } from '../users';
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
@@ -43,6 +44,12 @@ export interface SolutionResponse extends SituationResponse {
   challenge?: ChallengeResponse,
 }
 
+export interface LightSolutionResponse extends LightSituationResponse {
+  solution_id: string,
+  proposed_solution: string,
+  challenge_id?: string,
+  challenge?: ChallengeResponse,
+}
 
 @Route('solution')
 export default class SolutionController extends Controller {
@@ -67,7 +74,7 @@ export default class SolutionController extends Controller {
    * @returns 
    */
   @Get()
-  public async listSolutions(@Query() query?: any): Promise<SolutionResponse[]> {
+  public async listSolutions(@Query() query?: any): Promise<LightSolutionResponse[]> {
     return listSolutions(query, undefined)
   }
   @Post('/default-configuration')

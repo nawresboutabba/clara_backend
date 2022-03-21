@@ -39,7 +39,7 @@ const TeamService = {
         })
     })
   },
-  async getTeamsUser(user: UserI): Promise<TeamI[]> {
+/*   async getTeamsUser(user: UserI): Promise<TeamI[]> {
     return new Promise(async (resolve, reject)=> {
       await Team
         .find({
@@ -63,7 +63,7 @@ const TeamService = {
           ))
         })
     })
-  }
+  } */
 }
 
 export default TeamService

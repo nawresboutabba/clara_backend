@@ -10,35 +10,37 @@ import { AreaI } from "../../models/organization.area";
  * @returns 
  */
 export const genericAreaFilter = async (area: AreaI): Promise<AreaResponse> => {
-  return new Promise((resolve, reject)=> {
+  try{
     if(area) {
       const { areaId, name } = area
-      return resolve({
+      return ({
         area_id: areaId,
         name
-      })            
+      })
     }
-    return resolve(undefined)
-
-  })
+  }catch(error){
+    return Promise.reject(error)
+  }
 }
 
 export const genericArrayAreaFilter =  async (area: Array<AreaI>): Promise<Array<AreaResponse>> => {
-  return new Promise(async (resolve, reject)=> {
+  try{
     const arrayArea: Array<Promise<AreaResponse>>= []
     if(!area){
-      return resolve([])
+      return []
     }
     area.forEach(area => {
       arrayArea.push(genericAreaFilter(area))
     })
-    await Promise
+    return await Promise
       .all(arrayArea)
       .then(result => {
-        return resolve(result)
+        return result
       })
       .catch(error=> {
-        return reject(error)
+        return Promise.reject(error)
       })
-  })
+  }catch(error){
+    return Promise.reject(error)
+  }
 }

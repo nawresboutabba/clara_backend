@@ -32,7 +32,7 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
     if (challengeId) {
       challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
     }
-    const created = new Date();
+    const created = getCurrentDate();
 
     let configuration: ConfigurationSettingI
     if (challengeId) {
@@ -111,14 +111,15 @@ export const updateSolutionPartially = async (body: SolutionBody, resources: any
       title: body.title != currentSolution.title ? body.title : undefined,
       description: body.description != currentSolution.description ? body.description : undefined,
       images: body.images != currentSolution.images ? body.images : undefined,
-      departmentAffected: utils.departmentAffected != currentSolution.departmentAffected ? utils.departmentAffected : undefined,
+      proposedSolution: body.proposed_solution != currentSolution.proposedSolution ? body.proposed_solution : undefined,
+      departmentAffected: _.isEqual(utils.departmentAffected, currentSolution.departmentAffected) == false? utils.departmentAffected : undefined,
       isPrivated: body.is_privated != currentSolution.isPrivated ? body.is_privated : undefined,
       WSALevelChosed: body.WSALevel_chosed != currentSolution.WSALevelChosed ? body.WSALevel_chosed : undefined,
     }
 
     const solution = await SolutionService.updateSolutionPartially(currentSolution.solutionId, change);
 
-    const resp = genericSolutionFilter(solution)
+    const resp = await genericSolutionFilter(solution)
 
     return resp
   } catch (error) {

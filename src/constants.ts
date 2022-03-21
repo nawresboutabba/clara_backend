@@ -5,6 +5,8 @@ export const URLS = {
     CHALLENGE_PROPOSE: '/challenge/proposal',
     CHALLENGE_PROPOSE_PROPOSEID: '/challenge/proposal/:proposeId',
     CHALLENGE_CHALLENGEID: '/challenge/:challengeId',
+    CHALLENGE_CHALLENGEID_SOLUTION: '/challenge/:challengeId/solution',
+    CHALLENGE_CHALLENGEID_SOLUTION_SOLUTIONID: '/challenge/:challengeId/solution/:solutionId',
     CHALLENGE_PROPOSE_PROPOSEID_ACCEPT: '/challenge/proposal/:proposeId/accept',
   },
   VISIT:{

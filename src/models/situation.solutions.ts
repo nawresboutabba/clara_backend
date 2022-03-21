@@ -33,7 +33,4 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
   proposedSolution: String,
 }))
 
-
-
-
 export default Solution;

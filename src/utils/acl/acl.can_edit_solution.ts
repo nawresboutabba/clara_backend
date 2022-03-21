@@ -2,11 +2,8 @@ import { ERRORS, HTTP_RESPONSE, PARTICIPATION_MODE } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 import { SolutionI } from "../../models/situation.solutions";
-import { TeamI } from "../../models/team";
 import { UserI } from "../../models/users";
 import SolutionService from "../../services/Solution.service";
-import TeamService from "../../services/Team.service";
-import UserService from "../../services/User.service";
 
 export async function CAN_EDIT_SOLUTION (req: RequestMiddleware): Promise<void> {
   try{
@@ -21,44 +18,26 @@ export async function CAN_EDIT_SOLUTION (req: RequestMiddleware): Promise<void> 
         )
       )
     }
-    const user: UserI = await UserService.getUserActiveByUserId(req.user.userId)
-          
-    if (PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
-      if (user.userId == solution.author.userId){
-        /**
-                     * Check that user is author of solution
-                     */
-        return Promise.resolve()
-      }else if(solution.coauthor.includes(user)){
-        /**
-                     * Check that user is coauthor of solution
-                     */
-        return Promise.resolve()
-      }else {
-        return Promise.reject(
-          new RoutingError(
-            ERRORS.ROUTING.SOLUTION_FORBIDDEN,
-            HTTP_RESPONSE._500
-          )
-        )
-      }
-    }else if(PARTICIPATION_MODE.TEAM){
-      const teams:TeamI [] = await TeamService.getTeamsUser(user)
-      if(teams.includes(solution.team)){
-        return Promise.resolve()
-      }else{
-        return Promise.reject(
-          new RoutingError(
-            ERRORS.ROUTING.SOLUTION_FORBIDDEN,
-            HTTP_RESPONSE._500
-          )
-        )
-      }
+
+    const user: UserI = req.user
+
+    if(user.userId === solution.author.userId){
+      /**
+        * Check that user is author of solution
+        */
+      return Promise.resolve()
+    }else if(solution.coauthor.map(function(e){return e.userId}).includes(user.userId)){
+      /**
+        * Check that user is coauthor of solution
+        */
+      return Promise.resolve()
     }else {
-      return Promise.reject(new RoutingError(
-        ERRORS.ROUTING.PARTICIPATION_MODE_NOT_AVAILABLE,
-        HTTP_RESPONSE._500
-      ))
+      return Promise.reject(
+        new RoutingError(
+          ERRORS.ROUTING.SOLUTION_FORBIDDEN,
+          HTTP_RESPONSE._500
+        )
+      )
     }
   }catch(error){
     return Promise.reject(error)

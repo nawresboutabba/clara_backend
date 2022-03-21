@@ -1,4 +1,4 @@
-import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Request, Inject } from 'tsoa'
+import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Request, Inject, Put } from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
 import { UserRequest } from '../users';
 import {
@@ -14,7 +14,7 @@ import {
   acceptChallengeProposal,
   listChallengeProposal,
 } from '../../repository/repository.challenge';
-import { listSolutions } from '../../repository/repository.solution';
+import { listSolutions, updateSolutionPartially } from '../../repository/repository.solution';
 import { newSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solution';
@@ -136,6 +136,17 @@ export default class ChallengeController extends Controller {
     @Query() query: any
   ): Promise<LightSolutionResponse[]> {
     return listSolutions(query, challengeId)
+  }
+
+  @Put(':challengeId/solution/')
+  public async updateSolutionPartially(
+    @Path('challengeId') challengeId: string,
+    @Body() body: SolutionBody,
+    @Inject() resources: any,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<any> {
+    return updateSolutionPartially(body, resources, user, utils)
   }
 
   @Patch(':challengeId')

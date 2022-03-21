@@ -19,6 +19,7 @@ import UserService from "../../services/User.service";
 import TeamService from "../../services/Team.service";
 import ConfigurationService from "../../services/Configuration.service";
 import { GroupValidatorI } from "../../models/group-validator";
+import { AreaI } from "../../models/organization.area";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -285,7 +286,7 @@ router.post(URLS.CHALLENGE.CHALLENGE_PROPOSE_PROPOSEID_ACCEPT, [
 })
 
 router.post(
-  "/challenge/:challengeId/solution",
+  URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION,
   [
     authentication,
     acl(
@@ -307,6 +308,10 @@ router.post(
       }
     }),
     body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).notEmpty().escape().isIn([true, false]),
+    /**
+     * Solution description
+     */
+    body("proposed_solution", "proposed_solution can not be empty").notEmpty().escape(),
     /**
      * participation.mode_chosed is like participation_mode_chosed
      */
@@ -342,7 +347,6 @@ router.post(
             return Promise.reject("team_with this name already exist")
           }
         }
-
         /**
          * Check if all users are allowed
          */
@@ -372,6 +376,56 @@ router.post(
     }
   }
 );
+
+router.patch(
+  URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION_SOLUTIONID,
+  [
+    authentication,
+    acl(RULES.CAN_EDIT_SOLUTION),
+    /**
+      * Check if changes in department_affected happened
+      */
+    body("department_affected").custom(async (value: string[], { req }): Promise<void> => {
+      try {
+        let departmentAffected : Array<AreaI>
+        if (!value){
+          departmentAffected = req.resources.solution.department_affected
+          req.utils = { departmentAffected, ...req.utils }
+          return Promise.resolve()
+        }else {
+          departmentAffected = await AreaService.getAreasById(value)
+        }
+
+        if (departmentAffected.length == value.length) {
+          req.utils = { departmentAffected, ...req.utils }
+          return Promise.resolve()
+        }
+        return Promise.reject("department_affected does not valid")
+      } catch (error) {
+        return Promise.reject("department_affected does not valid")
+      }
+    }),
+  ],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
+
+      const challengeController = new ChallengeController();
+      const resp = await challengeController.updateSolutionPartially(
+        req.params.challengeId,
+        req.body,
+        req.resources,
+        req.user,
+        req.utils
+      )
+      res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  })
 
 router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
@@ -459,7 +513,7 @@ router.delete(
   }
 );
 
-router.get('/challenge/:challengeId/solution', [
+router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
   check('init').escape(),
   check('offset').escape(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

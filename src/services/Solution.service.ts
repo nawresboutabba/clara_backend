@@ -23,9 +23,11 @@ const SolutionService = {
         solutionId: id,
         active: true,
       })
+        .populate('departmentAffected')
         .populate('updatedBy')
         .populate('challenge')
         .populate('author')
+        .populate('coauthor')
         .populate('team')
         .populate('insertedBy')
         .populate('areasAvailable')
@@ -76,7 +78,18 @@ const SolutionService = {
         solutionId: id
       },{
         ...data
+      },{ 
+        new: true
       })
+        .populate('departmentAffected')
+        .populate('updatedBy')
+        .populate('challenge')
+        .populate('author')
+        .populate('coauthor')
+        .populate('team')
+        .populate('insertedBy')
+        .populate('areasAvailable')
+      return solution
       return solution
     }catch(error){
       return Promise.reject(new ServiceError(

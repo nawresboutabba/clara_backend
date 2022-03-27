@@ -28,7 +28,7 @@ export interface RequestMiddleware extends express.Request {
         creator: UserI
         guests: UserI[]
       }
-      defaultSolutionConfiguration?: ConfigurationDefaultI
+      defaultSolutionConfiguration?: ConfigurationDefaultI,
     },
     timeZone?: string;
 }

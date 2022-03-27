@@ -522,6 +522,7 @@ router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)
 
     const challengeController = new ChallengeController();
+    req.query.challengId = req.params.challengeId
     const query: QuerySolutionForm = await formatSolutionQuery(req.query)
 
     const solutions = await challengeController.listSolutions(

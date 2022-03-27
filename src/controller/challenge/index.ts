@@ -135,7 +135,7 @@ export default class ChallengeController extends Controller {
     @Path('challengeId') challengeId: string,
     @Query() query: any
   ): Promise<LightSolutionResponse[]> {
-    return listSolutions(query, challengeId)
+    return listSolutions(query)
   }
 
   @Put(':challengeId/solution/')

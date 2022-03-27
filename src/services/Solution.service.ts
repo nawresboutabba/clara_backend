@@ -104,20 +104,24 @@ const SolutionService = {
      * @param challengeId 
      * @returns 
      */
-  async listSolutions(query: QuerySolutionForm ,challengeId: string): Promise<any>{
+  async listSolutions(query: QuerySolutionForm, utils: any): Promise<any>{    
     try{
+      const mongooseQuery = {..._.pickBy({
+        created: query.created,
+        active:true,
+        title:{
+          $regex : `.*${query.title}.*`, 
+        },
+        status: query.status,
+        challengeId: query.challengeId,
+      }, _.identity),
+      }
+      if(utils.groupValidator){
+        mongooseQuery.groupValidator = utils.groupValidator
+      }  
+
       const solutions = await Solution
-        .find(
-          {..._.pickBy({
-            created: query.created,
-            active:true,
-            title:{
-              $regex : `.*${query.title}.*`, 
-            }
-          }, _.identity),
-           challengeId
-          }
-        )
+        .find({...mongooseQuery})
         .skip(query.init)
         .limit(query.offset)
         /**
@@ -129,6 +133,7 @@ const SolutionService = {
         .populate('areasAvailable')
         .populate('author')
         .populate('coauthor')
+        .populate('groupValidator')
       return solutions
     }catch(error){
       return Promise.reject( new ServiceError(

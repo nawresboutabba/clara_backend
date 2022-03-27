@@ -1,6 +1,8 @@
 import { QuerySituationForm, formatSitutationQuery } from "./situation.query.params";
 
-export type QuerySolutionForm = QuerySituationForm
+export interface QuerySolutionForm extends QuerySituationForm {
+  challengeId?: string
+}
 
 
 export async function formatSolutionQuery(query: any): Promise<QuerySolutionForm> {

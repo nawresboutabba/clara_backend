@@ -23,10 +23,11 @@ const baremo = new Schema({
   },
   created: Date,
   updated: Date,
+  status: String,
   type: String,
   comment: String
 })
 
-baremo.index({intervention:1, solution:1}, {unique:true})
+
 
 export default model('Baremo', baremo);

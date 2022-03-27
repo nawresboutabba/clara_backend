@@ -1,14 +1,17 @@
 import * as _ from 'lodash'
+import { QuerySolutionForm } from './solution.query.params'
 
 export interface QuerySituationForm {
   created?: createdFilter,
   init?: number,
   offset?: number,
+  groupValidatorId?: string,
   sort?: {
     title: string,
     created: string
   }
-  title?: string
+  title?: string,
+  status?: string,
 }
 
 export interface createdFilter {
@@ -22,6 +25,7 @@ export async function formatSitutationQuery(query: any): Promise<QuerySituationF
       * Pagination extraction and cleaning
       */
     let { init, offset } = query
+    const { challengeId, groupValidatorId, status } = query
     init = query.init ? parseInt(query.init.toString()) : 0;
     offset = query.offset? parseInt(query.offset.toString()) : 10;
     /**
@@ -42,13 +46,16 @@ export async function formatSitutationQuery(query: any): Promise<QuerySituationF
       */
     const { created_order, title_order } = query
 
-    let queryForm: QuerySituationForm = {
+    let queryForm: QuerySolutionForm = {
       init,
       offset,
       sort: {
         title: title_order,
         created: created_order? created_order: -1
       },
+      challengeId,
+      groupValidatorId,
+      status
     }
 
     queryForm.title = title ? title : ''

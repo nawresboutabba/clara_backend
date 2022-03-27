@@ -1,4 +1,3 @@
-import { UserI } from "../models/users";
 import Team, { TeamI } from "../models/team";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
@@ -39,31 +38,6 @@ const TeamService = {
         })
     })
   },
-/*   async getTeamsUser(user: UserI): Promise<TeamI[]> {
-    return new Promise(async (resolve, reject)=> {
-      await Team
-        .find({
-          $or:[
-            {
-              creator: user
-            },
-            {
-              members: {$in: user}
-            }
-          ]
-        })
-        .then(result => {
-          return resolve(result)
-        })
-        .catch(error=> {
-          return reject(new ServiceError(
-            ERRORS.SERVICE.GET_USER_TEAMS_PARTICIPATIONS,
-            HTTP_RESPONSE._500,
-            error
-          ))
-        })
-    })
-  } */
 }
 
 export default TeamService

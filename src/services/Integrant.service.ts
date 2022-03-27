@@ -6,6 +6,51 @@ import { IntegrantStatusI } from "../models/integrant";
 import { UserI } from "../models/users";
 
 const IntegrantService = {
+  async getIntegrantsOfGroupValidator(groupValidator: GroupValidatorI): Promise<IntegrantI[]> {
+    try{
+      const integrants = Integrant.find({
+        groupValidator: groupValidator,
+        active: true
+      })
+        .populate('user')
+      return integrants
+    }catch(error){
+      const customError = new ServiceError(
+        ERRORS.SERVICE.GET_INTEGRANTS_OF_TEAM_VALIDATOR,
+        HTTP_RESPONSE._500,
+        error
+      )
+      return Promise.reject(customError)
+    }
+  },
+  /**
+   * Get integrant by user entity. 
+   * @param user 
+   * @returns 
+   */
+  async getIntegrantByUser(user: UserI): Promise<IntegrantI>{
+    try{
+      const integrant = await Integrant.findOne({
+        user: user._id,
+        active: true
+      })
+        .populate('user')
+        .populate('groupValidator')
+      return integrant
+    }catch(error){
+      const customError = new ServiceError(
+        ERRORS.SERVICE.GET_INTEGRANT_ACTIVE_BY_ID,
+        HTTP_RESPONSE._500,
+        error
+      )
+      return Promise.reject(customError)
+    }
+  },
+  /**
+   * Deprecated, replaced by "getIntegrantByUser"
+   * @param integrantId 
+   * @returns 
+   */
   async getIntegrantActiveById(integrantId: string): Promise<IntegrantI> {
     return new Promise((resolve, reject) => {
       try {

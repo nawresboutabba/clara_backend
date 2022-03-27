@@ -75,7 +75,7 @@ export default class SolutionController extends Controller {
    */
   @Get()
   public async listSolutions(@Query() query?: any): Promise<LightSolutionResponse[]> {
-    return listSolutions(query, undefined)
+    return listSolutions(query)
   }
   @Post('/default-configuration')
   public async setSolutionDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI> {

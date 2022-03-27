@@ -156,9 +156,9 @@ export const getSolution = async (solutionId: string, solution: SolutionI, user:
   }
 }
 
-export const listSolutions = async (query: QuerySolutionForm, challengeId?: string): Promise<LightSolutionResponse[]> => {
+export const listSolutions = async (query: QuerySolutionForm): Promise<LightSolutionResponse[]> => {
   try {
-    const listSolutions = await SolutionService.listSolutions(query, challengeId)
+    const listSolutions = await SolutionService.listSolutions(query,{})
     /**
      * @TODO list solutions filter with minimal data
      */

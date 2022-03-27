@@ -7,6 +7,7 @@ import { CAN_VIEW_SOLUTION } from "../utils/acl/acl.can_view_solution";
 import { IS_ADMIN } from "../utils/acl/acl.is_admin";
 import { IS_COMMITTE_MEMBER } from "../utils/acl/acl.is_committe";
 import { IS_LEADER } from "../utils/acl/acl.is_leader";
+import { IS_PART_OF_GROUP_VALIDATOR } from "../utils/acl/acl.is_part_of_a_group_of_validators";
 import { IS_SOLUTION_CREATOR } from "../utils/acl/acl.is_solution_creator";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
 
@@ -43,6 +44,9 @@ export function acl(rule:string){
         break;
       case RULES.IS_SOLUTION_CREATOR:
         await IS_SOLUTION_CREATOR(req)
+        break;
+      case RULES.IS_PART_OF_GROUP_VALIDATOR:
+        await IS_PART_OF_GROUP_VALIDATOR(req)
         break;
       }
 

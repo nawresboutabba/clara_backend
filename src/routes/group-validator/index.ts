@@ -1,6 +1,6 @@
 import { NextFunction } from "express";
-import { body, validationResult } from "express-validator";
-import { ERRORS } from "../../constants";
+import { body, validationResult, query} from "express-validator";
+import { ERRORS, RULES, SOLUTION_STATUS } from "../../constants";
 import GroupValidatorController from "../../controller/group-validator";
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { IntegrantI } from "../../models/integrant";
@@ -9,6 +9,8 @@ import IntegrantService from "../../services/Integrant.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import * as _ from 'lodash';
 import authentication from "../../middlewares/authentication";
+import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
+import { acl } from "../../middlewares/acl";
 
 const router = require("express").Router();
 
@@ -83,6 +85,29 @@ router.get('/group-validator',[
   }
 })
 
+
+router.get('/group-validator/solution',[
+  authentication,
+  acl(RULES.IS_PART_OF_GROUP_VALIDATOR),
+  query('status').isIn([SOLUTION_STATUS.READY_FOR_ANALYSIS,SOLUTION_STATUS.ANALYZING])
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.GROUP_VALIDATOR_IDEAS_QUEUE)
+
+    const groupValidatorController = new GroupValidatorController()
+
+    const query: QuerySolutionForm = await formatSolutionQuery(req.query)
+
+    const solutions = await groupValidatorController.getSolutionsLinked(query, req.utils.groupValidator, req.user)
+
+    res
+      .json(solutions)
+      .status(200)
+      .send()
+  }catch(error){
+    next(error)
+  }
+})
 const groupValidatorRouter = router
 
 export default groupValidatorRouter

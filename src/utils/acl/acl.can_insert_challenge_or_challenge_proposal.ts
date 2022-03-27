@@ -26,9 +26,9 @@ export function CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL(req: RequestMiddlewar
         return resolve()
       }else if (
       /**
-                 * If user isn't leader but is a committee member 
-                 * just can insert a proposal challenge.
-                 */
+        * If user isn't leader but is a committee member 
+        * just can insert a proposal challenge.
+        */
         committe.isActive 
                 && committe.role === COMMITTE_ROLE.GENERAL
                 && url == URLS.CHALLENGE.CHALLENGE_PROPOSE){

@@ -32,6 +32,7 @@ export interface Login {
 
 
 export interface LightUserInterface {
+  user_id: string,
   username: string,
   points: number,
 }

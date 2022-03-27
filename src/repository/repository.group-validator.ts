@@ -1,12 +1,18 @@
 import IntegrantService from "../services/Integrant.service"
 import * as _ from 'lodash';
 import GroupValidatorService from "../services/GroupValidator.service";
-import { GroupValidatorBody } from "../controller/group-validator";
+import { GroupValidatorBody, GroupValidatorQueueResponse } from "../controller/group-validator";
 import { GroupValidatorI } from "../models/group-validator";
 import { nanoid } from "nanoid";
 import { IntegrantI } from "../models/integrant";
 import { genericGroupValidatorFilter } from "../utils/field-filters/group-validator";
-import { lightUserFilter } from "../utils/field-filters/user";
+import { genericArrayUserFilter, lightUserFilter } from "../utils/field-filters/user";
+import SolutionService from "../services/Solution.service";
+import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
+import { genericArraySolutionsFilter, lightSolutionFilter } from "../utils/field-filters/solution";
+import { LightSolutionResponse } from "../controller/solution";
+import { SolutionI } from "../models/situation.solutions";
+import BaremoService from "../services/Baremo.service";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,
@@ -65,4 +71,65 @@ export const getAllGroupValidatorsDetails = async(): Promise<any> => {
     }, {})
     return resolve(grouping)
   })
+}
+/**
+ * Get Ideas for give a resolution. The idea status must be READY_FOR_ANALYSIS or ANALYZING.
+ * For each case it is necessary to know:
+ * - READY_FOR_ANALYSIS: teams_members that opened the idea for analysis
+ * - ANALYZING: teams_members who already confirmed the final analysis
+ * @param query 
+ * @param groupValidator 
+ * @returns 
+ */
+export const getSolutionsLinked = async (query: any, groupValidator: GroupValidatorI): Promise<GroupValidatorQueueResponse> => {
+  try{
+    /**
+     * Query for get TeamMembers of GroupValidator
+     */
+    const teamMembers = await IntegrantService.getIntegrantsOfGroupValidator(groupValidator)
+    const usersTeamMembers = await genericArrayUserFilter(teamMembers.map(item => item.user))
+    /**
+     * Get solutions ready for analysis
+     */
+    const solutions = await SolutionService.listSolutions(query,{groupValidator})
+    /**
+     * For each solution, get baremos started
+     */
+    const baremosPromises = solutions.map(solution => BaremoService.getAllBaremosBySolution(solution))
+    const baremos = await Promise.all(baremosPromises)
+    const resp: Array<LightSolutionResponse> = await genericArraySolutionsFilter(solutions)
+    /**
+     * Compare baremos opened for validator team members. 
+     */
+    const chis = resp.map(idea => {
+      const baremosForIdea = baremos
+        .filter(baremo => baremo[0]?.solution?.solutionId == idea.solution_id)
+        
+      const usersWithBaremo = baremosForIdea[0]?.map(baremo => {return baremo.user.userId}) || []
+
+      const calification = usersTeamMembers.map(user => {
+        if(usersWithBaremo.includes(user.user_id)){
+          return {validator: user, done: true}
+        }else {
+          return {validator: user, done: false}
+        }
+      })
+      
+      return ({
+        idea,
+        baremos: calification
+      })
+    })
+
+    const queue = {
+      group_validator_id : groupValidator.groupValidatorId,
+      group_validator_name : groupValidator.name,
+      step : query.status,
+      integrants : usersTeamMembers,
+      queue: chis
+    }
+    return queue
+  } catch(error){
+    return Promise.reject(error)
+  }
 }

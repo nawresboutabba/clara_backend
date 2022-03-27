@@ -1,14 +1,15 @@
 import ServiceError from "../handle-error/error.service";
 import GroupValidator, { GroupValidatorI } from "../models/group-validator";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { IntegrantI } from "../models/integrant";
 
 const GroupValidatorService = {
   async getGroupValidatorById(GVId:string ): Promise<GroupValidatorI>{
     return new Promise (async (resolve, reject)=> {
       try{
         /**
-                 * If group validator ID is null, then error
-                 */
+          * If group validator ID is null, then error
+          */
 
         const groupValidator = await GroupValidator.findOne({
           groupValidatorId: GVId,

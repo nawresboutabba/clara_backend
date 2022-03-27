@@ -37,7 +37,7 @@ export interface IntegrantI {
      */
     groupValidator?: GroupValidatorI,
     /**
-     * What is the role? Committe General or Committe Leader
+     * What is the role? Committe GENERAL or Committe LEADER
      */
     role: string
     /**

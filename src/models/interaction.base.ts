@@ -12,6 +12,7 @@ export interface InteractionBaseI {
     insertedBy: UserI,
     author: UserI,
     date: Date,
+    type: string,
     challenge?: ChallengeI,
     solution?: SolutionI
 }
@@ -26,6 +27,7 @@ const interactionBase = new Schema({
     ref: 'User'
   },
   date: Date,
+  type: String,
   challenge: {
     type: Schema.Types.ObjectId,
     ref: 'Challenge'

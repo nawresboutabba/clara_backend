@@ -38,6 +38,7 @@ import { interactionResume } from "../utils/general/interaction-resume";
 import { SolutionI } from "../models/situation.solutions";
 import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
+import { CommentI } from "../models/interaction.comment";
 
 export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
   try {
@@ -222,13 +223,14 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
       insertedBy = await UserService.getUserActiveByUserId(user.userId)
     }
 
-    const commentChallenge = {
+    const commentChallenge: CommentI = {
+      commentId: nanoid(),
       insertedBy,
       author,
       type: INTERACTION.COMMENT,
       isPrivate: commentBody.is_private,
       comment: commentBody.comment,
-      date: new Date(),
+      date: getCurrentDate(),
       challenge
     }
 

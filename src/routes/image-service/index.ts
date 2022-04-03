@@ -1,5 +1,6 @@
 import { NextFunction } from "express";
 import ImageController from "../../controller/image";
+import authentication from "../../middlewares/authentication";
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 
 const router = require("express").Router();

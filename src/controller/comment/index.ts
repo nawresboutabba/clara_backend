@@ -6,6 +6,7 @@ export interface CommentBody extends InteractionBody {
 }
 
 export interface CommentResponse extends InteractionResponse{
+    comment_id: string
     comment: string,
     is_private: boolean
 }

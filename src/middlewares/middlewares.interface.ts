@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { ConfigurationDefaultI } from '../models/configuration.default';
 import { GroupValidatorI } from '../models/group-validator';
+import { CommentI } from '../models/interaction.comment';
 import { AreaI } from '../models/organization.area';
 import { ChallengeI } from '../models/situation.challenges';
 import { SolutionI } from '../models/situation.solutions';
@@ -29,6 +30,11 @@ export interface RequestMiddleware extends express.Request {
         guests: UserI[]
       }
       defaultSolutionConfiguration?: ConfigurationDefaultI,
+      /**
+        * When a comment is inserted, it can have a parent.
+        * Just can exist 2 nivels of comments. 
+        */
+      parentComment?: CommentI
     },
     timeZone?: string;
 }

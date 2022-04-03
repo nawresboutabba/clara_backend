@@ -1,15 +1,16 @@
 import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject } from 'tsoa'
 import { RESOURCE } from '../../constants';
 import { ConfigurationBaseI } from '../../models/configuration.default';
+import { CommentI } from '../../models/interaction.comment';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { listSolutions } from '../../repository/repository.solution';
+import { listSolutions, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { ChallengeResponse } from '../challenge';
+import { CommentBody, CommentResponse } from '../comment';
 import { ConfigurationBody } from '../configuration';
 import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
-import { LightUserInterface } from '../users';
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
@@ -80,5 +81,12 @@ export default class SolutionController extends Controller {
   @Post('/default-configuration')
   public async setSolutionDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI> {
     return setDefaultConfiguration(body, RESOURCE.SOLUTION)
+  }
+  /**
+   * 
+   */
+   @Post('/:solutionId/comment')
+  public async newComment(@Path('solutionId') solutionId: string, @Body() comment: CommentBody,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() parent: CommentI): Promise<CommentResponse> {
+    return newSolutionComment(comment,solution, user, parent)
   }
 }

@@ -3,27 +3,31 @@ import { CommentI } from "../../models/interaction.comment";
 import { genericUserFilter } from "./user";
 
 export const genericCommentFilter = async (commentEntity: CommentI): Promise<CommentResponse> => {
-  return new Promise(async (resolve, reject)=> {
+  try{
     const {
+      commentId,
       comment,
       date,
       isPrivate
     } = commentEntity
     const author = await genericUserFilter(commentEntity.author)
     const resp: CommentResponse = {
+      comment_id: commentId, 
       comment,
       date, 
       author,
       is_private: isPrivate
     }
     if (commentEntity.author.userId == commentEntity.insertedBy.userId){
-      return resolve({... resp})
+      return Promise.resolve({... resp})
     }
     const insertedBy = await genericUserFilter(commentEntity.insertedBy)
 
     resp.insertedBy = insertedBy
-    return resolve({...resp})
-  })
+    return Promise.resolve({...resp})
+  }catch(error){
+    return Promise.reject(error)
+  }
 }
 
 export const genericArrayCommentFilter = async(comments: CommentI[]): Promise<CommentResponse[]> =>{

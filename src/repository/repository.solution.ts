@@ -3,7 +3,7 @@ import { ChallengeI } from '../models/situation.challenges';
 import { LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
@@ -17,6 +17,10 @@ import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
+import { newComment } from "./repository.comment";
+import { CommentBody, CommentResponse } from "../controller/comment";
+import { genericCommentFilter } from "../utils/field-filters/comment";
+import { CommentI } from "../models/interaction.comment";
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
   try {
@@ -165,6 +169,30 @@ export const listSolutions = async (query: QuerySolutionForm): Promise<LightSolu
     const resp = await genericArraySolutionsFilter(listSolutions)
     return resp
   } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+export const newSolutionComment = async (comment: CommentBody, solution: SolutionI, user: UserI, parent?:CommentI ): Promise<CommentResponse> => {
+  try{
+    let solutionComment: CommentI =  {
+      commentId: nanoid(),
+      insertedBy: user,
+      author:user, 
+      type:INTERACTION.COMMENT,
+      isPrivate: comment.is_private,
+      comment: comment.comment,
+      date: getCurrentDate(),
+      solution, 
+    }
+    if (parent) {
+      solutionComment = {...solutionComment, parent}
+    }
+    const com  = await newComment(solutionComment)
+    const resp = await genericCommentFilter(com)
+    return resp
+
+  }catch(error){
     return Promise.reject(error)
   }
 }

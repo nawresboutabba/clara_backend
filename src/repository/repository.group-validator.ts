@@ -13,6 +13,7 @@ import { genericArraySolutionsFilter, lightSolutionFilter } from "../utils/field
 import { LightSolutionResponse } from "../controller/solution";
 import { SolutionI } from "../models/situation.solutions";
 import BaremoService from "../services/Baremo.service";
+import { SOLUTION_STATUS } from "../constants";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,
@@ -84,51 +85,59 @@ export const getAllGroupValidatorsDetails = async(): Promise<any> => {
 export const getSolutionsLinked = async (query: any, groupValidator: GroupValidatorI): Promise<GroupValidatorQueueResponse> => {
   try{
     /**
+     * Get solutions ready for analysis
+     */
+    const solutions = await SolutionService.listSolutions(query,{groupValidator})
+    const resp: Array<LightSolutionResponse> = await genericArraySolutionsFilter(solutions)
+    /**
      * Query for get TeamMembers of GroupValidator
      */
     const teamMembers = await IntegrantService.getIntegrantsOfGroupValidator(groupValidator)
     const usersTeamMembers = await genericArrayUserFilter(teamMembers.map(item => item.user))
-    /**
-     * Get solutions ready for analysis
-     */
-    const solutions = await SolutionService.listSolutions(query,{groupValidator})
-    /**
-     * For each solution, get baremos started
-     */
-    const baremosPromises = solutions.map(solution => BaremoService.getAllBaremosBySolution(solution))
-    const baremos = await Promise.all(baremosPromises)
-    const resp: Array<LightSolutionResponse> = await genericArraySolutionsFilter(solutions)
-    /**
-     * Compare baremos opened for validator team members. 
-     */
-    const chis = resp.map(idea => {
-      const baremosForIdea = baremos
-        .filter(baremo => baremo[0]?.solution?.solutionId == idea.solution_id)
-        
-      const usersWithBaremo = baremosForIdea[0]?.map(baremo => {return baremo.user.userId}) || []
-
-      const calification = usersTeamMembers.map(user => {
-        if(usersWithBaremo.includes(user.user_id)){
-          return {validator: user, done: true}
-        }else {
-          return {validator: user, done: false}
-        }
-      })
-      
-      return ({
-        idea,
-        baremos: calification
-      })
-    })
-
     const queue = {
       group_validator_id : groupValidator.groupValidatorId,
       group_validator_name : groupValidator.name,
       step : query.status,
       integrants : usersTeamMembers,
-      queue: chis
+      queue: undefined
     }
-    return queue
+    if(query.status == SOLUTION_STATUS.READY_FOR_ANALYSIS){
+      queue.queue = resp
+      return queue
+    } else if(query.status == SOLUTION_STATUS.ANALYZING){
+    
+      /**
+      * For each solution, get baremos started
+      */
+      const baremosPromises = solutions.map(solution => BaremoService.getAllBaremosBySolution(solution))
+      const baremos = await Promise.all(baremosPromises)
+
+      /**
+      * Compare baremos opened for validator team members. 
+      */
+      const chis = resp.map(idea => {
+        const baremosForIdea = baremos
+          .filter(baremo => baremo[0]?.solution?.solutionId == idea.solution_id)
+         
+        const usersWithBaremo = baremosForIdea[0]?.map(baremo => {return baremo.user.userId}) || []
+ 
+        const calification = usersTeamMembers.map(user => {
+          if(usersWithBaremo.includes(user.user_id)){
+            return {validator: user, done: true}
+          }else {
+            return {validator: user, done: false}
+          }
+        })
+       
+        return ({
+          idea,
+          baremos: calification
+        })
+      })
+
+      queue.queue = chis
+      return queue
+    }
   } catch(error){
     return Promise.reject(error)
   }

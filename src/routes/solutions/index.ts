@@ -7,7 +7,7 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -16,6 +16,65 @@ import UserService from "../../services/User.service";
 import ConfigurationService from "../../services/Configuration.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";
+import CommentService from "../../services/Comment.service";
+
+router.post(
+  URLS.SOLUTION.COMMENT,
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_SOLUTION),
+    body("author","author does not valid").custom(async (value, { req }) => {
+      try{
+        if(value != req.user.userId){
+          return Promise.reject()
+        }
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject()
+      }
+    }),
+    body('comment').isString().trim().escape(),
+    body('is_private').isBoolean(),
+    body('parent').custom(async (value, { req }) => {
+      try{
+        if(value){
+          const parentComment = await CommentService.getComment(value)
+          if(!parentComment){
+            return Promise.reject("parent not found")
+          }
+          if(parentComment.parent) {
+            return Promise.reject("more that 2 levels of comments")
+          }
+          req.utils = {...req.utils , parentComment}
+        }
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject("parent validation")
+      }
+    })
+  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_COMMENT)
+
+      const solutionController = new SolutionController()
+      const resp = await solutionController.newComment(
+        req.params.solutionId, 
+        req.body, 
+        req.resources.solution, 
+        req.user,
+        req.utils?.parentComment
+      )
+      
+      res
+        .json(resp)
+        .status(201)
+        .send();
+    } catch(error){
+      next(error)
+    }
+  })
+
 
 router.post("/solution/default-configuration", [
   authentication,
@@ -372,5 +431,7 @@ router.delete(
     }
   }
 );
+
+
 const solutionsRouter = router
 export default solutionsRouter;

@@ -8,22 +8,30 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
       commentId,
       comment,
       date,
-      isPrivate
+      scope
     } = commentEntity
     const author = await genericUserFilter(commentEntity.author)
-    const resp: CommentResponse = {
+
+    let resp: CommentResponse = {
       comment_id: commentId, 
       comment,
       date, 
       author,
-      is_private: isPrivate
+      scope
     }
-    if (commentEntity.author.userId == commentEntity.insertedBy.userId){
+/*     if (commentEntity.author.userId == commentEntity.insertedBy.userId){
       return Promise.resolve({... resp})
     }
     const insertedBy = await genericUserFilter(commentEntity.insertedBy)
 
-    resp.insertedBy = insertedBy
+    resp.insertedBy = insertedBy */
+
+    if (commentEntity.parent) {
+      const parent = await genericCommentFilter(commentEntity.parent)
+      resp = {...resp, parent}
+    }
+
+
     return Promise.resolve({...resp})
   }catch(error){
     return Promise.reject(error)
@@ -31,18 +39,16 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
 }
 
 export const genericArrayCommentFilter = async(comments: CommentI[]): Promise<CommentResponse[]> =>{
-  return new Promise(async (resolve, reject)=> {
-    const arrayComment: Array<Promise<CommentResponse>>= []
-    comments.forEach(comment => {
-      arrayComment.push(genericCommentFilter(comment))
-    })
-    await Promise
-      .all(arrayComment)
-      .then(result => {
-        return resolve(result)
-      })
-      .catch(error=> {
-        return reject(error)
-      })  
+  const arrayComment: Array<Promise<CommentResponse>>= []
+  comments.forEach(comment => {
+    arrayComment.push(genericCommentFilter(comment))
   })
+  return await Promise
+    .all(arrayComment)
+    .then(result => {
+      return result
+    })
+    .catch(error=> {
+      return Promise.reject(error)
+    })  
 }

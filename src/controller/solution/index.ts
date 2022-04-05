@@ -7,7 +7,7 @@ import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { getSolutionComments, listSolutions, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
-import { ChallengeResponse } from '../challenge';
+import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
 import { ConfigurationBody } from '../configuration';
 import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
@@ -49,7 +49,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
   solution_id: string,
   proposed_solution: string,
   challenge_id?: string,
-  challenge?: ChallengeResponse,
+  challenge?: LightChallengeResponse,
 }
 
 @Route('solution')

@@ -42,7 +42,11 @@ export interface ChallengeBody extends SituationBody {
   group_validator: string,
   finalization: Date
 }
-
+export interface LightChallengeResponse {
+  challenge_id: string,
+  title: string,
+  description: string,
+}
 
 export interface ChallengeResponse extends SituationResponse {
   challenge_id: string

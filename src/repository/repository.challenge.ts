@@ -22,7 +22,7 @@ import { UserI } from "../models/users";
 import { newComment } from "./repository.comment";
 import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 import RepositoryError from "../handle-error/error.repository";
-import { ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
+import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
 import CommentService from "../services/Comment.service";
 import { ReactionBody, ReactionResponse } from "../controller/reaction";
 import ReactionService from "../services/Reaction.service";
@@ -228,10 +228,10 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
       insertedBy,
       author,
       type: INTERACTION.COMMENT,
-      isPrivate: commentBody.is_private,
+      scope: commentBody.scope,
       comment: commentBody.comment,
       date: getCurrentDate(),
-      challenge
+      challenge,
     }
 
     const comment = await newComment(commentChallenge)

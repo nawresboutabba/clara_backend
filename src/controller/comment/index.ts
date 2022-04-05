@@ -2,11 +2,12 @@ import { InteractionBody, InteractionResponse } from "../interaction";
 
 export interface CommentBody extends InteractionBody {
     comment: string,
-    is_private: boolean
+    scope: string,
 }
 
 export interface CommentResponse extends InteractionResponse{
     comment_id: string
     comment: string,
-    is_private: boolean
+    scope: string,
+    parent?: CommentResponse
 }

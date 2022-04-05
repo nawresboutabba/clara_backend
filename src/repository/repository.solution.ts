@@ -3,7 +3,7 @@ import { ChallengeI } from '../models/situation.challenges';
 import { LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { COMMENT_LEVEL, INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
@@ -17,7 +17,7 @@ import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
-import { newComment } from "./repository.comment";
+import { getComments, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";
@@ -180,7 +180,7 @@ export const newSolutionComment = async (comment: CommentBody, solution: Solutio
       insertedBy: user,
       author:user, 
       type:INTERACTION.COMMENT,
-      isPrivate: comment.is_private,
+      scope: comment.scope,
       comment: comment.comment,
       date: getCurrentDate(),
       solution, 
@@ -192,6 +192,27 @@ export const newSolutionComment = async (comment: CommentBody, solution: Solutio
     const resp = await genericCommentFilter(com)
     return resp
 
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const getSolutionComments = async (solution: SolutionI, query: any, user: UserI): Promise<any> => {
+  try{
+    const filter = {
+      solution,
+      scope: query.scope,
+    }
+
+    if(query.scope == COMMENT_LEVEL.GROUP){
+      const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
+      responsibles.push(solution.author.userId)
+      if(responsibles.includes(user.userId) == false){
+        throw new Error('You are not authorized to see this comments')
+      }
+    }
+    const comments = await getComments(filter)
+    return comments
   }catch(error){
     return Promise.reject(error)
   }

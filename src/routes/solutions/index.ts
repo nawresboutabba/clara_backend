@@ -5,9 +5,9 @@ import authentication from "../../middlewares/authentication";
 import * as _ from 'lodash';
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
-import { validationResult, body } from "express-validator";
+import { validationResult, body, query } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -17,6 +17,44 @@ import ConfigurationService from "../../services/Configuration.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
+
+router.get(
+  URLS.SOLUTION.COMMENT,
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_SOLUTION),
+    query('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
+    query('scope').custom(async (value, { req }) => {
+      try{
+        if(value == COMMENT_LEVEL.GROUP){
+          const solution = req.resources.solution
+          const user = req.user
+          const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
+          responsibles.push(solution.author.userId)
+          if(responsibles.includes(user.userId) == false){
+            throw 'You are not authorized to see this comments'
+          }
+        }
+
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject(error)
+      }
+    }),
+  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
+
+      const solutionController = new SolutionController()
+      const resp = await solutionController.listComments(req.params.solutionId, req.query, req.resources.solution, req.user)
+      res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  })
 
 router.post(
   URLS.SOLUTION.COMMENT,
@@ -34,7 +72,24 @@ router.post(
       }
     }),
     body('comment').isString().trim().escape(),
-    body('is_private').isBoolean(),
+    body('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
+    body('scope').custom(async (value, { req }) => {
+      try{
+        if(value == COMMENT_LEVEL.GROUP){
+          const solution = req.resources.solution
+          const user = req.user
+          const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
+          responsibles.push(solution.author.userId)
+          if(responsibles.includes(user.userId) == false){
+            throw 'You are not authorized to post comments in this solution as responsible'
+          }
+        }
+
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject(error)
+      }
+    }),
     body('parent').custom(async (value, { req }) => {
       try{
         if(value){

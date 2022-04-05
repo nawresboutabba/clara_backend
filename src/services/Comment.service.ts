@@ -20,6 +20,55 @@ const CommentService = {
       ))
     }
   },
+  async getParentsComments(filter: any): Promise<any>{
+    try{
+      const comments = await Comment.find({
+        ...filter,
+        parent: undefined
+      })
+        .populate('author')
+        .populate('insertedBy')
+      return Promise.resolve(comments)
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_COMMENTS,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+  },
+  async getChildsComments(comments: CommentI[]): Promise<any>{
+    try{
+      const resp = await Comment.find({
+        parent: {$in:comments }
+      })
+        .populate('parent')
+        .populate('author')
+        .populate('insertedBy')
+      return Promise.resolve(resp)
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_COMMENTS,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+  },
+  async getChildComments(commentparent: CommentI): Promise<any>{
+    try{
+      const comments = await Comment.find({
+        parent: commentparent
+      })
+
+      return Promise.resolve(comments)
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_COMMENTS,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+  },
   async getComments(challenge: ChallengeI, user: UserI): Promise<any> {
     return new Promise(async (resolve, reject)=> {
       try{

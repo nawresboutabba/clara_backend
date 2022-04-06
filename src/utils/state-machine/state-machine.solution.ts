@@ -1,5 +1,9 @@
 import { ERRORS, SOLUTION_STATUS } from "../../constants";
-
+/**
+ * Solutions state machine 
+ * https://drive.google.com/file/d/1JFNcXbiDoof3LKlKQEQFrFnpRt4aq3E7/view?usp=sharing
+ * 
+ */
 const machine = {
   state: SOLUTION_STATUS.DRAFT,
   transitions: {
@@ -19,6 +23,12 @@ const machine = {
     PROPOSED: {
       published: function () {
         this.changeState(SOLUTION_STATUS.APROVED_FOR_DISCUSSION);
+      },
+      draft: function () {
+        this.changeState(SOLUTION_STATUS.APROVED_FOR_DISCUSSION);       
+      },
+      analyze: function () {
+        this.changeState(SOLUTION_STATUS.ANALYZING);      
       }
     },
     /**
@@ -26,41 +36,25 @@ const machine = {
      */
     APPOVED_FOR_DISCUSSION : {
       evaluate: function() {
-        this.changeState(SOLUTION_STATUS.ANALYZING);
+        this.changeState(SOLUTION_STATUS.PROPOSED);
       }
     },
     /**
      * Challenge under committee analysis
      */
     ANALYZING: {
-      build: function () {
-        this.changeState(SOLUTION_STATUS.ANALYZING);
+      prepare: function () {
+        this.changeState(SOLUTION_STATUS.PROPOSED);
       },
-      review: function () {
-        this.changeState(SOLUTION_STATUS.REVIEW);
-      },
-      reject: function () {
-        this.changeState(SOLUTION_STATUS.REJECTED);
-      },
+      aproved: function () {
+        this.changeState(SOLUTION_STATUS.APROVED_FOR_CONSTRUCTION);
+      }
     },
     APROVED_FOR_CONSTRUCTION: {
       /**
         * One of possible final for a solution
         */
     },
-    REVIEW: {
-      reject: function () {
-        this.changeState(SOLUTION_STATUS.REJECTED);
-      },
-      evaluate: function() {
-        this.changeState(SOLUTION_STATUS.ANALYZING);
-      }
-    },
-    REJECTED: {
-      /**
-        * One of possible final for a solution
-        */
-    }
   },
   dispatch(actualStatus: string, actionName: string, ...payload: any) {
 

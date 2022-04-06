@@ -5,30 +5,35 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import cors from 'cors';
 
 import swaggerDocument from '../swagger.json';
 
 const app = express();
 
 // const cookieParser = require('cookie-parser');
-const cors = require('cors');
 // global.repositoryError = require('./handle-error/error.repository')
-// app.use(cors());
+app.use(cors());
 // app.use(cookieParser());
 
-app.use((req, res, next) => {
-  // Qual site tem permissão de realizar a conexão, no exemplo abaixo está o "*" indicando que qualquer site pode fazer a conexão
-  res.header("Access-Control-Allow-Origin", "*");
-  // Quais são os métodos que a conexão pode realizar na API
-  res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
-  app.use(cors());
-  next();
-});
+// app.use((req, res, next) => {
+//   // Qual site tem permissão de realizar a conexão, no exemplo abaixo está o '*' indicando que qualquer site pode fazer a conexão
+//   res.header('Access-Control-Allow-Origin', '*');
+//   // Quais são os métodos que a conexão pode realizar na API
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+//   );
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   // app.use(cors());
+//   next();
+// });
 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 import solutionsRouter from './routes/solutions'
 import userRouter from './routes/users'
 import challengeRouter from './routes/challenge';

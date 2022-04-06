@@ -1,12 +1,16 @@
 {
-    "compilerOptions": {
-      "experimentalDecorators": true,
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./dist",
-      "allowJs": true,
-      "target": "es6",
-      "emitDecoratorMetadata": true,
-    },
-    "include": ["./src/**/*"]
-  }
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "allowJs": true,
+    "target": "es6",
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}

@@ -1,13 +1,15 @@
 'use strict';
 import 'module-alias/register'
-import * as dotenv from 'dotenv';
-dotenv.config();
-const express = require ('express')
-const app = require('express')();
-const mongoose = require('mongoose');
-const morgan = require("morgan");
+import 'dotenv/config';
 
-const swaggerDocument =require( '../swagger.json')
+import express from 'express';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+
+import swaggerDocument from '../swagger.json';
+
+const app = express();
+
 // const cookieParser = require('cookie-parser');
 // const cors = require('cors');
 // global.repositoryError = require('./handle-error/error.repository')
@@ -38,7 +40,7 @@ import { errorHandler } from './handle-error/middleware.error-handler';
 
 import swaggerUi = require('swagger-ui-express');
 
-const PORT = 3000
+const PORT = process.env.PORT ?? 3000;
 /* const DB_CONNECTION = 'localhost:27017'
 const DB_NAME = 'PINC-SE' */
 

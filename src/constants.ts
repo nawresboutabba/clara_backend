@@ -35,6 +35,11 @@ export const CHALLENGE_STATUS = {
   CLOSED: 'CLOSED',
 }
 
+export const BAREMO_STATUS = {
+  ONGOING: 'ONGOING',
+  CLOSED: 'CLOSED',
+}
+
 export const FAKE_GENERATOR = {
   userName : 'hasb',
   email:'sarquisboutroshector@gmail.com',

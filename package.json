@@ -16,6 +16,9 @@
     "type": "git",
     "url": "git+https://github.com/SARQUIS-BOUTROS/IDEATION_BACKEND.git"
   },
+  "engines": {
+    "node": "14.17"
+  },
   "keywords": [
     "ideation",
     "pinc-se",

@@ -74,6 +74,7 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       images: body.images,
       groupValidator,
       proposedSolution: body.proposed_solution,
+      version: 1,
       ...configuration,
     }
     if (challengeId && data.WSALevelChosed == WSALEVEL.AREA) {

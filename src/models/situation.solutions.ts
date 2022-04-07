@@ -34,6 +34,10 @@ export interface SolutionI extends SituationBaseI {
      * End of analysis
      */
     endAnalysis?: Date,
+    /**
+     * idea version
+     */
+    version: number,
   }
 
 
@@ -51,6 +55,8 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
     ref: 'User' 
   },
   endAnalysis: Date,
+  version: Number
 }))
+
 
 export default Solution;

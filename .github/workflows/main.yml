@@ -4,7 +4,7 @@ on:
     branches: [main, master]
 
 env:
-  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  FLY_API_TOKEN: "LoiFaxruPJOatbRfIgG2RiH0NljUzINN9rWjKA5Z1-k"
 
 jobs:
   deploy:

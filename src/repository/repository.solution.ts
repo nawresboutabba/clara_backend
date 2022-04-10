@@ -182,6 +182,7 @@ export const newSolutionComment = async (comment: CommentBody, solution: Solutio
       author:user, 
       type:INTERACTION.COMMENT,
       scope: comment.scope,
+      version: comment.version,
       comment: comment.comment,
       date: getCurrentDate(),
       solution, 

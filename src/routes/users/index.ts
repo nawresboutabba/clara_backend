@@ -3,9 +3,9 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import authentication from "../../middlewares/authentication";
 import UserController from "../../controller/users";
-import { body , validationResult} from "express-validator";
+import { body , query, validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, VIEW_BY } from "../../constants";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 const router = express.Router();
@@ -92,11 +92,14 @@ router.get('/user/info',[
 })
 
 router.get('/user/participation',[
-  authentication
+  authentication,
+  query('view_by', 'view can not be empty').notEmpty().isIn([VIEW_BY.CHALLENGE, VIEW_BY.SOLUTION])
 ],async (req: RequestMiddleware,res: ResponseMiddleware,next: NextFunction)=>{
   try{
+    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_MY_PARTICIPATION)
+
     const userController = new UserController()
-    const userParticipation = await userController.getParticipation(req.user)
+    const userParticipation = await userController.getParticipation(req.user, req.query)
     res
       .json(userParticipation)
       .status(200)

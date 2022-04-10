@@ -8,6 +8,7 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
       commentId,
       comment,
       date,
+      version,
       scope
     } = commentEntity
     const author = await genericUserFilter(commentEntity.author)
@@ -17,6 +18,7 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
       comment,
       date, 
       author,
+      version,
       scope
     }
 /*     if (commentEntity.author.userId == commentEntity.insertedBy.userId){

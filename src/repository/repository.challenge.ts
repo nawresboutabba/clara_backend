@@ -230,6 +230,7 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
       type: INTERACTION.COMMENT,
       scope: commentBody.scope,
       comment: commentBody.comment,
+      version: commentBody.version,
       date: getCurrentDate(),
       challenge,
     }

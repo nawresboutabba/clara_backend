@@ -5,6 +5,7 @@ import InteractionBase, { InteractionBaseI, options } from "./interaction.base";
 export interface CommentI extends InteractionBaseI{
   commentId: string
   comment: string,
+  version: string,
   parent?: CommentI,
   /**
    * GROUP | PUBLIC
@@ -16,6 +17,7 @@ export interface CommentI extends InteractionBaseI{
 const Comment = InteractionBase.discriminator('Comment',new Schema({
   commentId: String, 
   comment: String,
+  version: String,
   parent: {
     type: Schema.Types.ObjectId,
     ref: 'Comment'

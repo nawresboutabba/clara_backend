@@ -72,6 +72,7 @@ router.post(
       }
     }),
     body('comment').isString().trim().escape(),
+    body('version', 'version can not be empty').notEmpty(),
     body('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
     body('scope').custom(async (value, { req }) => {
       try{

@@ -4,7 +4,7 @@ import { UserI } from '../models/users';
 import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
 import { UserBody, Login, UserResponse, UserRequest } from '../controller/users'
-import { ERRORS, HTTP_RESPONSE } from '../constants'
+import { ERRORS, HTTP_RESPONSE, VIEW_BY } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
 import SolutionService from '../services/Solution.service';
@@ -133,12 +133,64 @@ export const getUserInformation = async (userInformation: UserRequest): Promise<
   })
 }
 
-export const getParticipation = async (user: UserI): Promise<any> => {
+export const getParticipation = async (user: UserI, query: any): Promise<any> => {
   try{
+    const view = query.view_by
     const solutions = await SolutionService.getParticipations(user)
     const rest = await genericArraySolutionsFilter(solutions)
-    return rest
-  }catch(error){
+    if (view === VIEW_BY.SOLUTION){
+      return rest
+    }else if(view === VIEW_BY.CHALLENGE){
+      try {
+      /**
+       * Get challenge_id. and save as set operation
+       */
+        const challenges = new Set(rest.map(idea => idea.challenge.challenge_id ).filter(id => id != undefined))
+        /**
+        * Init dictionary with solution by challenge
+        */
+        const solutionByChallenge = {}
+        /**
+        * Set information about challenge. 
+        */
+        challenges.forEach(challengeId => {
+          rest.forEach(idea => {
+            if(idea.challenge?.challenge_id == challengeId){
+              solutionByChallenge[challengeId]={
+                challenge: idea.challenge,
+                /**
+                * Init array of solutions
+                */
+                solutions: []
+              }
+            }
+          })
+        })
+       
+        /**
+        * Foreach solution, add the corresponding challenge
+        */
+        rest.forEach(solution => {
+          if (challenges.has(solution.challenge?.challenge_id )){
+            const challenge_id =  solution.challenge.challenge_id
+            delete solution.challenge
+            solutionByChallenge[challenge_id].solutions.push(solution)
+          }
+        })
+        return solutionByChallenge
+      }catch(error){
+        return Promise.reject(
+          new RepositoryError(
+            ERRORS.REPOSITORY.VIEW_TRANSFORMATION,
+            HTTP_RESPONSE._500,
+            error
+          )
+        )
+      }
+    } else {
+      throw "Invalid view_by"
+    }
+  }catch(error){ 
     return Promise.reject(error)
   }
 }

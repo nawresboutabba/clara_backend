@@ -71,6 +71,7 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       updated: created,
       status: SOLUTION_STATUS.DRAFT,
       fileComplementary: body.file_complementary,
+      bannerImage: body.banner_image,
       images: body.images,
       groupValidator,
       proposedSolution: body.proposed_solution,

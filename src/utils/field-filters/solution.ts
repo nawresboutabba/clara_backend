@@ -3,7 +3,7 @@ import { LightSolutionResponse, SolutionResponse } from "../../controller/soluti
 import { TeamResponse } from "../../controller/team";
 import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
-import { getArrayImageSignedUrl } from "../../repository/repository.image-service";
+import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "./area";
 import { lightTeamFilter } from "./team";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
@@ -19,6 +19,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     description,
     active,
     fileComplementary,
+    bannerImage,
     images,
     /**
       * Configuration section
@@ -70,6 +71,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     title,
     description,
     proposed_solution: proposedSolution,
+    banner_image: bannerImage,
     images,
     department_affected:departmentAffected,
     /**
@@ -101,6 +103,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
 export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSolutionResponse> => {
   
   const images = await getArrayImageSignedUrl(solution.images)
+  const banner_image = await getSignedUrl(solution.bannerImage)
   const inserted_by = await genericUserFilter(solution.insertedBy)
 
   const challenge = {
@@ -119,6 +122,7 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
     proposed_solution: solution.proposedSolution,
     created: solution.created,
     status: solution.status,
+    banner_image,
     images,
     challenge
   })

@@ -62,6 +62,10 @@ export interface SituationBaseI {
    */
   active: boolean,
   /**
+   * Banner image
+   */
+  bannerImage: string,
+  /**
    * Solution images
    */
   images: Array<string>,
@@ -219,6 +223,7 @@ export const situationBaseModel = {
     type: Boolean,
     default: true,
   },
+  bannerImage: String,
   images: [
     {
       type: String,

@@ -3,6 +3,7 @@ import { ChallengeI } from "../../models/situation.challenges";
 import { genericArrayAreaFilter } from "./area";
 import { genericUserFilter } from "./user";
 import { genericGroupValidatorFilter } from "./group-validator";
+import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
 
 /**
  * Challenge information filter. 
@@ -23,12 +24,11 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       description , 
       active,
       fileComplementary,
-      images,
       isStrategic,
       finalization,
       /**
-             * Configuration section
-             */
+       * Configuration section
+       */
       canShowDisagreement,
       canFixDisapprovedIdea,
       canChooseScope,
@@ -49,6 +49,8 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       externalContributionAvailableForCommittee,
       interactions
     } = challenge
+    const images = await getArrayImageSignedUrl(challenge.images)
+    const banner_image = await getSignedUrl(challenge.bannerImage)
     const author = await genericUserFilter(challenge.author)
     const inserted_by = await genericUserFilter(challenge.insertedBy)
     const areas_available = await genericArrayAreaFilter(challenge.areasAvailable)
@@ -66,6 +68,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       description , 
       active,
       file_complementary: fileComplementary,
+      banner_image,
       images,
       is_strategic: isStrategic,
       finalization,
@@ -108,20 +111,24 @@ export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any>
       title, 
       description , 
       active,
-      images,
       isStrategic,
       finalization,
       interactions
     } = challenge
+
+    const images = await getArrayImageSignedUrl(challenge.images)
+    const banner_image = await getSignedUrl(challenge.bannerImage)
     const areas_available = await genericArrayAreaFilter(challenge.areasAvailable)
     const department_affected = await genericArrayAreaFilter(challenge.departmentAffected)
     const group_validator = await genericGroupValidatorFilter(challenge.groupValidator)
+
     return {
       created,
       status,
       title, 
       description , 
       active,
+      banner_image,
       images,
       is_strategic: isStrategic,
       finalization,

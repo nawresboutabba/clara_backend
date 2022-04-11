@@ -7,6 +7,7 @@ export interface SituationBody {
     author?: string,
     title: string,
     description: string,
+    banner_image: string, 
     images: Array<string>,
     department_affected: Array<string>,
     /**
@@ -52,6 +53,7 @@ export interface LightSituationResponse {
     created: Date,
     title: string,
     description: string,
+    banner_image: string, 
     images: Array<string>,
     status: string,
 }

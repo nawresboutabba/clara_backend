@@ -446,7 +446,7 @@ router.get(URLS.CHALLENGE.CHALLENGE, [
 })
 
 router.get(
-  `/challenge/:challengeId`,
+  URLS.CHALLENGE.CHALLENGE_CHALLENGEID,
   [
     authentication,
     acl(

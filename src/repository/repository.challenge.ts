@@ -86,6 +86,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise
       challengeId: nanoid(),
       title: body.title,
       description: body.description,
+      bannerImage: body.banner_image,
       images: body.images,
       groupValidator,
       status: SolutionStateMachine.ready(),

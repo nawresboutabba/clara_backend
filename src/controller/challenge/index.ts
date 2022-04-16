@@ -1,6 +1,5 @@
-import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Request, Inject, Put } from 'tsoa'
+import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Inject, Put } from 'tsoa'
 import { ChallengeI } from '../../models/situation.challenges';
-import { UserRequest } from '../users';
 import {
   newChallenge,
   getChallenge,
@@ -26,7 +25,6 @@ import { ConfigurationBody } from '../configuration';
 import { ConfigurationDefaultI } from '../../models/configuration.default';
 import { RESOURCE } from '../../constants';
 import { GroupValidatorResponse } from '../../repository/repository.group-validator';
-import { updateCommaList } from 'typescript';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints

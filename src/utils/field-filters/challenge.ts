@@ -4,6 +4,7 @@ import { genericArrayAreaFilter } from "./area";
 import { genericUserFilter } from "./user";
 import { genericGroupValidatorFilter } from "./group-validator";
 import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
+import { genericArrayTagsFilter } from "./tag";
 
 /**
  * Challenge information filter. 
@@ -56,7 +57,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
     const areas_available = await genericArrayAreaFilter(challenge.areasAvailable)
     const department_affected = await genericArrayAreaFilter(challenge.departmentAffected)
     const group_validator = await genericGroupValidatorFilter(challenge.groupValidator)
-        
+    const tags = await genericArrayTagsFilter(challenge.tags)
     return {
       challenge_id: challengeId, 
       inserted_by,
@@ -70,6 +71,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       file_complementary: fileComplementary,
       banner_image,
       images,
+      tags,
       is_strategic: isStrategic,
       finalization,
       department_affected,

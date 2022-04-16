@@ -5,6 +5,7 @@ import { CommentI } from '../models/interaction.comment';
 import { AreaI } from '../models/organization.area';
 import { ChallengeI } from '../models/situation.challenges';
 import { SolutionI } from '../models/situation.solutions';
+import { TagI } from '../models/tag';
 import { UserI } from '../models/users';
 
 export interface RequestMiddleware extends express.Request {
@@ -34,7 +35,11 @@ export interface RequestMiddleware extends express.Request {
         * When a comment is inserted, it can have a parent.
         * Just can exist 2 nivels of comments. 
         */
-      parentComment?: CommentI
+      parentComment?: CommentI,
+      /**
+       * Tags what a resource is relationated
+       */
+      tags: TagI[]
     },
     timeZone?: string;
 }

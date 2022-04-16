@@ -6,6 +6,7 @@ import { TeamI } from './team';
 import Log from './log';
 import historicalSolutions from './historical-solutions';
 import * as _ from 'lodash';
+import { TagI } from './tag';
 
 export const options = {
   discriminatorKey: 'itemtype',
@@ -85,6 +86,10 @@ export interface SituationBaseI {
    * Complementary files to challenge, solution or problem
    */
   fileComplementary: string,
+  /**
+   * Tags relationated
+   */
+  tags: TagI[],
   /**
    * ---------------------------------
    * Configuration Section
@@ -239,6 +244,10 @@ export const situationBaseModel = {
   },
   status: String,
   fileComplementary: String,
+  tags: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Tag'
+  }],
   /**
    * ---------------------------------
    * Configuration Section

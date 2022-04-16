@@ -58,6 +58,14 @@ const ChallengeService = {
         },
         {
           $lookup: {
+            from: "tags",
+            localField: "tags",
+            foreignField: "_id",
+            as: "tags"
+          },
+        },
+        {
+          $lookup: {
             from: 'interactions',
             localField: "_id",    // field in the orders collection
             foreignField: "challenge",  // field in the items collection

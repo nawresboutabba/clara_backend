@@ -17,6 +17,7 @@ import ConfigurationService from "../../services/Configuration.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
+import TagService from "../../services/Tag.service";
 
 router.get(
   URLS.SOLUTION.COMMENT,
@@ -183,7 +184,7 @@ router.post("/solution/default-configuration", [
 })
 
 router.post(
-  "/solution",
+  URLS.SOLUTION.SOLUTION,
   [
     authentication,
     /**
@@ -206,8 +207,21 @@ router.post(
      */
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
+    body('banner_image').isString(),
     body("images", "images does not valid").isArray(),
-
+    body("tags").isArray(),
+    body("tags").custom(async (value: string[], { req }): Promise<void> => {
+      try{
+        const tags = await TagService.getTagsById(value)
+        if (tags.length == value.length) {
+          req.utils = { tags, ...req.utils }
+          return Promise.resolve()
+        }
+        return Promise.reject("tags does not valid")
+      }catch(error){
+        return Promise.reject("tags does not valid")
+      }
+    }),
     body("department_affected").isArray(),
     /**
      * Check that department affected is valid

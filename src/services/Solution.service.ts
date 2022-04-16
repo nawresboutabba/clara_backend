@@ -90,7 +90,6 @@ const SolutionService = {
         .populate('insertedBy')
         .populate('areasAvailable')
       return solution
-      return solution
     }catch(error){
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.UPDATE_SOLUTION,

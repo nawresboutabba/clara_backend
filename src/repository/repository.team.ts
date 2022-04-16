@@ -1,6 +1,5 @@
 import TeamService from "../services/Team.service";
 import { nanoid } from 'nanoid'
-import { UserI } from "../models/users";
 import { TeamI } from "../models/team";
 
 

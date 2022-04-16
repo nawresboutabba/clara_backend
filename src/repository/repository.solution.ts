@@ -67,6 +67,7 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       description: description,
       departmentAffected: utils.departmentAffected,
       created: created,
+      tags: challengeId? challenge.tags: utils.tags,
       active: true,
       updated: created,
       status: SOLUTION_STATUS.DRAFT,

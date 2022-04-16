@@ -85,7 +85,11 @@ router.get('/group-validator',[
   }
 })
 
-
+/**
+ * This endpoint is used for get solutions that have to be analyzed.
+ * Solutions are ready.
+ * See : https://www.notion.so/Analysis-step-Idea-analyzing-PART-II-135747bb006c4d61a9c7e2d853c0753f
+ */
 router.get('/group-validator/solution',[
   authentication,
   acl(RULES.IS_PART_OF_GROUP_VALIDATOR),

@@ -36,6 +36,9 @@ export const getImageSignedUrlForPost = async (imageName: string): Promise<strin
 
 export const getSignedUrl = async (imageName: string): Promise<string> => {
   try {
+    if(!imageName){
+      return undefined
+    }
     const params = ({
       Bucket: bucketName,
       Key: imageName,

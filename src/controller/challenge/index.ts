@@ -26,6 +26,7 @@ import { ConfigurationBody } from '../configuration';
 import { ConfigurationDefaultI } from '../../models/configuration.default';
 import { RESOURCE } from '../../constants';
 import { GroupValidatorResponse } from '../../repository/repository.group-validator';
+import { updateCommaList } from 'typescript';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -93,8 +94,8 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
    @Post('/proposal')
-  public async newChallengeProposal(@Body() body: ChallengeBody, @Request() user: UserRequest): Promise<ChallengeResponse> {
-    return newChallengeProposal(body, user)
+  public async newChallengeProposal(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
+    return newChallengeProposal(body, user, utils)
   }
 
   /**
@@ -104,8 +105,8 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
   @Post()
-   public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI): Promise<ChallengeResponse> {
-     return newChallenge(body, user)
+   public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
+     return newChallenge(body, user, utils)
    }
 
   @Post(':challengeId/solution')

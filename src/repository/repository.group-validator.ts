@@ -116,6 +116,9 @@ export const getSolutionsLinked = async (query: any, groupValidator: GroupValida
       * Compare baremos opened for validator team members. 
       */
       const chis = resp.map(idea => {
+        /**
+         * Foreach idea get baremos relationated (from baremos array)
+         */
         const baremosForIdea = baremos
           .filter(baremo => baremo[0]?.solution?.solutionId == idea.solution_id)
          
@@ -130,7 +133,7 @@ export const getSolutionsLinked = async (query: any, groupValidator: GroupValida
         })
        
         return ({
-          idea,
+          ...idea,
           baremos: calification
         })
       })

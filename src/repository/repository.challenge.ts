@@ -40,10 +40,10 @@ import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
 import { CommentI } from "../models/interaction.comment";
 
-export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<ChallengeResponse> => {
+export const newChallenge = async (body: ChallengeBody, user: UserI, utils: any): Promise<ChallengeResponse> => {
   try {
 
-    const data: ChallengeI = await composeChallenge(body, user)
+    const data: ChallengeI = await composeChallenge(body, user, utils)
 
     const challenge = await ChallengeService.newChallenge({
       ...data
@@ -55,9 +55,9 @@ export const newChallenge = async (body: ChallengeBody, user: UserI): Promise<Ch
   }
 }
 
-export const newChallengeProposal = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeProposalResponse> => {
+export const newChallengeProposal = async (body: ChallengeBody, user: UserI, utils: any): Promise<ChallengeProposalResponse> => {
   try {
-    const challenge: ChallengeI = await composeChallenge(body, user)
+    const challenge: ChallengeI = await composeChallenge(body, user, utils)
     const proposalId = nanoid()
     const dateProposal = getCurrentDate()
     const data: ChallengeProposalI = { ...challenge, proposalId, dateProposal }
@@ -70,7 +70,7 @@ export const newChallengeProposal = async (body: ChallengeBody, user: UserReques
 }
 
 
-const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise<ChallengeI> => {
+const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: any): Promise<ChallengeI> => {
   try {
     const created = new Date();
 
@@ -88,6 +88,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest): Promise
       description: body.description,
       bannerImage: body.banner_image,
       images: body.images,
+      tags: utils.tags,
       groupValidator,
       status: SolutionStateMachine.ready(),
       active: true,

@@ -45,6 +45,7 @@ import teamRouter from './routes/team'
 import invitationRouter from './routes/invitation'
 import imageRouter from './routes/image-service';
 import visitRouter from './routes/visit';
+import tagRouter from './routes/tag';
 
 // import session from './middlewares/session'
 
@@ -81,6 +82,7 @@ app.use('/', teamRouter);
 app.use('/', invitationRouter);
 app.use('/', imageRouter);
 app.use('/', visitRouter);
+app.use('/', tagRouter)
 app.use(logError)
 app.use(clientErrorHandler)
 app.use(errorHandler)

@@ -20,6 +20,7 @@ import TeamService from "../../services/Team.service";
 import ConfigurationService from "../../services/Configuration.service";
 import { GroupValidatorI } from "../../models/group-validator";
 import { AreaI } from "../../models/organization.area";
+import TagService from "../../services/Tag.service";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -152,7 +153,20 @@ router.post(
         return Promise.reject("department_affected does not valid")
       }
     }),
-    check("group_validator", "group_validator invalid").custom((value: string, { req }): Promise<void> => {
+    body("tags").isArray(),
+    body("tags").custom(async (value: string[], { req }): Promise<void> => {
+      try{
+        const tags = await TagService.getTagsById(value)
+        if (tags.length == value.length) {
+          req.utils = { tags, ...req.utils }
+          return Promise.resolve()
+        }
+        return Promise.reject("tags does not valid")
+      }catch(error){
+        return Promise.reject("tags does not valid")
+      }
+    }),
+    body("group_validator", "group_validator invalid").custom((value: string, { req }): Promise<void> => {
       return new Promise((resolve, reject) => {
         GroupValidatorService
           .getGroupValidatorById(req.body.group_validator)
@@ -249,13 +263,13 @@ router.post(
 
       const challengeController = new ChallengeController();
       if (req.url == URLS.CHALLENGE.CHALLENGE) {
-        const challenge = await challengeController.newChallenge(req.body, req.user)
+        const challenge = await challengeController.newChallenge(req.body, req.user, req.utils)
         res
           .status(200)
           .json(challenge)
           .send();
       } else if (req.url == URLS.CHALLENGE.CHALLENGE_PROPOSE) {
-        const challenge = await challengeController.newChallengeProposal(req.body, req.user)
+        const challenge = await challengeController.newChallengeProposal(req.body, req.user, req.utils)
 
         res
           .status(200)

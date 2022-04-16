@@ -5,6 +5,7 @@ import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "./area";
+import { genericArrayTagsFilter } from "./tag";
 import { lightTeamFilter } from "./team";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
@@ -56,6 +57,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
   const inserted_by = await genericUserFilter(solution.insertedBy)
   const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
   const departmentAffected = await genericArrayAreaFilter(solution.departmentAffected)
+  const tags = await genericArrayTagsFilter(solution.tags)
+
   return {
     inserted_by,
     author,
@@ -67,6 +70,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     created,
     status,
     updated,
+    tags,
     file_complementary:fileComplementary,
     title,
     description,

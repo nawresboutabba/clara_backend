@@ -21,6 +21,9 @@ import { getComments, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";
+import BaremoStateMachine from "../utils/state-machine/state-machine.baremo";
+import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
+
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
   try {
@@ -218,6 +221,35 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
     }
     const comments = await getComments(filter)
     return comments
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): Promise<any> => {
+  try{
+    const date = getCurrentDate()
+    const baremo = {
+      user,
+      solution,
+      created: date,
+      updated: date,
+      /**
+       * Initial State
+       */
+      status: BaremoStateMachine.init(),
+      type: utils.baremoType,
+      comment: ""
+    }
+
+    if (solution.status == SOLUTION_STATUS.READY_FOR_ANALYSIS){
+      const updateSolution = {
+        status : SolutionStateMachine.dispatch(solution.status , "analyze"),
+        startAnalysis : getCurrentDate()
+      }
+    }
+
+    return baremo
   }catch(error){
     return Promise.reject(error)
   }

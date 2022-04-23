@@ -5,7 +5,7 @@ import authentication from "../../middlewares/authentication";
 import * as _ from 'lodash';
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
-import { validationResult, body, query } from "express-validator";
+import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solution/index'
 import { COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
@@ -18,6 +18,7 @@ import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.er
 import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
 import TagService from "../../services/Tag.service";
+import BaremoService from "../../services/Baremo.service";
 
 router.get(
   URLS.SOLUTION.COMMENT,
@@ -502,6 +503,45 @@ router.delete(
   }
 );
 
+/**
+ * This endpoint initialize a baremo. If this is a first baremo open, then 
+ * idea status have to change to : READY_FOR_ANALYSIS --> ANALYZING
+ */
+router.post([
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR,
+], [
+  authentication,
+  acl(RULES.IS_VALIDATOR_OF_SOLUTION),
+  /**
+   * Check that this user don't have another baremo open for this solution.
+   * If exist a baremo with this USER-SOLUTION then the operation have to be GET or PATCH
+   */
+  param('solutionId').custom(async (value, {req})=> {
+    try{
+      const baremos = await BaremoService.getAllBaremosBySolution(req.resources.solution)
+      const user = baremos.filter(baremo => baremo.user.userId == req.user.userId)
+      if(user.length > 0){
+        return Promise.reject("this user has a baremo open for this solution")
+      }
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject("this user has a baremo open for this solution")
+    }
+  }),
+
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const solutionController = new SolutionController()
+    const baremo = await solutionController.newBaremo(req.params.solutionId, req.resources.solution, req.user, req.utils)
+    
+    res
+      .json(baremo)
+      .status(200)
+      .send()
+  }catch(error){
+    next(error)
+  }
+})
 
 const solutionsRouter = router
 export default solutionsRouter;

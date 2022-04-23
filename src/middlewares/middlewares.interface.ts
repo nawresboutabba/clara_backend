@@ -39,7 +39,12 @@ export interface RequestMiddleware extends express.Request {
       /**
        * Tags what a resource is relationated
        */
-      tags: TagI[]
+      tags: TagI[],
+      /**
+       * Is used when baremo intervention is created or updated. 
+       * "SPECIALIST_INTERVENTION" | "TEAM_VALIDATOR"
+       */
+      baremoType: string
     },
     timeZone?: string;
 }

@@ -5,7 +5,7 @@ import { CommentI } from '../../models/interaction.comment';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { getSolutionComments, listSolutions, newSolutionComment } from '../../repository/repository.solution';
+import { getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
@@ -83,17 +83,24 @@ export default class SolutionController extends Controller {
     return setDefaultConfiguration(body, RESOURCE.SOLUTION)
   }
   /**
-   * 
+   * New comment endpoint
    */
    @Post('/:solutionId/comment')
   public async newComment(@Path('solutionId') solutionId: string, @Body() comment: CommentBody,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() parent: CommentI): Promise<CommentResponse> {
     return newSolutionComment(comment,solution, user, parent)
   }
   /**
-   * 
+   * Get Comment endpoint
    */
   @Get('/:solutionId/comment')
    public async listComments(@Path('solutionId') solutionId: string, @Query() query: any , @Inject() solution: SolutionI, @Inject() user: UserI): Promise<CommentI[]>{
      return getSolutionComments(solution, query, user)
    }
+   /**
+    * New baremo
+    */
+   @Post('/:solutionId/baremo')
+  public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <any> {
+    return newBaremo(solution, user, utils)
+  }
 }

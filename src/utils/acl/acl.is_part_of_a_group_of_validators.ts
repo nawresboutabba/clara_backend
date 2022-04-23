@@ -5,6 +5,11 @@ import { IntegrantStatusI } from "../../models/integrant";
 import IntegrantService from "../../services/Integrant.service";
 import { isCommitteMember } from "./function.is_committe_member";
 
+/**
+ * Check that user is part of team validator
+ * @param req
+ * @returns 
+ */
 export async function IS_PART_OF_GROUP_VALIDATOR (req: RequestMiddleware): Promise<void> {
   try{
     const committe: IntegrantStatusI = await isCommitteMember(req.user)

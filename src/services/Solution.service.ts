@@ -31,6 +31,8 @@ const SolutionService = {
         .populate('team')
         .populate('insertedBy')
         .populate('areasAvailable')
+        .populate('groupValidator')
+        .populate('baremos')
       return solution
     }catch(error){
       return Promise.reject(new ServiceError(

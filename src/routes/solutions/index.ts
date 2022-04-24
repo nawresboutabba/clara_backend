@@ -536,9 +536,8 @@ router.post([
    */
   param('solutionId').custom(async (value, {req})=> {
     try{
-      const baremos = await BaremoService.getAllBaremosBySolution(req.resources.solution)
-      const user = baremos.filter(baremo => baremo.user.userId == req.user.userId)
-      if(user.length > 0){
+      const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(req.resource.solutino, req.user)
+      if(baremo){
         return Promise.reject("this user has a baremo open for this solution")
       }
       return Promise.resolve()
@@ -577,5 +576,20 @@ router.post([
   }
 })
 
+router.get(URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR_CURRENT,[
+  authentication,
+  acl(RULES.IS_VALIDATOR_OF_SOLUTION),
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const solutionController = new SolutionController()
+    const baremo = await solutionController.getCurrent(req.params.solutionId, req.resources.solution, req.user)
+    res
+      .json(baremo)
+      .status(200)
+      .send()
+  }catch(error){
+    next(error)
+  }
+})
 const solutionsRouter = router
 export default solutionsRouter;

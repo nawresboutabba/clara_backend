@@ -523,6 +523,7 @@ router.delete(
 /**
  * This endpoint initialize a baremo. If this is a first baremo open, then 
  * idea status have to change to : READY_FOR_ANALYSIS --> ANALYZING
+ * https://www.notion.so/Implement-analysis-step-endpoints-Part-II-678f92e5a4434cfc9564d2903a46fabb
  */
 router.post([
   URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR,
@@ -545,9 +546,25 @@ router.post([
       return Promise.reject("this user has a baremo open for this solution")
     }
   }),
-
+  /**
+   * Check if solution is available for analysis
+   */
+  param('solutionId').custom(async (value, {req})=> {
+    try{
+      const status = req.resources.solution.status
+      const valid = [SOLUTION_STATUS.ANALYZING, SOLUTION_STATUS.READY_FOR_ANALYSIS]
+      if (!valid.includes(status)){
+        return Promise.reject('anaysis not available for this solution status')
+      }
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject(error)
+    }
+  })
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
   try{
+    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.NEW_BAREMO)
+
     const solutionController = new SolutionController()
     const baremo = await solutionController.newBaremo(req.params.solutionId, req.resources.solution, req.user, req.utils)
     

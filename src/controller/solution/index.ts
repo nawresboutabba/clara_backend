@@ -99,7 +99,7 @@ export default class SolutionController extends Controller {
    /**
     * New baremo
     */
-   @Post('/:solutionId/baremo')
+   @Post('/:solutionId/baremo/group-validator')
   public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <any> {
     return newBaremo(solution, user, utils)
   }

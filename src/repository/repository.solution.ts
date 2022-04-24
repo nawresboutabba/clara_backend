@@ -26,6 +26,7 @@ import SolutionStateMachine from "../utils/state-machine/state-machine.solution"
 import BaremoService from "../services/Baremo.service";
 import RepositoryError from "../handle-error/error.repository";
 import { genericBaremoFilter } from "../utils/field-filters/baremo";
+import { BaremoResponse } from "../controller/baremo";
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
@@ -231,7 +232,7 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
   }
 }
 
-export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): Promise<any> => {
+export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): Promise<BaremoResponse> => {
   try{
     const date = getCurrentDate()
     const baremo = {
@@ -262,6 +263,30 @@ export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): P
   }catch(error){
     return Promise.reject(new RepositoryError(
       ERRORS.REPOSITORY.NEW_BAREMO,
+      HTTP_RESPONSE._500,
+      error
+    ))
+  }
+}
+
+/**
+ * Get current baremo for a solution X user. If not exist return undefined
+ * @param solution
+ * @param user 
+ * @returns 
+ */
+export const getCurrent = async (solution: SolutionI , user: UserI): Promise<BaremoResponse | void> => {
+  try{
+    const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(solution, user)
+    if (baremo){
+      const resp = genericBaremoFilter(baremo)
+      return resp
+    }
+    return undefined
+
+  }catch(error){
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.GET_BAREMO,
       HTTP_RESPONSE._500,
       error
     ))

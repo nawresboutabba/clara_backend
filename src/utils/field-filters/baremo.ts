@@ -8,6 +8,7 @@ export const genericBaremoFilter = async (baremo: BaremoI) : Promise<BaremoRespo
     const user = await lightUserFilter(baremo.user)
     const solution = await lightSolutionFilter (baremo.solution)
     return ({
+      baremo_id: baremo.baremoId,
       user,
       solution,
       created: baremo.created,

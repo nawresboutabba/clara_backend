@@ -86,8 +86,8 @@ export default class SolutionController extends Controller {
    * New comment endpoint
    */
    @Post('/:solutionId/comment')
-  public async newComment(@Path('solutionId') solutionId: string, @Body() comment: CommentBody,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() parent: CommentI): Promise<CommentResponse> {
-    return newSolutionComment(comment,solution, user, parent)
+  public async newComment(@Path('solutionId') solutionId: string, @Body() comment: CommentBody,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any): Promise<CommentResponse> {
+    return newSolutionComment(comment,solution, user, utils)
   }
   /**
    * Get Comment endpoint

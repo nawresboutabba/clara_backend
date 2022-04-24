@@ -109,6 +109,23 @@ router.post(
       }catch(error){
         return Promise.reject("parent validation")
       }
+    }),
+    body('tag', 'tag does not valid').custom(async (value, {req})=> {
+      try{
+        const tag = await TagService.getTagById(value)
+        if (!tag){
+          return Promise.reject('tag does not exist')
+        }
+        if(req.utils?.parentComment){
+          if(req.utils.parentComment.tag.tagId != value ){
+            return Promise.reject('tag parent and child does not same')
+          }
+        }
+        req.utils = {...req.utils , tagComment:tag}
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject(error)
+      }
     })
   ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try{
@@ -121,7 +138,7 @@ router.post(
         req.body, 
         req.resources.solution, 
         req.user,
-        req.utils?.parentComment
+        req.utils
       )
       
       res

@@ -40,6 +40,14 @@ const machine = {
       }
     },
     /**
+     * Solution ready for analysis
+     */
+    READY_FOR_ANALYSIS: {
+      analyze: function (){
+        this.changeState(SOLUTION_STATUS.ANALYZING);
+      }
+    },
+    /**
      * Challenge under committee analysis
      */
     ANALYZING: {

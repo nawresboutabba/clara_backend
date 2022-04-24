@@ -206,7 +206,7 @@ export const listChallengeProposal = async (query: QueryChallengeForm): Promise<
   }
 }
 
-export const newChallengeComment = async (challengeId: string, commentBody: CommentBody, user: UserI): Promise<CommentResponse> => {
+export const newChallengeComment = async (challengeId: string, commentBody: CommentBody, user: UserI, utils: any): Promise<CommentResponse> => {
   try {
     let insertedBy: UserI
     const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
@@ -232,6 +232,7 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
       type: INTERACTION.COMMENT,
       scope: commentBody.scope,
       comment: commentBody.comment,
+      tag: utils.tagComment,
       version: commentBody.version,
       date: getCurrentDate(),
       challenge,

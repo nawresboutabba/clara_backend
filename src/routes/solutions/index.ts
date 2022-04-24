@@ -536,7 +536,7 @@ router.post([
    */
   param('solutionId').custom(async (value, {req})=> {
     try{
-      const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(req.resource.solutino, req.user)
+      const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(req.resources.solution, req.user)
       if(baremo){
         return Promise.reject("this user has a baremo open for this solution")
       }

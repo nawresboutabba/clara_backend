@@ -3,6 +3,7 @@ import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
 export interface BaremoI {
+    baremoId: string,
     user: UserI
     solution: SolutionI,
     created: Date,
@@ -13,6 +14,7 @@ export interface BaremoI {
 }
 
 const baremo = new Schema({
+  baremoId: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'

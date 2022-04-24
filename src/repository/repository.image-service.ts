@@ -57,6 +57,12 @@ export const getSignedUrl = async (imageName: string): Promise<string> => {
 export const getArrayImageSignedUrl = async (imageNames: string[]): Promise<string[]> => {
   try {
     /**
+     * If imagesName is undefined
+     */
+    if(!imageNames){
+      return []
+    }
+    /**
      * Create promises to sign the urls.
      */
     const urlPromises = imageNames.map(url => {

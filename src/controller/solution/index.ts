@@ -5,8 +5,9 @@ import { CommentI } from '../../models/interaction.comment';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
+import { getCurrent, getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
+import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
 import { ConfigurationBody } from '../configuration';
@@ -100,7 +101,14 @@ export default class SolutionController extends Controller {
     * New baremo
     */
    @Post('/:solutionId/baremo/group-validator')
-  public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <any> {
+  public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <BaremoResponse> {
     return newBaremo(solution, user, utils)
   }
+  /**
+   * Get current Baremo for user X solution X version
+   */
+  @Get('/:solutionId/baremo/group-validator/current')
+   public async getCurrent(@Path('solutionId') solutionId: string, solution: SolutionI, @Inject() user: UserI):Promise <BaremoResponse | void> {
+     return getCurrent (solution, user)
+   }
 }

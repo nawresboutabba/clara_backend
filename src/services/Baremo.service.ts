@@ -2,6 +2,7 @@ import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import Baremo, { BaremoI } from "../models/baremo";
 import { SolutionI } from "../models/situation.solutions";
+import { UserI } from "../models/users";
 
 const BaremoService = {
   async newBaremo(baremo:BaremoI): Promise<BaremoI>{
@@ -32,6 +33,23 @@ const BaremoService = {
       )) 
     }
   },
+  async getCurrentBaremoByUserAndSolution (solution: SolutionI, user: UserI ): Promise<BaremoI> {
+    try{
+      const baremo = await Baremo.findOne({
+        solution: solution,
+        user:user
+      })
+        .populate('user')
+        .populate('solution')
+      return baremo
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_BAREMO,
+        HTTP_RESPONSE._500,
+        error
+      )) 
+    }
+  }
 }
 
 export default BaremoService;

@@ -41,6 +41,10 @@ export interface RequestMiddleware extends express.Request {
        */
       tags: TagI[],
       /**
+       * individual tag added for comments
+       */
+      tagComment: TagI,
+      /**
        * Is used when baremo intervention is created or updated. 
        * "SPECIALIST_INTERVENTION" | "TEAM_VALIDATOR"
        */

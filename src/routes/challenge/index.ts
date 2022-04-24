@@ -6,7 +6,7 @@ import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body, check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
@@ -21,6 +21,7 @@ import ConfigurationService from "../../services/Configuration.service";
 import { GroupValidatorI } from "../../models/group-validator";
 import { AreaI } from "../../models/organization.area";
 import TagService from "../../services/Tag.service";
+import CommentService from "../../services/Comment.service";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -552,15 +553,63 @@ router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
   }
 })
 
-router.post('/challenge/:challengeId/comment', [
+router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
   authentication,
   acl(
     RULES.CAN_VIEW_CHALLENGE
-  )
+  ),
+  body("author","author does not valid").custom(async (value, { req }) => {
+    try{
+      if(value != req.user.userId){
+        return Promise.reject()
+      }
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject()
+    }
+  }),
+  body('comment').isString().trim().escape(),
+  body('version', 'version can not be empty').notEmpty(),
+  body('scope').isIn([COMMENT_LEVEL.PUBLIC]),
+  body('parent').custom(async (value, { req }) => {
+    try{
+      if(value){
+        const parentComment = await CommentService.getComment(value)
+        if(!parentComment){
+          return Promise.reject("parent not found")
+        }
+        if(parentComment.parent) {
+          return Promise.reject("more that 2 levels of comments")
+        }
+        req.utils = {...req.utils , parentComment}
+      }
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject("parent validation")
+    }
+  }),
+  body('tag', 'tag does not valid').custom(async (value, {req})=> {
+    try{
+      const tag = await TagService.getTagById(value)
+      if (!tag){
+        return Promise.reject('tag does not exist')
+      }
+      if(req.utils?.parentComment){
+        if(req.utils.parentComment.tag.tagId != value ){
+          return Promise.reject('tag parent and child does not same')
+        }
+      }
+      req.utils = {...req.utils , tagComment:tag}
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject(error)
+    }
+  })
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     const challengeController = new ChallengeController()
-    const resp = await challengeController.newComment(req.params.challengeId, req.body, req.user)
+    // @TODO add comments rules
+    const resp = await challengeController.newComment(req.params.challengeId, req.body, req.user, req.utils)
     res
       .json(resp)
       .status(200)

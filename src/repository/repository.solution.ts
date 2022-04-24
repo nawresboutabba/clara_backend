@@ -180,13 +180,15 @@ export const listSolutions = async (query: QuerySolutionForm): Promise<LightSolu
   }
 }
 
-export const newSolutionComment = async (comment: CommentBody, solution: SolutionI, user: UserI, parent?:CommentI ): Promise<CommentResponse> => {
+export const newSolutionComment = async (comment: CommentBody, solution: SolutionI, user: UserI, utils: any): Promise<CommentResponse> => {
   try{
+    const parent = utils.parentComment
     let solutionComment: CommentI =  {
       commentId: nanoid(),
       insertedBy: user,
       author:user, 
       type:INTERACTION.COMMENT,
+      tag: utils.tagComment,
       scope: comment.scope,
       version: comment.version,
       comment: comment.comment,
@@ -194,7 +196,7 @@ export const newSolutionComment = async (comment: CommentBody, solution: Solutio
       solution, 
     }
     if (parent) {
-      solutionComment = {...solutionComment, parent}
+      solutionComment = {...solutionComment, parent }
     }
     const com  = await newComment(solutionComment)
     const resp = await genericCommentFilter(com)

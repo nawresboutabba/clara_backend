@@ -19,7 +19,7 @@ const BaremoService = {
   async getAllBaremosBySolution(solution: SolutionI): Promise<Array<BaremoI>> {
     try{
       const baremos = await Baremo.find({
-        solution: solution._id
+        solution: solution
       })
         .populate('solution')
         .populate('user')

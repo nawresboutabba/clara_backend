@@ -1,9 +1,9 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
-import SolutionService from "../services/Solution.service";
+import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
-import { COMMENT_LEVEL, INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import UserService from "../services/User.service";
@@ -23,6 +23,9 @@ import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";
 import BaremoStateMachine from "../utils/state-machine/state-machine.baremo";
 import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
+import BaremoService from "../services/Baremo.service";
+import RepositoryError from "../handle-error/error.repository";
+import { genericBaremoFilter } from "../utils/field-filters/baremo";
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
@@ -245,15 +248,23 @@ export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): P
     }
 
     if (solution.status == SOLUTION_STATUS.READY_FOR_ANALYSIS){
-      const updateSolution = {
+      const updateSolution : SolutionEditablesFields= {
         status : SolutionStateMachine.dispatch(solution.status , "analyze"),
-        startAnalysis : getCurrentDate()
+        startAnalysis : date,
       }
+      await SolutionService.updateSolutionPartially(solution, updateSolution)
     }
 
-    return baremo
+    const bar = await BaremoService.newBaremo(baremo)
+    const baremoFiltered = await genericBaremoFilter(bar)
+
+    return baremoFiltered
   }catch(error){
-    return Promise.reject(error)
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.NEW_BAREMO,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 

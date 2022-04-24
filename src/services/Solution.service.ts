@@ -7,11 +7,13 @@ import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { AreaI } from "../models/organization.area";
 
-export type editOneParams = {
-  title: string,
+export interface SolutionEditablesFields {
+  title?: string,
   description?: string,
   images?: Array<string>,
   departmentAffected?:Array<AreaI>,
+  status?: string,
+  startAnalysis?: Date,
   isPrivated?:boolean,
   WSALevelChosed?: string
 }
@@ -74,10 +76,10 @@ const SolutionService = {
         error))
     }
   },
-  async updateSolutionPartially (id: string, data: editOneParams): Promise<any> {
+  async updateSolutionPartially (solution: SolutionI, data: SolutionEditablesFields): Promise<any> {
     try{
-      const solution = await Solution.findOneAndUpdate({
-        solutionId: id
+      const resp = await Solution.findOneAndUpdate({
+        solution: solution
       },{
         ...data
       },{ 
@@ -91,7 +93,7 @@ const SolutionService = {
         .populate('team')
         .populate('insertedBy')
         .populate('areasAvailable')
-      return solution
+      return resp
     }catch(error){
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.UPDATE_SOLUTION,

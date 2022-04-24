@@ -103,6 +103,7 @@ const CommentService = {
         .populate('author')
         .populate('insertedBy')
         .populate('parent')
+        .populate('tag')
       return Promise.resolve(comment)
     }catch(error){
       return Promise.reject(new ServiceError(

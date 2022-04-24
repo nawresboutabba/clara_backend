@@ -27,10 +27,6 @@ export interface SolutionI extends SituationBaseI {
      */
     startAnalysis?: Date,
     /**
-     * Baremos relationated to Idea
-     */
-    baremos: BaremoI[]
-    /**
      * Evaluator that opened the idea for analysis. Is part of Team Validator
      */
     initialEvaluator?: UserI,
@@ -54,10 +50,6 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
   },
   proposedSolution: String,
   startAnalysis: Date,
-  baremos: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'Baremo' 
-  },
   initialEvaluator: { 
     type: Schema.Types.ObjectId, 
     ref: 'User' 

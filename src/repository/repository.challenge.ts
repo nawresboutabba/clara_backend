@@ -22,7 +22,7 @@ import { UserI } from "../models/users";
 import { newComment } from "./repository.comment";
 import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 import RepositoryError from "../handle-error/error.repository";
-import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
+import { ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
 import CommentService from "../services/Comment.service";
 import { ReactionBody, ReactionResponse } from "../controller/reaction";
 import ReactionService from "../services/Reaction.service";

@@ -35,6 +35,9 @@ const machine = {
      */
     this.state = newState;
   },
+  init() {
+    return this.state
+  }
 }
 
 const BaremoStateMachine = Object.create(machine, {

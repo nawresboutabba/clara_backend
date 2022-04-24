@@ -27,6 +27,7 @@ import BaremoService from "../services/Baremo.service";
 import RepositoryError from "../handle-error/error.repository";
 import { genericBaremoFilter } from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
+import { BaremoI } from "../models/baremo";
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
@@ -234,7 +235,8 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
 export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): Promise<BaremoResponse> => {
   try{
     const date = getCurrentDate()
-    const baremo = {
+    const baremo : BaremoI= {
+      baremoId: nanoid(),
       user,
       solution,
       created: date,

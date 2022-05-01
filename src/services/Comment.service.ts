@@ -28,6 +28,7 @@ const CommentService = {
       })
         .populate('author')
         .populate('insertedBy')
+        .populate('tag')
       return Promise.resolve(comments)
     }catch(error){
       return Promise.reject(new ServiceError(
@@ -37,7 +38,7 @@ const CommentService = {
       ))
     }
   },
-  async getChildsComments(comments: CommentI[]): Promise<any>{
+  async getChildrenComments(comments: CommentI[]): Promise<any>{
     try{
       const resp = await Comment.find({
         parent: {$in:comments }

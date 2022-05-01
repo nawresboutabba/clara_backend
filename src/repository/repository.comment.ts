@@ -22,14 +22,14 @@ export const getComments = async (filter: any ): Promise<any> => {
 
     const parentsFiltered = await genericArrayCommentFilter(parents)
 
-    const allChilds = await CommentService.getChildsComments(parents)
+    const allChildren = await CommentService.getChildrenComments(parents)
 
-    const allChildsFiltered = await genericArrayCommentFilter(allChilds)
+    const allChildrenFiltered = await genericArrayCommentFilter(allChildren)
 
     const complete = parentsFiltered.map(parent => {
-      const childs = allChildsFiltered.filter(child => 
+      const children = allChildrenFiltered.filter(child => 
         child?.parent?.comment_id == parent.comment_id)
-      return { ...parent, childs}
+      return { ...parent, children}
     })
 
     return complete

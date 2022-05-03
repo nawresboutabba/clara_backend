@@ -19,6 +19,10 @@ import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
 import TagService from "../../services/Tag.service";
 import BaremoService from "../../services/Baremo.service";
+import { BaremoI } from "../../models/baremo";
+import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
+
+
 
 router.get(
   URLS.SOLUTION.COMMENT,
@@ -576,6 +580,51 @@ router.post([
   }
 })
 
+router.put([
+  URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID,
+  URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_FINISH,
+  URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_REOPEN,
+],[
+  authentication,
+  acl(RULES.IS_BAREMO_CREATOR),
+  body('comment').notEmpty(),
+  /**
+   * Artificial attribute. Does not exist. Is used just for create the check operation
+   */
+  body('transition').custom(async(value, {req})=> {
+    try{
+      if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_FINISH.replace(':baremoId',req.params.baremoId)){
+        const status = BaremoStateMachine.dispatch(req.utils.baremo.status , "confirm")
+        req.body = {...req.body, status }
+      }else if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_REOPEN.replace(':baremoId',req.params.baremoId)) {
+        const status = BaremoStateMachine.dispatch(req.utils.baremo.status , "reopen")
+        req.body = {...req.body, status }
+      }
+      return Promise.resolve()
+    }catch(error){
+      return Promise.reject(error)
+    }
+  })
+  /**
+   * Add SOLUTION.STATUS = 'ANALYZING' condition
+   */
+], async (req: RequestMiddleware , res: ResponseMiddleware, next: NextFunction) => {
+  try {
+    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.NEW_BAREMO)
+    const solutionController = new SolutionController()
+    const baremo = await solutionController.editBaremo(req.params.baremoId, req.body, req.utils.baremo )
+    res
+      .json(baremo)
+      .status(200)
+      .send()
+  }catch(error){
+    next(error)
+  }
+})
+
+/**
+ * Get current Baremo for an user for solution. User is obtained from session
+ */
 router.get(URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR_CURRENT,[
   authentication,
   acl(RULES.IS_VALIDATOR_OF_SOLUTION),

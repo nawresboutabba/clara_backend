@@ -1,11 +1,12 @@
-import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject } from 'tsoa'
+import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject, Patch } from 'tsoa'
 import { RESOURCE } from '../../constants';
+import { BaremoI } from '../../models/baremo';
 import { ConfigurationBaseI } from '../../models/configuration.default';
 import { CommentI } from '../../models/interaction.comment';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { getCurrent, getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
+import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
@@ -111,4 +112,9 @@ export default class SolutionController extends Controller {
    public async getCurrent(@Path('solutionId') solutionId: string, solution: SolutionI, @Inject() user: UserI):Promise <BaremoResponse | void> {
      return getCurrent (solution, user)
    }
+
+  @Patch('/:solutionId/baremo/:baremoId')
+  public async editBaremo(@Path('baremoId') baremoId: string ,@Body() data: any, @Inject() baremo: any, ): Promise<BaremoI> {
+    return editBaremo(baremo, data)
+  }
 }

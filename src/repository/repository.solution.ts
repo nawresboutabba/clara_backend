@@ -294,6 +294,17 @@ export const getCurrent = async (solution: SolutionI , user: UserI): Promise<Bar
   }
 }
 
+
+export const editBaremo = async (baremo: BaremoI, data : any): Promise<any> => {
+  try{
+    data = {...data, updated: getCurrentDate()}
+    const result = await BaremoService.updateBaremo(baremo, data)
+    const res_filtered = await genericBaremoFilter(result)
+    return res_filtered
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
 const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {
   const configuration = {
     canShowDisagreement: challenge.canShowDisagreement,

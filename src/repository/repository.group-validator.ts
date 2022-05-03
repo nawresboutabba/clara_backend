@@ -14,6 +14,8 @@ import { LightSolutionResponse } from "../controller/solution";
 import { SolutionI } from "../models/situation.solutions";
 import BaremoService from "../services/Baremo.service";
 import { SOLUTION_STATUS } from "../constants";
+import { genericArrayBaremoFilter, genericBaremoFilter } from "../utils/field-filters/baremo";
+import { BaremoResponse } from "../controller/baremo";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,
@@ -142,6 +144,16 @@ export const getSolutionsLinked = async (query: any, groupValidator: GroupValida
       return queue
     }
   } catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const getBaremosLinkedToSolution = async (solution: SolutionI): Promise<BaremoResponse []> => {
+  try{
+    const baremos = await BaremoService.getAllBaremosBySolution(solution)
+    const resp = await genericArrayBaremoFilter(baremos)
+    return resp
+  }catch(error){
     return Promise.reject(error)
   }
 }

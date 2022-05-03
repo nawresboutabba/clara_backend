@@ -4,6 +4,8 @@ import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 import { SolutionI } from "../../models/situation.solutions";
 import SolutionService from "../../services/Solution.service";
 import * as _ from 'lodash'; 
+import { IntegrantStatusI } from "../../models/integrant";
+import { isCommitteMember } from "./function.is_committe_member";
 
 export async function CAN_VIEW_SOLUTION (req: RequestMiddleware) : Promise<void>{
   try{
@@ -18,6 +20,18 @@ export async function CAN_VIEW_SOLUTION (req: RequestMiddleware) : Promise<void>
       req.resources = {... req.resources, solution}
     }
     const user = req.user
+    /**
+     * Check if user is committe member. If user is committe member, then can view solution
+     */
+    const committe: IntegrantStatusI = await isCommitteMember(req.user)
+
+    if(committe.isActive){
+      return Promise.resolve()
+    }
+
+    /**
+     * If user is not committe member, then analysis continue
+     */
     if (user.externalUser){
       /**
         * Temporaly: Return error if a external User want to see a challenge

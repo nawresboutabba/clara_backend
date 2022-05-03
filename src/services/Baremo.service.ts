@@ -5,6 +5,22 @@ import { SolutionI } from "../models/situation.solutions";
 import { UserI } from "../models/users";
 
 const BaremoService = {
+  async getBaremoById (baremoId: string): Promise<BaremoI>{
+    try{
+      const baremo: BaremoI = await Baremo.findOne({
+        baremoId
+      })
+        .populate('solution')
+        .populate('user')
+      return baremo
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_BAREMO,
+        HTTP_RESPONSE._500,
+        error
+      )) 
+    }
+  },
   async newBaremo(baremo:BaremoI): Promise<BaremoI>{
     try{
       const resp = await Baremo.create(baremo)
@@ -45,6 +61,26 @@ const BaremoService = {
     }catch(error){
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.GET_BAREMO,
+        HTTP_RESPONSE._500,
+        error
+      )) 
+    }
+  },
+  async updateBaremo (baremo: BaremoI, update: any) : Promise<BaremoI> {
+    try{
+      const res = await Baremo.findOneAndUpdate({
+        _id : baremo
+      },{
+        ...update
+      },{ 
+        new: true
+      })
+        .populate('solution')
+        .populate('user')
+      return res
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.UPDATE_BAREMO,
         HTTP_RESPONSE._500,
         error
       )) 

@@ -10,6 +10,7 @@ import { IS_LEADER } from "../utils/acl/acl.is_leader";
 import { IS_PART_OF_GROUP_VALIDATOR } from "../utils/acl/acl.is_part_of_a_group_of_validators";
 import { IS_SOLUTION_CREATOR } from "../utils/acl/acl.is_solution_creator";
 import { IS_VALIDATOR_OF_SOLUTION } from "../utils/acl/acl.is_validator_of_solution";
+import { IS_BAREMO_CREATOR } from "../utils/acl/is_baremo_creator";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
 
 export function acl(rule:string){
@@ -51,6 +52,9 @@ export function acl(rule:string){
         break;
       case RULES.IS_VALIDATOR_OF_SOLUTION:
         await IS_VALIDATOR_OF_SOLUTION(req)
+        break;
+      case RULES.IS_BAREMO_CREATOR:
+        await IS_BAREMO_CREATOR(req)
         break;
       }
 

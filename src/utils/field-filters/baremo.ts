@@ -21,3 +21,21 @@ export const genericBaremoFilter = async (baremo: BaremoI) : Promise<BaremoRespo
     return Promise.reject(error)
   }
 }
+
+export const genericArrayBaremoFilter = async (baremos: BaremoI []) : Promise<BaremoResponse []> => {
+  try{
+    const arrayBaremo: Array<Promise<BaremoResponse>>= []
+    baremos.forEach(baremo => {
+      arrayBaremo.push(genericBaremoFilter(baremo))
+    })
+    return await Promise.all(arrayBaremo)
+      .then(result => {
+        return result
+      })
+      .catch(error=> {
+        return Promise.reject(error)
+      })  
+  }catch(error){
+    return Promise.reject(error)
+  }
+}

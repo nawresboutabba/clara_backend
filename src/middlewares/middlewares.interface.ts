@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { BaremoI } from '../models/baremo';
 import { ConfigurationDefaultI } from '../models/configuration.default';
 import { GroupValidatorI } from '../models/group-validator';
 import { CommentI } from '../models/interaction.comment';
@@ -48,7 +49,11 @@ export interface RequestMiddleware extends express.Request {
        * Is used when baremo intervention is created or updated. 
        * "SPECIALIST_INTERVENTION" | "TEAM_VALIDATOR"
        */
-      baremoType: string
+      baremoType: string,
+      /**
+       * Baremo Entity
+       */
+      baremo: BaremoI
     },
     timeZone?: string;
 }

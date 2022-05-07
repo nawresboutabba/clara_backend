@@ -92,7 +92,6 @@ router.get('/group-validator',[
  */
 router.get('/group-validator/solution',[
   authentication,
-  acl(RULES.CAN_VIEW_SOLUTION),
   acl(RULES.IS_PART_OF_GROUP_VALIDATOR),
   query('status').isIn([SOLUTION_STATUS.READY_FOR_ANALYSIS,SOLUTION_STATUS.ANALYZING])
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {

@@ -13,9 +13,13 @@ import { genericArraySolutionsFilter, lightSolutionFilter } from "../utils/field
 import { LightSolutionResponse } from "../controller/solution";
 import { SolutionI } from "../models/situation.solutions";
 import BaremoService from "../services/Baremo.service";
-import { SOLUTION_STATUS } from "../constants";
+import { BAREMO_STATUS, ERRORS, HTTP_RESPONSE, SOLUTION_STATUS } from "../constants";
 import { genericArrayBaremoFilter, genericBaremoFilter } from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
+import { BaremoI } from "../models/baremo";
+import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
+import { isDefaultForAdditionalPropertiesAllowed } from "tsoa";
+import RepositoryError from "../handle-error/error.repository";
 
 export interface GroupValidatorResponse {
     group_validator_id: string,
@@ -79,7 +83,7 @@ export const getAllGroupValidatorsDetails = async(): Promise<any> => {
  * Get Ideas for give a resolution. The idea status must be READY_FOR_ANALYSIS or ANALYZING.
  * For each case it is necessary to know:
  * - READY_FOR_ANALYSIS: teams_members that opened the idea for analysis
- * - ANALYZING: teams_members who already confirmed the final analysis
+ * - ANALYZING: teams_members who already confirmed the final analysis or did idea analysis opened
  * @param query 
  * @param groupValidator 
  * @returns 
@@ -115,36 +119,64 @@ export const getSolutionsLinked = async (query: any, groupValidator: GroupValida
       const baremos = await Promise.all(baremosPromises)
 
       /**
+       * Create idea-baremo dictionary: {'xxdsdsdsdsass': [Array of baremos]}
+       */
+      const baremoDictionary = baremos.reduce((dictionary, current)=> {
+        if (current.length > 0) {
+          const solutionId = current[0].solution.solutionId
+          dictionary[solutionId] = current
+          return dictionary
+        } 
+        return dictionary
+      },{})
+      /**
       * Compare baremos opened for validator team members. 
       */
       const chis = resp.map(idea => {
         /**
-         * Foreach idea get baremos relationated (from baremos array)
+         * Get baremos relationated to idea
          */
-        const baremosForIdea = baremos
-          .filter(baremo => baremo[0]?.solution?.solutionId == idea.solution_id)
-         
-        const usersWithBaremo = baremosForIdea[0]?.map(baremo => {return baremo.user.userId}) || []
+        const baremosForIdea:BaremoI[] = baremoDictionary[idea.solution_id]
+
+        /**
+         * Chech that exist baremos for this. Redundant
+         */
+        if(!baremosForIdea) {
+          return false
+        }
+        /**
+         * Check validators that did a baremo for this idea
+         */
+        const usersWithBaremo = baremosForIdea.map((baremo: BaremoI )=> {return baremo.user.userId})
  
         const calification = usersTeamMembers.map(user => {
           if(usersWithBaremo.includes(user.user_id)){
-            return {validator: user, done: true}
+
+            const baremoUser = baremosForIdea.filter(baremo => baremo.user.userId == user.user_id)[0]
+            
+            if (baremoUser.status == BAREMO_STATUS.ONGOING){
+              return {validator: user, done: false, status: BAREMO_STATUS.ONGOING}
+            }else {
+              return {validator: user, done: true, status: BAREMO_STATUS.CLOSED}
+            }
           }else {
             return {validator: user, done: false}
           }
         })
-       
         return ({
           ...idea,
           baremos: calification
         })
       })
-
       queue.queue = chis
       return queue
     }
   } catch(error){
-    return Promise.reject(error)
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.IDEA_ANALYSIS_LISTING,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 

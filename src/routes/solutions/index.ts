@@ -7,7 +7,7 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -23,7 +23,7 @@ import { BaremoI } from "../../models/baremo";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 
 
-
+  
 router.get(
   URLS.SOLUTION.COMMENT,
   [
@@ -153,7 +153,6 @@ router.post(
       next(error)
     }
   })
-
 
 router.post("/solution/default-configuration", [
   authentication,
@@ -639,6 +638,31 @@ router.get(URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR_CURRENT,[
   }catch(error){
     next(error)
   }
+});
+
+router.post('/solution/:solutionId/evaluation-note',[
+  authentication,
+  /**
+    * Check that validator can do this action
+    */
+  acl(RULES.IS_VALIDATOR_OF_SOLUTION),
+  body('title','title can not be empty').notEmpty(),
+  body('description', 'description can not be empty').notEmpty(),
+  body('type', 'type is not valid').isIn([EVALUATION_NOTE_ROLE.GROUP_VALIDATOR]),
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    const solutionController = new SolutionController()
+    const note = await solutionController.evaluationNote(req.params.solutionId, req.body, req.resources.solution, req.user)
+    res
+      .json(note)
+      .status(200)
+      .send()
+  
+  }catch(error){
+    next(error)
+  }
 })
+
+
 const solutionsRouter = router
 export default solutionsRouter;

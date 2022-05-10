@@ -28,7 +28,7 @@ const ChallengeProposalService = {
       ))
     }
   },
-  async listProposals(query: QueryChallengeForm): Promise<ChallengeProposalI[]> {
+  async listProposals(query: QueryChallengeForm): Promise<any> {
     try{
       const findQuery = {
         ..._.pickBy({

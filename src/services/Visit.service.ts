@@ -4,7 +4,7 @@ import { UserI } from "../models/users";
 import Visit ,{ VisitI }from "../models/visit";
 
 const VisitService = {
-  async getLastestVisitByUserId (user: UserI, query: any): Promise<VisitI[]> {
+  async getLastestVisitByUserId (user: UserI, query: any): Promise<any> {
     const lastestVisit = await Visit.find({
       user: user._id,
     })

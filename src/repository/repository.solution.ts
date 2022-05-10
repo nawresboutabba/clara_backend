@@ -1,6 +1,6 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
-import { LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
+import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
 import ChallengeService from "../services/Challenge.service";
 import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
@@ -28,6 +28,9 @@ import RepositoryError from "../handle-error/error.repository";
 import { genericBaremoFilter } from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
 import { BaremoI } from "../models/baremo";
+import { EvaluationNoteI } from "../models/evaluation-note";
+import EvaluationNoteService from "../services/EvaluationNote.service";
+import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
@@ -294,13 +297,33 @@ export const getCurrent = async (solution: SolutionI , user: UserI): Promise<Bar
   }
 }
 
-
 export const editBaremo = async (baremo: BaremoI, data : any): Promise<any> => {
   try{
     data = {...data, updated: getCurrentDate()}
     const result = await BaremoService.updateBaremo(baremo, data)
     const res_filtered = await genericBaremoFilter(result)
     return res_filtered
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const newEvaluationNote = async (data: any, solution: SolutionI, user: UserI): Promise<EvaluationNoteResponse> => {
+  try{
+    const date = getCurrentDate()
+    const evaluationNote : EvaluationNoteI= {
+      title: data.title,
+      description: data.description,
+      noteId: nanoid(),
+      type: data.type,
+      user,
+      solution,
+      created: date,
+      updated: date,
+    }
+    const note = await EvaluationNoteService.newEvaluationNote(evaluationNote)
+    const resp = await genericEvaluationNoteFilter(note)
+    return resp
   }catch(error){
     return Promise.reject(error)
   }

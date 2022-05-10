@@ -5,9 +5,9 @@ import { SolutionI } from "../models/situation.solutions";
 import { UserI } from "../models/users";
 
 const BaremoService = {
-  async getBaremoById (baremoId: string): Promise<BaremoI>{
+  async getBaremoById (baremoId: string): Promise<any>{
     try{
-      const baremo: BaremoI = await Baremo.findOne({
+      const baremo = await Baremo.findOne({
         baremoId
       })
         .populate('solution')
@@ -33,7 +33,7 @@ const BaremoService = {
       )) 
     }
   },
-  async getAllBaremosBySolution(solution: SolutionI): Promise<Array<BaremoI>> {
+  async getAllBaremosBySolution(solution: SolutionI): Promise<Array<any>> {
     try{
       const baremos = await Baremo.find({
         solution: solution

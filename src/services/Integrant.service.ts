@@ -6,7 +6,7 @@ import { IntegrantStatusI } from "../models/integrant";
 import { UserI } from "../models/users";
 
 const IntegrantService = {
-  async getIntegrantsOfGroupValidator(groupValidator: GroupValidatorI): Promise<IntegrantI[]> {
+  async getIntegrantsOfGroupValidator(groupValidator: GroupValidatorI): Promise<any> {
     try{
       const integrants = Integrant.find({
         groupValidator: groupValidator,
@@ -71,7 +71,7 @@ const IntegrantService = {
       }
     })
   },
-  async getAllIntegrantsListById(integrants: Array<string>): Promise<Array<IntegrantI>> {
+  async getAllIntegrantsListById(integrants: Array<string>): Promise<Array<any>> {
     return new Promise(async (resolve, reject) => {
       try {
         const integrantsResp = await Integrant.find({
@@ -236,8 +236,9 @@ const IntegrantService = {
         }, {
           lastChangePosition: currentData,
           role: COMMITTE_ROLE.LEADER
-        },
-                                                           { returnOriginal: false })
+        },{
+          returnOriginal: false 
+        })
           .populate('user')
         return resolve(integrant)
       } catch (error) {
@@ -250,7 +251,7 @@ const IntegrantService = {
       }
     })
   },
-  async currentLeader(): Promise<IntegrantI> {
+  async currentLeader(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const currentLeader = await Integrant.findOne({
@@ -269,7 +270,7 @@ const IntegrantService = {
       }
     })
   },
-  async abdicationLeader(currentData?: Date): Promise<IntegrantI> {
+  async abdicationLeader(currentData?: Date): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!currentData) {
@@ -295,7 +296,7 @@ const IntegrantService = {
       }
     })
   },
-  async getAllActiveMembers(): Promise<IntegrantI[]> {
+  async getAllActiveMembers(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const members = await Integrant.find({
@@ -315,7 +316,7 @@ const IntegrantService = {
       }
     })
   },
-  async getGeneralMembers(): Promise<Array<IntegrantI>> {
+  async getGeneralMembers(): Promise<Array<any>> {
     return new Promise((resolve, reject) => {
       try {
         const generalMembers = Integrant.find({

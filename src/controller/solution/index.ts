@@ -6,13 +6,14 @@ import { CommentI } from '../../models/interaction.comment';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newSolutionComment } from '../../repository/repository.solution';
+import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
 import { ConfigurationBody } from '../configuration';
 import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
+import { UserResponse } from '../users';
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
@@ -52,6 +53,17 @@ export interface LightSolutionResponse extends LightSituationResponse {
   proposed_solution: string,
   challenge_id?: string,
   challenge?: LightChallengeResponse,
+}
+
+
+export interface EvaluationNoteResponse {
+  note_id: string,
+  solution: LightSolutionResponse,
+  user: UserResponse,
+  title: string,
+  description:string,
+  created: Date,
+  updated: Date,
 }
 
 @Route('solution')
@@ -116,5 +128,12 @@ export default class SolutionController extends Controller {
   @Patch('/:solutionId/baremo/:baremoId')
   public async editBaremo(@Path('baremoId') baremoId: string ,@Body() data: any, @Inject() baremo: any, ): Promise<BaremoI> {
     return editBaremo(baremo, data)
+  }
+  /**
+   * Evaluation note insert
+   */
+   @Post('/:solutionId/evaluation-note')
+  public async evaluationNote(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() solution: SolutionI, @Inject() user: UserI ): Promise <EvaluationNoteResponse> {
+    return newEvaluationNote(data, solution, user)
   }
 }

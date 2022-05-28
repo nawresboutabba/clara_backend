@@ -1,12 +1,10 @@
-import { PARTICIPATION_MODE } from "../../constants";
+import { CHALLENGE_TYPE } from "../../constants";
 import { LightSolutionResponse, SolutionResponse } from "../../controller/solution";
-import { TeamResponse } from "../../controller/team";
 import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "./area";
 import { genericArrayTagsFilter } from "./tag";
-import { lightTeamFilter } from "./team";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async(solution: SolutionI ): Promise<SolutionResponse> => {  
@@ -46,13 +44,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     proposedSolution
   } = solution
 
-  let coauthor : UserResponse[]
-  let team : TeamResponse
-  if(solution.participationModeChosed == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP){
-    coauthor = await genericArrayUserFilter(solution.coauthor)
-  }else if (solution.participationModeChosed == PARTICIPATION_MODE.TEAM){
-    team = await lightTeamFilter(solution.team)
-  }
+  const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
+
   const author = await genericUserFilter(solution.author)
   const inserted_by = await genericUserFilter(solution.insertedBy)
   const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
@@ -63,10 +56,9 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     inserted_by,
     author,
     coauthor,
-    team,
     active,
     solution_id:solutionId,
-    challenge_id:challengeId,
+    challenge_id: solution.challenge.type == CHALLENGE_TYPE.PARTICULAR? challengeId : undefined,
     created,
     status,
     updated,

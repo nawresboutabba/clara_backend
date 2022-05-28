@@ -31,9 +31,16 @@ import { GroupValidatorResponse } from '../../repository/repository.group-valida
  */
 export interface ChallengeBody extends SituationBody {
   /**
+   * GENERIC | PARTICULAR
+   */
+  type: string
+  /**
    * author is required for a challenge creation
    */
   author: string,
+  /**
+   * Challenge is strategic?
+   */
   is_strategic: boolean,
   /**
    * Required for challenge
@@ -108,8 +115,8 @@ export default class ChallengeController extends Controller {
    }
 
   @Post(':challengeId/solution')
-  public async newSolution(@Body() body: SolutionBody, @Inject() user: UserI, @Path('challengeId') challengeId: string, @Inject() utils: any): Promise<SolutionResponse> {
-    return newSolution(body, user, utils, challengeId)
+  public async newSolution(@Body() body: SolutionBody, @Inject() user: UserI, @Path('challengeId') challengeId: string, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
+    return newSolution(body, user, utils, challenge)
   }
   /**
    * Challenge listing

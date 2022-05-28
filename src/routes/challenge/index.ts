@@ -6,7 +6,7 @@ import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body, check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
@@ -18,10 +18,10 @@ import { isCompositionUsersValid } from "../../utils/configuration-rules/partici
 import UserService from "../../services/User.service";
 import TeamService from "../../services/Team.service";
 import ConfigurationService from "../../services/Configuration.service";
-import { GroupValidatorI } from "../../models/group-validator";
 import { AreaI } from "../../models/organization.area";
 import TagService from "../../services/Tag.service";
 import CommentService from "../../services/Comment.service";
+import ChallengeService from "../../services/Challenge.service";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -138,6 +138,25 @@ router.post(
     acl(
       RULES.CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL
     ),
+    body("type").isIn([CHALLENGE_TYPE.GENERIC, CHALLENGE_TYPE.PARTICULAR]),
+    /**
+     * Just can exist one generic challenge
+     */
+    body("type").custom(async (value): Promise<void>=> {
+      try{
+        if (CHALLENGE_TYPE.PARTICULAR == value){
+          return Promise.resolve()
+        }
+        const genericChallenge = await ChallengeService.getGenericChallenge()
+
+        if(genericChallenge) {
+          return Promise.reject("generic challenge that exist")
+        }
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject("generic challenge that exist")
+      }
+    }),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
@@ -167,30 +186,35 @@ router.post(
         return Promise.reject("tags does not valid")
       }
     }),
-    body("group_validator", "group_validator invalid").custom((value: string, { req }): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        GroupValidatorService
-          .getGroupValidatorById(req.body.group_validator)
-          .then((groupValidator: GroupValidatorI) => {
-            if (groupValidator) {
-              req.utils = groupValidator
-              return resolve()
-            }
-          })
-          .catch(error => {
-            return reject(error)
-          })
-      })
+    body("group_validator").custom((value: string, { req }): Promise<void> => {
+      try{
+        const groupValidator = GroupValidatorService.getGroupValidatorById(value)
+        if(groupValidator){
+          req.utils = {groupValidator, ...req.utils}
+          return Promise.resolve()
+        }
+        return Promise.reject("Group Validator that not exist")
+      }catch(error){
+        return Promise.reject("Group Validator that not exist")        
+      }
     }),
     body("is_strategic", "is_strategic invalid").notEmpty().escape().isIn([true, false]),
-    body("finalization", "finalization invalid").notEmpty(),
+    body("finalization").notEmpty(),
+    /**
+     * Check that finalization date is in the future
+     */
     body("finalization").custom((value: Date): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        if (toISOData(value) > getCurrentDate()) {
-          return resolve()
+      try{
+        const currentDate = toISOData(getCurrentDate())
+        const finalizationData = toISOData(value)
+
+        if (finalizationData> currentDate) {
+          return Promise.resolve()
         }
-        return reject("Date does not valid. Finalization must be greater than current date")
-      })
+        return Promise.reject("Date does not valid. Finalization must be greater than current date")
+      }catch(error){
+        return Promise.reject("Date does not valid. Finalization must be greater than current date")
+      }
     }),
     /**
      * Checking the configuration of allowed solutions.
@@ -202,16 +226,19 @@ router.post(
     body("is_privated", "is_privated invalid").notEmpty().escape().isIn([true, false]),
 
     body("can_choose_WSALevel", "can_choose_WSALevel invalid").notEmpty().escape().isIn([true, false]),
+    body("WSALevel_available").notEmpty(),
     body("WSALevel_available", "WSALevel_available invalid").custom((value: string[], { req }): Promise<void> => {
-      return new Promise((resolve, reject) => {
+      try{
         const WSALevel: string[] = _.sortedUniq(value)
         WSALevel.forEach(value => {
           if (![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)) {
-            return reject("WSALevel_available invalid")
+            return Promise.reject("WSALevel_available invalid")
           }
         })
-        return resolve()
-      })
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject("WSALevel_available invalid")
+      }
     }),
     body("WSALevel_chosed", "WSALevel_chosed invalid").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
 
@@ -380,7 +407,7 @@ router.post(
 
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_SOLUTION)
       const challengeController = new ChallengeController();
-      const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId, req.utils)
+      const solution = await challengeController.newSolution(req.body, req.user, req.params.challengeId, req.utils, req.resources.challenge)
       res
         .status(200)
         .json(solution)

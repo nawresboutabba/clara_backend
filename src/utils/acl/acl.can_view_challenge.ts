@@ -21,7 +21,7 @@ export async function CAN_VIEW_CHALLENGE(req: RequestMiddleware): Promise<void> 
       const challenge: ChallengeI = await ChallengeService.getChallengeActiveById(req.params.challengeId, req.user)
       if (challenge == null) {
         return Promise.reject(new RoutingError(
-          ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
+          ERRORS.ROUTING.CHALLENGE_DOES_NOT_EXIST,
           HTTP_RESPONSE._500
         ))
       }

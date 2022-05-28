@@ -2,17 +2,14 @@ import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
-import ChallengeService from "../services/Challenge.service";
-import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, PARTICIPATION_MODE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
-import UserService from "../services/User.service";
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { newTeam } from "./repository.team"
 import { TeamI } from "../models/team";
 import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation } from "./repository.invitation";
-import ConfigurationService from "../services/Configuration.service";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
@@ -33,36 +30,24 @@ import EvaluationNoteService from "../services/EvaluationNote.service";
 import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 
 
-export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challengeId?: string): Promise<SolutionResponse> => {
+export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challenge: ChallengeI): Promise<SolutionResponse> => {
   try {
     const guests = utils.guests
-    const insertedBy = await UserService.getUserActiveByUserId(user.userId)
+    const insertedBy = user
     /**
       * Solution have to have setted `author` or `team`.
       * If both are undefined or null, then throw error
       */
     const creator = utils.creator
 
-    let challenge: ChallengeI
-    if (challengeId) {
-      challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
-    }
     const created = getCurrentDate();
 
-    let configuration: ConfigurationSettingI
-    if (challengeId) {
-      configuration = getConfigurationFromChallenge(body, challenge)
-    } else {
-      const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
-      configuration = getConfigurationFromDefaultSolution(body, defaultSolutionConfiguration)
-    }
-    /**
-      * If the challenge's solution, 
-      * then title and description is the same that challenge. 
-      */
-    const title = challengeId ? challenge.title : body.title
-    const description = challengeId ? challenge.description : body.description
-    const groupValidator = challengeId ? challenge.groupValidator : undefined
+
+    const configuration: ConfigurationSettingI = getConfigurationFromChallenge(body, challenge)
+
+    const title = challenge.type == CHALLENGE_TYPE.GENERIC ? body.title: challenge.title
+    const description = challenge.type == CHALLENGE_TYPE.GENERIC ? body.description : challenge.description
+    const groupValidator = challenge.type == CHALLENGE_TYPE.GENERIC ? undefined : challenge.groupValidator
 
     const data: SolutionI = {
       insertedBy,
@@ -73,12 +58,12 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       author: creator,
       solutionId: nanoid(),
       title,
-      challengeId,
+      challengeId: challenge.challengeId,
       challenge,
       description: description,
       departmentAffected: utils.departmentAffected,
       created: created,
-      tags: challengeId? challenge.tags: utils.tags,
+      tags: challenge.type == CHALLENGE_TYPE.GENERIC ? utils.tags: challenge.tags,
       active: true,
       updated: created,
       status: SOLUTION_STATUS.DRAFT,
@@ -90,10 +75,10 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
       version: 1,
       ...configuration,
     }
-    if (challengeId && data.WSALevelChosed == WSALEVEL.AREA) {
-      data.areasAvailable = challenge.areasAvailable
-    } else if (body.WSALevel_chosed == WSALEVEL.AREA) {
+    if (challenge.type == CHALLENGE_TYPE.GENERIC && data.WSALevelChosed == WSALEVEL.AREA) {
       data.areasAvailable = utils.areas_available
+    } else if (body.WSALevel_chosed == WSALEVEL.AREA) {
+      data.areasAvailable = challenge.areasAvailable
     }
 
     /**
@@ -358,45 +343,6 @@ const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI
     timeIdeaFix: challenge.timeIdeaFix,
     externalContributionAvailableForGenerators: challenge.externalContributionAvailableForGenerators,
     externalContributionAvailableForCommittee: challenge.externalContributionAvailableForCommittee,
-  }
-  return configuration
-}
-
-const getConfigurationFromDefaultSolution = (body: SolutionBody, defaultSolutionConfiguration: any): ConfigurationSettingI => {
-  const configuration = {
-    canShowDisagreement: defaultSolutionConfiguration.canShowDisagreement,
-    canFixDisapprovedIdea: defaultSolutionConfiguration.canFixDisapprovedIdea,
-    canChooseScope: defaultSolutionConfiguration.canChooseScope,
-    /**
-     * attribute that can be set by the person responsible 
-     * for the solution or the committee, 
-     * depending on the permission granted
-     */
-    isPrivated: defaultSolutionConfiguration.canChooseScope == true ? body.is_privated : defaultSolutionConfiguration.isPrivated,
-    canChooseWSALevel: defaultSolutionConfiguration.canChooseWSALevel,
-    WSALevelAvailable: defaultSolutionConfiguration.WSALevelAvailable,
-    /**
-     * attribute that can be set by the person responsible 
-     * for the solution or the committee, 
-     * depending on the permission granted
-     */
-    WSALevelChosed: defaultSolutionConfiguration.canChooseWSALevel == true ? body.WSALevel_chosed : defaultSolutionConfiguration.WSALevel_chosed,
-    communityCanSeeReactions: defaultSolutionConfiguration.communityCanSeeReactions,
-    minimumLikes: defaultSolutionConfiguration.minimumLikes,
-    maximumDontUnderstand: defaultSolutionConfiguration.maximumDontUnderstand,
-    reactionFilter: defaultSolutionConfiguration.reactionFilter,
-    participationModeAvailable: defaultSolutionConfiguration.participationModeAvailable,
-    /**
-     * attribute that can be set by the person responsible 
-     * for the solution or the committee, 
-     * depending on the permission granted
-     */
-    participationModeChosed: defaultSolutionConfiguration.participationModeAvailable.includes(body.participation.chosed_mode) == true ? body.participation.chosed_mode : defaultSolutionConfiguration.participationModeChosed,
-    timeInPark: defaultSolutionConfiguration.timeInPark,
-    timeExpertFeedback: defaultSolutionConfiguration.timeExpertFeedback,
-    timeIdeaFix: defaultSolutionConfiguration.timeIdeaFix,
-    externalContributionAvailableForGenerators: defaultSolutionConfiguration.externalContributionAvailableForGenerators,
-    externalContributionAvailableForCommittee: defaultSolutionConfiguration.externalContributionAvailableForCommittee,
   }
   return configuration
 }

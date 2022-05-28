@@ -3,6 +3,7 @@ import { RESOURCE } from '../../constants';
 import { BaremoI } from '../../models/baremo';
 import { ConfigurationBaseI } from '../../models/configuration.default';
 import { CommentI } from '../../models/interaction.comment';
+import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
@@ -68,9 +69,19 @@ export interface EvaluationNoteResponse {
 
 @Route('solution')
 export default class SolutionController extends Controller {
+
+  /**
+   * Add new solution. It´s associated to Free challenge
+   * @param body 
+   * @param user 
+   * @param utils 
+   * @param challenge 
+   * @returns 
+   */
+
   @Post()
-  public async newSolution(@Body() body: SolutionBody, @Request() user: UserI, @Inject() utils: any): Promise<SolutionResponse> {
-    return newSolution(body, user, utils)
+  public async newSolution(@Body() body: SolutionBody, @Request() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
+    return newSolution(body, user, utils, challenge)
   }
   
   @Delete(':solutionId')

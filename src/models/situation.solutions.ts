@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import { BaremoI } from './baremo';
 import SituationBase, {  SituationBaseI} from './situation.base';
 import { ChallengeI } from './situation.challenges';
 import { UserI } from './users';
@@ -12,12 +11,12 @@ export interface SolutionI extends SituationBaseI {
     /**
      * Id Challenge associated to solution.
      */
-    challengeId?: string
+    challengeId: string
     /**
      *  Challenge Object. challengeId refer to challenge attribute. 
      * The redundace is for performance lookup (for example Solutions with a particular challengeId)
      */
-    challenge?: ChallengeI,
+    challenge: ChallengeI,
     /**
      * Solution description
      */

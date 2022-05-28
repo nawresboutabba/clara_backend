@@ -3,7 +3,7 @@ import { startSession } from 'mongoose';
 import HistoricalChallenge from "../models/historical-challenges";
 import * as _ from 'lodash';
 import ServiceError from "../handle-error/error.service";
-import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { CHALLENGE_TYPE, ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 import { UserI } from "../models/users";
 
@@ -282,6 +282,23 @@ const ChallengeService = {
         error
       ))
     }
+  },
+  async getGenericChallenge(): Promise<any> {
+    try{
+      const genericChallenge = await Challenge.findOne({
+        type : CHALLENGE_TYPE.GENERIC
+      })
+      return genericChallenge
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.GET_GENERIC_CHALLENGE,
+        HTTP_RESPONSE._500,
+        error
+      ))
+    }
+
+
+
   }
 }
 

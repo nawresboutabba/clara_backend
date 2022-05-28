@@ -5,6 +5,11 @@ import SituationBase, { SituationBaseI } from './situation.base';
 
 export interface ChallengeI extends SituationBaseI {
   /**
+   * GENERIC | PARTICULAR . Generic challenge is created for group ideas free. 
+   * Exist just one GENERIC CHALLENGE
+   */
+  type: string, 
+  /**
    * Id that uniquely identifies a challenge
    */
   challengeId: string,
@@ -23,6 +28,7 @@ export interface ChallengeI extends SituationBaseI {
 }
 
 export const challengeModel = {
+  type: String,
   challengeId: String,
   isStrategic: Boolean,
   finalization: Date,

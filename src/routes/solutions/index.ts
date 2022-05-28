@@ -21,6 +21,7 @@ import TagService from "../../services/Tag.service";
 import BaremoService from "../../services/Baremo.service";
 import { BaremoI } from "../../models/baremo";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
+import ChallengeService from "../../services/Challenge.service";
 
 
   
@@ -154,75 +155,28 @@ router.post(
     }
   })
 
-router.post("/solution/default-configuration", [
-  authentication,
-  acl(RULES.IS_LEADER),
-  body("can_show_disagreement").isBoolean(),
-  body("disagreement_default").isBoolean(),
-  body("can_fix_desapproved_idea").isBoolean(),
-  body("can_choose_scope").isBoolean(),
-  body("is_private_default").isBoolean(),
-  body("can_choose_WSALevel").isBoolean(),
-  body("WSALevel_available", "WSALevel_available invalid").custom(async (value: string[]): Promise<void> => {
-    const WSALevel: string[] = _.sortedUniq(value)
-    WSALevel.forEach(value => {
-      if (![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)) {
-        return Promise.reject("WSALevel_available invalid")
-      }
-    })
-    return Promise.resolve()
-  }),
-  body("WSALevel_default").isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
-  body("community_can_see_reactions").isBoolean(),
-  body("maximun_dont_understand").isInt({ min: 0 }),
-  body("minimun_likes").isInt({ min: 0 }),
-  body("reaction_filter").notEmpty().isBoolean(),
-  body("external_contribution_available_for_generators").isBoolean(),
-  body("external_contribution_available_for_committee").isBoolean(),
-  body("participation_mode_available", 'participation_mode_available invalid').custom(async (value: string[]): Promise<void> => {
-    const participationModeAvailable: string[] = _.sortedUniq(value)
-    participationModeAvailable.forEach(value => {
-      if (![PARTICIPATION_MODE.TEAM, PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP].includes(value)) {
-        return Promise.reject("participation_mode_available invalid")
-      }
-    })
-    return Promise.resolve()
-  }),
-  body("time_in_park").isInt(),
-  body("time_expert_feedback").isInt(),
-  body("time_idea_fix").isInt(),
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-    const solutionController = new SolutionController()
-    const solutionConfiguration = await solutionController.setSolutionDefaultConfiguration(req.body)
-    res
-      .json(solutionConfiguration)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
-  }
-})
-
 router.post(
   URLS.SOLUTION.SOLUTION,
   [
     authentication,
     /**
-     * Check that default configuration is set
+     * This item that not exist in request. "generic_challenge_exist" is validation wich the
+     * goal is check that generic challenge was created, Remember that ideas free are associated
+     * to GENERIC CHALLENGE
      */
-    body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
-      try {
-        const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
-        if (!defaultSolutionConfiguration) {
-          return Promise.reject(ERRORS.ROUTING.DEFAULT_CONFIGURATION_NOT_FOUND)
+    body("generic_challenge_exist").custom(async (value: any, { req }): Promise<void>=> {
+      try{
+        const challenge = await ChallengeService.getGenericChallenge()
+        if (challenge){
+          req.resources  = {challenge, ...req.resource}
+          return Promise.resolve()
         }
-        req.utils = { defaultSolutionConfiguration, ...req.utils }
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
+        return Promise.reject()
+      }catch(error){
+        return Promise.reject()
       }
     }),
+
     /**
      * Challenge situation description
      */
@@ -267,11 +221,11 @@ router.post(
         /**
          * Check that user can choose WSALevel, otherwise ignore decision. 
          */
-        if (req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
+        if (req.resources.challenge.canChooseWSALevel) {
           /**
            * If user can choose WSALevel, check that WSALevel is valid.
            */
-          if (!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)) {
+          if (!req.resources.challenge.WSALevel_available.includes(value)) {
             return Promise.reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
           }
           /**
@@ -307,7 +261,7 @@ router.post(
         /**
          * Check that participation chosed by user is available
          */
-        if (req.utils.defaultSolutionConfiguration.participationModeAvailable.includes(value)) {
+        if (req.resources.challenge.participationModeAvailable.includes(value)) {
           return Promise.resolve()
         }
         return Promise.reject("participation.chosed_mode invalid")
@@ -362,7 +316,7 @@ router.post(
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_SOLUTION)
 
       const solutionController = new SolutionController()
-      const solution = await solutionController.newSolution(req.body, req.user, req.utils)
+      const solution = await solutionController.newSolution(req.body, req.user, req.utils, req.resources.challenge)
       res
         .status(200)
         .json(solution)
@@ -466,11 +420,11 @@ router.patch(
         /**
        * Check that user can choose WSALevel, otherwise ignore decision. 
        */
-        if (req.utils.defaultSolutionConfiguration.canChooseWSALevel) {
+        if (req.resources.challenge.canChooseWSALevel) {
           /**
          * If user can choose WSALevel, check that WSALevel is valid.
          */
-          if (!req.utils.defaultSolutionConfiguration.WSALevel_available.includes(value)) {
+          if (!req.resources.challenge.WSALevel_available.includes(value)) {
             return Promise.reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
           }
           return Promise.resolve()

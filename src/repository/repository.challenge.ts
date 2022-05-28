@@ -51,7 +51,11 @@ export const newChallenge = async (body: ChallengeBody, user: UserI, utils: any)
     const resp = await genericChallengeFilter(challenge)
     return resp
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.NEW_CHALLENGE,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 
@@ -84,13 +88,14 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
       author: authorEntity,
       created,
       challengeId: nanoid(),
+      type: body.type,
       title: body.title,
       description: body.description,
       bannerImage: body.banner_image,
       images: body.images,
       tags: utils.tags,
       groupValidator,
-      status: SolutionStateMachine.ready(),
+      status: SolutionStateMachine.init(),
       active: true,
       fileComplementary: body.file_complementary,
       isStrategic: body.is_strategic,
@@ -127,7 +132,11 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
 
     return data
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.NEW_CHALLENGE,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 

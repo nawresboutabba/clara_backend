@@ -34,6 +34,7 @@ const SolutionService = {
         .populate('insertedBy')
         .populate('areasAvailable')
         .populate('groupValidator')
+        .populate('tags')
       return solution
     }catch(error){
       return Promise.reject(new ServiceError(
@@ -136,6 +137,7 @@ const SolutionService = {
         .populate('author')
         .populate('coauthor')
         .populate('groupValidator')
+        .populate('challenge')
       return solutions
     }catch(error){
       return Promise.reject( new ServiceError(

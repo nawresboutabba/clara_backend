@@ -4,6 +4,7 @@ import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "./area";
+import { lightChallengeFilter } from "./challenge";
 import { genericArrayTagsFilter } from "./tag";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
@@ -51,6 +52,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
   const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
   const departmentAffected = await genericArrayAreaFilter(solution.departmentAffected)
   const tags = await genericArrayTagsFilter(solution.tags)
+  const challenge = await lightChallengeFilter(solution.challenge)
+
 
   return {
     inserted_by,
@@ -59,6 +62,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     active,
     solution_id:solutionId,
     challenge_id: solution.challenge.type == CHALLENGE_TYPE.PARTICULAR? challengeId : undefined,
+    challenge,
     created,
     status,
     updated,
@@ -103,9 +107,10 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
   const inserted_by = await genericUserFilter(solution.insertedBy)
 
   const challenge = {
-    challenge_id: solution.challenge?.challengeId,
-    title: solution.challenge?.title,
-    description: solution.challenge?.description,
+    type: solution.challenge.type,
+    challenge_id: solution.challenge.challengeId,
+    title: solution.challenge.title,
+    description: solution.challenge.description,
   }
 
 

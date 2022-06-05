@@ -6,7 +6,7 @@ import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 const { validationResult, body, check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
@@ -176,7 +176,11 @@ router.post(
     body("tags").isArray(),
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
       try{
-        const tags = await TagService.getTagsById(value)
+        const query = {
+          tagId: { $in: value },
+          type: TAG_ORIGIN.CHALLENGE
+        }
+        const tags = await TagService.getTagsByQuery(query)
         if (tags.length == value.length) {
           req.utils = { tags, ...req.utils }
           return Promise.resolve()

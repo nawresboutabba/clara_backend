@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import { getCurrentDate } from "../utils/date";
 import { TagI } from "../models/tag";
 import { genericArrayTagsFilter, genericTagFilter } from "../utils/field-filters/tag";
+import { UserI } from "../models/users";
+import { TAG_ORIGIN, URLS } from "../constants";
 
 const handler = {
   get(target, prop) {
@@ -20,13 +22,13 @@ const handler = {
 };
 
 
-
-export const newTag = async (tagBody: TagBody) : Promise<TagResponse> => {
+export const newTag = async (tagBody: TagBody, user: UserI) : Promise<TagResponse> => {
   try{
     const tag : TagI= {
       ...tagBody,
       created: getCurrentDate(),
-      tagId: nanoid()
+      tagId: nanoid(),
+      creator: user
     }
     const newTag = await TagService.newTag(tag)
     const resp = await genericTagFilter(newTag)
@@ -36,14 +38,31 @@ export const newTag = async (tagBody: TagBody) : Promise<TagResponse> => {
   }
 }
 
-export const getTags = async (query: any): Promise<TagResponse[]> => {
+export const getTags = async (query: any, url:string): Promise<TagResponse[]> => {
   try{
+
+    let tag_type: string
+
+    switch(url){
+    case URLS.TAG.CHALLENGE:
+      tag_type = TAG_ORIGIN.CHALLENGE
+      break;
+    case URLS.TAG.COMMENT:
+      tag_type = undefined
+      break;
+    case URLS.TAG.IDEA:
+      tag_type = TAG_ORIGIN.IDEA
+      break;
+    default:
+      return Promise.reject()
+    }
 
     const queryCleaned = new Proxy(query, handler);
     const mongooseQuery = {..._.pickBy({
       name:{
         $regex : `(?i).*${queryCleaned.name}.*`, 
-      }
+      },
+      type: tag_type
     }, _.identity),
     }
     const tags = await TagService.getTagsByQuery(mongooseQuery)

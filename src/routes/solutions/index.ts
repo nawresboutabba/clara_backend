@@ -7,7 +7,7 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -19,7 +19,6 @@ import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
 import TagService from "../../services/Tag.service";
 import BaremoService from "../../services/Baremo.service";
-import { BaremoI } from "../../models/baremo";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
 
@@ -187,7 +186,12 @@ router.post(
     body("tags").isArray(),
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
       try{
-        const tags = await TagService.getTagsById(value)
+        const query = {
+          tagId: { $in: value },
+          type: TAG_ORIGIN.IDEA
+        }
+        const tags = await TagService.getTagsByQuery(query)
+
         if (tags.length == value.length) {
           req.utils = { tags, ...req.utils }
           return Promise.resolve()

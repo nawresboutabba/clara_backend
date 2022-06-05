@@ -2,6 +2,7 @@ import { NextFunction } from "express";
 import { RULES, OWNER } from "../constants";
 import { CAN_EDIT_SOLUTION } from "../utils/acl/acl.can_edit_solution";
 import { CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL } from "../utils/acl/acl.can_insert_challenge_or_challenge_proposal";
+import { CAN_INSERT_TAG } from "../utils/acl/acl.can_insert_tag";
 import { CAN_VIEW_CHALLENGE } from "../utils/acl/acl.can_view_challenge";
 import { CAN_VIEW_SOLUTION } from "../utils/acl/acl.can_view_solution";
 import { IS_ADMIN } from "../utils/acl/acl.is_admin";
@@ -17,8 +18,8 @@ export function acl(rule:string){
   return async function (req:RequestMiddleware, res:ResponseMiddleware, next: NextFunction){
     try{
       /**
-             * Admin Role has full Access.Same function in IS_ADMIN (case situation)
-             */
+        * Admin Role has full Access.Same function in IS_ADMIN (case situation)
+        */
       if(req.user.email === OWNER){
         return next()
       }
@@ -55,6 +56,9 @@ export function acl(rule:string){
         break;
       case RULES.IS_BAREMO_CREATOR:
         await IS_BAREMO_CREATOR(req)
+        break;
+      case RULES.CAN_INSERT_TAG:
+        await CAN_INSERT_TAG(req)
         break;
       }
 

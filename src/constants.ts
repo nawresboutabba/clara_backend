@@ -25,7 +25,11 @@ export const URLS = {
   VISIT:{
     LATEST: '/visit/latest',
   },
-  TAG:'/tag'
+  TAG: {
+    COMMENT: '/tag/comment',
+    IDEA: '/tag/idea',
+    CHALLENGE: '/tag/challenge'
+  }
 }
 
 export const SOLUTION_STATUS = {
@@ -55,6 +59,12 @@ export const FAKE_GENERATOR = {
   userName : 'hasb',
   email:'sarquisboutroshector@gmail.com',
   role: 'GENERATOR'
+}
+
+export const TAG_ORIGIN = {
+  IDEA: 'IDEA',
+  CHALLENGE: 'CHALLENGE',
+  COMMENT: 'COMMENT'
 }
 
 export const HTTP_RESPONSE = {
@@ -249,6 +259,7 @@ export const COMMENT_LEVEL = {
 export const RULES = {
   CAN_EDIT_SOLUTION: "CAN_EDIT_SOLUTION",
   CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL: "CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL",
+  CAN_INSERT_TAG: 'CAN_INSERT_TAG',
   CAN_VIEW_CHALLENGE: "CAN_VIEW_CHALLENGE",
   CAN_VIEW_SOLUTION: "CAN_VIEW_SOLUTION",
   IS_ADMIN:"IS_ADMIN",

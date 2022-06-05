@@ -1,5 +1,5 @@
 import * as express from "express";
-import { ERRORS, RULES, URLS } from "../../constants";
+import { ERRORS, RULES, TAG_ORIGIN, URLS } from "../../constants";
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import authentication from "../../middlewares/authentication";
@@ -10,12 +10,16 @@ import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.er
 import TagService from "../../services/Tag.service";
 const router = express.Router();
 
-router.get(URLS.TAG, [
+router.get([
+  URLS.TAG.COMMENT,
+  URLS.TAG.CHALLENGE,
+  URLS.TAG.IDEA
+], [
   authentication,
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try{
     const tagController = new TagController ()
-    const tags = await tagController.getTags(req.query)
+    const tags = await tagController.getTags(req.query, req.url)
     res
       .json(tags)
       .status(200)
@@ -25,14 +29,23 @@ router.get(URLS.TAG, [
   }
 })
 
-router.post(URLS.TAG, [
+router.post([
+  URLS.TAG.COMMENT,
+  URLS.TAG.CHALLENGE,
+  URLS.TAG.IDEA
+],[
   authentication,
-  acl(RULES.IS_COMMITTE_MEMBER),
+  acl(RULES.CAN_INSERT_TAG),
   body('name', 'name can not be empty').notEmpty(),
-  body('name', 'name already exist').custom(async (value)=> {
+  body('name', 'name already exist').custom(async (value, {req})=> {
     try{
+      /**
+       * According to definition, could exist tags with same name but different type.
+       * See: https://www.notion.so/TAGS-Fix-Tag-comments-according-to-10-th-meeting-dc0ee99aa6f9478daedcc35c0664a34d
+       */
       const query = {
-        name: value
+        name: value,
+        type: req.body.type
       }
       const tag = await TagService.getTagsByQuery(query)
       if (tag.length > 0){
@@ -49,7 +62,7 @@ router.post(URLS.TAG, [
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_TAG)
 
     const tagController = new TagController ()
-    const tag = await tagController.newTag(req.body)
+    const tag = await tagController.newTag(req.body, req.user)
     res
       .json(tag)
       .status(200)

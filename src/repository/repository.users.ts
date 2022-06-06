@@ -10,6 +10,7 @@ import { genericUserFilter } from '../utils/field-filters/user';
 import SolutionService from '../services/Solution.service';
 import { genericArraySolutionsFilter } from '../utils/field-filters/solution';
 import TeamService from '../services/Team.service';
+import { isCommitteMember } from '../utils/acl/function.is_committe_member';
 
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
@@ -121,16 +122,17 @@ export const deleteUser = async (userId : string): Promise <boolean> => {
 }
 
 export const getUserInformation = async (userInformation: UserRequest): Promise<UserResponse> => {
-  return new Promise(async (resolve, reject)=> {
-    try{
-      const user: UserI = await UserService.getUserActiveByUserId(userInformation.userId);
-      const resp = await genericUserFilter(user)
+  try{
+    const user: UserI = await UserService.getUserActiveByUserId(userInformation.userId);
+    const status = await isCommitteMember(user)
+    const resp:any = await genericUserFilter(user)
 
-      return resolve(resp)
-    }catch(error){
-      return reject(error)
-    }
-  })
+    resp.is_committe_member = status.isActive
+
+    return resp
+  }catch(error){
+    return Promise.reject(error)
+  }
 }
 
 export const getParticipation = async (user: UserI, query: any): Promise<any> => {

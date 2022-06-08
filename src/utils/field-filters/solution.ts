@@ -20,7 +20,6 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     active,
     fileComplementary,
     bannerImage,
-    images,
     /**
       * Configuration section
       */
@@ -53,6 +52,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
   const departmentAffected = await genericArrayAreaFilter(solution.departmentAffected)
   const tags = await genericArrayTagsFilter(solution.tags)
   const challenge = await lightChallengeFilter(solution.challenge)
+  const images = await getArrayImageSignedUrl(solution.images)
+  const banner_image = await getSignedUrl(solution.bannerImage)
 
 
   return {
@@ -71,8 +72,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     title,
     description,
     proposed_solution: proposedSolution,
-    banner_image: bannerImage,
     images,
+    banner_image,
     department_affected:departmentAffected,
     /**
       * Configuration section
@@ -111,6 +112,7 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
     challenge_id: solution.challenge.challengeId,
     title: solution.challenge.title,
     description: solution.challenge.description,
+    finalization: solution.challenge.finalization
   }
 
 

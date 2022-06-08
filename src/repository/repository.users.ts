@@ -196,3 +196,28 @@ export const getParticipation = async (user: UserI, query: any): Promise<any> =>
     return Promise.reject(error)
   }
 }
+
+export const changePassword = async (newPassword: string, user: UserI): Promise<UserResponse> => {
+  try{
+    let userFiltered
+    await hash(newPassword, 10, async (err: Error, hash: string) => {
+      if (err) {
+        return Promise.reject(new RepositoryError(
+          ERRORS.REPOSITORY.PASSWORD_GENERATION, 
+          HTTP_RESPONSE._500,
+          err));
+      }
+      const query = {
+        password: hash
+      }
+      const userResp = await UserService.updateUserById(user,query)
+      userFiltered = await genericUserFilter(userResp)
+    })  
+    return userFiltered
+  }catch(error){
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.PASSWORD_GENERATION, 
+      HTTP_RESPONSE._500,
+      error));
+  }
+}

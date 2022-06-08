@@ -130,6 +130,24 @@ const UserService = {
         return reject(customError)
       }
     })
+  },
+  async updateUserById(user:UserI, data: any ):Promise<UserI> {
+    try{
+      const resp = await User.findOneAndUpdate({
+        user : user
+      },{
+        ...data
+      },{ 
+        new: true
+      }) 
+      return resp
+    }catch(error){
+      return Promise.reject(new ServiceError(
+        ERRORS.SERVICE.UPDATE_PASSWORD,
+        HTTP_RESPONSE._500,
+        error))
+    }
+   
   }
 }
 

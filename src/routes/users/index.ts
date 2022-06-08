@@ -2,7 +2,7 @@ import * as express from "express";
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import authentication from "../../middlewares/authentication";
-import UserController from "../../controller/users";
+import UserController, { Login } from "../../controller/users";
 import { body , query, validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, VIEW_BY } from "../../constants";
@@ -84,6 +84,32 @@ router.get('/user/info',[
     const userInformation = await userController.getInformation(req.user)
     res
       .json(userInformation)
+      .status(200)
+      .send()
+  }catch(error){
+    next(error)
+  }
+})
+
+router.post('/user/change-password', [
+  authentication,
+  body('new_password').custom(async (value, {req}): Promise<void> => {
+    try{
+      if(value == req.body.repeat_new_password){
+        return Promise.resolve()
+      }
+      return Promise.reject('new password confirmation failed')
+    }catch(error){
+      return Promise.reject()
+    }
+  })
+], async (req:RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+  try{
+    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.CHANGE_PASSWORD)
+    const userController = new UserController()
+    const userParticipation = await userController.changePassword(req.body.new_password, req.user)
+    res
+      .json(userParticipation)
       .status(200)
       .send()
   }catch(error){

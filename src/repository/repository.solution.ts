@@ -2,14 +2,13 @@ import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, PARTICIPATION_MODE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATIONS, PARTICIPATION_MODE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { newTeam } from "./repository.team"
 import { TeamI } from "../models/team";
-import { generateSolutionCoauthorshipInvitation, generateSolutionTeamInvitation } from "./repository.invitation";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
@@ -28,6 +27,9 @@ import { BaremoI } from "../models/baremo";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import EvaluationNoteService from "../services/EvaluationNote.service";
 import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
+import InvitationService from "../services/Invitation.service";
+import { SolutionInvitationI } from "../models/invitation";
+import { genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challenge: ChallengeI): Promise<SolutionResponse> => {
@@ -90,14 +92,6 @@ export const newSolution = async (body: SolutionBody, user: UserI, utils: any, c
     }
 
     const solution = await SolutionService.newSolution(data, challenge);
-    /**
-      * Create invitations. Members are added when invitation is accepted.
-      */
-    if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM) {
-      generateSolutionTeamInvitation(creator, guests, solution, solution.team)
-    } else if (body.participation.chosed_mode == PARTICIPATION_MODE.INDIVIDUAL_WITH_COAUTHORSHIP) {
-      generateSolutionCoauthorshipInvitation(creator, guests, solution)
-    }
 
     const resp = await genericSolutionFilter(solution)
     return resp
@@ -313,6 +307,25 @@ export const newEvaluationNote = async (data: any, solution: SolutionI, user: Us
     return Promise.reject(error)
   }
 }
+
+export const newInvitation = async (user: UserI, solution: SolutionI): Promise<any> => {
+  try{
+    const date = getCurrentDate()
+    const invitation: SolutionInvitationI = {
+      to: solution.author,
+      from: user,
+      creationDate: date, 
+      solution,
+      type: INVITATIONS.TEAM_PARTICIPATION
+    }
+    const resp = await InvitationService.newInvitation(invitation)
+    const resp_filtered = await genericSolutionInvitationFilter(resp)
+    return resp_filtered
+  }catch(error){
+    return Promise.reject(error)    
+  }
+}
+
 const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {
   const configuration = {
     canShowDisagreement: challenge.canShowDisagreement,

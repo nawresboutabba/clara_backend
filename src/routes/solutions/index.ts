@@ -21,6 +21,7 @@ import TagService from "../../services/Tag.service";
 import BaremoService from "../../services/Baremo.service";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
+import { UserI } from "../../models/users";
 
 
   
@@ -153,6 +154,56 @@ router.post(
       next(error)
     }
   })
+
+/**
+ * Endpoint for an author to invite people to be part of the team
+ */
+router.post(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_INVITATION,
+  [
+    authentication, 
+    acl(RULES.IS_SOLUTION_CREATOR),
+    /**
+     * Check that user invitated exist
+     */
+    body('userId').custom(async (value: string, {req}): Promise<void>=> {
+      try{
+        const user = await UserService.getUserActiveByUserId(value)
+        if (user){
+          const members = req.resources.solution.coauthor
+          const isMember = members.filter((member: UserI)=> member.userId == user.userId)
+          if (isMember.length > 0){
+            return Promise.reject('this user is already member')
+          }
+          /**
+           * This conditional is redundant. ACL check this
+           */
+          if(req.user.userId == req.resources.solution.author.userId){
+            req.utils = {user, ...req.utils}
+            return Promise.resolve()
+          }
+          return Promise.reject('Operation available just for idea owner')
+        }
+        return Promise.reject('user is not valid')
+      }catch(error){
+        return Promise.reject('user is not valid')
+      }
+    })
+  ],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.CREATE_INVITATION)
+      const solutionController = new SolutionController()
+      const invitation = await solutionController.newInvitation(req.params.solutionId, req.body, req.utils.user, req.resources.solution)
+      res
+        .json(invitation)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  }
+)
 
 router.post(
   URLS.SOLUTION.SOLUTION,

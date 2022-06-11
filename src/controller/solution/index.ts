@@ -7,7 +7,7 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newSolutionComment } from '../../repository/repository.solution';
+import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
@@ -147,4 +147,11 @@ export default class SolutionController extends Controller {
   public async evaluationNote(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() solution: SolutionI, @Inject() user: UserI ): Promise <EvaluationNoteResponse> {
     return newEvaluationNote(data, solution, user)
   }
+  /**
+   * Create a invitation
+   */
+  @Post('/:solutionId/invitation')
+   public async newInvitation(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() user: UserI, @Inject() solution: SolutionI): Promise<any> {
+     return newInvitation(user, solution)
+   }
 }

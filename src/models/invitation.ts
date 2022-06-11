@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
 import { SolutionI } from "./situation.solutions";
-import { TeamI } from "./team";
 import { UserI } from "./users";
 
 export interface InvitationI{
@@ -25,19 +24,14 @@ export interface InvitationI{
      */
     decisionDate?: Date,
     /**
-     * Invitation type
+     * Invitation type. see: const INVITATIONS
      */
     type: string,
 
 }
 
-export interface SolutionTeamInvitationI extends InvitationI {
-    team: TeamI,
-    solution: SolutionI
-}
-
-export interface SolutionCoauthorshipInvitationI extends InvitationI {
-    solution: SolutionI
+export interface SolutionInvitationI extends InvitationI {
+  solution: SolutionI
 }
 
 const invitation = new Schema({
@@ -53,10 +47,6 @@ const invitation = new Schema({
   invitationAccepted: Boolean,
   decisionDate: Date,
   type: String,
-  team: {
-    type: Schema.Types.ObjectId,
-    ref: 'Team'
-  },
   solution:{
     type: Schema.Types.ObjectId,
     ref: 'Solution'

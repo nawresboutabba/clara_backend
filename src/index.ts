@@ -42,7 +42,6 @@ import areaRouter from './routes/area';
 import groupValidatorRouter from './routes/group-validator';
 import integrantRouter from './routes/integrant';
 import teamRouter from './routes/team'
-import invitationRouter from './routes/invitation'
 import imageRouter from './routes/image-service';
 import visitRouter from './routes/visit';
 import tagRouter from './routes/tag';
@@ -79,7 +78,6 @@ app.use('/', areaRouter);
 app.use('/', groupValidatorRouter);
 app.use('/', integrantRouter);
 app.use('/', teamRouter);
-app.use('/', invitationRouter);
 app.use('/', imageRouter);
 app.use('/', visitRouter);
 app.use('/', tagRouter)

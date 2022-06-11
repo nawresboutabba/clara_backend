@@ -7,6 +7,10 @@ export interface UserI {
    */
   _id?: string,
   /**
+   * User Image
+   */
+  userImage?: string,
+  /**
    * Username 
    */
   username: string,
@@ -53,6 +57,7 @@ export interface UserI {
 }
 
 const user = new Schema({
+  userImage: String, 
   username: String, 
   email: {
     type: String,

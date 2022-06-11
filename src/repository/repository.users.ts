@@ -31,6 +31,7 @@ export const signUp  = async (body: UserBody):Promise<UserResponse> => {
             userId: nanoid(),
             username: body.username,
             email: body.email,
+            userImage: body.user_image,
             password: hash,
             firstName: body.first_name,
             lastName: body.last_name,

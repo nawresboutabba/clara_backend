@@ -21,6 +21,7 @@ export interface UserBody {
   username: string,
   password: string,
   email: string,
+  user_image: string,
   first_name: string,
   last_name: string
 }
@@ -40,6 +41,7 @@ export interface LightUserInterface {
 export interface UserResponse extends LightUserInterface {
   area_visible: Array<AreaResponse>,
   external_user: boolean,
+  user_image: string,
   active: boolean,
   email: string,
   first_name: string,

@@ -19,7 +19,6 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     description,
     active,
     fileComplementary,
-    bannerImage,
     /**
       * Configuration section
       */

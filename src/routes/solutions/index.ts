@@ -247,12 +247,28 @@ router.post(
     }),
     body('type').custom(async (value: string, {req})=> {
       try{
-        if (value in [INVITATIONS.TEAM_PARTICIPATION,INVITATIONS.EXTERNAL_OPINION]){
+        if (value in INVITATIONS){
           return Promise.resolve()
         }
         return Promise.reject('Invitation invalid')
       }catch(error){
         return Promise.reject('Invitation invalid')
+      }
+    }),
+    body('userId').custom(async (value:string , {req})=> {
+      try{
+        const user = req.utils.user
+        const query = {
+          solution : req.resources.solution,
+          from: user
+        }
+        const invitation = await InvitationService.getSolutionInvitations(query)
+        if (invitation.length > 0){
+          return Promise.reject('Invitation for this solution is pending for response')
+        }
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject('invitation post error')
       }
     })
   ],

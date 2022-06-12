@@ -36,6 +36,10 @@ export interface SituationBaseI {
    */
   coauthor?: Array<UserI>,
   /**
+   *  When a user external to the idea is invited to give their opinion
+   */
+  externalOpinion?: Array<UserI>
+  /**
    * Field that is filled when participationModeChosen = "TEAM"
    * This field exclusive with author and coauthor configuration
    */
@@ -207,6 +211,10 @@ export const situationBaseModel = {
     ref: 'User'
   },
   coauthor: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  externalOpinion: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],

@@ -152,7 +152,7 @@ export default class SolutionController extends Controller {
    */
   @Post('/:solutionId/invitation')
    public async newInvitation(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() user: UserI, @Inject() solution: SolutionI): Promise<any> {
-     return newInvitation(user, solution)
+     return newInvitation(user, solution, data.type)
    }
    /**
     * Get invitations

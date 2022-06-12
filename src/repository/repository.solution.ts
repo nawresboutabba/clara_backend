@@ -338,8 +338,11 @@ export const getInvitations = async (solution: SolutionI , query: any, utils: an
   }
 }
 
-export const newInvitation = async (user: UserI, solution: SolutionI): Promise<any> => {
+export const newInvitation = async (user: UserI, solution: SolutionI, type: string): Promise<any> => {
   try{
+    /**
+     * @TODO create user if does not exist for external opinion
+     */
     const date = getCurrentDate()
     const invitation: SolutionInvitationI = {
       resource: RESOURCE.SOLUTION,
@@ -348,7 +351,7 @@ export const newInvitation = async (user: UserI, solution: SolutionI): Promise<a
       from: user,
       creationDate: date, 
       solution,
-      type: INVITATIONS.TEAM_PARTICIPATION
+      type
     }
     const resp = await InvitationService.newInvitation(invitation)
     const resp_filtered = await genericSolutionInvitationFilter(resp)
@@ -365,11 +368,29 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
       invitationAccepted: response == INVITATION.ACCEPTED? true:false,
       decisionDate: date
     }
-    const resp = await InvitationService.updateInvitation(invitation, update)
-    const respFilterd = await genericSolutionInvitationFilter(resp)
-    return respFilterd
+    let updateSolution 
+    if ((invitation.type == INVITATIONS.TEAM_PARTICIPATION) && update.invitationAccepted){
+      updateSolution = { 
+        $push: { coauthor: invitation.from } 
+      }
+    }else if (invitation.type == INVITATIONS.EXTERNAL_OPINION && update.invitationAccepted){
+      updateSolution = { 
+        $push: { externalOpinion: invitation.from } 
+      }
+    }
+    const solution = await SolutionService.updateSolutionPartially(invitation.solution, updateSolution)
+    if (solution){
+      const resp = await InvitationService.updateInvitation(invitation, update)
+      const respFilterd = await genericSolutionInvitationFilter(resp)
+      return respFilterd
+    }
+    throw 'Errors when data is updated'
   }catch(error){
-    return Promise.reject(error)
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.UPDATE_INVITATIONS,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 

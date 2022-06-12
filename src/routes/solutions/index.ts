@@ -7,7 +7,7 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -243,6 +243,16 @@ router.post(
         return Promise.reject('user is not valid')
       }catch(error){
         return Promise.reject('user is not valid')
+      }
+    }),
+    body('type').custom(async (value: string, {req})=> {
+      try{
+        if (value in [INVITATIONS.TEAM_PARTICIPATION,INVITATIONS.EXTERNAL_OPINION]){
+          return Promise.resolve()
+        }
+        return Promise.reject('Invitation invalid')
+      }catch(error){
+        return Promise.reject('Invitation invalid')
       }
     })
   ],

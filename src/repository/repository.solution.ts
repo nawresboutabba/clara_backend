@@ -371,11 +371,11 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
     let updateSolution 
     if ((invitation.type == INVITATIONS.TEAM_PARTICIPATION) && update.invitationAccepted){
       updateSolution = { 
-        $push: { coauthor: invitation.from } 
+        $addToSet: { coauthor: invitation.from } 
       }
     }else if (invitation.type == INVITATIONS.EXTERNAL_OPINION && update.invitationAccepted){
       updateSolution = { 
-        $push: { externalOpinion: invitation.from } 
+        $addToSet: { externalOpinion: invitation.from } 
       }
     }
     const solution = await SolutionService.updateSolutionPartially(invitation.solution, updateSolution)

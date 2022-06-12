@@ -1,4 +1,4 @@
-import { ERRORS, HTTP_RESPONSE, PARTICIPATION_MODE } from "../../constants";
+import { ERRORS, HTTP_RESPONSE } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 import { SolutionI } from "../../models/situation.solutions";

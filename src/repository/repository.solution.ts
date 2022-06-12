@@ -2,7 +2,7 @@ import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATIONS, PARTICIPATION_MODE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
@@ -29,12 +29,26 @@ import EvaluationNoteService from "../services/EvaluationNote.service";
 import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 import InvitationService from "../services/Invitation.service";
 import { SolutionInvitationI } from "../models/invitation";
-import { genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
+import { genericArraySolutionInvitationFilter, genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
+
+const handler = {
+  get(target, prop) {
+    if (prop === "invitation_accepted") {
+      const value = target.invitation_accepted
+      if(value){
+        return value
+      }else{
+        return undefined
+      }
+    }
+  },
+};
+
+
 
 
 export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challenge: ChallengeI): Promise<SolutionResponse> => {
   try {
-    const guests = utils.guests
     const insertedBy = user
     /**
       * Solution have to have setted `author` or `team`.
@@ -308,10 +322,28 @@ export const newEvaluationNote = async (data: any, solution: SolutionI, user: Us
   }
 }
 
+export const getInvitations = async (solution: SolutionI , query: any, utils: any):Promise<any> => {
+  try{
+    const queryCleaned = new Proxy(query, handler);
+    const mongooseQuery = {..._.pickBy({
+      solution,
+      invitationAccepted: queryCleaned.invitation_accepted
+    }, _.identity),
+    }
+    const invitations = await InvitationService.getSolutionInvitations(mongooseQuery)
+    const invitationsFiltered = await genericArraySolutionInvitationFilter(invitations)
+    return invitationsFiltered
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
 export const newInvitation = async (user: UserI, solution: SolutionI): Promise<any> => {
   try{
     const date = getCurrentDate()
     const invitation: SolutionInvitationI = {
+      resource: RESOURCE.SOLUTION,
+      invitationId: nanoid(),
       to: solution.author,
       from: user,
       creationDate: date, 
@@ -323,6 +355,21 @@ export const newInvitation = async (user: UserI, solution: SolutionI): Promise<a
     return resp_filtered
   }catch(error){
     return Promise.reject(error)    
+  }
+}
+
+export const responseInvitation = async (invitation: SolutionInvitationI, response: string):Promise<any>=> {
+  try{
+    const date = getCurrentDate()
+    const update = {
+      invitationAccepted: response == INVITATION.ACCEPTED? true:false,
+      decisionDate: date
+    }
+    const resp = await InvitationService.updateInvitation(invitation, update)
+    const respFilterd = await genericSolutionInvitationFilter(resp)
+    return respFilterd
+  }catch(error){
+    return Promise.reject(error)
   }
 }
 
@@ -359,3 +406,4 @@ const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI
   }
   return configuration
 }
+

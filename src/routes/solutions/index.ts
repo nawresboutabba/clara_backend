@@ -7,7 +7,7 @@ import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solution/index'
-import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
@@ -22,6 +22,7 @@ import BaremoService from "../../services/Baremo.service";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
 import { UserI } from "../../models/users";
+import InvitationService from "../../services/Invitation.service";
 
 
   
@@ -115,7 +116,7 @@ router.post(
         return Promise.reject("parent validation")
       }
     }),
-    body('tag', 'tag does not valid').custom(async (value, {req})=> {
+    body('tag', 'tag does not valid').custom(async (value, {req}):Promise<void> => {
       try{
         const tag = await TagService.getTagById(value)
         if (!tag){
@@ -154,6 +155,61 @@ router.post(
       next(error)
     }
   })
+
+router.post(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_INVITATION_INVITATIONID_RESPONSE,
+  [
+    authentication,
+    acl(RULES.IS_THE_RECIPIENT_OF_THE_INVITATION),
+    body('response').custom(async (value, {req}):Promise<void> => {
+      try{
+        if(req.utils.invitation.decisionDate){
+          return Promise.reject('The invitation has already been answered')
+        }
+        if (value in INVITATION){
+          return Promise.resolve()
+        }
+        return Promise.reject('Invitation response invalid')
+      }catch(error){
+        return Promise.reject('invitation invalid')
+      }
+    })
+  ],
+  async (req:RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.RESPONSE_INVITATION)
+      const solutionController = new SolutionController()
+      const resp = await solutionController.responseInvitation(req.params.solutionId, req.params.invitationId, req.body, req.utils)
+      res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  }
+)
+
+router.get(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_INVITATION,
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_SOLUTION),
+  ],
+  async (req:RequestMiddleware, res: ResponseMiddleware, next:NextFunction)=> {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_INVITATIONS)
+      const solutionController = new SolutionController()
+      const invitations = await solutionController.getInvitations(req.params.solutionId, req.query, req.resources.solution, req.utils)
+      res
+        .json(invitations)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  }
+)
 
 /**
  * Endpoint for an author to invite people to be part of the team

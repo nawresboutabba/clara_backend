@@ -3,6 +3,7 @@ import { BaremoI } from '../models/baremo';
 import { ConfigurationDefaultI } from '../models/configuration.default';
 import { GroupValidatorI } from '../models/group-validator';
 import { CommentI } from '../models/interaction.comment';
+import { SolutionInvitationI } from '../models/invitation';
 import { AreaI } from '../models/organization.area';
 import { ChallengeI } from '../models/situation.challenges';
 import { SolutionI } from '../models/situation.solutions';
@@ -22,6 +23,7 @@ export interface RequestMiddleware extends express.Request {
       departmentAffected?: Array<AreaI>
       groupValidator?: GroupValidatorI
       areasAvailable?: Array<AreaI>
+      users: UserI[],
       /**
        * This user is different to req.user.
        * This user is a auxiliar field to add user to committee.
@@ -53,7 +55,11 @@ export interface RequestMiddleware extends express.Request {
       /**
        * Baremo Entity
        */
-      baremo: BaremoI
+      baremo: BaremoI,
+      /**
+       * Invitation
+       */
+      invitation: SolutionInvitationI,
     },
     timeZone?: string;
 }

@@ -7,7 +7,7 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { editBaremo, getCurrent, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment } from '../../repository/repository.solution';
+import { editBaremo, getCurrent, getInvitations, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation } from '../../repository/repository.solution';
 import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
@@ -153,5 +153,19 @@ export default class SolutionController extends Controller {
   @Post('/:solutionId/invitation')
    public async newInvitation(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() user: UserI, @Inject() solution: SolutionI): Promise<any> {
      return newInvitation(user, solution)
+   }
+   /**
+    * Get invitations
+    */
+   @Get('/:solutionId/invitation')
+  public async getInvitations(@Path('solutionId') solutionId: string, @Query() query: any, @Inject() solution: SolutionI,  @Inject() utils: any):Promise<any> {
+    return getInvitations(solution, query, utils)
+  }
+    /**
+     * Response invitation
+     */
+    @Post('/:solutionId/invitation/:invitationId/response')
+   public async responseInvitation(@Path('solutionId') solutionId: string, @Path('invitationId') invitationId: string, @Body() data: any,@Inject() utils: any, ): Promise<any> {
+     return responseInvitation(utils.invitation, data.response)
    }
 }

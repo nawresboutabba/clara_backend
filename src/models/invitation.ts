@@ -3,6 +3,10 @@ import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
 export interface InvitationI{
+  /**
+   * InvitationId
+   */
+    invitationId: string
     /**
      * User that did the invitation
      */
@@ -24,6 +28,10 @@ export interface InvitationI{
      */
     decisionDate?: Date,
     /**
+     * Resource for which an invitation is granted. e.g.: SOLUTION
+     */
+    resource: string
+    /**
      * Invitation type. see: const INVITATIONS
      */
     type: string,
@@ -35,6 +43,7 @@ export interface SolutionInvitationI extends InvitationI {
 }
 
 const invitation = new Schema({
+  invitationId: String,
   to:{
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -46,6 +55,7 @@ const invitation = new Schema({
   creationDate: Date,
   invitationAccepted: Boolean,
   decisionDate: Date,
+  resource: String, 
   type: String,
   solution:{
     type: Schema.Types.ObjectId,

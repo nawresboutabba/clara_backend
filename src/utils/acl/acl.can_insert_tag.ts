@@ -22,7 +22,7 @@ export async function CAN_INSERT_TAG (req: RequestMiddleware) : Promise<void>{
     }
 
     const url = req.url
-    if (url == URLS.TAG.COMMENT ){
+    if (url == URLS.TAG.COMMENT || url == URLS.TAG.IDEA){
       req.body = {type : tag_type, ...req.body}
       return Promise.resolve()
     }else{

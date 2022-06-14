@@ -51,7 +51,7 @@ export const getTags = async (query: any, url:string): Promise<TagResponse[]> =>
       tag_type = undefined
       break;
     case URLS.TAG.IDEA:
-      tag_type = TAG_ORIGIN.IDEA
+      tag_type = undefined
       break;
     default:
       return Promise.reject()

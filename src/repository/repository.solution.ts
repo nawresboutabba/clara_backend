@@ -396,8 +396,6 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
 
 const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {
   const configuration = {
-    canShowDisagreement: challenge.canShowDisagreement,
-    canFixDisapprovedIdea: challenge.canFixDisapprovedIdea,
     canChooseScope: challenge.canChooseScope,
     /**
      * attribute that can be set by the person responsible 
@@ -409,9 +407,6 @@ const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI
     WSALevelAvailable: challenge.WSALevelAvailable,
     WSALevelChosed: challenge.WSALevelChosed,
     communityCanSeeReactions: challenge.communityCanSeeReactions,
-    minimumLikes: challenge.minimumLikes,
-    maximumDontUnderstand: challenge.maximumDontUnderstand,
-    reactionFilter: challenge.reactionFilter,
     participationModeAvailable: challenge.participationModeAvailable,
     /**
      * attribute that can be set by the person responsible 

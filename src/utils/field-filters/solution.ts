@@ -22,17 +22,12 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     /**
       * Configuration section
       */
-    canShowDisagreement,
-    canFixDisapprovedIdea,
     canChooseScope,
     isPrivated,
     canChooseWSALevel,
     WSALevelAvailable,
     WSALevelChosed,
     communityCanSeeReactions,
-    minimumLikes,
-    maximumDontUnderstand,
-    reactionFilter,
     participationModeAvailable,
     participationModeChosed,
     timeInPark,
@@ -77,8 +72,6 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     /**
       * Configuration section
       */
-    can_show_disagreement: canShowDisagreement,
-    can_fix_disapproved_idea: canFixDisapprovedIdea,
     can_choose_scope: canChooseScope,
     is_privated: isPrivated,
     can_choose_WSALevel: canChooseWSALevel,
@@ -86,9 +79,6 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     WSALevel_chosed: WSALevelChosed,
     areas_available: areasAvailable,
     community_can_see_reactions: communityCanSeeReactions,
-    minimum_likes: minimumLikes,
-    maximum_dont_understand: maximumDontUnderstand,
-    reaction_filter: reactionFilter,
     participation_mode_available: participationModeAvailable,
     participation_mode_chosed: participationModeChosed,
     time_in_park: timeInPark,

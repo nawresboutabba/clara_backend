@@ -99,19 +99,7 @@ export interface SituationBaseI {
    * Configuration Section
    * ---------------------------------
    */
-  /**
-   * Can those responsible express their disagreement? 
-   * It affects an attribute in the Barema that indicates 
-   * if the person responsible for the solution agrees or 
-   * disagrees with the rating.
-   */
-  canShowDisagreement: boolean,
-  /**
-   * Can managers make corrections after disapproving an idea? 
-   * Affects the ability to update the solution for a solution 
-   * status = REJECTED
-   */
-  canFixDisapprovedIdea: boolean,
+
   /**
    * Can the generator choose the privacy of the solution 
    * (if it goes to the park or directly to the committee)?
@@ -148,9 +136,6 @@ export interface SituationBaseI {
    * Reactions in park
    */
   communityCanSeeReactions: boolean,
-  minimumLikes: number,
-  maximumDontUnderstand: number,
-  reactionFilter: boolean
   /**
    * How can you participate in the proposal of a solution?
    * - INDIVIDUAL_WITH_COAUTHORSHIP - TEAM
@@ -261,8 +246,6 @@ export const situationBaseModel = {
    * Configuration Section
    * ---------------------------------
    */
-  canShowDisagreement: Boolean,
-  canFixDisapprovedIdea: Boolean,
   canChooseScope: Boolean,
   isPrivated: Boolean,
   canChooseWSALevel: Boolean,
@@ -273,9 +256,6 @@ export const situationBaseModel = {
     ref: 'Area'
   }],
   communityCanSeeReactions: Boolean,
-  minimumLikes: Number,
-  maximumDontUnderstand: Number,
-  reactionFilter: Boolean,
   participationModeAvailable: [String],
   participationModeChosed: String,
   timeInPark: Number,

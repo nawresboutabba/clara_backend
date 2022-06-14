@@ -69,8 +69,6 @@ export interface SituationResponse extends LightSituationResponse {
     /**
      * Configuration Section
      */
-    can_show_disagreement: boolean,
-    can_fix_disapproved_idea: boolean,
     can_choose_scope: boolean,
     is_privated: boolean, 
     can_choose_WSALevel: boolean,
@@ -78,9 +76,6 @@ export interface SituationResponse extends LightSituationResponse {
     WSALevel_chosed: string,
     areas_available: Array<AreaResponse>,
     community_can_see_reactions: boolean,
-    minimum_likes: number,
-    maximum_dont_understand: number,
-    reaction_filter: boolean,
     participation_mode_available: Array<string>,
     participation_mode_chosed: string
     time_in_park: number,

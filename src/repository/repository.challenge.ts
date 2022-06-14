@@ -104,17 +104,12 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
         * Configuration section
         */
 
-      canShowDisagreement: body.can_show_disagreement,
-      canFixDisapprovedIdea: body.can_fix_disapproved_idea,
       canChooseScope: body.can_choose_scope,
       isPrivated: body.is_privated,
       canChooseWSALevel: body.can_choose_WSALevel,
       WSALevelAvailable: body.WSALevel_available,
       WSALevelChosed: body.WSALevel_chosed,
       communityCanSeeReactions: body.community_can_see_reactions,
-      minimumLikes: body.minimum_likes,
-      maximumDontUnderstand: body.maximum_dont_understand,
-      reactionFilter: body.reaction_filter,
       participationModeAvailable: body.participation_mode_available,
       participationModeChosed: body.participation_mode_chosed,
       timeInPark: body.time_in_park,

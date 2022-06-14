@@ -2,20 +2,6 @@ import { Schema, model } from "mongoose";
 
 export interface ConfigurationBaseI {
     /**
-     * Can those responsible express their disagreement? 
-     * Affects an attribute in the Scale that indicates 
-     * if the person responsible for the solution agrees 
-     * or disagrees with the rating.
-     */
-    canShowDisagreement: boolean,
-    /**
-     * ¿Pueden los responsables hacer correcciones 
-     * después de desaprobar una idea? 
-     * Afecta a la posibilidad de hacer un update sobre la 
-     * solucion para el estado de solucion = REJECTED
-     */
-    canFixDisapprovedIdea: boolean,
-    /**
      * Can the generator choose the privacy of the solution? 
      * Affects the scope_chosed attribute. If can_chosose_scope = true, 
      * then the maintainer can edit is_privated 
@@ -38,22 +24,6 @@ export interface ConfigurationBaseI {
      * Affects the solution: the reactions achieved can be seen
      */
     communityCanSeeReactions: boolean,
-    /**
-     * What is the maximum number of negative 
-     * reactions of this type that can be had?
-     */
-    maximumDontUnderstand: number,
-    /**
-     * What is the minimum number of likes you must have to continue?
-     */
-    minimumLikes: number,
-    /**
-     * Used in the square, it indicates 
-     * if a limit is established on the reactions. 
-     * Enable choices made: minimum_likes, 
-     * maximum_dont_understand
-     */
-    reactionFilter: boolean,
     /**
      * Are invitations to external contributors allowed by generators? 
      * affects whether authors, co-authors, 

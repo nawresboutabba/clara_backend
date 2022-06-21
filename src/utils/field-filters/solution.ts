@@ -35,7 +35,15 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     timeIdeaFix,
     externalContributionAvailableForGenerators,
     externalContributionAvailableForCommittee,
-    proposedSolution
+    proposedSolution,
+    differential ,
+    isNewFor,
+    wasTested,
+    firstDifficulty,  
+    secondDifficulty,
+    thirdDifficulty,
+    implementationTimeInMonths,
+    moneyNeeded
   } = solution
 
   const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
@@ -66,6 +74,14 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     title,
     description,
     proposed_solution: proposedSolution,
+    differential,
+    is_new_for: isNewFor,
+    was_tested: wasTested,
+    first_difficulty: firstDifficulty,  
+    second_difficulty:secondDifficulty,
+    third_difficulty: thirdDifficulty,
+    implementation_time_in_months: implementationTimeInMonths,
+    money_needed: moneyNeeded,
     images,
     banner_image,
     department_affected:departmentAffected,

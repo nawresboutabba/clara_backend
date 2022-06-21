@@ -31,7 +31,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
        * Configuration section
        */
       canChooseScope,
-      isPrivated,
+      defaultScope,
       canChooseWSALevel,
       WSALevelAvailable,
       WSALevelChosed,
@@ -75,7 +75,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
        * Configuration section
        */
       can_choose_scope: canChooseScope,
-      is_privated: isPrivated,
+      default_scope: defaultScope,
       can_choose_WSALevel: canChooseWSALevel,
       WSALevel_available: WSALevelAvailable,
       WSALevel_chosed: WSALevelChosed,

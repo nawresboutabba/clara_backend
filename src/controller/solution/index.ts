@@ -1,3 +1,4 @@
+import { bool } from 'aws-sdk/clients/signer';
 import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject, Patch } from 'tsoa'
 import { RESOURCE } from '../../constants';
 import { BaremoI } from '../../models/baremo';
@@ -7,8 +8,8 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { editBaremo, getCurrent, getInvitations, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation } from '../../repository/repository.solution';
-import { newSolution, deleteSolution, getSolution } from '../../repository/repository.solution';
+import { createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
+import { deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
@@ -18,6 +19,15 @@ import { UserResponse } from '../users';
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
+  differential:string,
+  is_new_for:string,
+  was_tested: bool,
+  first_difficulty:string,
+  second_difficulty:string,
+  third_difficulty:string,
+  implementation_time_in_months: number,
+  money_needed:number,
+
   /**
    * Participation defines the type of intervention 
    * that the creator chose to make the proposal.
@@ -42,11 +52,20 @@ export interface SolutionBody extends SituationBody {
 export interface SolutionResponse extends SituationResponse {
   solution_id: string,
   proposed_solution: string,
+  differential:string ,
+  is_new_for:string,
+  was_tested:bool,
+  first_difficulty:string,  
+  second_difficulty:string,
+  third_difficulty:string,
+  implementation_time_in_months:number,
+  money_needed:number
   /**
    * challenge associated
    */
   challenge_id?: string,
   challenge?: ChallengeResponse,
+  is_privated: boolean
 }
 
 export interface LightSolutionResponse extends LightSituationResponse {
@@ -80,8 +99,12 @@ export default class SolutionController extends Controller {
    */
 
   @Post()
-  public async newSolution(@Body() body: SolutionBody, @Request() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
-    return newSolution(body, user, utils, challenge)
+  public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
+    return createSolution(user, utils, challenge)
+  }
+  @Patch(':solutionId')
+  public async updateSolution(@Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any):Promise<any> {
+    return updateSolution(body, resources, user, utils)
   }
   
   @Delete(':solutionId')
@@ -93,12 +116,6 @@ export default class SolutionController extends Controller {
     return getSolution(solutionId, solution, user)
   }
 
-  /**
-   * Solutions Listing without challenge associated
-   *  
-   * @param query 
-   * @returns 
-   */
   @Get()
   public async listSolutions(@Query() query?: any): Promise<LightSolutionResponse[]> {
     return listSolutions(query)

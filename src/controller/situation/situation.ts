@@ -70,7 +70,6 @@ export interface SituationResponse extends LightSituationResponse {
      * Configuration Section
      */
     can_choose_scope: boolean,
-    is_privated: boolean, 
     can_choose_WSALevel: boolean,
     WSALevel_available: Array<string>,
     WSALevel_chosed: string,

@@ -13,8 +13,8 @@ import {
   acceptChallengeProposal,
   listChallengeProposal,
 } from '../../repository/repository.challenge';
-import { listSolutions, updateSolutionPartially } from '../../repository/repository.solution';
-import { newSolution } from '../../repository/repository.solution'
+import { listSolutions, updateSolution } from '../../repository/repository.solution';
+import { createSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
 import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solution';
 import { CommentBody, CommentResponse } from '../comment';
@@ -46,7 +46,8 @@ export interface ChallengeBody extends SituationBody {
    * Required for challenge
    */
   group_validator: string,
-  finalization: Date
+  finalization: Date,
+  default_scope:boolean
 }
 export interface LightChallengeResponse {
   challenge_id: string,
@@ -58,6 +59,7 @@ export interface ChallengeResponse extends SituationResponse {
   challenge_id: string
   is_strategic: boolean,
   finalization: Date,
+  default_scope: boolean,
   group_validator: GroupValidatorResponse,
   interactions?: {
     interaction: string,
@@ -115,8 +117,8 @@ export default class ChallengeController extends Controller {
    }
 
   @Post(':challengeId/solution')
-  public async newSolution(@Body() body: SolutionBody, @Inject() user: UserI, @Path('challengeId') challengeId: string, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
-    return newSolution(body, user, utils, challenge)
+  public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
+    return createSolution(user, utils, challenge)
   }
   /**
    * Challenge listing
@@ -148,16 +150,11 @@ export default class ChallengeController extends Controller {
     return listSolutions(query)
   }
 
-  @Put(':challengeId/solution/')
-  public async updateSolutionPartially(
-    @Path('challengeId') challengeId: string,
-    @Body() body: SolutionBody,
-    @Inject() resources: any,
-    @Inject() user: UserI,
-    @Inject() utils: any
-  ): Promise<any> {
-    return updateSolutionPartially(body, resources, user, utils)
+  @Patch(':challengeId/solution/:solutionId')
+  public async updateSolution(@Path('challengeId') challengeId: string,@Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any):Promise<any> {
+    return updateSolution(body, resources, user, utils)
   }
+    
 
   @Patch(':challengeId')
   public async updateChallengePartially(@Body() body: ChallengeBody, @Path('challengeId') challengeId: string): Promise<ChallengeI> {

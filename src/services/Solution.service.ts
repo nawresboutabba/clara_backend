@@ -6,6 +6,7 @@ import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { AreaI } from "../models/organization.area";
+import { NewSolutionI } from "../repository/repository.solution";
 
 export interface SolutionEditablesFields {
   title?: string,
@@ -55,20 +56,13 @@ const SolutionService = {
       return error
     }
   },
-  async newSolution  (data: SolutionI, challenge?: ChallengeI): Promise<any> {
+  async newSolution  (data: NewSolutionI): Promise<any> {
     try{
-      if(data.challengeId){
-        if(!challenge){
-          const customError = new ServiceError(
-            ERRORS.SERVICE.NEW_SOLUTION,
-            HTTP_RESPONSE._500,
-          )
-          throw customError
-        }
-        data.challenge = challenge
-      }
-      const solution = await Solution.create(data)
-      return solution
+      const solution = 
+      await Solution.create(data)
+      const resp = solution.populate('challenge')
+
+      return resp
     }catch (error){
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.NEW_SOLUTION,

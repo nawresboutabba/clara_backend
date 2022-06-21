@@ -22,6 +22,38 @@ export interface SolutionI extends SituationBaseI {
      */
     proposedSolution: string,
     /**
+     * What's new about your idea?
+     */
+    differential:string, 
+    /**
+     * Is new for COMPANY, WORLD, MARKET
+     */
+    isNewFor: string, 
+    /**
+     * The idea was tested
+     */
+    wasTested: boolean,
+    /**
+     * First Difficulty
+     */
+    firstDifficulty: string, 
+    /**
+     * Second Difficulty
+     */
+    secondDifficulty: string, 
+    /**
+     * Third Difficulty
+     */
+    thirdDifficulty: string,
+    /**
+     * Implementation Time in Months
+     */
+    implementationTimeInMonths: number,
+    /**
+     * How much money does the project need for its execution?
+     */
+    moneyNeeded: number, 
+    /**
      * Data that idea was opened for analysis
      */
     startAnalysis?: Date,
@@ -37,6 +69,13 @@ export interface SolutionI extends SituationBaseI {
      * idea version
      */
     version: number,
+    /**
+     * Configuration parameters section
+     */
+    /**
+     * if committee allow to user choose solution privacity
+     */
+    isPrivated: boolean,
   }
 
 
@@ -48,13 +87,22 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
     ref: 'Challenge' 
   },
   proposedSolution: String,
+  differential:String,
+  isNewFor: String, 
+  wasTested: Boolean,
+  firstDifficulty: String, 
+  secondDifficulty:String, 
+  thirdDifficulty: String,
+  implementationTimeinMonths: Number,
+  moneyNeeded: Number,
   startAnalysis: Date,
   initialEvaluator: { 
     type: Schema.Types.ObjectId, 
     ref: 'User' 
   },
   endAnalysis: Date,
-  version: Number
+  version: Number,
+  isPrivated: Boolean
 }))
 
 

@@ -105,7 +105,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
         */
 
       canChooseScope: body.can_choose_scope,
-      isPrivated: body.is_privated,
+      defaultScope: body.default_scope,
       canChooseWSALevel: body.can_choose_WSALevel,
       WSALevelAvailable: body.WSALevel_available,
       WSALevelChosed: body.WSALevel_chosed,

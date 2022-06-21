@@ -13,7 +13,6 @@ import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
 import { isCompositionUsersValid } from "../../utils/configuration-rules/participation";
 import UserService from "../../services/User.service";
-import ConfigurationService from "../../services/Configuration.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
@@ -308,15 +307,78 @@ router.post(
         return Promise.reject()
       }
     }),
+  ],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try {
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_SOLUTION)
 
+      const solutionController = new SolutionController()
+      const solution = await solutionController.newSolution(req.user, req.utils, req.resources.challenge)
+      res
+        .status(200)
+        .json(solution)
+        .send();
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.get(
+  URLS.SOLUTION.SOLUTION,
+  [
+    authentication
+  ],
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try {
+      const solutionController = new SolutionController()
+      const query: QuerySolutionForm = await formatSolutionQuery(req.query)
+      const solutions = await solutionController.listSolutions(query)
+      res
+        .json(solutions)
+        .status(200)
+        .send();
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+
+router.get(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID,
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_SOLUTION)
+  ]
+  ,
+  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try {
+      const solutionController = new SolutionController()
+      const solution = await solutionController.getSolution(req.params.solutionId, req.resources.solution, req.user)
+      res.status(200).json(solution).send();
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+
+router.patch(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID,
+  [
+    authentication,
+    acl(RULES.CAN_EDIT_SOLUTION),
     /**
      * Challenge situation description
      */
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
-    body('banner_image').isString(),
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
-    body("tags").isArray(),
+    body("tags").isArray(),    
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
       try{
         const query = {
@@ -350,25 +412,44 @@ router.post(
         return Promise.reject("department_affected does not valid")
       }
     }),
-
-    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).notEmpty().escape().isIn([true, false]),
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).custom(async (value: string, { req }):Promise<void> => {
+      try{
+        const is_privated = value
+        if(req.resources.solution.canChooseScope){
+          if(is_privated in[true, false]){
+            return Promise.resolve()
+          }
+        }else {
+          if (is_privated == req.resources.solution.challenge.defaultScope) {
+            return Promise.resolve()
+          }
+        }
+        return Promise.reject()
+      }catch(error){
+        return Promise.reject(error)
+      }
+    }),
     body("WSALevel_chosed","WSALevel_chosed can not be empty").notEmpty().isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
     body("WSALevel_chosed").custom(async (value: string, { req }): Promise<void> => {
       try {
         /**
          * Check that user can choose WSALevel, otherwise ignore decision. 
          */
-        if (req.resources.challenge.canChooseWSALevel) {
+        if (req.resources.solution.canChooseWSALevel) {
           /**
            * If user can choose WSALevel, check that WSALevel is valid.
            */
-          if (!req.resources.challenge.WSALevel_available.includes(value)) {
+          if (!req.resources.solution.WSALevelAvailable.includes(value)) {
             return Promise.reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
           }
           /**
            * Check that if WSALevel == AREA, user inserted areasId valid.
            */
           if (value == WSALEVEL.AREA) {
+            const areas_available = req.body.areas_available
+            if (areas_available == undefined || areas_available == []){
+              return Promise.reject('Insert at least an area when WSALevel is AREA')
+            }
             const areasAvailable = await AreaService.getAreasById(req.body.areas_available)
             if (areasAvailable.length != req.body.areas_available.length) {
               return Promise.reject("Areas available does not valid")
@@ -398,7 +479,7 @@ router.post(
         /**
          * Check that participation chosed by user is available
          */
-        if (req.resources.challenge.participationModeAvailable.includes(value)) {
+        if (req.resources.solution.challenge.participationModeAvailable.includes(value)) {
           return Promise.resolve()
         }
         return Promise.reject("participation.chosed_mode invalid")
@@ -408,18 +489,6 @@ router.post(
     }),
     body("participation.chosed_mode").custom(async (value: string, { req }): Promise<void> => {
       try {
-        const creator = await UserService.getUserActiveByUserId(req.body.participation.creator)
-        const guests = await UserService.getUsersById(req.body.participation.guests)
-        /**
-         * if any of the members who are going to participate does not exist.
-         */
-        if (!guests.length == req.body.participation.guests.length || !creator) {
-          return Promise.reject("participation integrants is not valid")
-        }
-        /**
-         * Check that external users composition. 
-         */
-        const validComposition = await isCompositionUsersValid(creator, guests, req.utils.defaultSolutionConfiguration)
         /**
          * Check team name is valid.
          */
@@ -435,143 +504,11 @@ router.post(
             return Promise.reject("team_with this name already exist")
           }
         }
-        /**
-         * Check if all users are allowed
-         */
-        if (validComposition) {
-          req.utils = { creator, guests, ...req.utils }
-          return Promise.resolve()
-        }
-        return Promise.reject("invalid composition. Invitations to externals users not availible for this user")
+
+        return Promise.resolve()
+        
       } catch (error) {
         return Promise.reject("participation.chosed_mode invalid")
-      }
-    }),
-  ],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_SOLUTION)
-
-      const solutionController = new SolutionController()
-      const solution = await solutionController.newSolution(req.body, req.user, req.utils, req.resources.challenge)
-      res
-        .status(200)
-        .json(solution)
-        .send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-router.get(
-  "/solution",
-  [
-    authentication
-  ],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      const solutionController = new SolutionController()
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query)
-      const solutions = await solutionController.listSolutions(query)
-      res
-        .json(solutions)
-        .status(200)
-        .send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-
-router.get(
-  "/solution/:solutionId",
-  [
-    authentication,
-    acl(RULES.CAN_VIEW_SOLUTION)
-  ]
-  ,
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      const solutionController = new SolutionController()
-      const solution = await solutionController.getSolution(req.params.solutionId, req.resources.solution, req.user)
-      res.status(200).json(solution).send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-
-router.patch(
-  "/solution/:solutionId", [
-    authentication,
-    acl(RULES.CAN_EDIT_SOLUTION),
-    body("default_solution_configuration").custom(async (value, { req }): Promise<void> => {
-      try {
-        const defaultSolutionConfiguration = await ConfigurationService.getConfigurationDefault(RESOURCE.SOLUTION)
-        if (!defaultSolutionConfiguration) {
-          return Promise.reject(ERRORS.ROUTING.DEFAULT_CONFIGURATION_NOT_FOUND)
-        }
-        req.utils = { defaultSolutionConfiguration, ...req.utils }
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
-      }
-    }),
-    /**
-     * Status have to be changed trought particular endpoint.
-     */
-    body("status", "status invalid").notEmpty()
-      .isIn([SOLUTION_STATUS.DRAFT, SOLUTION_STATUS.PROPOSED, SOLUTION_STATUS.APROVED_FOR_DISCUSSION])
-      .custom(async (value, { req }): Promise<void> => {
-        if (req.resources.solution.status == value) {
-          return Promise.resolve()
-        }
-        return Promise.reject("CAN_NOT_EDIT_SOLUTION")
-      }),
-    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
-    body("images", "images does not valid").isArray(),
-    body("department_affected").isArray(),
-    body("department_affected").custom(async (value: string[], { req }): Promise<void> => {
-      try {
-        const departmentAffected = await AreaService.getAreasById(value)
-        if (departmentAffected.length == value.length) {
-          req.utils = { departmentAffected, ...req.utils }
-          return Promise.resolve()
-        }
-        return Promise.reject("department_affected does not valid")
-      } catch (error) {
-        return Promise.reject("department_affected does not valid")
-      }
-
-    }),
-    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).isBoolean(),
-    body("WSALevel_chosed").custom((value: string, { req }): Promise<void> => {
-      try {
-        /**
-       * Check that user can choose WSALevel, otherwise ignore decision. 
-       */
-        if (req.resources.challenge.canChooseWSALevel) {
-          /**
-         * If user can choose WSALevel, check that WSALevel is valid.
-         */
-          if (!req.resources.challenge.WSALevel_available.includes(value)) {
-            return Promise.reject(ERRORS.ROUTING.WSALEVEL_NOT_AVAILABLE)
-          }
-          return Promise.resolve()
-        }
-        /**
-       * Ignore decision because user can not choose WSALevel. Taking default configuration. 
-       */
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
       }
     }),
   ],
@@ -580,10 +517,10 @@ router.patch(
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
 
       const solutionController = new SolutionController()
-      //const solution = await solutionController.updateSolutionPartially(req.params.solutionId, req.body, req.resources, req.user, req.utils)
+      const solution = await solutionController.updateSolution(req.params.solutionId, req.body, req.resources, req.user, req.utils)
       res
+        .json(solution)
         .status(200)
-        .json()
         .send();
       next();
     } catch (error) {

@@ -2,13 +2,11 @@ import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
-import { newTeam } from "./repository.team"
-import { TeamI } from "../models/team";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
@@ -44,91 +42,101 @@ const handler = {
   },
 };
 
+/**
+ * This interface does not exactly correspond to a model,
+ * because it is for the creation of an idea, 
+ * which may have missing attributes. 
+ * What is mandatory is that the attributes inserted here 
+ * are a subset of SolutionI
+ */
+export interface NewSolutionI {
+  insertedBy: UserI,
+  author:UserI,
+  solutionId: string,
+  active: boolean,
+  created: Date,
+  updated: Date,
+  status: string,
+  challenge: ChallengeI,
+  version: number,
+  /**
+   * Configuration copy from Challenge as default. This copy is for manage custom 
+   * configuration by solution in the future
+   */
+  canChooseScope: boolean,
+  canChooseWSALevel: boolean,
+  WSALevelAvailable: string[]
+}
 
-
-
-export const newSolution = async (body: SolutionBody, user: UserI, utils: any, challenge: ChallengeI): Promise<SolutionResponse> => {
-  try {
+export const createSolution = async (user: UserI, util:any, challenge:ChallengeI): Promise<any> => {
+  try{
     const insertedBy = user
     /**
       * Solution have to have setted `author` or `team`.
       * If both are undefined or null, then throw error
       */
-    const creator = utils.creator
-
-    const created = getCurrentDate();
-
-
-    const configuration: ConfigurationSettingI = getConfigurationFromChallenge(body, challenge)
-
-    const title = challenge.type == CHALLENGE_TYPE.GENERIC ? body.title: challenge.title
-    const description = challenge.type == CHALLENGE_TYPE.GENERIC ? body.description : challenge.description
-    const groupValidator = challenge.type == CHALLENGE_TYPE.GENERIC ? undefined : challenge.groupValidator
-
-    const data: SolutionI = {
+    const created = getCurrentDate();    
+    const data : NewSolutionI = {
       insertedBy,
-      updatedBy: insertedBy,
-      /**
-       * This field has reference to the creator team or author solution, depends on the PARTICIPATION_MODE_CHOSED
-       */
-      author: creator,
+      author: user,
       solutionId: nanoid(),
-      title,
-      challengeId: challenge.challengeId,
-      challenge,
-      description: description,
-      departmentAffected: utils.departmentAffected,
-      created: created,
-      tags: challenge.type == CHALLENGE_TYPE.GENERIC ? utils.tags: challenge.tags,
+      created,
       active: true,
       updated: created,
       status: SOLUTION_STATUS.DRAFT,
-      fileComplementary: body.file_complementary,
-      bannerImage: body.banner_image,
-      images: body.images,
-      groupValidator,
-      proposedSolution: body.proposed_solution,
-      version: 1,
-      ...configuration,
+      challenge,
+      version: 0,
+      /**
+       * Configurations Settings
+       */
+      canChooseScope: challenge.canChooseScope,
+      canChooseWSALevel: challenge.canChooseWSALevel,
+      WSALevelAvailable: challenge.WSALevelAvailable
     }
-    if (challenge.type == CHALLENGE_TYPE.GENERIC && data.WSALevelChosed == WSALEVEL.AREA) {
-      data.areasAvailable = utils.areas_available
-    } else if (body.WSALevel_chosed == WSALEVEL.AREA) {
-      data.areasAvailable = challenge.areasAvailable
-    }
-
-    /**
-      * Participation Mode Choosed
-      */
-    if (body.participation.chosed_mode == PARTICIPATION_MODE.TEAM) {
-      const team: TeamI = await newTeam(body.participation.team_name)
-      data.team = team
-    }
-
-    const solution = await SolutionService.newSolution(data, challenge);
+    const solution = await SolutionService.newSolution(data);
 
     const resp = await genericSolutionFilter(solution)
-    return resp
-  } catch (error) {
-    return Promise.reject(error)
+    return resp    
+  }catch(error){
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.CREATE_SOLUTION,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 
-export const updateSolutionPartially = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
+
+export const updateSolution = async (body: SolutionBody, resources: any, user: UserI, utils: any): Promise<SolutionResponse> => {
   try {
     const currentSolution = resources.solution
     const change = {
       updatedBy: user,
-      title: body.title != currentSolution.title ? body.title : undefined,
-      description: body.description != currentSolution.description ? body.description : undefined,
-      images: body.images != currentSolution.images ? body.images : undefined,
-      proposedSolution: body.proposed_solution != currentSolution.proposedSolution ? body.proposed_solution : undefined,
-      departmentAffected: _.isEqual(utils.departmentAffected, currentSolution.departmentAffected) == false? utils.departmentAffected : undefined,
-      isPrivated: body.is_privated != currentSolution.isPrivated ? body.is_privated : undefined,
-      WSALevelChosed: body.WSALevel_chosed != currentSolution.WSALevelChosed ? body.WSALevel_chosed : undefined,
+      /**
+       * Idea Form
+       */
+      title: body.title ,
+      description:  body.description ,
+      proposedSolution: body.proposed_solution ,
+      differential: body.differential ,
+      isNewFor: body.is_new_for,
+      wasTested: body.was_tested,
+      firstDifficulty: body.first_difficulty,  
+      secondDifficulty:  body.second_difficulty,
+      thirdDifficulty: body.third_difficulty,
+      implementationTimeInMonths:body.implementation_time_in_months,
+      moneyNeeded: body.money_needed,
+      /**
+       * 
+       */
+      images: body.images ,
+      departmentAffected: utils.departmentAffected,
+      isPrivated: body.is_privated ,
+      WSALevelChosed: body.WSALevel_chosed,
+      areasAvailable : utils.areasAvailable
     }
 
-    const solution = await SolutionService.updateSolutionPartially(currentSolution.solutionId, change);
+    const solution = await SolutionService.updateSolutionPartially(currentSolution, change);
 
     const resp = await genericSolutionFilter(solution)
 
@@ -402,7 +410,7 @@ const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI
      * for the solution or the committee, 
      * depending on the permission granted
      */
-    isPrivated: challenge.canChooseScope == true ? body.is_privated : challenge.isPrivated,
+    isPrivated: challenge.canChooseScope == true ? body.is_privated : challenge.defaultScope,
     canChooseWSALevel: challenge.canChooseWSALevel,
     WSALevelAvailable: challenge.WSALevelAvailable,
     WSALevelChosed: challenge.WSALevelChosed,

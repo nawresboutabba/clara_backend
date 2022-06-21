@@ -109,10 +109,6 @@ export interface SituationBaseI {
    */
   canChooseScope: boolean,
   /**
-   * if committee allow to user choose solution privacity
-   */
-  isPrivated: boolean,
-  /**
    * Determines if the user can edit the WSALevel_chosed.
    */
   canChooseWSALevel: boolean,
@@ -247,7 +243,6 @@ export const situationBaseModel = {
    * ---------------------------------
    */
   canChooseScope: Boolean,
-  isPrivated: Boolean,
   canChooseWSALevel: Boolean,
   WSALevelAvailable: [String],
   WSALevelChosed: String,

@@ -10,6 +10,10 @@ export interface ChallengeI extends SituationBaseI {
    */
   type: string, 
   /**
+   * True or False. Work in combination with canChooseScope
+   */
+  defaultScope: boolean,
+  /**
    * Id that uniquely identifies a challenge
    */
   challengeId: string,
@@ -29,6 +33,7 @@ export interface ChallengeI extends SituationBaseI {
 
 export const challengeModel = {
   type: String,
+  defaultScope: Boolean, 
   challengeId: String,
   isStrategic: Boolean,
   finalization: Date,

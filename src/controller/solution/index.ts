@@ -8,7 +8,7 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
+import { createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
 import { deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
@@ -138,13 +138,20 @@ export default class SolutionController extends Controller {
    public async listComments(@Path('solutionId') solutionId: string, @Query() query: any , @Inject() solution: SolutionI, @Inject() user: UserI): Promise<CommentI[]>{
      return getSolutionComments(solution, query, user)
    }
+  /**
+   * Get  a Comment with his childs
+   */
+   @Get('/:solutionId/comment/:commentId')
+  public async getComments( @Path('commentId') commentId: string,  @Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any): Promise<CommentI[]>{
+    return getThread(utils)
+  }   
    /**
     * New baremo
     */
    @Post('/:solutionId/baremo/group-validator')
-  public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <BaremoResponse> {
-    return newBaremo(solution, user, utils)
-  }
+   public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <BaremoResponse> {
+     return newBaremo(solution, user, utils)
+   }
   /**
    * Get current Baremo for user X solution X version
    */

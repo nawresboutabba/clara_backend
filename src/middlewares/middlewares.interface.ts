@@ -35,6 +35,10 @@ export interface RequestMiddleware extends express.Request {
       }
       defaultSolutionConfiguration?: ConfigurationDefaultI,
       /**
+       * Is the same that parentComment, but a comment without childs
+       */
+      childComment?: CommentI,
+      /**
         * When a comment is inserted, it can have a parent.
         * Just can exist 2 nivels of comments. 
         */

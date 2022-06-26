@@ -250,27 +250,6 @@ export const newChallengeComment = async (challengeId: string, commentBody: Comm
   }
 }
 
-export const getComments = async (challengeId: string, user: UserI): Promise<CommentResponse[]> => {
-  try {
-
-    /**
-   * Poner los comentarios privados a true si:
-   * - El usuario es dueño de los comentarios 
-   * - Es parte del comite
-   * - Participa de alguna forma como creador del challenge
-   * @TODO hacer una funcion para esto
-   */
-
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
-    const userEntity = await UserService.getUserActiveByUserId(user.userId)
-    const comments = await CommentService.getComments(challenge, userEntity)
-    const resp = await genericArrayCommentFilter(comments)
-    return resp
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
-
 export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
   try {
     const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)

@@ -13,6 +13,7 @@ import { IS_SOLUTION_CREATOR } from "../utils/acl/acl.is_solution_creator";
 import { IS_THE_RECIPIENT_OF_THE_INVITATION } from "../utils/acl/acl.is_the_recipient_of_the_invitation";
 import { IS_VALIDATOR_OF_SOLUTION } from "../utils/acl/acl.is_validator_of_solution";
 import { IS_BAREMO_CREATOR } from "../utils/acl/is_baremo_creator";
+import { CAN_VIEW_COMMENT } from "../utils/acl/acl.can_view_comment";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
 
 export function acl(rule:string){
@@ -30,6 +31,9 @@ export function acl(rule:string){
         break;
       case RULES.CAN_VIEW_SOLUTION:
         await CAN_VIEW_SOLUTION(req)
+        break;
+      case RULES.CAN_VIEW_COMMENT:
+        await CAN_VIEW_COMMENT(req)
         break;
       case RULES.IS_COMMITTE_MEMBER: 
         await IS_COMMITTE_MEMBER(req)

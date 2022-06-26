@@ -693,24 +693,6 @@ router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
   }
 })
 
-router.get('/challenge/:challengeId/comment', [
-  authentication,
-  acl(
-    RULES.CAN_VIEW_CHALLENGE
-  )
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-    const challengeController = new ChallengeController()
-    const comments = await challengeController.getComments(req.params.challengeId, req.user)
-    res
-      .json(comments)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
-  }
-})
-
 router.post('/challenge/:challengeId/reaction', [
   authentication,
   acl(

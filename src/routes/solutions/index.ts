@@ -23,7 +23,26 @@ import ChallengeService from "../../services/Challenge.service";
 import { UserI } from "../../models/users";
 import InvitationService from "../../services/Invitation.service";
 
+router.get(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_COMMENT_COMMENTID,
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_COMMENT)
+  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
 
+      const solutionController = new SolutionController()
+      const resp = await solutionController.getComments(req.params.commentId, req.resources.solution, req.user, req.utils)
+      res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  }
+)
   
 router.get(
   URLS.SOLUTION.COMMENT,

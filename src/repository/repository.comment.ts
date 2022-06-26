@@ -1,6 +1,6 @@
 import { CommentI } from "../models/interaction.comment";
 import CommentService from "../services/Comment.service";
-import { genericArrayCommentFilter } from "../utils/field-filters/comment";
+import { genericArrayCommentFilter, genericCommentFilter } from "../utils/field-filters/comment";
 
 /**
  * Generic Comment post
@@ -11,6 +11,17 @@ export const newComment = async (comment: CommentI): Promise<CommentI> => {
   try{
     const resp = await CommentService.newComment(comment)
     return Promise.resolve(resp)
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
+export const getThreadComments = async(commentId: string): Promise<any>=> {
+  try{
+    const comment = await CommentService.getComment(commentId)
+    
+    const resp = await genericCommentFilter(comment)
+    return resp
   }catch(error){
     return Promise.reject(error)
   }

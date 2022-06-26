@@ -13,7 +13,7 @@ export async function CAN_VIEW_SOLUTION (req: RequestMiddleware) : Promise<void>
     if (!(req.resources?.solution)){
       if(solution == null){
         return Promise.reject(new RoutingError(
-          ERRORS.ROUTING.SOLUTION_FORBIDDEN,
+          ERRORS.ROUTING.SOLUTION_DOES_NOT_EXIST,
           HTTP_RESPONSE._500
         ))                    
       }

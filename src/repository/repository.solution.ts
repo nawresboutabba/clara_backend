@@ -11,7 +11,7 @@ import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
-import { getComments, newComment } from "./repository.comment";
+import { getComments, getThreadComments, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";
@@ -28,6 +28,7 @@ import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-n
 import InvitationService from "../services/Invitation.service";
 import { SolutionInvitationI } from "../models/invitation";
 import { genericArraySolutionInvitationFilter, genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
+import CommentService from "../services/Comment.service";
 
 const handler = {
   get(target, prop) {
@@ -214,6 +215,28 @@ export const newSolutionComment = async (comment: CommentBody, solution: Solutio
     return Promise.reject(error)
   }
 }
+
+export const getThread = async (utils: any):Promise<any> => {
+  try{
+    if (utils.childComment){
+      const resp = await genericCommentFilter(utils.childComment)
+      return resp
+    }else {
+      const filter = {
+        commentId : utils.parentComment.commentId
+      }      
+      const comments = await getComments(filter)
+      /**
+       * Just exist a comment with his childs
+       */
+      return comments[0]
+    }
+
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
+
 
 export const getSolutionComments = async (solution: SolutionI, query: any, user: UserI): Promise<any> => {
   try{

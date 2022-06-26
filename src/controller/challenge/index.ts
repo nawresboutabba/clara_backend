@@ -6,7 +6,6 @@ import {
   updateChallengePartially,
   deleteChallenge, listChallenges,
   newChallengeComment,
-  getComments,
   newReaction,
   newChallengeProposal,
   getChallengeProposal,
@@ -175,10 +174,7 @@ export default class ChallengeController extends Controller {
   public async newComment(@Path('challengeId') challengeId: string, @Body() comment: CommentBody, @Inject() user: UserI, @Inject() utils: any): Promise<CommentResponse> {
     return newChallengeComment(challengeId, comment, user, utils)
   }
-  @Get('/:challengeId/comment')
-  public async getComments(@Path('challengeId') challengeId: string, @Inject() user: UserI): Promise<CommentResponse[]> {
-    return getComments(challengeId, user)
-  }
+  
   /**
    * New Reacion
    * @param challengeId 

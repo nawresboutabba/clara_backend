@@ -98,6 +98,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
 export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any> => {
   try{
     const {
+      challengeId,
       created,
       status,
       title, 
@@ -115,6 +116,7 @@ export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any>
     const group_validator = await genericGroupValidatorFilter(challenge.groupValidator)
 
     return {
+      challenge_id: challengeId,
       created,
       status,
       title, 

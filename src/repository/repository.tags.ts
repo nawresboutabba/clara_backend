@@ -42,8 +42,8 @@ export const getTags = async (query: any, url:string): Promise<TagResponse[]> =>
   try{
 
     let tag_type: string
-
-    switch(url){
+    const urlFixed = url.split('?')[0]
+    switch(urlFixed){
     case URLS.TAG.CHALLENGE:
       tag_type = TAG_ORIGIN.CHALLENGE
       break;

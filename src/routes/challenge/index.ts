@@ -95,6 +95,7 @@ router.post("/challenge/default-configuration", [
     next(error)
   }
 })
+/*
 router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE, [
   authentication,
   acl(RULES.IS_COMMITTE_MEMBER)
@@ -112,6 +113,7 @@ router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE, [
     next(error)
   }
 })
+*/
 router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE_PROPOSEID, [
   authentication,
   acl(RULES.IS_COMMITTE_MEMBER)
@@ -522,7 +524,7 @@ router.get(URLS.CHALLENGE.CHALLENGE, [
   try {
     const challengeController = new ChallengeController()
 
-    const query: QueryChallengeForm = await formatChallengeQuery(req.query)
+    const query: QueryChallengeForm = await formatChallengeQuery(req.query, req.resources)
     const challenges = await challengeController.listChallenges(query, req.user)
 
     res
@@ -603,8 +605,12 @@ router.delete(
 );
 
 router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
+  authentication,
+  acl(
+    RULES.CAN_VIEW_CHALLENGE
+  ),
   check('init').escape(),
-  check('offset').escape(),
+  check('offset').escape()
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
 
@@ -612,7 +618,7 @@ router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
 
     const challengeController = new ChallengeController();
     req.query.challengId = req.params.challengeId
-    const query: QuerySolutionForm = await formatSolutionQuery(req.query)
+    const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.resources)
 
     const solutions = await challengeController.listSolutions(
       req.params.challengeId,

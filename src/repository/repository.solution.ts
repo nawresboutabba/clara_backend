@@ -28,7 +28,6 @@ import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-n
 import InvitationService from "../services/Invitation.service";
 import { SolutionInvitationI } from "../models/invitation";
 import { genericArraySolutionInvitationFilter, genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
-import CommentService from "../services/Comment.service";
 
 const handler = {
   get(target, prop) {
@@ -122,6 +121,8 @@ export const updateSolution = async (body: SolutionBody, resources: any, user: U
       differential: body.differential ,
       isNewFor: body.is_new_for,
       wasTested: body.was_tested,
+      testDescription: body.test_description,
+      baremaTypeSuggested: body.barema_type_suggested,
       firstDifficulty: body.first_difficulty,  
       secondDifficulty:  body.second_difficulty,
       thirdDifficulty: body.third_difficulty,
@@ -134,6 +135,7 @@ export const updateSolution = async (body: SolutionBody, resources: any, user: U
       departmentAffected: utils.departmentAffected,
       isPrivated: body.is_privated ,
       WSALevelChosed: body.WSALevel_chosed,
+      tags: utils.tags,
       areasAvailable : utils.areasAvailable
     }
 

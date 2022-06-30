@@ -30,9 +30,17 @@ export interface SolutionI extends SituationBaseI {
      */
     isNewFor: string, 
     /**
+     * @TODO add baremaTypeReco
+     */
+    baremaTypeSuggested: string,
+    /**
      * The idea was tested
      */
     wasTested: boolean,
+    /**
+     * @TODO how was tested
+     */
+    testDescription: string,
     /**
      * First Difficulty
      */
@@ -90,6 +98,8 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
   differential:String,
   isNewFor: String, 
   wasTested: Boolean,
+  testDescription: String,
+  baremaTypeSuggested: String,
   firstDifficulty: String, 
   secondDifficulty:String, 
   thirdDifficulty: String,

@@ -89,7 +89,7 @@ export interface SituationBaseI {
   /**
    * Complementary files to challenge, solution or problem
    */
-  fileComplementary: string,
+  fileComplementary:  Array<string>,
   /**
    * Tags relationated
    */
@@ -232,7 +232,11 @@ export const situationBaseModel = {
     ref: 'GroupValidator'
   },
   status: String,
-  fileComplementary: String,
+  fileComplementary: [
+    {
+      type: String,
+    },
+  ],
   tags: [{
     type: Schema.Types.ObjectId,
     ref: 'Tag'

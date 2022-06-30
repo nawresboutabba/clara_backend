@@ -15,7 +15,7 @@ export interface SituationBody {
      * Group Validat Id
      */
     group_validator?: string,
-    file_complementary: string,
+    file_complementary: Array<string>,
     /**
      * Configuration Section
      */
@@ -64,7 +64,7 @@ export interface SituationResponse extends LightSituationResponse {
     updated: Date,
     department_affected: Array<AreaResponse>,
     group_validator?: GroupValidatorResponse,
-    file_complementary: string,
+    file_complementary: Array<string>,
     tags: TagResponse[],
     /**
      * Configuration Section

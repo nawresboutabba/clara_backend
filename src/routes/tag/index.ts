@@ -44,9 +44,10 @@ router.post([
        * See: https://www.notion.so/TAGS-Fix-Tag-comments-according-to-10-th-meeting-dc0ee99aa6f9478daedcc35c0664a34d
        */
       const query = {
-        name: value,
+        name: {'$regex': value,$options:'i'},
         type: req.body.type
       }
+
       const tag = await TagService.getTagsByQuery(query)
       if (tag.length > 0){
         return Promise.reject()

@@ -90,6 +90,7 @@ router.get('/group-validator',[
  * Solutions are ready.
  * See : https://www.notion.so/Analysis-step-Idea-analyzing-PART-II-135747bb006c4d61a9c7e2d853c0753f
  */
+/*
 router.get('/group-validator/solution',[
   authentication,
   acl(RULES.IS_PART_OF_GROUP_VALIDATOR),
@@ -112,7 +113,7 @@ router.get('/group-validator/solution',[
     next(error)
   }
 })
-
+*/
 /**
  * This endpoint is used for get baremos relationated to solution
  * See: https://www.notion.so/Analysis-step-Idea-calification-PART-III-b930f64c9a8740f18bf8257cc523b48a

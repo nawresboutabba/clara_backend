@@ -17,9 +17,9 @@ export interface QueryChallengeForm extends QuerySituationForm {
     participationMode?: Array<string>
 }
 
-export async function formatChallengeQuery(query:any): Promise<QueryChallengeForm>{
+export async function formatChallengeQuery(query:any, resources: any): Promise<QueryChallengeForm>{
   try{
-    const querySituationForm:QuerySituationForm = await formatSitutationQuery(query)
+    const querySituationForm:QuerySituationForm = await formatSitutationQuery(query, resources)
     const { 
       is_strategic,
       participation_mode

@@ -19,13 +19,13 @@ export interface createdFilter {
   $gte?: Date
 }
 
-export async function formatSitutationQuery(query: any): Promise<QuerySituationForm> {
+export async function formatSitutationQuery(query: any, resources:any): Promise<QuerySituationForm> {
   try {
     /**
       * Pagination extraction and cleaning
       */
     let { init, offset } = query
-    const { challengeId, groupValidatorId, status } = query
+    const { group_validator_id, status } = query
     init = query.init ? parseInt(query.init.toString()) : 0;
     offset = query.offset? parseInt(query.offset.toString()) : 10;
     /**
@@ -53,8 +53,8 @@ export async function formatSitutationQuery(query: any): Promise<QuerySituationF
         title: title_order,
         created: created_order? created_order: -1
       },
-      challengeId,
-      groupValidatorId,
+      challengeId : resources?.challenge.challengeId || resources?.solution.challenge.challengeId,
+      groupValidatorId: group_validator_id,
       status
     }
 

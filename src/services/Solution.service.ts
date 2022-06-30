@@ -73,7 +73,7 @@ const SolutionService = {
   async updateSolutionPartially (solution: SolutionI, data: SolutionEditablesFields): Promise<any> {
     try{
       const resp = await Solution.findOneAndUpdate({
-        solution: solution
+        solutionId: solution.solutionId
       },{
         ...data
       },{ 
@@ -87,6 +87,8 @@ const SolutionService = {
         .populate('team')
         .populate('insertedBy')
         .populate('areasAvailable')
+        .populate('tags')
+        
       return resp
     }catch(error){
       return Promise.reject(new ServiceError(

@@ -22,6 +22,8 @@ export interface SolutionBody extends SituationBody {
   differential:string,
   is_new_for:string,
   was_tested: bool,
+  test_description: string,
+  barema_type_suggested:string,
   first_difficulty:string,
   second_difficulty:string,
   third_difficulty:string,

@@ -83,7 +83,7 @@ export const login = async (body: Login ) : Promise<string> => {
               },
               process.env.JWT_KEY,
               {
-                expiresIn: "1h",
+                expiresIn: "154h",
               }
             );  
             return resolve(token)

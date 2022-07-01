@@ -19,6 +19,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     description,
     active,
     fileComplementary,
+    testDescription,
+    baremaTypeSuggested,
     /**
       * Configuration section
       */
@@ -43,7 +45,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     secondDifficulty,
     thirdDifficulty,
     implementationTimeInMonths,
-    moneyNeeded
+    moneyNeeded    
   } = solution
 
   const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
@@ -85,6 +87,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     images,
     banner_image,
     department_affected:departmentAffected,
+    test_description: testDescription,
+    barema_type_suggested: baremaTypeSuggested,
     /**
       * Configuration section
       */

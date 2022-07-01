@@ -61,7 +61,10 @@ export interface SolutionResponse extends SituationResponse {
   second_difficulty:string,
   third_difficulty:string,
   implementation_time_in_months:number,
-  money_needed:number
+  money_needed:number,
+  test_description: string,
+  barema_type_suggested:string,
+
   /**
    * challenge associated
    */

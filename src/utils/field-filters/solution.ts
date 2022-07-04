@@ -57,6 +57,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
   const tags = await genericArrayTagsFilter(solution.tags)
   const challenge = await lightChallengeFilter(solution.challenge)
   const images = await getArrayImageSignedUrl(solution.images)
+  const file_complementary = await getArrayImageSignedUrl(solution.fileComplementary)
   const banner_image = await getSignedUrl(solution.bannerImage)
 
 
@@ -72,7 +73,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     status,
     updated,
     tags,
-    file_complementary:fileComplementary,
+    file_complementary,
     title,
     description,
     proposed_solution: proposedSolution,

@@ -136,7 +136,8 @@ router.get('/user/participation',[
 })
 /**
  * Query
- * email: String
+ * email: String. Looking by fuzzy
+ * user_id: String. Looking just for coincidence 100%
  */
 router.get(URLS.USER.USER,[
   authentication,

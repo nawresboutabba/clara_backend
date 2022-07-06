@@ -394,7 +394,6 @@ router.patch(
     /**
      * Challenge situation description
      */
-    //body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
     body("tags").isArray(),    

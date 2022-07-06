@@ -11,7 +11,7 @@ import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/date";
 import { logVisit } from "../utils/general/log-visit";
-import { getComments, getThreadComments, newComment } from "./repository.comment";
+import { getComments, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";

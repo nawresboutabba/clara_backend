@@ -65,6 +65,7 @@ const UserService = {
     });
   },
 
+  // Deprecated !!
   async deleteUserWithLog (userId: string): Promise<boolean> {
     return new Promise (async (resolve, reject)=> {
       await this
@@ -101,6 +102,22 @@ const UserService = {
         })
     })
   },
+
+  async getUsers (query: any): Promise<any>{
+    try{
+      const resp = await User.find({
+        ...query
+      }) 
+      return resp
+    }catch(error){
+      const customError = new ServiceError(
+        ERRORS.SERVICE.GET_USERS,
+        HTTP_RESPONSE._500, 
+        error)
+      return Promise.reject(customError)
+    }
+  },
+  // @Deprecated!! Use a query
   async  getUsersById (usersId: Array<string>):Promise<Array<UserI>>{
     return new Promise(async (resolve, reject)=>{
       try{

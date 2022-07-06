@@ -9,8 +9,8 @@ import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
 import SolutionService from '../services/Solution.service';
 import { genericArraySolutionsFilter } from '../utils/field-filters/solution';
-import TeamService from '../services/Team.service';
 import { isCommitteMember } from '../utils/acl/function.is_committe_member';
+import * as _ from 'lodash';
 
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
@@ -133,6 +133,52 @@ export const getUserInformation = async (userInformation: UserRequest): Promise<
     return resp
   }catch(error){
     return Promise.reject(error)
+  }
+}
+
+
+const handler = {
+  get(target, prop) {
+    if (prop === "email") {
+      const value = target.email
+      if(value){
+        const emailQuery = {
+          $regex : `(?i).*${value}.*`, 
+        }
+        return emailQuery
+      }else{
+        return undefined
+      }
+    }else if (prop == 'user_id'){
+      const value = target.user_id
+      if(value){
+        return value
+      }else{
+        return undefined
+      }      
+    }else{
+      return undefined
+    }
+  },
+};
+
+
+export const getUsers= async (query: any): Promise<any>=> {
+  try{
+    const queryCleaned = new Proxy(query, handler);
+    const mongooseQuery = {..._.pickBy({
+      email: queryCleaned.email,
+      userId : queryCleaned.user_id
+    }, _.identity),
+    }
+    const users = await UserService.getUsers(mongooseQuery);
+    return users
+  }catch(error){
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.GET_USERS,
+      HTTP_RESPONSE._500,
+      error
+    ))
   }
 }
 

@@ -1,6 +1,6 @@
 import { Post, Controller, Route, Body, Delete, Path, Get, Inject, Query } from 'tsoa'
 import { UserI } from '../../models/users';
-import { changePassword, deleteUser, getParticipation, getUserInformation, login, signUp } from '../../repository/repository.users'
+import { changePassword, deleteUser, getParticipation, getUserInformation, getUsers, login, signUp } from '../../repository/repository.users'
 import { AreaResponse } from '../area/area'
 
 /**
@@ -81,7 +81,10 @@ export default class UserController extends Controller {
   public async getParticipation(@Inject() user: UserI, @Query() query: any ): Promise<any> {
     return getParticipation(user, query)
   }
-  
+  @Get()
+  public async getUsers(@Query() query: any): Promise<any> {
+    return getUsers(query)
+  }
   @Post('change-password')
   public async changePassword(@Body() newPassword: string, @Inject() user: UserI):Promise<UserResponse>{
     return changePassword(newPassword,user )

@@ -5,7 +5,7 @@ import authentication from "../../middlewares/authentication";
 import UserController, { Login } from "../../controller/users";
 import { body , query, validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, VIEW_BY } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, URLS, VIEW_BY } from "../../constants";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 const router = express.Router();
@@ -130,6 +130,24 @@ router.get('/user/participation',[
       .json(userParticipation)
       .status(200)
       .send()
+  }catch(error){
+    next(error)
+  }
+})
+/**
+ * Query
+ * email: String
+ */
+router.get(URLS.USER.USER,[
+  authentication,
+], async (req:RequestMiddleware , res: ResponseMiddleware, next:NextFunction) => {
+  try{
+    const userController = new UserController()
+    const userParticipation = await userController.getUsers(req.query)
+    res
+      .json(userParticipation)
+      .status(200)
+      .send()  
   }catch(error){
     next(error)
   }

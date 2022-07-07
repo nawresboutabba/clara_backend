@@ -31,6 +31,7 @@ const InvitationService = {
         error))
     }
   },
+  // Deprecated
   async getInvitationById(invitationId: string) :Promise<any> {
     try{
       const invitation = await Invitation.findOne({

@@ -35,7 +35,9 @@ export interface InvitationI{
      * Invitation type. see: const INVITATIONS
      */
     type: string,
-
+    /**
+     * Status is calculated
+     */
 }
 
 export interface SolutionInvitationI extends InvitationI {

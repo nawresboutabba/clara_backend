@@ -5,7 +5,7 @@ import authentication from "../../middlewares/authentication";
 import UserController, { Login } from "../../controller/users";
 import { body , query, validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
-import { ERRORS, HTTP_RESPONSE, URLS, VIEW_BY } from "../../constants";
+import { ERRORS, HTTP_RESPONSE, INVITATION, URLS, VIEW_BY } from "../../constants";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 
 const router = express.Router();
@@ -145,6 +145,26 @@ router.get(URLS.USER.USER,[
   try{
     const userController = new UserController()
     const userParticipation = await userController.getUsers(req.query)
+    res
+      .json(userParticipation)
+      .status(200)
+      .send()  
+  }catch(error){
+    next(error)
+  }
+})
+
+/**
+ * User's invitation. My invitations.
+ * Query
+ * status: undefined || [ACCEPTED, REJECTED, PENDING] . See constants.ts. Pending
+ */
+router.get(URLS.USER.USER_INVITATION,[
+  authentication,
+],async (req:RequestMiddleware , res: ResponseMiddleware, next:NextFunction) => {
+  try{
+    const userController = new UserController()
+    const userParticipation = await userController.getInvitations(req.query, req.user)
     res
       .json(userParticipation)
       .status(200)

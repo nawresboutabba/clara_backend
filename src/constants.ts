@@ -35,7 +35,8 @@ export const URLS = {
     CHALLENGE: '/tag/challenge'
   },
   USER: {
-    USER: '/user'
+    USER: '/user',
+    USER_INVITATION: '/user/invitation'
   }
 }
 
@@ -323,5 +324,6 @@ export const OWNER = "owner@gmail.com"
 
 export const INVITATION = {
   ACCEPTED: "ACCEPTED",
-  REJECTED: "REJECTED"
+  REJECTED: "REJECTED",
+  PENDING: "PENDING"
 }

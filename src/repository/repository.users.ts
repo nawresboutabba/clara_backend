@@ -4,13 +4,16 @@ import { UserI } from '../models/users';
 import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
 import { UserBody, Login, UserResponse, UserRequest } from '../controller/users'
-import { ERRORS, HTTP_RESPONSE, VIEW_BY } from '../constants'
+import { ERRORS, HTTP_RESPONSE, INVITATION, VIEW_BY } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
 import SolutionService from '../services/Solution.service';
 import { genericArraySolutionsFilter } from '../utils/field-filters/solution';
 import { isCommitteMember } from '../utils/acl/function.is_committe_member';
 import * as _ from 'lodash';
+import InvitationService from '../services/Invitation.service';
+import { genericArraySolutionInvitationFilter } from '../utils/field-filters/invitation';
+import { InvitationI } from '../models/invitation';
 
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
   return new Promise (async (resolve, reject)=> {
@@ -137,7 +140,7 @@ export const getUserInformation = async (userInformation: UserRequest): Promise<
 }
 
 
-const handler = {
+const handlerUsers = {
   get(target, prop) {
     if (prop === "email") {
       const value = target.email
@@ -165,7 +168,7 @@ const handler = {
 
 export const getUsers= async (query: any): Promise<any>=> {
   try{
-    const queryCleaned = new Proxy(query, handler);
+    const queryCleaned = new Proxy(query, handlerUsers);
     const mongooseQuery = {..._.pickBy({
       email: queryCleaned.email,
       userId : queryCleaned.user_id
@@ -182,6 +185,60 @@ export const getUsers= async (query: any): Promise<any>=> {
   }
 }
 
+const handlerInvitations = {
+  get(target, prop) {
+    if (prop === "invitationAccepted") {
+      const value = target.status
+      if(value.includes[INVITATION.ACCEPTED] && value.includes[INVITATION.REJECTED] ){
+        const invitationAccepted = undefined
+        return invitationAccepted
+      }else if (value.includes[INVITATION.ACCEPTED]){
+        const invitationAccepted = true
+        return invitationAccepted
+      }else {
+        const invitationAccepted = false
+        return invitationAccepted        
+      }
+    } else if (prop ==='decisionDate'){
+      const value = target.status
+      if(value.includes[INVITATION.PENDING] ){
+        const invitationAccepted = { $ne: null }
+        return invitationAccepted
+      }    
+    }
+  },
+};
+
+
+export const getInvitations = async (query:any, user: UserI) : Promise<any> => {
+  try{
+    /*
+    const queryCleaned = new Proxy(query, handlerInvitations);
+    const mongooseQuery = {..._.pickBy({
+      invitationAccepted: queryCleaned.invitationAccepted,
+      decisionDate:queryCleaned.decisionDate,
+    }, _.identity),
+    }
+    */
+    const mongooseQuery = {
+      to : user
+    }
+    const invitations = await InvitationService.getSolutionInvitations(mongooseQuery);
+    const invitationFiltered = await genericArraySolutionInvitationFilter(invitations)
+    const solutionWithStatus = invitationFiltered.map((invitation) =>{
+      if (invitation.invitation_accepted) {
+        return {...invitation, status: INVITATION.ACCEPTED}
+      }else if ( invitation.decision_date && invitation.invitation_accepted == false){
+        return {...invitation, status: INVITATION.REJECTED}        
+      }else if (! invitation.decision_date){
+        return {...invitation, status: INVITATION.PENDING}        
+      }
+    })
+    return solutionWithStatus
+  }catch(error){
+    return Promise.reject(error)
+  }
+}
 export const getParticipation = async (user: UserI, query: any): Promise<any> => {
   try{
     const view = query.view_by
@@ -243,6 +300,8 @@ export const getParticipation = async (user: UserI, query: any): Promise<any> =>
     return Promise.reject(error)
   }
 }
+
+
 
 export const changePassword = async (newPassword: string, user: UserI): Promise<UserResponse> => {
   try{

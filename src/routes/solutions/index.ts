@@ -11,7 +11,6 @@ import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, INVITATIONS, P
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
-import { isCompositionUsersValid } from "../../utils/configuration-rules/participation";
 import UserService from "../../services/User.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";

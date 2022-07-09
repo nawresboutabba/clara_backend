@@ -1,4 +1,5 @@
-import { ERRORS, HTTP_RESPONSE } from "../constants";
+import { query } from "express";
+import { ERRORS, HTTP_RESPONSE, INVITATION } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import Invitation, { SolutionInvitationI } from "../models/invitation";
 
@@ -15,13 +16,19 @@ const InvitationService = {
         error))
     }
   },
-  async getSolutionInvitations(queryCompleted: any): Promise<any[]>{
+  async getSolutionInvitations(queryTemp: any): Promise<any[]>{
     try{
+
       const invitations = await Invitation
-        .find({...queryCompleted})
+        .find({...queryTemp})
         .populate('solution')
         .populate('from')
         .populate('to')
+
+      if (queryTemp.status){
+        return  invitations.filter(inv => queryTemp.status.includes(inv.status) )
+      }
+
       return invitations
     }catch(error){
       return Promise.reject(new ServiceError(

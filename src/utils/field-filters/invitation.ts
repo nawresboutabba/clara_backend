@@ -4,7 +4,7 @@ import { lightUserFilter } from "./user";
 
 export const genericSolutionInvitationFilter = async (invitation: SolutionInvitationI): Promise<any> => {
   try{
-    const {creationDate, decisionDate, invitationAccepted, type, invitationId, resource} = invitation
+    const {creationDate, decisionDate, invitationAccepted, type, invitationId, resource, status} = invitation
     const to = await lightUserFilter(invitation.to)
     const from = await lightUserFilter(invitation.from)
     const solution = await lightSolutionFilter(invitation.solution)
@@ -17,7 +17,8 @@ export const genericSolutionInvitationFilter = async (invitation: SolutionInvita
       type,
       to,
       from,
-      solution
+      solution,
+      status
     }
   }catch(error){
     return Promise.reject(error)

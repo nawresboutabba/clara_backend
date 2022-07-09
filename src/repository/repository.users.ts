@@ -187,23 +187,17 @@ export const getUsers= async (query: any): Promise<any>=> {
 
 const handlerInvitations = {
   get(target, prop) {
-    if (prop === "invitationAccepted") {
+    if (prop === "status") {
       const value = target.status
-      if(value.includes[INVITATION.ACCEPTED] && value.includes[INVITATION.REJECTED] ){
-        const invitationAccepted = undefined
-        return invitationAccepted
-      }else if (value.includes[INVITATION.ACCEPTED]){
-        const invitationAccepted = true
-        return invitationAccepted
+      if (!value){
+        return undefined
+      }else if(_.isString(value) == 1 ){
+        const status = [value]
+        return status
+      }else if(value.length > 1) {
+        return value       
       }else {
-        const invitationAccepted = false
-        return invitationAccepted        
-      }
-    } else if (prop ==='decisionDate'){
-      const value = target.status
-      if(value.includes[INVITATION.PENDING] ){
-        const invitationAccepted = { $ne: null }
-        return invitationAccepted
+        return undefined
       }    
     }
   },
@@ -212,29 +206,18 @@ const handlerInvitations = {
 
 export const getInvitations = async (query:any, user: UserI) : Promise<any> => {
   try{
-    /*
+
     const queryCleaned = new Proxy(query, handlerInvitations);
     const mongooseQuery = {..._.pickBy({
-      invitationAccepted: queryCleaned.invitationAccepted,
-      decisionDate:queryCleaned.decisionDate,
+      status: queryCleaned.status,
+      to : user
     }, _.identity),
     }
-    */
-    const mongooseQuery = {
-      to : user
-    }
+
     const invitations = await InvitationService.getSolutionInvitations(mongooseQuery);
     const invitationFiltered = await genericArraySolutionInvitationFilter(invitations)
-    const solutionWithStatus = invitationFiltered.map((invitation) =>{
-      if (invitation.invitation_accepted) {
-        return {...invitation, status: INVITATION.ACCEPTED}
-      }else if ( invitation.decision_date && invitation.invitation_accepted == false){
-        return {...invitation, status: INVITATION.REJECTED}        
-      }else if (! invitation.decision_date){
-        return {...invitation, status: INVITATION.PENDING}        
-      }
-    })
-    return solutionWithStatus
+
+    return invitationFiltered
   }catch(error){
     return Promise.reject(error)
   }

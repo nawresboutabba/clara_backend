@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { INVITATION } from "../constants";
 import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
@@ -38,6 +39,7 @@ export interface InvitationI{
     /**
      * Status is calculated
      */
+    status?: string
 }
 
 export interface SolutionInvitationI extends InvitationI {
@@ -62,7 +64,18 @@ const invitation = new Schema({
   solution:{
     type: Schema.Types.ObjectId,
     ref: 'Solution'
-  },
+  }
 })
 
+invitation.virtual('status').get(function() {
+  if (this.decisionDate == undefined){
+    return INVITATION.PENDING
+  }else if (this.invitationAccepted && this.decisionDate){
+    return INVITATION.ACCEPTED
+  }else if (! this.invitationAccepted && this.decisionDate){
+    return INVITATION.REJECTED
+  }else {
+    return "ERROR"
+  }
+});
 export default model('Invitation', invitation);

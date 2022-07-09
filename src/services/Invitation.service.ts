@@ -1,6 +1,5 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import invitation from "../models/invitation";
 import Invitation, { SolutionInvitationI } from "../models/invitation";
 
 const InvitationService = {

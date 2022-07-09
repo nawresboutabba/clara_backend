@@ -27,6 +27,7 @@ export interface RequestMiddleware extends express.Request {
       /**
        * This user is different to req.user.
        * This user is a auxiliar field to add user to committee.
+       * Is used for "to" invitaitons setting too. See as example in POST /solution/:solutionId/invitation
        */
       user: UserI
       participation?:{

@@ -32,6 +32,7 @@
   "homepage": "https://github.com/SARQUIS-BOUTROS/IDEATION_BACKEND#readme",
   "dependencies": {
     "-": "0.0.1",
+    "assert": "^2.0.0",
     "aws-sdk": "^2.1092.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",

@@ -21,6 +21,7 @@ import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
 import { UserI } from "../../models/users";
 import InvitationService from "../../services/Invitation.service";
+import * as assert from 'assert';
 
 router.get(
   URLS.SOLUTION.SOLUTION_SOLUTIONID_COMMENT_COMMENTID,
@@ -237,12 +238,13 @@ router.post(
     authentication, 
     acl(RULES.IS_SOLUTION_CREATOR),
     /**
-     * Check that user invitated exist
+     * Check that user invitated exist. If not exist, check if is posible to add
      */
-    body('userId').custom(async (value: string, {req}): Promise<void>=> {
+    body('email').custom(async (value: string, {req}): Promise<void>=> {
       try{
-        const user = await UserService.getUserActiveByUserId(value)
+        const user = await UserService.getUserActiveByEmail(value)
         if (user){
+          assert.ok((user.externalUser ==  false || (user.externalUser ==  true && req.body.type == INVITATIONS.EXTERNAL_OPINION)), "External user can participate just with opinion")
           const members = req.resources.solution.coauthor
           const isMember = members.filter((member: UserI)=> member.userId == user.userId)
           if (isMember.length > 0){
@@ -256,13 +258,18 @@ router.post(
             return Promise.resolve()
           }
           return Promise.reject('Operation available just for idea owner')
+        }else if (req.body.type == INVITATIONS.EXTERNAL_OPINION){
+          /**
+           * External user for external opinion is ok
+           */
+          return Promise.resolve()
         }
         return Promise.reject('user is not valid')
       }catch(error){
-        return Promise.reject('user is not valid')
+        return Promise.reject(error)
       }
     }),
-    body('type').custom(async (value: string, {req})=> {
+    body('type').custom(async (value: string)=> {
       try{
         if (value in INVITATIONS){
           return Promise.resolve()
@@ -272,20 +279,24 @@ router.post(
         return Promise.reject('Invitation invalid')
       }
     }),
-    body('userId').custom(async (value:string , {req})=> {
+    body('email').custom(async (value:string, {req}): Promise<void>=> {
       try{
-        const user = req.utils.user
-        const query = {
-          solution : req.resources.solution,
-          from: user
+        const queryUser = {
+          email: value,
+          active: true
         }
-        const invitation = await InvitationService.getSolutionInvitations(query)
+        const to = await UserService.getUsers(queryUser)
+        const queryInvitation =  {
+          solution: req.resources.solution,
+          to: to
+        }
+        const invitation = await InvitationService.getSolutionInvitations(queryInvitation)
         if (invitation.length > 0){
           return Promise.reject('Invitation for this solution is pending for response')
         }
         return Promise.resolve()
       }catch(error){
-        return Promise.reject('invitation post error')
+        return Promise.reject()
       }
     })
   ],
@@ -293,7 +304,7 @@ router.post(
     try{
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.CREATE_INVITATION)
       const solutionController = new SolutionController()
-      const invitation = await solutionController.newInvitation(req.params.solutionId, req.body, req.utils.user, req.resources.solution)
+      const invitation = await solutionController.newInvitation(req.params.solutionId, req.body, req.utils, req.resources.solution)
       res
         .json(invitation)
         .status(200)

@@ -371,7 +371,7 @@ export const getInvitations = async (solution: SolutionI , query: any, utils: an
   }
 }
 
-export const newInvitation = async (user: UserI, solution: SolutionI, type: string): Promise<any> => {
+export const newInvitation = async (utils: any, solution: SolutionI, type: string): Promise<any> => {
   try{
     /**
      * @TODO create user if does not exist for external opinion
@@ -380,8 +380,14 @@ export const newInvitation = async (user: UserI, solution: SolutionI, type: stri
     const invitation: SolutionInvitationI = {
       resource: RESOURCE.SOLUTION,
       invitationId: nanoid(),
-      to: solution.author,
-      from: user,
+      /**
+       * do not confuse req.utils.user with req.user. 
+       * Req.user is the person in the session, while req.utils.user 
+       * can be the storage of an auxiliary user for an endpoint. 
+       * for example in this case it is used to store the person who is invited
+       */
+      from: solution.author,
+      to: utils.user,
       creationDate: date, 
       solution,
       type

@@ -424,6 +424,7 @@ router.patch(
     body("tags").isArray(),    
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
       try{
+        // https://www.notion.so/TAGS-Fix-Tag-comments-according-to-10-th-meeting-dc0ee99aa6f9478daedcc35c0664a34d
         const query = {
           tagId: { $in: value }
         }

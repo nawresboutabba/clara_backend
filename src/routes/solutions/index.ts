@@ -425,8 +425,7 @@ router.patch(
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
       try{
         const query = {
-          tagId: { $in: value },
-          type: TAG_ORIGIN.IDEA
+          tagId: { $in: value }
         }
         const tags = await TagService.getTagsByQuery(query)
 

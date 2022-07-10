@@ -8,7 +8,7 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
+import { applyTransition, createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
 import { deleteSolution, getSolution } from '../../repository/repository.solution';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
@@ -197,4 +197,11 @@ export default class SolutionController extends Controller {
    public async responseInvitation(@Path('solutionId') solutionId: string, @Path('invitationId') invitationId: string, @Body() data: any,@Inject() utils: any, ): Promise<any> {
      return responseInvitation(utils.invitation, data.response)
    }
+   /**
+    * Apply TRansition function
+    */
+   @Post('/:solutionId/transition')
+    public async applyTransition(@Path('solutionId') solutionId: string,@Body() data: any,  @Inject() solution: SolutionI){
+      return applyTransition(data, solution)
+    }
 }

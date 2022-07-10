@@ -22,6 +22,22 @@ import ChallengeService from "../../services/Challenge.service";
 import { UserI } from "../../models/users";
 import InvitationService from "../../services/Invitation.service";
 import * as assert from 'assert';
+import { checkProposedSolution } from "../../utils/sanitization/proposedSolution.check";
+import { checkDifferential} from "../../utils/sanitization/differential.check";
+import { checkIsNewFor} from "../../utils/sanitization/isNewFor.check";
+import { checkBaremaTypeSuggested } from "../../utils/sanitization/baremaTypeSuggested.check";
+import { checkWasTested } from "../../utils/sanitization/wasTested.check";
+import { checkTestDescription } from "../../utils/sanitization/testDescription.check";
+import { checkFirstDifficulty } from "../../utils/sanitization/firstDifficulty.check";
+import { checkSecondDifficulty } from "../../utils/sanitization/secondDifficulty.check";
+import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.check";
+import { checkImplementationTimeInMonths } from "../../utils/sanitization/implementationTimeInMonth.check";
+import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
+
+
+
+import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
+
 
 router.get(
   URLS.SOLUTION.SOLUTION_SOLUTIONID_COMMENT_COMMENTID,
@@ -411,6 +427,52 @@ router.get(
 );
 
 
+router.post(
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_TRANSITION, 
+  [
+    authentication,
+    acl(RULES.CAN_EDIT_SOLUTION),
+    body('transition').custom(async (value:string, {req}):Promise<void>=> {
+      try{
+        const solution = req.resources.solution
+        /**
+         * Check if transition is valid
+         */
+        await SolutionStateMachine.dispatch(solution.status , value)
+
+        return Promise.resolve()
+      }catch(error){
+        return Promise.reject(error)
+      }
+    }),
+    checkProposedSolution(body),
+    checkDifferential(body),
+    checkIsNewFor(body),
+    checkBaremaTypeSuggested(body),
+    checkWasTested(body),
+    checkTestDescription(body),
+    checkFirstDifficulty(body),
+    checkSecondDifficulty(body),
+    checkThirdDifficulty(body),
+    checkImplementationTimeInMonths(body), 
+    checkMoneyNeeded(body),       
+  ], async (req:RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
+      const solutionController = new SolutionController()
+      const solution = await solutionController.applyTransition(req.params.solutionId, req.body, req.resources.solution)
+      res
+        .json(solution)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  })
+
+/**
+ * Endpoint for update solutions
+ */
 router.patch(
   URLS.SOLUTION.SOLUTION_SOLUTIONID,
   [

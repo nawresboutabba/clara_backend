@@ -400,6 +400,26 @@ export const newInvitation = async (utils: any, solution: SolutionI, type: strin
   }
 }
 
+export const applyTransition = async (data: any , solution:SolutionI) :Promise<any> => {
+  try{
+    const date = getCurrentDate()
+
+    const update = {
+      status: await SolutionStateMachine.dispatch(solution.status , data.transition),
+      updated: date
+    }
+    const resp = await SolutionService.updateSolutionPartially(solution, update)
+    const respFilterd = await genericSolutionFilter(resp)
+    return respFilterd
+  }catch(error){
+    return Promise.reject(new RepositoryError(
+      ERRORS.REPOSITORY.UPDATE_SOLUTION,
+      HTTP_RESPONSE._500,
+      error
+    ))    
+  }
+}
+
 export const responseInvitation = async (invitation: SolutionInvitationI, response: string):Promise<any>=> {
   try{
     const date = getCurrentDate()

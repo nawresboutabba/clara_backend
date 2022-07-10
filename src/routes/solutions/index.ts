@@ -426,7 +426,11 @@ router.get(
   }
 );
 
-
+/**
+ * Body:
+ * transition. Can be: confirm or draft at moment.
+ * Datails see in state-machine.solution.ts (Contain all transitions)
+ */
 router.post(
   URLS.SOLUTION.SOLUTION_SOLUTIONID_TRANSITION, 
   [

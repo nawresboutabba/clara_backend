@@ -103,7 +103,7 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
   firstDifficulty: String, 
   secondDifficulty:String, 
   thirdDifficulty: String,
-  implementationTimeinMonths: Number,
+  implementationTimeInMonths: Number,
   moneyNeeded: Number,
   startAnalysis: Date,
   initialEvaluator: { 

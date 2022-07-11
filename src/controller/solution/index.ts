@@ -28,6 +28,7 @@ export interface SolutionBody extends SituationBody {
   second_difficulty:string,
   third_difficulty:string,
   implementation_time_in_months: number,
+  impact: string,
   money_needed:number,
 
   /**
@@ -64,6 +65,7 @@ export interface SolutionResponse extends SituationResponse {
   money_needed:number,
   test_description: string,
   barema_type_suggested:string,
+  impact: string, 
 
   /**
    * challenge associated

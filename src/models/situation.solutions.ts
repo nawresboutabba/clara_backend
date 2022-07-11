@@ -58,6 +58,10 @@ export interface SolutionI extends SituationBaseI {
      */
     implementationTimeInMonths: number,
     /**
+     * 
+     */
+    impact: string,
+    /**
      * How much money does the project need for its execution?
      */
     moneyNeeded: number, 
@@ -105,6 +109,7 @@ const Solution = SituationBase.discriminator('Solution',new Schema({
   thirdDifficulty: String,
   implementationTimeinMonths: Number,
   moneyNeeded: Number,
+  impact:String,
   startAnalysis: Date,
   initialEvaluator: { 
     type: Schema.Types.ObjectId, 

@@ -45,7 +45,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     secondDifficulty,
     thirdDifficulty,
     implementationTimeInMonths,
-    moneyNeeded    
+    moneyNeeded,
+    impact    
   } = solution
 
   const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
@@ -90,6 +91,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     department_affected:departmentAffected,
     test_description: testDescription,
     barema_type_suggested: baremaTypeSuggested,
+    impact,
     /**
       * Configuration section
       */

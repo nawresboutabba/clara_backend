@@ -127,6 +127,7 @@ export const updateSolution = async (body: SolutionBody, resources: any, user: U
       secondDifficulty:  body.second_difficulty,
       thirdDifficulty: body.third_difficulty,
       implementationTimeInMonths:body.implementation_time_in_months,
+      impact: body.impact,
       moneyNeeded: body.money_needed,
       /**
        * 

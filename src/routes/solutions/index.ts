@@ -580,7 +580,7 @@ router.patch(
     /**
      * Solution description
      */
-    body("proposed_solution", "proposed_solution can not be empty").notEmpty().escape(),
+    body("proposed_solution").escape(),
 
     /**
      * participation.mode_chosed is like participation_mode_chosed

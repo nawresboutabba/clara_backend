@@ -233,8 +233,8 @@ router.get(
     authentication,
     acl(RULES.CAN_VIEW_SOLUTION),
     query('status')
-      .isArray()
       .optional()
+      .customSanitizer(value => Array.isArray(value) ? value : [value])
       .custom(async (value, {req}):Promise<void>=> {
         try{
           const result = value.every(element => {

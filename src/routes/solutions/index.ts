@@ -232,18 +232,20 @@ router.get(
   [
     authentication,
     acl(RULES.CAN_VIEW_SOLUTION),
-    query('status').isArray(),
-    query('status').custom(async (value, {req}):Promise<void>=> {
-      try{
-        const result = value.every(element => {
-          return element in INVITATION
-        })
-        assert.ok(result, "status not valid")
-        return Promise.resolve()
-      }catch(error){
-        return Promise.reject("status not valid")
-      }
-    })
+    query('status')
+      .optional()
+      .customSanitizer(value => Array.isArray(value) ? value : [value])
+      .custom(async (value, {req}):Promise<void>=> {
+        try{
+          const result = value.every(element => {
+            return element in INVITATION
+          })
+          assert.ok(result, "status not valid")
+          return Promise.resolve()
+        }catch(error){
+          return Promise.reject("status not valid")
+        }
+      })
   ],
   async (req:RequestMiddleware, res: ResponseMiddleware, next:NextFunction)=> {
     try{

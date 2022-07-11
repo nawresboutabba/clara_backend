@@ -21,7 +21,10 @@ const InvitationService = {
 
       const invitations = await Invitation
         .find({...queryTemp})
-        .populate('solution')
+        .populate({
+          path:'solution',
+          populate: { path: 'challenge' }
+        })
         .populate('from')
         .populate('to')
 

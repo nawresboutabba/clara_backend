@@ -45,6 +45,7 @@ import teamRouter from './routes/team'
 import imageRouter from './routes/image-service';
 import visitRouter from './routes/visit';
 import tagRouter from './routes/tag';
+import emailRouter from './routes/email';
 
 // import session from './middlewares/session'
 
@@ -80,7 +81,8 @@ app.use('/', integrantRouter);
 app.use('/', teamRouter);
 app.use('/', imageRouter);
 app.use('/', visitRouter);
-app.use('/', tagRouter)
+app.use('/', tagRouter);
+app.use('/', emailRouter);
 app.use(logError)
 app.use(clientErrorHandler)
 app.use(errorHandler)

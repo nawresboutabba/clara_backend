@@ -30,9 +30,9 @@ export async function CAN_VIEW_CHALLENGE(req: RequestMiddleware): Promise<void> 
     const user = req.user
     if (user.externalUser) {
       /**
-               * Temporaly: Return error if a external User want to see a challenge
-               * @TODO create a whitelist for manage external users
-               */
+        * Temporaly: Return error if a external User want to see a challenge
+        * @TODO create a whitelist for manage external users
+        */
       return Promise.reject(new RoutingError(
         ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
         HTTP_RESPONSE._500
@@ -52,8 +52,8 @@ export async function CAN_VIEW_CHALLENGE(req: RequestMiddleware): Promise<void> 
         ))
       } else {
         /**
-                   * Challenge WSALevel = "COMPANY"
-                   */
+          * Challenge WSALevel = "COMPANY"
+          */
         return Promise.resolve()
       }
     }

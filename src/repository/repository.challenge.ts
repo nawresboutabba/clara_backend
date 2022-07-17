@@ -36,7 +36,7 @@ import { genericArrayChallengeProposalFilter, genericChallengeProposalFilter } f
 import SolutionService from "../services/Solution.service";
 import { interactionResume } from "../utils/general/interaction-resume";
 import { SolutionI } from "../models/situation.solutions";
-import { getCurrentDate } from "../utils/date";
+import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
 import { CommentI } from "../models/interaction.comment";
 

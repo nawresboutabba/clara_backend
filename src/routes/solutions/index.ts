@@ -33,10 +33,10 @@ import { checkSecondDifficulty } from "../../utils/sanitization/secondDifficulty
 import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.check";
 import { checkImplementationTimeInMonths } from "../../utils/sanitization/implementationTimeInMonth.check";
 import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
-
-
-
+import generator from 'generate-password'
 import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
+import { newExternalUser } from "../../repository/repository.users";
+import { generatePassword } from "../../utils/general/generate-password";
 
 
 router.get(
@@ -293,8 +293,17 @@ router.post(
           return Promise.reject('Operation available just for idea owner')
         }else if (req.body.type == INVITATIONS.EXTERNAL_OPINION){
           /**
-           * External user for external opinion is ok
+           * External user for external opinion is ok. Create  temporal user
            */
+          const password = generatePassword()
+          await newExternalUser(value, password)
+          const query = {
+            email:value,
+            active:false,
+            confirmed:false
+          }
+          const user = await UserService.getUser(query)
+          req.utils = {user, ...req.utils}
           return Promise.resolve()
         }
         return Promise.reject('user is not valid')

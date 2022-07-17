@@ -36,6 +36,7 @@ const SolutionService = {
         .populate('areasAvailable')
         .populate('groupValidator')
         .populate('tags')
+        .populate('externalOpinion')
       return solution
     }catch(error){
       return Promise.reject(new ServiceError(
@@ -88,6 +89,7 @@ const SolutionService = {
         .populate('insertedBy')
         .populate('areasAvailable')
         .populate('tags')
+        .populate('externalOpinion')
         
       return resp
     }catch(error){

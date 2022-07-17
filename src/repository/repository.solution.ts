@@ -2,14 +2,14 @@ import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
 import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
-import { COMMENT_LEVEL, ERRORS, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
+import { COMMENT_LEVEL, ERRORS, EVENTS_TYPE, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
 import * as _ from 'lodash';
 import { genericArraySolutionsFilter, genericSolutionFilter } from "../utils/field-filters/solution";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
-import { getCurrentDate } from "../utils/date";
+import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
 import { getComments, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
@@ -28,6 +28,7 @@ import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-n
 import InvitationService from "../services/Invitation.service";
 import { SolutionInvitationI } from "../models/invitation";
 import { genericArraySolutionInvitationFilter, genericSolutionInvitationFilter } from "../utils/field-filters/invitation";
+import { sendEmail } from "./repository.mailing";
 
 const handler = {
   get(target, prop) {
@@ -394,6 +395,20 @@ export const newInvitation = async (utils: any, solution: SolutionI, type: strin
       type
     }
     const resp = await InvitationService.newInvitation(invitation)
+    const Destination =  {
+      BccAddresses: [
+      ], 
+      CcAddresses: [
+      ], 
+      ToAddresses: [
+        utils.user.email, 
+      ]
+    }
+    const info = {
+      solution,
+      invitation:resp
+    }
+    await sendEmail(Destination, EVENTS_TYPE.EXTERNAL_OPINION_INVITATION, info)
     const resp_filtered = await genericSolutionInvitationFilter(resp)
     return resp_filtered
   }catch(error){
@@ -435,7 +450,7 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
       }
     }else if (invitation.type == INVITATIONS.EXTERNAL_OPINION && update.invitationAccepted){
       updateSolution = { 
-        $addToSet: { externalOpinion: invitation.from } 
+        $addToSet: { externalOpinion: invitation.to } 
       }
     }
     const solution = await SolutionService.updateSolutionPartially(invitation.solution, updateSolution)
@@ -453,33 +468,3 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
     ))
   }
 }
-
-const getConfigurationFromChallenge = (body: SolutionBody, challenge: ChallengeI): ConfigurationSettingI => {
-  const configuration = {
-    canChooseScope: challenge.canChooseScope,
-    /**
-     * attribute that can be set by the person responsible 
-     * for the solution or the committee, 
-     * depending on the permission granted
-     */
-    isPrivated: challenge.canChooseScope == true ? body.is_privated : challenge.defaultScope,
-    canChooseWSALevel: challenge.canChooseWSALevel,
-    WSALevelAvailable: challenge.WSALevelAvailable,
-    WSALevelChosed: challenge.WSALevelChosed,
-    communityCanSeeReactions: challenge.communityCanSeeReactions,
-    participationModeAvailable: challenge.participationModeAvailable,
-    /**
-     * attribute that can be set by the person responsible 
-     * for the solution or the committee, 
-     * depending on the permission granted
-     */
-    participationModeChosed: challenge.participationModeAvailable.includes(body.participation.chosed_mode) ? body.participation.chosed_mode : challenge.participationModeChosed,
-    timeInPark: challenge.timeInPark,
-    timeExpertFeedback: challenge.timeExpertFeedback,
-    timeIdeaFix: challenge.timeIdeaFix,
-    externalContributionAvailableForGenerators: challenge.externalContributionAvailableForGenerators,
-    externalContributionAvailableForCommittee: challenge.externalContributionAvailableForCommittee,
-  }
-  return configuration
-}
-

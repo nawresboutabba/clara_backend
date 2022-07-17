@@ -2,7 +2,7 @@ import * as express from "express";
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import authentication from "../../middlewares/authentication";
-import UserController, { Login } from "../../controller/users";
+import UserController from "../../controller/users";
 import { body , query, validationResult} from "express-validator";
 import RoutingError from "../../handle-error/error.routing";
 import { ERRORS, HTTP_RESPONSE, INVITATION, URLS, VIEW_BY } from "../../constants";

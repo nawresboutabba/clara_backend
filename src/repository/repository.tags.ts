@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { TagBody, TagResponse } from "../controller/tag";
 import TagService from "../services/Tag.service";
 import * as _ from 'lodash'; 
-import { getCurrentDate } from "../utils/date";
+import { getCurrentDate } from "../utils/general/date";
 import { TagI } from "../models/tag";
 import { genericArrayTagsFilter, genericTagFilter } from "../utils/field-filters/tag";
 import { UserI } from "../models/users";

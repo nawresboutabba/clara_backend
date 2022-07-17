@@ -6,6 +6,24 @@ import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
 
 const UserService = {
+  /**
+   * General query for user. As example users not confirmed
+   * @param query 
+   */
+  async getUser(query:any):Promise<UserI> {
+    try{
+      const user = User.findOne({
+        ...query
+      })
+      return user
+    }catch(error){
+      const customError = new ServiceError(
+        ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
+        HTTP_RESPONSE._500, 
+        error)
+      return Promise.reject(customError)
+    }
+  },
   async getUserActiveByEmail (email: string): Promise <UserI> {
     return new Promise(async (resolve, reject) => {
       /**
@@ -148,10 +166,10 @@ const UserService = {
       }
     })
   },
-  async updateUserById(user:UserI, data: any ):Promise<UserI> {
+  async updateUser(user:UserI, data: any ):Promise<UserI> {
     try{
       const resp = await User.findOneAndUpdate({
-        user : user
+        userId : user.userId
       },{
         ...data
       },{ 

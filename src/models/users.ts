@@ -35,6 +35,10 @@ export interface UserI {
    */
   lastName: string,
   /**
+   * User confirmed?
+   */
+  confirmed: boolean,
+  /**
    * Is the user active?
    */
   active: boolean,
@@ -74,6 +78,7 @@ const user = new Schema({
   password: { type: String, required: true },
   firstName: String,
   lastName: String, 
+  confirmed: Boolean,
   active: Boolean,
   externalUser: Boolean,
   areaVisible: [{

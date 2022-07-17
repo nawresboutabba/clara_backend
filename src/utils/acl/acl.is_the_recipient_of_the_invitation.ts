@@ -8,7 +8,7 @@ export async function IS_THE_RECIPIENT_OF_THE_INVITATION (req: RequestMiddleware
     /**
      * Check if current user is the guest
      */
-    if ( !(req.user.userId == invitation.from.userId)){
+    if ( !(req.user.userId == invitation.to.userId)){
       return Promise.reject('User is not the guest')
     }
     req.utils = {...req.utils, invitation}

@@ -18,7 +18,6 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     title,
     description,
     active,
-    fileComplementary,
     testDescription,
     baremaTypeSuggested,
     /**
@@ -50,7 +49,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
   } = solution
 
   const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
-
+  const external_opinion: UserResponse[] = await genericArrayUserFilter(solution.externalOpinion)
   const author = await genericUserFilter(solution.author)
   const inserted_by = await genericUserFilter(solution.insertedBy)
   const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
@@ -66,6 +65,7 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     inserted_by,
     author,
     coauthor,
+    external_opinion,
     active,
     solution_id:solutionId,
     challenge_id: solution.challenge.type == CHALLENGE_TYPE.PARTICULAR? challengeId : undefined,

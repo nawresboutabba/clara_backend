@@ -6,6 +6,7 @@ import SolutionService from "../../services/Solution.service";
 import * as _ from 'lodash'; 
 import { IntegrantStatusI } from "../../models/integrant";
 import { isCommitteMember } from "./function.is_committe_member";
+import InvitationService from "../../services/Invitation.service";
 
 export async function CAN_VIEW_SOLUTION (req: RequestMiddleware) : Promise<void>{
   try{
@@ -29,6 +30,33 @@ export async function CAN_VIEW_SOLUTION (req: RequestMiddleware) : Promise<void>
       return Promise.resolve()
     }
 
+    /**
+     * Check if user is part of solution. either team member or external opinion
+     */
+    const coauthor = solution.coauthor.filter(c => c.userId == user.userId)
+    const externalOpinion = solution.externalOpinion.filter(eo => eo.userId == user.userId)
+    if (coauthor.length> 0 || externalOpinion.length>0){
+      return Promise.resolve()
+    }
+    /**
+     * Check if exist invitations pendings, then the user can see the solution
+     */
+    const invitation = await InvitationService.getSolutionInvitations(
+      {
+        to:user,
+        solution:solution,
+        decisionDate: {
+          $eq:undefined
+        }
+      }
+    )
+    /**
+     * This user has a invitation pending for this solution
+     */
+    if(invitation.length> 0){
+      return Promise.resolve()
+    }
+    
     /**
      * If user is not committe member, then analysis continue
      */

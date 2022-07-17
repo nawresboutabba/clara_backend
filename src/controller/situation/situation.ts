@@ -51,6 +51,7 @@ export interface LightSituationResponse {
     author?: UserResponse,
     coauthor?: UserResponse[],
     team?: TeamResponse,
+    external_opinion?: UserResponse[],
     created: Date,
     title: string,
     description: string,

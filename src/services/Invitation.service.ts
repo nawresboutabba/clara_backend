@@ -1,5 +1,4 @@
-import { query } from "express";
-import { ERRORS, HTTP_RESPONSE, INVITATION } from "../constants";
+import { ERRORS, HTTP_RESPONSE,  } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import Invitation, { SolutionInvitationI } from "../models/invitation";
 

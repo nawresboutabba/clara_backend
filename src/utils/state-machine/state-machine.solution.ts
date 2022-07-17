@@ -25,7 +25,7 @@ const machine = {
         this.changeState(SOLUTION_STATUS.APROVED_FOR_DISCUSSION);
       },
       draft: function () {
-        this.changeState(SOLUTION_STATUS.APROVED_FOR_DISCUSSION);       
+        this.changeState(SOLUTION_STATUS.DRAFT);       
       },
       analyze: function () {
         this.changeState(SOLUTION_STATUS.ANALYZING);      

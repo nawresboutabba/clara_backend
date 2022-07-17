@@ -27,6 +27,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       fileComplementary,
       isStrategic,
       finalization,
+      type,
       /**
        * Configuration section
        */
@@ -71,6 +72,7 @@ export const genericChallengeFilter = async (challenge : ChallengeI): Promise<Ch
       finalization,
       department_affected,
       group_validator,
+      type,
       /**
        * Configuration section
        */
@@ -106,7 +108,8 @@ export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any>
       active,
       isStrategic,
       finalization,
-      interactions
+      interactions,
+      type,
     } = challenge
 
     const images = await getArrayImageSignedUrl(challenge.images)
@@ -130,6 +133,7 @@ export const lightChallengeFilter = async (challenge : ChallengeI): Promise<any>
       department_affected,
       group_validator,
       interactions,
+      type,
     }
   }catch(error){
     return Promise.reject(error)

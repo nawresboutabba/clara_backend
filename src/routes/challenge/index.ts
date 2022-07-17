@@ -363,7 +363,7 @@ router.patch(
     /**
      * Challenge situation description
      */
-    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY).notEmpty(),
+    body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
     body("tags").isArray(),    
@@ -457,7 +457,7 @@ router.patch(
     /**
       * Solution description
       */
-    body("proposed_solution", "proposed_solution can not be empty").notEmpty().escape(),
+    body("proposed_solution").escape(),
  
     /**
       * participation.mode_chosed is like participation_mode_chosed

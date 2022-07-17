@@ -60,6 +60,7 @@ export interface ChallengeResponse extends SituationResponse {
   finalization: Date,
   default_scope: boolean,
   group_validator: GroupValidatorResponse,
+  type: string,
   interactions?: {
     interaction: string,
     count: number

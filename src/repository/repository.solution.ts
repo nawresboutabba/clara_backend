@@ -180,9 +180,9 @@ export const getSolution = async (solutionId: string, solution: SolutionI, user:
   }
 }
 
-export const listSolutions = async (query: QuerySolutionForm): Promise<LightSolutionResponse[]> => {
+export const listSolutions = async (query: QuerySolutionForm, utils?: any): Promise<LightSolutionResponse[]> => {
   try {
-    const listSolutions = await SolutionService.listSolutions(query,{})
+    const listSolutions = await SolutionService.listSolutions(query,utils)
     /**
      * @TODO list solutions filter with minimal data
      */

@@ -118,6 +118,7 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
   const images = await getArrayImageSignedUrl(solution.images)
   const banner_image = await getSignedUrl(solution.bannerImage)
   const inserted_by = await genericUserFilter(solution.insertedBy)
+  const tags = await genericArrayTagsFilter(solution.tags)
 
   const challenge = {
     type: solution.challenge.type,
@@ -139,7 +140,8 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
     status: solution.status,
     banner_image,
     images,
-    challenge
+    challenge,
+    tags
   })
 }
 

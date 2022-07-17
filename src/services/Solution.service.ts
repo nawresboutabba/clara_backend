@@ -1,5 +1,4 @@
 import Solution, { SolutionI } from "../models/situation.solutions"
-import { ChallengeI } from "../models/situation.challenges";
 import * as _ from 'lodash'; 
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
@@ -7,6 +6,7 @@ import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
 import { AreaI } from "../models/organization.area";
 import { NewSolutionI } from "../repository/repository.solution";
+import { TagI } from "../models/tag";
 
 export interface SolutionEditablesFields {
   title?: string,
@@ -107,7 +107,7 @@ const SolutionService = {
      */
   async listSolutions(query: QuerySolutionForm, utils: any): Promise<any>{    
     try{
-      const mongooseQuery = {..._.pickBy({
+      let mongooseQuery = {..._.pickBy({
         created: query.created,
         active:true,
         title:{
@@ -117,9 +117,16 @@ const SolutionService = {
         challengeId: query.challengeId,
       }, _.identity),
       }
-      if(utils.groupValidator){
+      if(utils?.groupValidator){
         mongooseQuery.groupValidator = utils.groupValidator
       }  
+      if (utils?.tags){
+        const arrayTags = utils.tags
+        const tags = {
+          $in:    arrayTags
+        }
+        mongooseQuery = {...mongooseQuery , tags}
+      }
 
       const solutions = await Solution
         .find({...mongooseQuery})
@@ -136,6 +143,7 @@ const SolutionService = {
         .populate('coauthor')
         .populate('groupValidator')
         .populate('challenge')
+        .populate('tags')
       return solutions
     }catch(error){
       return Promise.reject( new ServiceError(

@@ -15,6 +15,7 @@ import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
 import { ConfigurationBody } from '../configuration';
 import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
+import { TagResponse } from '../tag';
 import { UserResponse } from '../users';
 
 export interface SolutionBody extends SituationBody {
@@ -80,6 +81,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
   proposed_solution: string,
   challenge_id?: string,
   challenge?: LightChallengeResponse,
+  tags: TagResponse[]
 }
 
 
@@ -124,8 +126,8 @@ export default class SolutionController extends Controller {
   }
 
   @Get()
-  public async listSolutions(@Query() query?: any): Promise<LightSolutionResponse[]> {
-    return listSolutions(query)
+  public async listSolutions(@Query() query?: any, @Inject() utils?: any): Promise<LightSolutionResponse[]> {
+    return listSolutions(query, utils)
   }
   @Post('/default-configuration')
   public async setSolutionDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI> {

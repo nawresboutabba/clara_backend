@@ -129,6 +129,12 @@ const ChallengeService = {
         });
     });
   },
+  /**
+   * Deprecated
+   * @param challengeId 
+   * @param challengeChanges 
+   * @returns 
+   */
   async updateWithLog(challengeId: string, challengeChanges: editOneParams): Promise<ChallengeI> {
     const challenge = await this.getChallengeActiveById(challengeId)
     const oldData = _.omit(challenge.toJSON(), ["_id", "__v"]);

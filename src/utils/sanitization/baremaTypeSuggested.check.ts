@@ -16,6 +16,8 @@ export function checkBaremaTypeSuggested(body:CallableFunction):any{
         return Promise.resolve()
       }else if (transition == SOLUTION_STATUS.DRAFT){
         return Promise.resolve()
+      }else if (transition == SOLUTION_STATUS.APROVED_FOR_DISCUSSION){
+        return Promise.resolve()
       }
       throw 'Transtition not Implemented'
     }catch(error){

@@ -420,10 +420,17 @@ export const applyTransition = async (data: any , solution:SolutionI) :Promise<a
   try{
     const date = getCurrentDate()
 
-    const update = {
+    let update = {
       status: await SolutionStateMachine.dispatch(solution.status , data.transition),
-      updated: date
+      updated: date,
+      version: solution.version
     }
+
+    if (solution.status == SOLUTION_STATUS.DRAFT && update.status == SOLUTION_STATUS.PROPOSED){
+      const version = solution.version+1
+      update = {...update , version}
+    }
+
     const resp = await SolutionService.updateSolutionPartially(solution, update)
     const respFilterd = await genericSolutionFilter(resp)
     return respFilterd

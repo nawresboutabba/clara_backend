@@ -33,7 +33,6 @@ import { checkSecondDifficulty } from "../../utils/sanitization/secondDifficulty
 import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.check";
 import { checkImplementationTimeInMonths } from "../../utils/sanitization/implementationTimeInMonth.check";
 import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
-import generator from 'generate-password'
 import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
 import { newExternalUser } from "../../repository/repository.users";
 import { generatePassword } from "../../utils/general/generate-password";

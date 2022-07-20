@@ -9,11 +9,11 @@ export interface InvitationI{
    */
     invitationId: string
     /**
-     * User that did the invitation
+     * Guest user
      */
     to: UserI,
     /**
-     * Guest user
+     * User that did the invitation
      */
     from: UserI,
     /**

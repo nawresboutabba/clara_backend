@@ -250,10 +250,13 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
     }
 
     if(query.scope == COMMENT_LEVEL.GROUP){
-      const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
-      responsibles.push(solution.author.userId)
-      if(responsibles.includes(user.userId) == false){
-        throw new Error('You are not authorized to see this comments')
+      const canViewComment = [
+        ...solution.coauthor.map(coauthor => coauthor.userId),
+        solution.author.userId,
+        ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
+      ]
+      if(canViewComment.includes(user.userId) == false){
+        throw 'You are not authorized to see this comments'
       }
     }
     const comments = await getComments(filter)

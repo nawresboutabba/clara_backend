@@ -70,9 +70,12 @@ router.get(
         if(value == COMMENT_LEVEL.GROUP){
           const solution = req.resources.solution
           const user = req.user
-          const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
-          responsibles.push(solution.author.userId)
-          if(responsibles.includes(user.userId) == false){
+          const canViewComment = [
+            ...solution.coauthor.map(coauthor => coauthor.userId),
+            solution.author.userId,
+            ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
+          ]
+          if(canViewComment.includes(user.userId) == false){
             throw 'You are not authorized to see this comments'
           }
         }
@@ -120,10 +123,13 @@ router.post(
         if(value == COMMENT_LEVEL.GROUP){
           const solution = req.resources.solution
           const user = req.user
-          const responsibles = solution.coauthor.map(coauthor => coauthor.userId)
-          responsibles.push(solution.author.userId)
-          if(responsibles.includes(user.userId) == false){
-            throw 'You are not authorized to post comments in this solution as responsible'
+          const canViewComment = [
+            ...solution.coauthor.map(coauthor => coauthor.userId),
+            solution.author.userId,
+            ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
+          ]
+          if(canViewComment.includes(user.userId) == false){
+            throw 'You are not authorized to see this comments'
           }
         }
 

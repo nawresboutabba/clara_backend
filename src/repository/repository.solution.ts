@@ -453,7 +453,7 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
     let updateSolution 
     if ((invitation.type == INVITATIONS.TEAM_PARTICIPATION) && update.invitationAccepted){
       updateSolution = { 
-        $addToSet: { coauthor: invitation.from } 
+        $addToSet: { coauthor: invitation.to } 
       }
     }else if (invitation.type == INVITATIONS.EXTERNAL_OPINION && update.invitationAccepted){
       updateSolution = { 

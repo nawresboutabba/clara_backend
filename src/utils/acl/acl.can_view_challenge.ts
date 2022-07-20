@@ -28,35 +28,35 @@ export async function CAN_VIEW_CHALLENGE(req: RequestMiddleware): Promise<void> 
       req.resources = { challenge }
     }
     const user = req.user
-    if (user.externalUser) {
-      /**
-        * Temporaly: Return error if a external User want to see a challenge
-        * @TODO create a whitelist for manage external users
-        */
+    // if (user.externalUser) {
+    //   /**
+    //     * Temporaly: Return error if a external User want to see a challenge
+    //     * @TODO create a whitelist for manage external users
+    //     */
+    //   return Promise.reject(new RoutingError(
+    //     ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
+    //     HTTP_RESPONSE._500
+    //   ))
+    // } else {
+    if (req.resources.challenge.WSALevelChosed == WSALEVEL.AREA) {
+      const userAreaVisible = user.areaVisible.filter((area) => { return area.areaId })
+      const challengeAreasAvailable = req.resources.challenge.areasAvailable.filter((area) => { return area.areaId })
+      const intersection = _.intersection(challengeAreasAvailable, userAreaVisible)
+
+      if (intersection.length > 0) {
+        return Promise.resolve()
+      }
       return Promise.reject(new RoutingError(
         ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
         HTTP_RESPONSE._500
       ))
     } else {
-      if (req.resources.challenge.WSALevelChosed == WSALEVEL.AREA) {
-        const userAreaVisible = user.areaVisible.filter((area) => { return area.areaId })
-        const challengeAreasAvailable = req.resources.challenge.areasAvailable.filter((area) => { return area.areaId })
-        const intersection = _.intersection(challengeAreasAvailable, userAreaVisible)
-
-        if (intersection.length > 0) {
-          return Promise.resolve()
-        }
-        return Promise.reject(new RoutingError(
-          ERRORS.ROUTING.CHALLENGE_FORBIDDEN,
-          HTTP_RESPONSE._500
-        ))
-      } else {
-        /**
-          * Challenge WSALevel = "COMPANY"
-          */
-        return Promise.resolve()
-      }
+      /**
+        * Challenge WSALevel = "COMPANY"
+        */
+      return Promise.resolve()
     }
+    // }
   } catch (error) {
     return Promise.reject(error)
   }

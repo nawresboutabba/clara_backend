@@ -44,7 +44,7 @@ export async function formatSitutationQuery(query: any, resources:any): Promise<
     /**
       * Order filter
       */
-    const { created_order, title_order } = query
+    const { created_order, title_order, challengeType } = query
 
     let queryForm: QuerySolutionForm = {
       init,
@@ -53,6 +53,7 @@ export async function formatSitutationQuery(query: any, resources:any): Promise<
         title: title_order,
         created: created_order? created_order: -1
       },
+      challenge: {  type: challengeType },
       challengeId : resources?.challenge.challengeId || resources?.solution.challenge.challengeId,
       groupValidatorId: group_validator_id,
       status

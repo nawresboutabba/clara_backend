@@ -430,8 +430,7 @@ router.get(
     try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)     
       const solutionController = new SolutionController()
-      const challenge = await ChallengeService.getGenericChallenge()
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query, { challenge })
+      const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.resources)
       const solutions = await solutionController.listSolutions(query, req.utils)
       res
         .json(solutions)

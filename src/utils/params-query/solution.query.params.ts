@@ -2,6 +2,7 @@ import { QuerySituationForm, formatSitutationQuery } from "./situation.query.par
 
 export interface QuerySolutionForm extends QuerySituationForm {
   challengeId?: string
+  challenge?: { type: string }
 }
 
 

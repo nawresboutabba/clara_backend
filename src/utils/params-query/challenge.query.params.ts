@@ -1,5 +1,6 @@
 import { PARTICIPATION_MODE } from "../../constants";
-import { QuerySituationForm, formatSitutationQuery } from "./situation.query.params";
+import { TagI } from "../../models/tag";
+import { QuerySituationForm, formatSituationQuery } from "./situation.query.params";
 
 function modalitySwitch(modality:string){
   switch(modality){
@@ -19,7 +20,7 @@ export interface QueryChallengeForm extends QuerySituationForm {
 
 export async function formatChallengeQuery(query:any, resources: any): Promise<QueryChallengeForm>{
   try{
-    const querySituationForm:QuerySituationForm = await formatSitutationQuery(query, resources)
+    const querySituationForm:QuerySituationForm = await formatSituationQuery(query, resources)
     const { 
       is_strategic,
       participation_mode
@@ -28,12 +29,12 @@ export async function formatChallengeQuery(query:any, resources: any): Promise<Q
     const queryChallengeForm: QueryChallengeForm = {
       ... querySituationForm,
     }
-    
-    if (is_strategic){
+
+    if (is_strategic) {
       const isStrategic: boolean = (is_strategic != undefined && is_strategic.toLowerCase() == 'true') ? true : false;
       queryChallengeForm.isStrategic = isStrategic
     }
-            
+
     const participationMode = modalitySwitch(participation_mode)
     
     queryChallengeForm.participationMode = participationMode

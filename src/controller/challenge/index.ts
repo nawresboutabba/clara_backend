@@ -24,6 +24,7 @@ import { ConfigurationBody } from '../configuration';
 import { ConfigurationDefaultI } from '../../models/configuration.default';
 import { RESOURCE } from '../../constants';
 import { GroupValidatorResponse } from '../../repository/repository.group-validator';
+import { AreaResponse } from '../area/area';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -49,9 +50,24 @@ export interface ChallengeBody extends SituationBody {
   default_scope:boolean
 }
 export interface LightChallengeResponse {
-  challenge_id: string,
-  title: string,
-  description: string,
+  challenge_id: string;
+  created: Date;
+  status: string;
+  title: string;
+  description: string;
+  active: boolean;
+  banner_image: string;
+  images: string[];
+  is_strategic: boolean;
+  finalization: Date;
+  areas_available: AreaResponse[];
+  department_affected: AreaResponse[];
+  group_validator: GroupValidatorResponse;
+  interactions: {
+    interaction: string;
+    count: number;
+  };
+  type: string;
 }
 
 export interface ChallengeResponse extends SituationResponse {
@@ -126,7 +142,7 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
   @Get()
-  public async listChallenges(@Query() query: any, @Inject() user: UserI): Promise<ChallengeResponse[]> {
+  public async listChallenges(@Query() query: any, @Inject() user: UserI): Promise<LightChallengeResponse[]> {
     return listChallenges(query, user)
   }
 

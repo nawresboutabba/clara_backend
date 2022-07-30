@@ -165,38 +165,38 @@ export const deleteChallenge = async (challengeId: string): Promise<boolean> => 
 }
 
 
-export const listChallenges = async (query: QueryChallengeForm, user: UserI): Promise<ChallengeResponse[]> => {
+export async function listChallenges(query: QueryChallengeForm, user: UserI) {
   try {
     /**
-     * Listing for user internals and external is not the same. 
+     * Listing for user internals and external is not the same.
      * The externals users just can see challenge what was invited.
      * The internals users can see all challenges.
      */
-    if(user.externalUser){
-      const mySolutions : SolutionI[]= await SolutionService.getParticipations(user)
-      const myChallenge : ChallengeI []= mySolutions.filter((solution) => {
-        if (solution.challenge){
-          return solution
+    if (user.externalUser) {
+      const mySolutions: SolutionI[] = await SolutionService.getParticipations(user);
+      const myChallenge: ChallengeI[] = mySolutions.filter((solution) => {
+        if (solution.challenge) {
+          return solution;
         }
-      }).map(solution =>solution.challenge)
+      }).map(solution => solution.challenge);
       const challenges = await ChallengeService.listChallengeForExternals(query, myChallenge, user);
       /**
        * @TODO reactions resume
        */
       challenges.forEach(challenge => {
-        challenge.interactions = interactionResume(challenge.interactions)
-      })
+        challenge.interactions = interactionResume(challenge.interactions);
+      });
 
       const resp = await genericArrayChallengeFilter(challenges);
-      return resp
-    }else{
-      const challenges = await ChallengeService.listChallenges(query, user)
-      const resp = await genericArrayChallengeFilter(challenges)
-      return resp
+      return resp;
+    } else {
+      const challenges = await ChallengeService.listChallenges(query, user);
+      const resp = await genericArrayChallengeFilter(challenges);
+      return resp;
     }
 
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 }
 

@@ -4,7 +4,6 @@ import authentication from "../../middlewares/authentication";
 import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-const { validationResult, body, check } = require("express-validator");
 import ChallengeController from '../../controller/challenge'
 import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
@@ -19,6 +18,8 @@ import ConfigurationService from "../../services/Configuration.service";
 import TagService from "../../services/Tag.service";
 import CommentService from "../../services/Comment.service";
 import ChallengeService from "../../services/Challenge.service";
+import { query, validationResult, body, check } from "express-validator";
+import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -517,11 +518,16 @@ router.patch(
 
 router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
+  tagsValidArray(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     const challengeController = new ChallengeController()
 
-    const query: QueryChallengeForm = await formatChallengeQuery(req.query, req.resources)
+    const query: QueryChallengeForm = await formatChallengeQuery(req.query, {
+      challenge: req.resources?.challenge,
+      solution: req.resources?.solution,
+      tags: req.utils?.tags,
+    })
     const challenges = await challengeController.listChallenges(query, req.user)
 
     res
@@ -614,8 +620,8 @@ router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)
 
     const challengeController = new ChallengeController();
-    req.query.challengId = req.params.challengeId
-    const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.resources)
+    req.query.challengeId = req.params.challengeId
+    const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.utils)
 
     const solutions = await challengeController.listSolutions(
       req.params.challengeId,

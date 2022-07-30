@@ -36,6 +36,7 @@ import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
 import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
 import { newExternalUser } from "../../repository/repository.users";
 import { generatePassword } from "../../utils/general/generate-password";
+import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
 
 
 router.get(
@@ -405,32 +406,13 @@ router.get(
   URLS.SOLUTION.SOLUTION,
   [
     authentication,
-    query('tags').isArray().optional().custom(async (value: string[], { req }): Promise<void> => {
-      try{
-        if(value.length== 0){
-          return Promise.resolve()
-        }
-        // https://www.notion.so/TAGS-Fix-Tag-comments-according-to-10-th-meeting-dc0ee99aa6f9478daedcc35c0664a34d
-        const query = {
-          tagId: { $in: value }
-        }
-        const tags = await TagService.getTagsByQuery(query)
-
-        if (tags.length == value.length) {
-          req.utils = { tags, ...req.utils }
-          return Promise.resolve()
-        }
-        return Promise.reject("tags does not valid")
-      }catch(error){
-        return Promise.reject("tags does not valid")
-      }
-    }),
+    tagsValidArray(),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)     
       const solutionController = new SolutionController()
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.resources)
+      const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.utils);
       const solutions = await solutionController.listSolutions(query, req.utils)
       res
         .json(solutions)

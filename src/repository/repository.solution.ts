@@ -59,6 +59,7 @@ export interface NewSolutionI {
   updated: Date,
   status: string,
   challenge: ChallengeI,
+  challengeId: string,
   version: number,
   /**
    * Configuration copy from Challenge as default. This copy is for manage custom 
@@ -86,6 +87,7 @@ export const createSolution = async (user: UserI, util:any, challenge:ChallengeI
       updated: created,
       status: SOLUTION_STATUS.DRAFT,
       challenge,
+      challengeId: challenge.challengeId,
       version: 0,
       /**
        * Configurations Settings

@@ -175,13 +175,13 @@ const ChallengeService = {
    * @returns 
    */
   async listChallenges(query: QueryChallengeForm, user: UserI): Promise<Array<any>> {
-    try {      
+    try {
       return await Challenge.find({
         $and: [
           { $or: [{ title: { $regex: `.*${query.title}.*` } }] },
           { active: true },
           { participationModeAvailable: { $in: query.participationMode } },
-          removeEmpty({ tags: query.tags }),
+          removeEmpty({ tags: query?.tags, type: query.challenge?.type }),
         ],
       })
         .populate('tags')

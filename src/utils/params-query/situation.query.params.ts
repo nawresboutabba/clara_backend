@@ -16,6 +16,7 @@ export interface QuerySituationForm {
   title?: string;
   status?: string;
   tags?: { $in: TagI[] };
+  challenge?: { type: string };
 }
 
 export interface createdFilter {

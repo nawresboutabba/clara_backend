@@ -5,7 +5,7 @@ import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 import ChallengeController from '../../controller/challenge'
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
 import AreaService from "../../services/Area.service";
@@ -609,11 +609,11 @@ router.delete(
 
 router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
   authentication,
-  acl(
-    RULES.CAN_VIEW_CHALLENGE
-  ),
+  // !TODO enhance access rule
+  acl(RULES.CAN_VIEW_CHALLENGE),
   check('init').escape(),
-  check('offset').escape()
+  check('offset').escape(),
+  query('status').optional().isIn(Object.values(SOLUTION_STATUS)),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
 

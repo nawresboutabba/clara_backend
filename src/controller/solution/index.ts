@@ -72,7 +72,7 @@ export interface SolutionResponse extends SituationResponse {
    * challenge associated
    */
   challenge_id?: string,
-  challenge?: ChallengeResponse,
+  challenge?: LightChallengeResponse,
   is_privated: boolean
 }
 
@@ -80,7 +80,13 @@ export interface LightSolutionResponse extends LightSituationResponse {
   solution_id: string,
   proposed_solution: string,
   challenge_id?: string,
-  challenge?: LightChallengeResponse,
+  challenge?: {
+    type: string;
+    challenge_id: string;
+    title: string;
+    description: string;
+    finalization: Date,
+  },
   tags: TagResponse[]
 }
 

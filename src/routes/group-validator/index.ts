@@ -9,24 +9,24 @@ import IntegrantService from "../../services/Integrant.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import * as _ from 'lodash';
 import authentication from "../../middlewares/authentication";
-import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import { acl } from "../../middlewares/acl";
+import {Router} from 'express'
 
-const router = require("express").Router();
+const router = Router()
 
 router.post('/group-validator',[
   authentication,
   body("name", "name can not be empty").notEmpty(),
-  body("name","group validator name already exist").custom(async (value, {req}): Promise<void> => {
-    return new Promise(async (resolve, reject)=> {
+  body("name","group validator name already exist").custom(async (value, {req}) => {
+    return async () => {
       const groupValidators = await GroupValidatorService.getAllGroupValidators();
       groupValidators.forEach(groupValidator => {
         if(groupValidator.name === value){
-          return reject()
+          throw new Error("Invalid Group");
         }
       })
-      return resolve()
-    })
+      return
+    }
   }),
   body("integrants").custom(async (value, {req}): Promise<void> => {
     return new Promise(async (resolve, reject)=> {

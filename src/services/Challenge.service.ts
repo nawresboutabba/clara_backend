@@ -6,6 +6,7 @@ import ServiceError from "../handle-error/error.service";
 import { CHALLENGE_TYPE, ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 import { UserI } from "../models/users";
+import { removeEmpty } from "../utils/general/remove-empty";
 
 type editOneParams = {
   description?: string,
@@ -174,52 +175,60 @@ const ChallengeService = {
    * @returns 
    */
   async listChallenges(query: QueryChallengeForm, user: UserI): Promise<Array<any>> {
-    try {
-      const matchQuery = {
+    try {      
+      return await Challenge.find({
         $and: [
-          {$or:[
-            {title:{$regex:`.*${query.title}.*`}},
-          ]},
-          {active:true},
-          { participationModeAvailable: {$in: query.participationMode}},
-        ]
-      }
-      
-      const resp = await Challenge.aggregate([
-        {
-          $match: {
-            ...matchQuery
-          }
-        },
-        {
-          $lookup: {
-            from: 'interactions',
-            localField: "_id",    // field in the orders collection
-            foreignField: "challenge",  // field in the items collection
-            pipeline: [
-              {
-                $match: {
-                  $or: [{
-                    $or: [
-                      { isPrivate: true },
-                      { author: user },
-                      { insertedBy: user }
-                    ]
-                  },
-                  { isPrivate: false },
-                  ]
-                }
-              }
-            ],
-            as: 'interactions'
-          }
-        },
-      ])
+          { $or: [{ title: { $regex: `.*${query.title}.*` } }] },
+          { active: true },
+          { participationModeAvailable: { $in: query.participationMode } },
+          removeEmpty({ tags: query.tags }),
+        ],
+      })
+        .populate('tags')
         .skip(query.init)
         .limit(query.offset)
-        .sort(_.pickBy(query.sort, _.identity))
+        .sort(removeEmpty(query.sort));
+      // const resp = await Challenge.aggregate([
+      //   {
+      //     $match: matchQuery
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'interactions',
+      //       localField: "_id",    // field in the orders collection
+      //       foreignField: "challenge",  // field in the items collection
+      //       pipeline: [
+      //         {
+      //           $match: {
+      //             $or: [{
+      //               $or: [
+      //                 { isPrivate: true },
+      //                 { author: user },
+      //                 { insertedBy: user }
+      //               ]
+      //             },
+      //             { isPrivate: false },
+      //             ]
+      //           }
+      //         }
+      //       ],
+      //       as: 'interactions'
+      //     }
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "tags",
+      //       localField: "tags",
+      //       foreignField: "_id",
+      //       as: "tags"
+      //     }
+      //   }
+      // ])
+      //   .skip(query.init)
+      //   .limit(query.offset)
+      //   .sort(_.pickBy(query.sort, _.identity))
 
-      return resp
+      // return resp
     } catch (error) {
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.CHALLENGE_LISTING,

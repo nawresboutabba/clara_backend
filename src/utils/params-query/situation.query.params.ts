@@ -1,70 +1,85 @@
-import * as _ from 'lodash'
-import { QuerySolutionForm } from './solution.query.params'
+import { ChallengeI } from "../../models/situation.challenges";
+import { SolutionI } from "../../models/situation.solutions";
+import { TagI } from "../../models/tag";
+import { removeEmpty } from "../general/remove-empty";
+import { QuerySolutionForm } from "./solution.query.params";
 
 export interface QuerySituationForm {
-  created?: createdFilter,
-  init?: number,
-  offset?: number,
-  groupValidatorId?: string,
+  created?: createdFilter;
+  init?: number;
+  offset?: number;
+  groupValidatorId?: string;
   sort?: {
-    title: string,
-    created: string
-  }
-  title?: string,
-  status?: string,
+    title: string;
+    created: string;
+  };
+  title?: string;
+  status?: string;
+  tags?: { $in: TagI[] };
 }
 
 export interface createdFilter {
-  $lte?: Date,
-  $gte?: Date
+  $lte?: Date;
+  $gte?: Date;
 }
 
-export async function formatSitutationQuery(query: any, resources:any): Promise<QuerySituationForm> {
+// situation
+interface SituationResources {
+  tags?: TagI[];
+}
+
+export async function formatSituationQuery(
+  query: any,
+  resources: SituationResources = {}
+): Promise<QuerySituationForm> {
   try {
     /**
-      * Pagination extraction and cleaning
-      */
-    let { init, offset } = query
-    const { group_validator_id, status } = query
+     * Pagination extraction and cleaning
+     */
+    let { init, offset } = query;
+    const { group_validator_id, status } = query;
     init = query.init ? parseInt(query.init.toString()) : 0;
-    offset = query.offset? parseInt(query.offset.toString()) : 10;
+    offset = query.offset ? parseInt(query.offset.toString()) : 10;
     /**
-      * Date filter
-      */
-    const { created_lt: $lte, created_gt: $gte } = query
+     * Date filter
+     */
+    const { created_lt: $lte, created_gt: $gte } = query;
 
-    const created: createdFilter = {}
-    created.$gte = $gte 
-    created.$lte = $lte
+    const created: createdFilter = {};
+    created.$gte = $gte;
+    created.$lte = $lte;
 
     /**
-      * String filters
-      */
-    const { title } = query
+     * String filters
+     */
+    const { title } = query;
     /**
-      * Order filter
-      */
-    const { created_order, title_order, challengeType } = query
+     * Order filter
+     */
+    const { created_order, title_order, challengeType } = query;
 
-    let queryForm: QuerySolutionForm = {
+    const queryForm: QuerySolutionForm = {
       init,
       offset,
       sort: {
         title: title_order,
-        created: created_order? created_order: -1
+        created: created_order ? created_order : -1,
       },
-      challenge: {  type: challengeType },
-      challengeId : resources?.challenge.challengeId || resources?.solution.challenge.challengeId,
+      challenge: { type: challengeType },
+      challengeId: query.challengeId,
       groupValidatorId: group_validator_id,
-      status
+      status,
+    };
+
+    if (resources.tags) {
+      queryForm.tags = {
+        $in: resources.tags,
+      };
     }
+    queryForm.title = title ? title : "";
 
-    queryForm.title = title ? title : ''
-
-    queryForm = JSON.parse(JSON.stringify(queryForm))
-
-    return queryForm
+    return removeEmpty(queryForm);
   } catch (error) {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 }

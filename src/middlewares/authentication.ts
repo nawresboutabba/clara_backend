@@ -12,8 +12,8 @@ export default async (req: RequestMiddleware, res: ResponseMiddleware, next: Nex
     next();
   } catch (error) {
     /**
-         * @TODO respose according to convention
-         */
+     * @TODO respose according to convention
+     */
     return res.status(401).json({
       message: 'Auth failed'
     });

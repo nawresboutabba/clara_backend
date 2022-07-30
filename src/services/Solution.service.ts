@@ -100,14 +100,14 @@ const SolutionService = {
     }
   },
   /**
-     * Solution List. Is used for solution without challenge associated too.
-     * @param query 
-     * @param challengeId 
-     * @returns 
-     */
+   * Solution List. Is used for solution without challenge associated too.
+   * @param query 
+   * @param challengeId 
+   * @returns 
+   */
   async listSolutions(query: QuerySolutionForm, utils: any): Promise<any>{    
     try{
-      let mongooseQuery = {..._.pickBy({
+      const mongooseQuery = _.pickBy({
         created: query.created,
         active:true,
         title:{
@@ -115,21 +115,15 @@ const SolutionService = {
         },
         status: query.status,
         challengeId: query.challengeId,
-      }, _.identity),
-      }
+        tags: query.tags
+      }, _.identity)
+
       if(utils?.groupValidator){
         mongooseQuery.groupValidator = utils.groupValidator
-      }  
-      if (utils?.tags){
-        const arrayTags = utils.tags
-        const tags = {
-          $in:    arrayTags
-        }
-        mongooseQuery = {...mongooseQuery , tags}
       }
 
       const solutions = await Solution
-        .find({...mongooseQuery})
+        .find(mongooseQuery)
         .skip(query.init)
         .limit(query.offset)
         /**

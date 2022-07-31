@@ -1,5 +1,4 @@
-import { ChallengeI } from "../../models/situation.challenges";
-import { SolutionI } from "../../models/situation.solutions";
+import { AreaI } from "../../models/organization.area";
 import { TagI } from "../../models/tag";
 import { removeEmpty } from "../general/remove-empty";
 import { QuerySolutionForm } from "./solution.query.params";
@@ -16,6 +15,7 @@ export interface QuerySituationForm {
   title?: string;
   status?: string;
   tags?: { $in: TagI[] };
+  departmentAffected?: { $in: AreaI[] };
   challenge?: { type: string };
 }
 
@@ -27,6 +27,7 @@ export interface createdFilter {
 // situation
 interface SituationResources {
   tags?: TagI[];
+  departmentAffected?: AreaI[];
 }
 
 export async function formatSituationQuery(
@@ -75,6 +76,11 @@ export async function formatSituationQuery(
     if (resources.tags) {
       queryForm.tags = {
         $in: resources.tags,
+      };
+    }
+    if (resources.departmentAffected) {
+      queryForm.departmentAffected = {
+        $in: resources.departmentAffected,
       };
     }
     queryForm.title = title ? title : "";

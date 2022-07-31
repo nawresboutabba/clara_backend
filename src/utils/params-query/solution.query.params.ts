@@ -1,5 +1,4 @@
-import { ChallengeI } from "../../models/situation.challenges";
-import { SolutionI } from "../../models/situation.solutions";
+import { AreaI } from "../../models/organization.area";
 import { TagI } from "../../models/tag";
 import {
   QuerySituationForm,
@@ -13,6 +12,7 @@ export interface QuerySolutionForm extends QuerySituationForm {
 
 interface SituationResources {
   tags?: TagI[];
+  departmentAffected?: AreaI[];
 }
 
 export async function formatSolutionQuery(

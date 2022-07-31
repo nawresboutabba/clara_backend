@@ -10,6 +10,7 @@ import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { applyTransition, createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
 import { deleteSolution, getSolution } from '../../repository/repository.solution';
+import { AreaResponse } from '../area/area';
 import { BaremoResponse } from '../baremo';
 import { ChallengeResponse, LightChallengeResponse } from '../challenge';
 import { CommentBody, CommentResponse } from '../comment';
@@ -88,6 +89,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
     finalization: Date,
   },
   tags: TagResponse[]
+  departmentAffected: AreaResponse[]
 }
 
 

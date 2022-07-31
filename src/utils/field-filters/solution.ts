@@ -1,14 +1,22 @@
 import { CHALLENGE_TYPE } from "../../constants";
-import { LightSolutionResponse, SolutionResponse } from "../../controller/solution";
+import {
+  LightSolutionResponse,
+  SolutionResponse,
+} from "../../controller/solution";
 import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
-import { getArrayImageSignedUrl, getSignedUrl } from "../../repository/repository.image-service";
-import { genericArrayAreaFilter } from "./area";
+import {
+  getArrayImageSignedUrl,
+  getSignedUrl,
+} from "../../repository/repository.image-service";
+import { genericAreaFilter, genericArrayAreaFilter } from "./area";
 import { lightChallengeFilter } from "./challenge";
 import { genericArrayTagsFilter } from "./tag";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
-export const genericSolutionFilter = async(solution: SolutionI ): Promise<SolutionResponse> => {  
+export const genericSolutionFilter = async (
+  solution: SolutionI
+): Promise<SolutionResponse> => {
   const {
     solutionId,
     challengeId,
@@ -21,8 +29,8 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     testDescription,
     baremaTypeSuggested,
     /**
-      * Configuration section
-      */
+     * Configuration section
+     */
     canChooseScope,
     isPrivated,
     canChooseWSALevel,
@@ -37,29 +45,36 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     externalContributionAvailableForGenerators,
     externalContributionAvailableForCommittee,
     proposedSolution,
-    differential ,
+    differential,
     isNewFor,
     wasTested,
-    firstDifficulty,  
+    firstDifficulty,
     secondDifficulty,
     thirdDifficulty,
     implementationTimeInMonths,
     moneyNeeded,
-    impact    
-  } = solution
+    impact,
+  } = solution;
 
-  const coauthor : UserResponse[] = await genericArrayUserFilter(solution.coauthor)
-  const external_opinion: UserResponse[] = await genericArrayUserFilter(solution.externalOpinion)
-  const author = await genericUserFilter(solution.author)
-  const inserted_by = await genericUserFilter(solution.insertedBy)
-  const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable)
-  const departmentAffected = await genericArrayAreaFilter(solution.departmentAffected)
-  const tags = await genericArrayTagsFilter(solution.tags)
-  const challenge = await lightChallengeFilter(solution.challenge)
-  const images = await getArrayImageSignedUrl(solution.images)
-  const file_complementary = await getArrayImageSignedUrl(solution.fileComplementary)
-  const banner_image = await getSignedUrl(solution.bannerImage)
-
+  const coauthor: UserResponse[] = await genericArrayUserFilter(
+    solution.coauthor
+  );
+  const external_opinion: UserResponse[] = await genericArrayUserFilter(
+    solution.externalOpinion
+  );
+  const author = await genericUserFilter(solution.author);
+  const inserted_by = await genericUserFilter(solution.insertedBy);
+  const areasAvailable = await genericArrayAreaFilter(solution.areasAvailable);
+  const departmentAffected = await genericArrayAreaFilter(
+    solution.departmentAffected
+  );
+  const tags = await genericArrayTagsFilter(solution.tags);
+  const challenge = await lightChallengeFilter(solution.challenge);
+  const images = await getArrayImageSignedUrl(solution.images);
+  const file_complementary = await getArrayImageSignedUrl(
+    solution.fileComplementary
+  );
+  const banner_image = await getSignedUrl(solution.bannerImage);
 
   return {
     inserted_by,
@@ -67,8 +82,11 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     coauthor,
     external_opinion,
     active,
-    solution_id:solutionId,
-    challenge_id: solution.challenge.type == CHALLENGE_TYPE.PARTICULAR? challengeId : undefined,
+    solution_id: solutionId,
+    challenge_id:
+      solution.challenge.type == CHALLENGE_TYPE.PARTICULAR
+        ? challengeId
+        : undefined,
     challenge,
     created,
     status,
@@ -81,20 +99,20 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     differential,
     is_new_for: isNewFor,
     was_tested: wasTested,
-    first_difficulty: firstDifficulty,  
-    second_difficulty:secondDifficulty,
+    first_difficulty: firstDifficulty,
+    second_difficulty: secondDifficulty,
     third_difficulty: thirdDifficulty,
     implementation_time_in_months: implementationTimeInMonths,
     money_needed: moneyNeeded,
     images,
     banner_image,
-    department_affected:departmentAffected,
+    department_affected: departmentAffected,
     test_description: testDescription,
     barema_type_suggested: baremaTypeSuggested,
     impact,
     /**
-      * Configuration section
-      */
+     * Configuration section
+     */
     can_choose_scope: canChooseScope,
     is_privated: isPrivated,
     can_choose_WSALevel: canChooseWSALevel,
@@ -106,31 +124,34 @@ export const genericSolutionFilter = async(solution: SolutionI ): Promise<Soluti
     participation_mode_chosed: participationModeChosed,
     time_in_park: timeInPark,
     time_expert_feedback: timeExpertFeedback,
-    time_idea_fix: timeIdeaFix,           
-    external_contribution_available_for_generators: externalContributionAvailableForGenerators,
-    external_contribution_available_for_committee: externalContributionAvailableForCommittee,
-  }
-}
+    time_idea_fix: timeIdeaFix,
+    external_contribution_available_for_generators:
+      externalContributionAvailableForGenerators,
+    external_contribution_available_for_committee:
+      externalContributionAvailableForCommittee,
+  };
+};
 
-
-export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSolutionResponse> => {
-  
-  const images = await getArrayImageSignedUrl(solution.images)
-  const banner_image = await getSignedUrl(solution.bannerImage)
-  const inserted_by = await genericUserFilter(solution.insertedBy)
-  const tags = await genericArrayTagsFilter(solution.tags)
+export async function lightSolutionFilter(
+  solution: SolutionI
+): Promise<LightSolutionResponse> {
+  const images = await getArrayImageSignedUrl(solution.images);
+  const banner_image = await getSignedUrl(solution.bannerImage);
+  const inserted_by = await genericUserFilter(solution.insertedBy);
+  const tags = genericArrayTagsFilter(solution.tags);
+  const departmentAffected = genericArrayAreaFilter(
+    solution.departmentAffected
+  );
 
   const challenge = {
     type: solution.challenge.type,
     challenge_id: solution.challenge.challengeId,
     title: solution.challenge.title,
     description: solution.challenge.description,
-    finalization: solution.challenge.finalization
-  }
+    finalization: solution.challenge.finalization,
+  };
 
-
-
-  return ({
+  return {
     solution_id: solution.solutionId,
     inserted_by,
     title: solution.title,
@@ -141,22 +162,23 @@ export const lightSolutionFilter = async (solution : SolutionI): Promise<LightSo
     banner_image,
     images,
     challenge,
-    tags
-  })
+    tags,
+    departmentAffected,
+  };
 }
 
-
-export const genericArraySolutionsFilter = async(solutions : Array<SolutionI>):Promise<Array<LightSolutionResponse>>=> {
-  const arraySolution: Array<Promise<LightSolutionResponse>>= []
-  solutions.forEach(solution => {
-    arraySolution.push(lightSolutionFilter(solution))
-  })
-  return await Promise
-    .all(arraySolution)
-    .then(result => {
-      return result
+export const genericArraySolutionsFilter = async (
+  solutions: Array<SolutionI>
+): Promise<Array<LightSolutionResponse>> => {
+  const arraySolution: Array<Promise<LightSolutionResponse>> = [];
+  solutions.forEach((solution) => {
+    arraySolution.push(lightSolutionFilter(solution));
+  });
+  return await Promise.all(arraySolution)
+    .then((result) => {
+      return result;
     })
-    .catch(error=> {
-      return Promise.reject(error)
-    })
-}
+    .catch((error) => {
+      return Promise.reject(error);
+    });
+};

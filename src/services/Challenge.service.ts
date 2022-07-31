@@ -181,10 +181,11 @@ const ChallengeService = {
           { $or: [{ title: { $regex: `.*${query.title}.*` } }] },
           { active: true },
           { participationModeAvailable: { $in: query.participationMode } },
-          removeEmpty({ tags: query?.tags, type: query.challenge?.type }),
+          removeEmpty({ tags: query?.tags, type: query.challenge?.type, departmentAffected: query?.departmentAffected }),
         ],
       })
         .populate('tags')
+        .populate('departmentAffected')
         .skip(query.init)
         .limit(query.offset)
         .sort(removeEmpty(query.sort));

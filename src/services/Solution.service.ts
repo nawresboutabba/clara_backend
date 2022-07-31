@@ -115,7 +115,8 @@ const SolutionService = {
         },
         status: query.status,
         challengeId: query.challengeId,
-        tags: query.tags
+        tags: query.tags,
+        departmentAffected: query.departmentAffected
       }, _.identity)
 
       if(utils?.groupValidator){
@@ -138,6 +139,7 @@ const SolutionService = {
         .populate('groupValidator')
         .populate('challenge')
         .populate('tags')
+        .populate('departmentAffected')
       return solutions
     }catch(error){
       return Promise.reject( new ServiceError(

@@ -37,6 +37,7 @@ import SolutionStateMachine from "../../utils/state-machine/state-machine.soluti
 import { newExternalUser } from "../../repository/repository.users";
 import { generatePassword } from "../../utils/general/generate-password";
 import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
+import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
 
 
 router.get(
@@ -407,12 +408,16 @@ router.get(
   [
     authentication,
     tagsValidArray(),
+    areasValidArray(),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
     try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)     
       const solutionController = new SolutionController()
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.utils);
+      const query: QuerySolutionForm = await formatSolutionQuery(req.query, {
+        tags: req.utils?.tags,
+        departmentAffected: req.utils?.areas,
+      });
       const solutions = await solutionController.listSolutions(query, req.utils)
       res
         .json(solutions)

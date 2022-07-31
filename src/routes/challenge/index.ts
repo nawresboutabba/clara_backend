@@ -20,6 +20,7 @@ import CommentService from "../../services/Comment.service";
 import ChallengeService from "../../services/Challenge.service";
 import { query, validationResult, body, check } from "express-validator";
 import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
+import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -519,14 +520,14 @@ router.patch(
 router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
   tagsValidArray(),
+  areasValidArray(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     const challengeController = new ChallengeController()
 
     const query: QueryChallengeForm = await formatChallengeQuery(req.query, {
-      challenge: req.resources?.challenge,
-      solution: req.resources?.solution,
       tags: req.utils?.tags,
+      departmentAffected: req.utils?.areas,
     })
     const challenges = await challengeController.listChallenges(query, req.user)
 

@@ -178,10 +178,19 @@ const ChallengeService = {
     try {
       return await Challenge.find({
         $and: [
-          { $or: [{ title: { $regex: `.*${query.title}.*` } }] },
+          {
+            $or: [
+              { title: { $regex: `.*${query.title}.*` } },
+              { description: { $regex: `.*${query.title}.*` } },
+            ],
+          },
           { active: true },
           { participationModeAvailable: { $in: query.participationMode } },
-          removeEmpty({ tags: query?.tags, type: query.challenge?.type, departmentAffected: query?.departmentAffected }),
+          removeEmpty({
+            tags: query?.tags,
+            type: query.challenge?.type,
+            departmentAffected: query?.departmentAffected,
+          }),
         ],
       })
         .populate('tags')

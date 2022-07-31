@@ -7,6 +7,7 @@ import { UserI } from "../models/users";
 import { AreaI } from "../models/organization.area";
 import { NewSolutionI } from "../repository/repository.solution";
 import { TagI } from "../models/tag";
+import { removeEmpty } from "../utils/general/remove-empty";
 
 export interface SolutionEditablesFields {
   title?: string,
@@ -107,20 +108,25 @@ const SolutionService = {
    */
   async listSolutions(query: QuerySolutionForm, utils: any): Promise<any>{    
     try{
-      const mongooseQuery = _.pickBy({
-        created: query.created,
-        active:true,
-        title:{
-          $regex : `.*${query.title}.*`, 
-        },
-        status: query.status,
-        challengeId: query.challengeId,
-        tags: query.tags,
-        departmentAffected: query.departmentAffected
-      }, _.identity)
-
-      if(utils?.groupValidator){
-        mongooseQuery.groupValidator = utils.groupValidator
+      const mongooseQuery = {
+        $and: [
+          {
+            $or: [
+              { title: { $regex: `.*${query.title}.*` } },
+              { description: { $regex: `.*${query.title}.*` } },
+              { proposedSolution: { $regex: `.*${query.title}.*` } },
+            ],
+          },
+          removeEmpty({
+            created: query?.created,
+            active:true,
+            status: query?.status,
+            challengeId: query?.challengeId,
+            tags: query?.tags,
+            departmentAffected: query?.departmentAffected,
+            groupValidator: utils?.groupValidator,
+          }),
+        ]
       }
 
       const solutions = await Solution

@@ -4,11 +4,34 @@ import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlew
 import { sendEmail } from "../../repository/repository.mailing";
 const router = express.Router();
 
+/**
+ * Endpoint just for testing!!
+ * @TODO delete in production this endpoint
+ */
 router.post('/email', [
 
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: express.NextFunction) => {
   try {
-    const email = await sendEmail (req.body.to, EVENTS_TYPE.EXTERNAL_OPINION_INVITATION, {to:'hector'})
+
+    const Destination =  {
+      BccAddresses: [
+      ], 
+      CcAddresses: [
+      ], 
+      ToAddresses: [
+        req.body.to, 
+      ]
+    }
+
+    let message
+    if (req.body.message){
+      message = req.body.message
+    }else{
+      message = 'No message '
+    }
+
+
+    const email = await sendEmail (Destination, EVENTS_TYPE.GREETINGS_MAILING, {message:message})
     res
       .status(200)
       .json(email)

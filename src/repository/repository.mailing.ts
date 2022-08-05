@@ -2,6 +2,24 @@ import MailingService from "../services/Mailing.service";
 import fetchTemplates from './../utils/templates-mailing';
 const twig = require('twig').twig;
 
+/**
+ *    const Destination =  {
+ *    BccAddresses: [
+ *    ], 
+ *    CcAddresses: [
+ *    ], 
+ *    ToAddresses: [
+ *      req.body.to, 
+ *    ]
+ *   }
+ * @param Destination 
+ * 
+ * @param eventType 
+ * @param info 
+ * @returns 
+ */
+
+
 export const sendEmail = async (Destination: any, eventType: string, info:any): Promise<any> => {
   try {
     const from = 'tecnologia@claraidea.com.br'

@@ -5,6 +5,7 @@ import { readFile } from "fs/promises";
 const fileNames = [
   MAILING_TEMPLATES.EXTERNAL_OPINION_INVITATION,
   MAILING_TEMPLATES.NEW_EXTERNAL_USER,
+  MAILING_TEMPLATES.GREETINGS_MAILING
 ];
 
 export default async function () {

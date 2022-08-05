@@ -22,3 +22,13 @@ Execution example:
     make challenge
 ## Docker
 run  *docker-compose up* or *docker-compose up --build*
+
+## Just for develop: .env File
+
+USER=dev-enviroment
+PASSWORD=0Q5ryUinCQ0pOeiT
+JWT_KEY=WEP
+AWS_ACCESS_KEY_ID=AKIA6B5EPWPMCRCEWQTU
+AWS_SECRET_ACCESS_KEY=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
+AWS_REGION=us-west-2
+AWS_BUCKET_NAME=genesis-ideation

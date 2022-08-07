@@ -136,8 +136,10 @@ export async function lightSolutionFilter(
   solution: SolutionI
 ): Promise<LightSolutionResponse> {
   const images = await getArrayImageSignedUrl(solution.images);
-  const banner_image = await getSignedUrl(solution.bannerImage);
+  const banner_image = await getSignedUrl(solution.challenge.images[0]);
   const inserted_by = await genericUserFilter(solution.insertedBy);
+  const author = await genericUserFilter(solution.author);
+  const coauthor = await genericArrayUserFilter(solution.coauthor);
   const tags = genericArrayTagsFilter(solution.tags);
   const departmentAffected = genericArrayAreaFilter(
     solution.departmentAffected
@@ -149,14 +151,27 @@ export async function lightSolutionFilter(
     title: solution.challenge.title,
     description: solution.challenge.description,
     finalization: solution.challenge.finalization,
+    banner_image,
   };
 
   return {
     solution_id: solution.solutionId,
     inserted_by,
+    author,
+    coauthor,
     title: solution.title,
     description: solution.description,
     proposed_solution: solution.proposedSolution,
+    differential: solution.differential,
+    is_new_for: solution.isNewFor,
+    was_tested: solution.wasTested,
+    test_description: solution.testDescription,
+    impact: solution.impact,
+    implementation_time_in_months: solution.implementationTimeInMonths,
+    money_needed: solution.moneyNeeded,
+    first_difficulty: solution.firstDifficulty,
+    second_difficulty: solution.secondDifficulty,
+    third_difficulty: solution.thirdDifficulty,
     created: solution.created,
     status: solution.status,
     banner_image,

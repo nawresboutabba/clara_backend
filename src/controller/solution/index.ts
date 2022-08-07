@@ -90,6 +90,16 @@ export interface LightSolutionResponse extends LightSituationResponse {
   },
   tags: TagResponse[]
   departmentAffected: AreaResponse[]
+  differential: string;
+  is_new_for: string;
+  was_tested: boolean;
+  test_description: string;
+  impact: string;
+  implementation_time_in_months: number;
+  money_needed: number;
+  first_difficulty: string;
+  second_difficulty: string;
+  third_difficulty: string;
 }
 
 

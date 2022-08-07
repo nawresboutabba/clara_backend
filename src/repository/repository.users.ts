@@ -160,20 +160,7 @@ export const login = async (body: Login ) : Promise<string> => {
 }
 
 export const deleteUser = async (userId : string): Promise <boolean> => {
-  return new Promise (async (resolve, reject)=> {
-    await UserService
-      .deleteUserWithLog(userId)
-      .then(resp => {
-
-        return resolve(resp)
-      })
-      .catch(error => {
-        /**
-         * Send to routing layer the error got in service layer
-         */
-        return reject(error)
-      })
-  })
+  return UserService.deleteUserWithLog(userId)
 }
 
 export const getUserInformation = async (userInformation: UserRequest): Promise<UserResponse> => {

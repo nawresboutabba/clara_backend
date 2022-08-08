@@ -16,7 +16,7 @@ export interface QuerySituationForm {
   status?: string;
   tags?: { $in: TagI[] };
   departmentAffected?: { $in: AreaI[] };
-  challenge?: { type: string };
+  type: string;
 }
 
 export interface createdFilter {
@@ -67,7 +67,7 @@ export async function formatSituationQuery(
         title: title_order,
         created: created_order ? created_order : -1,
       },
-      challenge: { type: challengeType },
+      type: challengeType,
       challengeId: query.challengeId,
       groupValidatorId: group_validator_id,
       status,

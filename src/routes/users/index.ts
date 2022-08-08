@@ -64,19 +64,41 @@ router.post("/user/login",[
   }
 });
 
-router.delete("/user/:userId", [
-  authentication
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+router.patch("/user", authentication, [
+  body('email'),
+  body('first_name'),
+  body('last_name'),
+  body('username'),
+  body('about'),
+  body('linkedIn'),
+], async (req:RequestMiddleware, res: ResponseMiddleware, next:NextFunction) => {
   try {
+    await throwSanitizatorErrors(validationResult , req, ERRORS.ROUTING.UPDATE_USER)
+
     const userController = new UserController()
-    await userController.delete(req.params.userId)
+    const response = await userController.update(req.user.userId, req.body)
     res
-      .status(204)
-      .send();
+      .json(response)
+      .status(200)
+      .send()
   } catch (err) {
     next(err);
   }
 });
+
+// router.delete("/user/:userId", [
+//   authentication
+// ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+//   try {
+//     const userController = new UserController()
+//     await userController.delete(req.params.userId)
+//     res
+//       .status(204)
+//       .send();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 router.get('/user/info',[
   authentication

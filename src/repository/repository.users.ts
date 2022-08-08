@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { UserI } from '../models/users';
 import { nanoid } from 'nanoid'
 import UserService from '../services/User.service';
-import { UserBody, Login, UserResponse, UserRequest } from '../controller/users'
+import { UserBody, Login, UserResponse, UserRequest, UserUpdate } from '../controller/users'
 import { ERRORS, EVENTS_TYPE, HTTP_RESPONSE,  VIEW_BY } from '../constants'
 import RepositoryError from '../handle-error/error.repository';
 import { genericUserFilter } from '../utils/field-filters/user';
@@ -58,50 +58,47 @@ export const newExternalUser = async (email:string, password:string):Promise<Use
 }
 
 export const signUp  = async (body: UserBody):Promise<UserResponse> => {
-  return new Promise (async (resolve, reject)=> {
-    await UserService
-      .getUserActiveByEmail(body.email)
-      .then(async user => {
-        if (user) {
-          return  reject (new RepositoryError(ERRORS.REPOSITORY.USER_EXIST, HTTP_RESPONSE._409));
-        }
-        await hash(body.password, 10, async (err: Error, hash: string) => {
-          if (err) {
-            return reject(new RepositoryError(
-              ERRORS.REPOSITORY.PASSWORD_GENERATION, 
-              HTTP_RESPONSE._500,
-              err));
-          }
-          await UserService.newGenericUser({
-            userId: nanoid(),
-            username: body.username,
-            email: body.email,
-            userImage: body.user_image,
-            password: hash,
-            firstName: body.first_name,
-            lastName: body.last_name,
-            active: true,
-            confirmed:true,
-            externalUser: false,
-            points: 0,
-          })
-            .then(async user => {
-              const resp = await genericUserFilter(user)
-              return resolve(resp)
-            })
-            .catch(error => {
-              return reject(error)
-            });
-        })
-      })
-      .catch(error => {
-        const customError = new RepositoryError(
-          ERRORS.REPOSITORY.USER_CREATION, 
-          HTTP_RESPONSE._500, 
-          error)
-        return reject(customError)
-      });
-  })
+  const user = await UserService.getUserActiveByEmail(body.email);
+
+  if (user) {
+    throw new RepositoryError(ERRORS.REPOSITORY.USER_EXIST, HTTP_RESPONSE._409);
+  }
+
+  const hashValue = await hash(body.password, 10).catch((err) => {
+    throw new RepositoryError(
+      ERRORS.REPOSITORY.PASSWORD_GENERATION,
+      HTTP_RESPONSE._500,
+      err
+    );
+  });
+
+  await UserService.newGenericUser({
+    userId: nanoid(),
+    username: body.username,
+    email: body.email,
+    userImage: body.user_image,
+    password: hashValue,
+    firstName: body.first_name,
+    lastName: body.last_name,
+    active: true,
+    confirmed: true,
+    externalUser: false,
+    points: 0,
+  }).catch((error) => {
+    throw new RepositoryError(
+      ERRORS.REPOSITORY.USER_CREATION,
+      HTTP_RESPONSE._500,
+      error
+    );
+  });
+
+  const resp = await genericUserFilter(user);
+  return resp;
+}
+
+export async function updateUser(userId: string, userData: UserUpdate) {
+  const updatedUser = await UserService.updateUser(userId, userData);
+  return genericUserFilter(updatedUser)
 }
 
 export const login = async (body: Login ) : Promise<string> => {
@@ -130,7 +127,7 @@ export const login = async (body: Login ) : Promise<string> => {
         active:true,
         confirmed:true
       }
-      user =await UserService.updateUser(user, update)
+      user =await UserService.updateUser(user.userId, update)
     }
     const comparation = await compare(body.password, user.password)
     if(comparation){
@@ -159,9 +156,9 @@ export const login = async (body: Login ) : Promise<string> => {
   }
 }
 
-export const deleteUser = async (userId : string): Promise <boolean> => {
-  return UserService.deleteUserWithLog(userId)
-}
+// export const deleteUser = async (userId : string): Promise <boolean> => {
+//   return UserService.deleteUserWithLog(userId)
+// }
 
 export const getUserInformation = async (userInformation: UserRequest): Promise<UserResponse> => {
   try{
@@ -337,7 +334,7 @@ export const changePassword = async (newPassword: string, user: UserI): Promise<
       const query = {
         password: hash
       }
-      const userResp = await UserService.updateUser(user,query)
+      const userResp = await UserService.updateUser(user.userId, query)
       userFiltered = await genericUserFilter(userResp)
     })  
     return userFiltered

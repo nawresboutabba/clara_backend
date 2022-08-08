@@ -253,16 +253,16 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
       scope: query.scope,
     }
 
-    if(query.scope == COMMENT_LEVEL.GROUP){
-      const canViewComment = [
-        ...solution.coauthor.map(coauthor => coauthor.userId),
-        solution.author.userId,
-        ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
-      ]
-      if(canViewComment.includes(user.userId) == false){
-        throw 'You are not authorized to see this comments'
-      }
-    }
+    // if(query.scope === COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
+    //   const canViewComment = [
+    //     ...solution.coauthor.map(coauthor => coauthor.userId),
+    //     solution.author.userId,
+    //     ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
+    //   ]
+    //   if(canViewComment.includes(user.userId) == false){
+    //     throw 'You are not authorized to see this comments'
+    //   }
+    // }
     const comments = await getComments(filter)
     return comments
   }catch(error){

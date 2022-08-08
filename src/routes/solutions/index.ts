@@ -69,8 +69,8 @@ router.get(
     query('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
     query('scope').custom(async (value, { req }) => {
       try{
-        if(value == COMMENT_LEVEL.GROUP){
-          const solution = req.resources.solution
+        const solution = req.resources.solution;
+        if(value == COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),
@@ -122,8 +122,8 @@ router.post(
     body('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
     body('scope').custom(async (value, { req }) => {
       try{
-        if(value == COMMENT_LEVEL.GROUP){
-          const solution = req.resources.solution
+        const solution = req.resources.solution
+        if(value == COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),

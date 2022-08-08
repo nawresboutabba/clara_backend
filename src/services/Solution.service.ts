@@ -1,5 +1,5 @@
-import Solution, { SolutionI } from "../models/situation.solutions"
-import * as _ from 'lodash'; 
+import Solution, { SolutionI } from "../models/situation.solutions";
+import * as _ from "lodash";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
@@ -10,188 +10,189 @@ import { TagI } from "../models/tag";
 import { removeEmpty } from "../utils/general/remove-empty";
 
 export interface SolutionEditablesFields {
-  title?: string,
-  description?: string,
-  images?: Array<string>,
-  departmentAffected?:Array<AreaI>,
-  status?: string,
-  startAnalysis?: Date,
-  isPrivated?:boolean,
-  WSALevelChosed?: string
+  title?: string;
+  description?: string;
+  images?: Array<string>;
+  departmentAffected?: Array<AreaI>;
+  status?: string;
+  startAnalysis?: Date;
+  isPrivated?: boolean;
+  WSALevelChosed?: string;
 }
 
 const SolutionService = {
-  async getSolutionActiveById (id: string): Promise <any> {
-    try{
+  async getSolutionActiveById(id: string): Promise<any> {
+    try {
       const solution = await Solution.findOne({
         solutionId: id,
         active: true,
       })
-        .populate('departmentAffected')
-        .populate('updatedBy')
-        .populate('challenge')
-        .populate('author')
-        .populate('coauthor')
-        .populate('team')
-        .populate('insertedBy')
-        .populate('areasAvailable')
-        .populate('groupValidator')
-        .populate('tags')
-        .populate('externalOpinion')
-      return solution
-    }catch(error){
-      return Promise.reject(new ServiceError(
-        ERRORS.SERVICE.SOLUTION_DOES_NOT_EXIST,
-        HTTP_RESPONSE._404,
-        error))
+        .populate("departmentAffected")
+        .populate("updatedBy")
+        .populate("challenge")
+        .populate("author")
+        .populate("coauthor")
+        .populate("team")
+        .populate("insertedBy")
+        .populate("areasAvailable")
+        .populate("groupValidator")
+        .populate("tags")
+        .populate("externalOpinion");
+      return solution;
+    } catch (error) {
+      return Promise.reject(
+        new ServiceError(
+          ERRORS.SERVICE.SOLUTION_DOES_NOT_EXIST,
+          HTTP_RESPONSE._404,
+          error
+        )
+      );
     }
   },
-  async deactivateSolution (solution: any, update: any): Promise<boolean> {
-    try{
-      await Solution.findOneAndUpdate({
-        ...solution
-      },{
-        ...update
-      })
-      return true
-    }catch(error){
-      return error
+  async deactivateSolution(solution: any, update: any): Promise<boolean> {
+    try {
+      await Solution.findOneAndUpdate(solution, update);
+      return true;
+    } catch (error) {
+      return error;
     }
   },
-  async newSolution  (data: NewSolutionI): Promise<any> {
-    try{
-      const solution = 
-      await Solution.create(data)
-      const resp = solution.populate('challenge')
+  async newSolution(data: NewSolutionI): Promise<any> {
+    try {
+      const solution = await Solution.create(data);
+      const resp = solution.populate("challenge");
 
-      return resp
-    }catch (error){
-      return Promise.reject(new ServiceError(
-        ERRORS.SERVICE.NEW_SOLUTION,
-        HTTP_RESPONSE._500,
-        error))
+      return resp;
+    } catch (error) {
+      return Promise.reject(
+        new ServiceError(ERRORS.SERVICE.NEW_SOLUTION, HTTP_RESPONSE._500, error)
+      );
     }
   },
-  async updateSolutionPartially (solution: SolutionI, data: SolutionEditablesFields): Promise<any> {
-    try{
-      const resp = await Solution.findOneAndUpdate({
-        solutionId: solution.solutionId
-      },{
-        ...data
-      },{ 
-        new: true
-      })
-        .populate('departmentAffected')
-        .populate('updatedBy')
-        .populate('challenge')
-        .populate('author')
-        .populate('coauthor')
-        .populate('team')
-        .populate('insertedBy')
-        .populate('areasAvailable')
-        .populate('tags')
-        .populate('externalOpinion')
-        
-      return resp
-    }catch(error){
-      return Promise.reject(new ServiceError(
-        ERRORS.SERVICE.UPDATE_SOLUTION,
-        HTTP_RESPONSE._500,
-        error))
+  async updateSolutionPartially(
+    solution: SolutionI,
+    data: SolutionEditablesFields
+  ): Promise<any> {
+    try {
+      const resp = await Solution.findOneAndUpdate(
+        {
+          solutionId: solution.solutionId,
+        },
+        {
+          ...data,
+        },
+        {
+          new: true,
+        }
+      )
+        .populate("departmentAffected")
+        .populate("updatedBy")
+        .populate("challenge")
+        .populate("author")
+        .populate("coauthor")
+        .populate("team")
+        .populate("insertedBy")
+        .populate("areasAvailable")
+        .populate("tags")
+        .populate("externalOpinion");
+
+      return resp;
+    } catch (error) {
+      return Promise.reject(
+        new ServiceError(
+          ERRORS.SERVICE.UPDATE_SOLUTION,
+          HTTP_RESPONSE._500,
+          error
+        )
+      );
     }
   },
   /**
    * Solution List. Is used for solution without challenge associated too.
-   * @param query 
-   * @param challengeId 
-   * @returns 
+   * @param query
+   * @param challengeId
+   * @returns
    */
-  async listSolutions(query: QuerySolutionForm, utils: any): Promise<any>{    
-    try{
-      const mongooseQuery = {
-        $and: [
-          {
-            $or: [
-              { title: { $regex: `.*${query.title}.*` } },
-              { description: { $regex: `.*${query.title}.*` } },
-              { proposedSolution: { $regex: `.*${query.title}.*` } },
-            ],
-          },
-          removeEmpty({
-            created: query?.created,
-            active:true,
-            status: query?.status,
-            challengeId: query?.challengeId,
-            tags: query?.tags,
-            departmentAffected: query?.departmentAffected,
-            groupValidator: utils?.groupValidator,
-          }),
-        ]
-      }
+  async listSolutions(query: QuerySolutionForm, utils: any): Promise<any> {
+    try {
+      const mongooseQuery = removeEmpty({
+        title: { $regex: `.*${query.title}.*` },
+        created: query?.created,
+        active: true,
+        status: query?.status,
+        challengeId: query?.challengeId,
+        tags: query?.tags,
+        departmentAffected: query?.departmentAffected,
+        groupValidator: utils?.groupValidator,
+        type: query.type,
+      });
 
-      const solutions = await Solution
-        .find(mongooseQuery)
+      const solutions = await Solution.find(mongooseQuery)
         .skip(query.init)
         .limit(query.offset)
         /**
-          * Filter order criteria unused
-          */
-        .sort(_.pickBy(query.sort,_.identity))
-        .populate('team')
-        .populate('insertedBy')
-        .populate('areasAvailable')
-        .populate('author')
-        .populate('coauthor')
-        .populate('groupValidator')
-        .populate('challenge')
-        .populate('tags')
-        .populate('departmentAffected')
-      return solutions
-    }catch(error){
-      return Promise.reject( new ServiceError(
-        ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
-        HTTP_RESPONSE._500,
-        error
-      ))
-    }   
+         * Filter order criteria unused
+         */
+        .sort(_.pickBy(query.sort, _.identity))
+        .populate("team")
+        .populate("insertedBy")
+        .populate("areasAvailable")
+        .populate("author")
+        .populate("coauthor")
+        .populate("groupValidator")
+        .populate("challenge")
+        .populate("tags")
+        .populate("departmentAffected");
+      return solutions;
+    } catch (error) {
+      return Promise.reject(
+        new ServiceError(
+          ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
+          HTTP_RESPONSE._500,
+          error
+        )
+      );
+    }
   },
-  async getParticipations(user: UserI): Promise<any>{
-    try{
+  async getParticipations(user: UserI): Promise<any> {
+    try {
       const solutions = await Solution.find({
-        $and:[
+        $and: [
           {
-            active:true
+            active: true,
           },
           {
-            $or:[
+            $or: [
               {
-                insertedBy: user
+                insertedBy: user,
               },
               {
-                author: user
+                author: user,
               },
               {
-                coauthor:{$in: user}
+                coauthor: { $in: user },
               },
-            ]
-          }
+            ],
+          },
         ],
       })
-        .populate('insertedBy')
-        .populate('areasAvailable')
-        .populate('author')
-        .populate('coauthor')
-        .populate('team')
-        .populate('challenge')
+        .populate("insertedBy")
+        .populate("areasAvailable")
+        .populate("author")
+        .populate("coauthor")
+        .populate("team")
+        .populate("challenge");
 
-      return solutions
-    }catch(error){
-      return Promise.reject( new ServiceError(
-        ERRORS.SERVICE.SOLUTION_USER_PARTICIPATIONS,
-        HTTP_RESPONSE._500,
-        error
-      ))
+      return solutions;
+    } catch (error) {
+      return Promise.reject(
+        new ServiceError(
+          ERRORS.SERVICE.SOLUTION_USER_PARTICIPATIONS,
+          HTTP_RESPONSE._500,
+          error
+        )
+      );
     }
-  }    
-}
+  },
+};
 export default SolutionService;

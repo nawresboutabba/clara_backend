@@ -178,17 +178,12 @@ const ChallengeService = {
     try {
       return await Challenge.find({
         $and: [
-          {
-            $or: [
-              { title: { $regex: `.*${query.title}.*` } },
-              { description: { $regex: `.*${query.title}.*` } },
-            ],
-          },
+          { title: { $regex: `.*${query.title}.*` } },
           { active: true },
           { participationModeAvailable: { $in: query.participationMode } },
           removeEmpty({
             tags: query?.tags,
-            type: query.challenge?.type,
+            type: query?.type,
             departmentAffected: query?.departmentAffected,
           }),
         ],

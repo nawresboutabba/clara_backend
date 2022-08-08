@@ -7,7 +7,7 @@ import {
 
 export interface QuerySolutionForm extends QuerySituationForm {
   challengeId?: string;
-  challenge?: { type: string };
+  type: string;
 }
 
 interface SituationResources {

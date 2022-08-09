@@ -11,7 +11,7 @@ import { ConfigurationSettingI } from "../models/configuration.default";
 import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
-import { getComments, newComment } from "./repository.comment";
+import { getComments, getCommentsWithoutRelation, newComment } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { CommentI } from "../models/interaction.comment";
@@ -268,6 +268,15 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
   }catch(error){
     return Promise.reject(error)
   }
+}
+
+export async function getSolutionCommentsWithoutRelations(solution: SolutionI) {
+  const filter = {
+    solution,
+    scope: "GROUP",
+  }
+
+  return getCommentsWithoutRelation(filter)
 }
 
 export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): Promise<BaremoResponse> => {

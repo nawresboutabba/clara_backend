@@ -60,7 +60,7 @@ router.get(
     }
   }
 )
-  
+
 router.get(
   URLS.SOLUTION.COMMENT,
   [
@@ -70,7 +70,7 @@ router.get(
     query('scope').custom(async (value, { req }) => {
       try{
         const solution = req.resources.solution;
-        if(value == COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
+        if(value == COMMENT_LEVEL.GROUP){
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),
@@ -102,6 +102,26 @@ router.get(
     }
   })
 
+router.get(
+  '/solution/:solutionId/comment/resume',
+  [
+    authentication,
+    acl(RULES.CAN_VIEW_SOLUTION),
+  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try{
+      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
+
+      const solutionController = new SolutionController()
+      const resp = await solutionController.listCommentsWithoutRelation(req.resources.solution);
+      res
+        .json(resp)
+        .status(200)
+        .send()
+    }catch(error){
+      next(error)
+    }
+  })
+
 router.post(
   URLS.SOLUTION.COMMENT,
   [
@@ -123,7 +143,7 @@ router.post(
     body('scope').custom(async (value, { req }) => {
       try{
         const solution = req.resources.solution
-        if(value == COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
+        if(value == COMMENT_LEVEL.GROUP){
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),

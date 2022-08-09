@@ -8,7 +8,7 @@ import { ChallengeI } from '../../models/situation.challenges';
 import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { applyTransition, createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
+import { applyTransition, createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getSolutionCommentsWithoutRelations, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
 import { deleteSolution, getSolution } from '../../repository/repository.solution';
 import { AreaResponse } from '../area/area';
 import { BaremoResponse } from '../baremo';
@@ -165,6 +165,11 @@ export default class SolutionController extends Controller {
    public async listComments(@Path('solutionId') solutionId: string, @Query() query: any , @Inject() solution: SolutionI, @Inject() user: UserI): Promise<CommentI[]>{
      return getSolutionComments(solution, query, user)
    }
+
+  @Get('/:solutionId/comment/resume')
+  public async listCommentsWithoutRelation(@Inject() solution: SolutionI) {
+    return getSolutionCommentsWithoutRelations(solution);
+  }
   /**
    * Get  a Comment with his childs
    */

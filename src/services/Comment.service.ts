@@ -3,90 +3,99 @@ import ServiceError from "../handle-error/error.service";
 import Comment, { CommentI } from "../models/interaction.comment";
 
 const CommentService = {
-  async newComment (comment: CommentI) : Promise<any>{
-    try{
+  async newComment(comment: CommentI): Promise<any> {
+    try {
       const resp = await Comment.create({
-        ...comment
-      })
-      return Promise.resolve(resp)
-    }catch(error){
-      return Promise.reject(new ServiceError(
+        ...comment,
+      });
+      return resp;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.POST_COMMENT_FAIL,
         HTTP_RESPONSE._500,
         error
-      ))
+      );
     }
   },
-  async getParentsComments(filter: any): Promise<any>{
-    try{
+  async getParentsComments(filter: any): Promise<any> {
+    try {
       const comments = await Comment.find({
         ...filter,
-        parent: undefined
+        parent: undefined,
       })
-        .populate('author')
-        .populate('insertedBy')
-        .populate('tag')
-      return Promise.resolve(comments)
-    }catch(error){
-      return Promise.reject(new ServiceError(
+        .populate("author")
+        .populate("insertedBy")
+        .populate("tag");
+      return comments;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.GET_COMMENTS,
         HTTP_RESPONSE._500,
         error
-      ))
+      );
     }
   },
-  async getChildrenComments(comments: CommentI[]): Promise<any>{
-    try{
+  async getChildrenComments(comments: CommentI[]): Promise<any> {
+    try {
       const resp = await Comment.find({
-        parent: {$in:comments }
+        parent: { $in: comments },
       })
-        .populate('parent')
-        .populate('author')
-        .populate('insertedBy')
-      return Promise.resolve(resp)
-    }catch(error){
-      return Promise.reject(new ServiceError(
+        .populate("parent")
+        .populate("author")
+        .populate("insertedBy");
+      return resp;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.GET_COMMENTS,
         HTTP_RESPONSE._500,
         error
-      ))
+      );
     }
   },
-  async getChildComments(commentparent: CommentI): Promise<any>{
-    try{
+  async getChildComments(commentparent: CommentI): Promise<any> {
+    try {
       const comments = await Comment.find({
-        parent: commentparent
-      })
+        parent: commentparent,
+      });
 
-      return Promise.resolve(comments)
-    }catch(error){
-      return Promise.reject(new ServiceError(
+      return comments;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.GET_COMMENTS,
         HTTP_RESPONSE._500,
         error
-      ))
+      );
     }
   },
   async getComment(commentId: string): Promise<any> {
-    try{
+    try {
       const comment = await Comment.findOne({
-        commentId
+        commentId,
       })
-        .populate('author')
-        .populate('insertedBy')
-        .populate('parent')
-        .populate('tag')
-        .populate('solution')
-        .populate('challenge')
-      return Promise.resolve(comment)
-    }catch(error){
-      return Promise.reject(new ServiceError(
+        .populate("author")
+        .populate("insertedBy")
+        .populate("parent")
+        .populate("tag")
+        .populate("solution")
+        .populate("challenge");
+      return comment;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.GET_COMMENT,
         HTTP_RESPONSE._500,
         error
-      ))
+      );
     }
-  }
-}
+  },
+  async getComments(filter: any) {
+    return Comment.find(filter)
+      .populate("author")
+      .populate("insertedBy")
+      .populate("parent")
+      .populate("tag")
+      .sort({ created: "asc" })
+      .limit(10);
+  },
+};
 
-export default CommentService
+export default CommentService;

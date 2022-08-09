@@ -1,189 +1,104 @@
 import User, { UserI } from "../models/users";
-import { startSession } from 'mongoose';
-import HistoricalUser from "../models/historical-users";
-import * as _ from 'lodash'; 
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
+import { removeEmpty } from "../utils/general/remove-empty";
 
 const UserService = {
   /**
    * General query for user. As example users not confirmed
-   * @param query 
+   * @param query
    */
-  async getUser(query:any):Promise<UserI> {
-    try{
+  async getUser(query: any): Promise<UserI> {
+    try {
       const user = User.findOne({
-        ...query
-      })
-      return user
-    }catch(error){
-      const customError = new ServiceError(
+        ...query,
+      });
+      return user;
+    } catch (error) {
+      throw new ServiceError(
         ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
-        HTTP_RESPONSE._500, 
-        error)
-      return Promise.reject(customError)
+        HTTP_RESPONSE._500,
+        error
+      );
     }
   },
-  async getUserActiveByEmail (email: string): Promise <UserI> {
-    return new Promise(async (resolve, reject) => {
-      /**
-           * @see https://mongoosejs.com/docs/tutorials/lean.html
-           */
-      User.findOne({
-        email: email,
-        active: true,              
-      })
-        .populate('areaVisible')
-        .then(result => {
-          return resolve(result)
-        })
-        .catch(error => {
-          const customError = new ServiceError(
-            ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
-            HTTP_RESPONSE._500, 
-            error)
-          return reject(customError)
-        })
-    })
+  async getUserActiveByEmail(email: string): Promise<UserI> {
+    /**
+     * @see https://mongoosejs.com/docs/tutorials/lean.html
+     */
+    return User.findOne({ email, active: true })
+      .populate("areaVisible")
+      .catch((error) => {
+        throw new ServiceError(
+          ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
+          HTTP_RESPONSE._500,
+          error
+        );
+      });
   },
-  async getUserActiveByUserId (userId:string ): Promise<UserI> {
-    return new Promise(async (resolve, reject)=> {
-
-      await User
-        .findOne({
-          userId: userId,
-          active: true,
-        })
-        .populate('areaVisible')
-        .then(user => {
-          return resolve(user)
-        })
-        .catch(error => {
-          const customError = new ServiceError(
-            ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
-            HTTP_RESPONSE._500, 
-            error)
-          return reject(customError)
-        })
-    })
+  async getUserActiveByUserId(userId: string): Promise<UserI> {
+    return User.findOne({ userId, active: true })
+      .populate("areaVisible")
+      .catch((error) => {
+        throw new ServiceError(
+          ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
+          HTTP_RESPONSE._500,
+          error
+        );
+      });
   },
-  async newGenericUser (user: UserI ): Promise<UserI> {
+  async newGenericUser(user: UserI): Promise<UserI> {
     return new Promise((resolve, reject) => {
-      User.create({...user})
+      User.create({ ...user })
         .then((resp) => {
           return resolve(resp);
         })
         .catch((err) => {
           const customError = new ServiceError(
-            ERRORS.SERVICE.USER_EXIST, 
+            ERRORS.SERVICE.USER_EXIST,
             HTTP_RESPONSE._409,
-            err)
+            err
+          );
           return reject(customError);
         });
     });
   },
-
-  // Deprecated !!
-  async deleteUserWithLog (userId: string): Promise<boolean> {
-    return new Promise (async (resolve, reject)=> {
-      await this
-        .getUserActiveByUserId(userId)
-        .then(async user=> {
-          if (user == null){
-            return reject(new ServiceError(ERRORS.SERVICE.USER_NOT_EXIST, HTTP_RESPONSE._500))
-          }
-          const oldData = _.omit(user.toJSON(), ["_id", "__v"]);
-          const data = { update: new Date(), active: false };
-          Object.assign(user, data);
-          const session = await startSession();
-          try {
-            session.startTransaction();
-            await Promise.all([
-              HistoricalUser.create([oldData], { session: session }),
-              user.save({ session: session }),
-            ]);
-            await session.commitTransaction();
-            session.endSession();
-            return resolve( true );
-          } catch (error) {
-            await session.abortTransaction();
-            session.endSession();
-            const customError = new ServiceError(
-              ERRORS.SERVICE.UPDATE_SOLUTION, 
-              HTTP_RESPONSE._500,
-              error)
-            return reject(customError);
-          }
-        })
-        .catch((error:any) => {
-          return reject(error)
-        })
-    })
-  },
-
-  async getUsers (query: any): Promise<any>{
-    try{
+  async getUsers(query: any): Promise<any> {
+    try {
       const resp = await User.find({
-        ...query
-      }) 
-      return resp
-    }catch(error){
+        ...query,
+      });
+      return resp;
+    } catch (error) {
       const customError = new ServiceError(
         ERRORS.SERVICE.GET_USERS,
-        HTTP_RESPONSE._500, 
-        error)
-      return Promise.reject(customError)
-    }
-  },
-  // @Deprecated!! Use a query
-  async  getUsersById (usersId: Array<string>):Promise<Array<UserI>>{
-    return new Promise(async (resolve, reject)=>{
-      try{
-        const users: Array<Promise<UserI>>= [] 
-        usersId.forEach(user => {
-          users.push(this.getUserActiveByUserId(user))
-        })
-        await Promise
-          .all(users)
-          .then(result => {
-            return resolve (result)
-          })
-          .catch(error => {
-            const customError = new ServiceError(
-              ERRORS.SERVICE.USER_EXIST,
-              HTTP_RESPONSE._500,
-              error
-            )
-            return reject(customError)
-          })      
-      }catch(error){
-        const customError = new ServiceError(
-          ERRORS.SERVICE.USER_EXIST,
-          HTTP_RESPONSE._500,
-          error
-        )
-        return reject(customError)
-      }
-    })
-  },
-  async updateUser(user:UserI, data: any ):Promise<UserI> {
-    try{
-      const resp = await User.findOneAndUpdate({
-        userId : user.userId
-      },{
-        ...data
-      },{ 
-        new: true
-      }) 
-      return resp
-    }catch(error){
-      return Promise.reject(new ServiceError(
-        ERRORS.SERVICE.UPDATE_PASSWORD,
         HTTP_RESPONSE._500,
-        error))
+        error
+      );
+      return Promise.reject(customError);
     }
-   
-  }
-}
+  },
+  async updateUser(userId: string, data: any): Promise<UserI> {
+    try {
+      const { first_name, last_name, ...rest } = data;
+      const resp = await User.findOneAndUpdate(
+        { userId },
+        removeEmpty({
+          firstName: first_name,
+          lastName: last_name,
+          ...rest,
+        }),
+        { new: true }
+      );
+      return resp;
+    } catch (error) {
+      throw new ServiceError(
+        ERRORS.SERVICE.UPDATE_USER,
+        HTTP_RESPONSE._500,
+        error
+      );
+    }
+  },
+};
 
 export default UserService;

@@ -23,8 +23,18 @@ export const lightUserFilter = async (user: UserI): Promise<any> => {
  * @returns
  */
 export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
-  const { externalUser, active, points, firstName, lastName, email, username } =
-    user;
+  const {
+    externalUser,
+    active,
+    points,
+    firstName,
+    lastName,
+    email,
+    username,
+    linkedIn,
+    about,
+  } = user;
+
   const area_visible = await genericArrayAreaFilter(user.areaVisible);
   const user_image = await getSignedUrl(user.userImage);
   return {
@@ -38,6 +48,8 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
     last_name: lastName,
     email,
     username,
+    linkedIn,
+    about,
   };
 };
 

@@ -1,68 +1,76 @@
-import { Schema, model } from 'mongoose';
-import { AreaI } from './organization.area';
+import { Schema, model } from "mongoose";
+import { AreaI } from "./organization.area";
 
 export interface UserI {
   /**
    * Mongo Document Id
    */
-  _id?: string,
+  _id?: string;
   /**
    * User Image
    */
-  userImage?: string,
+  userImage?: string;
   /**
-   * Username 
+   * Username
    */
-  username: string,
+  username: string;
   /**
    * User email
    */
-  email: string,
+  email: string;
   /**
    * Business User Id
    */
-  userId: string,
+  userId: string;
   /**
    * Password encrypted
    */
-  password: string,
+  password: string;
   /**
    * user first name
    */
-  firstName: string,
+  firstName: string;
+  /**
+   * User linkedIn
+   */
+  linkedIn?: string;
+  /**
+   * User bio
+   */
+  about?: string;
   /**
    * User last name
    */
-  lastName: string,
+  lastName: string;
   /**
    * User confirmed?
    */
-  confirmed: boolean,
+  confirmed: boolean;
   /**
    * Is the user active?
    */
-  active: boolean,
+  active: boolean;
   /**
    * External User. If true is external user that has participation in OpenChallenges
    */
-  externalUser: boolean
+  externalUser: boolean;
   /**
    * Area that is visible for user
    */
-  areaVisible?: Array<AreaI>,
+  areaVisible?: Array<AreaI>;
   /**
    * Last user update
    */
-  updated?: Date
+  updated?: Date;
   /**
    * Resume: Points earned for participation in platform.
    */
-  points: number
+  points: number;
 }
 
 const user = new Schema({
-  userImage: String, 
-  username: String, 
+  userImage: String,
+  username: String,
   email: {
     type: String,
     required: true,
@@ -77,18 +85,22 @@ const user = new Schema({
   },
   password: { type: String, required: true },
   firstName: String,
-  lastName: String, 
+  lastName: String,
+  linkedIn: String,
+  about: String,
   confirmed: Boolean,
   active: Boolean,
   externalUser: Boolean,
-  areaVisible: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Area'
-  }],
+  areaVisible: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Area",
+    },
+  ],
   updated: Date,
   points: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 });
 export default model("User", user);

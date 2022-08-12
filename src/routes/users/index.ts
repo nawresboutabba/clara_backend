@@ -65,9 +65,9 @@ router.post("/user/login",[
 });
 
 router.patch("/user", authentication, [
-  body('email'),
   body('first_name'),
   body('last_name'),
+  body('user_image'),
   body('username'),
   body('about'),
   body('linkedIn'),

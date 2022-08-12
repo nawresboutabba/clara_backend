@@ -121,9 +121,10 @@ export default class UserController extends Controller {
   @Post("change-password")
   public async changePassword(
     @Body() newPassword: string,
+    @Body() oldPassword: string,
     @Inject() user: UserI
   ): Promise<UserResponse> {
-    return changePassword(newPassword, user);
+    return changePassword(newPassword, oldPassword, user);
   }
   @Get()
   public async getInvitations(

@@ -80,14 +80,15 @@ const UserService = {
   },
   async updateUser(userId: string, data: any): Promise<UserI> {
     try {
-      const { first_name, last_name, ...rest } = data;
+      const { first_name, last_name, user_image, ...rest } = data;
       const resp = await User.findOneAndUpdate(
         { userId },
-        removeEmpty({
+        {
           firstName: first_name,
           lastName: last_name,
+          userImage: user_image,
           ...rest,
-        }),
+        },
         { new: true }
       );
       return resp;

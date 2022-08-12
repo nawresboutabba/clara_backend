@@ -65,9 +65,9 @@ router.post("/user/login",[
 });
 
 router.patch("/user", authentication, [
-  body('email'),
   body('first_name'),
   body('last_name'),
+  body('user_image'),
   body('username'),
   body('about'),
   body('linkedIn'),
@@ -118,21 +118,13 @@ router.get('/user/info',[
 
 router.post('/user/change-password', [
   authentication,
-  body('new_password').custom(async (value, {req}): Promise<void> => {
-    try{
-      if(value == req.body.repeat_new_password){
-        return Promise.resolve()
-      }
-      return Promise.reject('new password confirmation failed')
-    }catch(error){
-      return Promise.reject()
-    }
-  })
+  body('new_password'),
+  body('old_password'),
 ], async (req:RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
   try{
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.CHANGE_PASSWORD)
     const userController = new UserController()
-    const userParticipation = await userController.changePassword(req.body.new_password, req.user)
+    const userParticipation = await userController.changePassword(req.body.new_password, req.body.old_password, req.user)
     res
       .json(userParticipation)
       .status(200)

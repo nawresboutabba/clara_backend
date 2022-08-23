@@ -36,7 +36,7 @@ import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
 import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
 import { newExternalUser } from "../../repository/repository.users";
 import { generatePassword } from "../../utils/general/generate-password";
-import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
+import { tagsBodyCheck, tagsQueryCheck } from "../../utils/sanitization/tagsValidArray.check";
 import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
 
 
@@ -427,7 +427,7 @@ router.get(
   URLS.SOLUTION.SOLUTION,
   [
     authentication,
-    tagsValidArray().optional(),
+    tagsQueryCheck(),
     areasValidArray(),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -531,24 +531,7 @@ router.patch(
      */
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
-    body("tags").isArray(),    
-    body("tags").custom(async (value: string[], { req }): Promise<void> => {
-      try{
-        // https://www.notion.so/TAGS-Fix-Tag-comments-according-to-10-th-meeting-dc0ee99aa6f9478daedcc35c0664a34d
-        const query = {
-          tagId: { $in: value }
-        }
-        const tags = await TagService.getTagsByQuery(query)
-
-        if (tags.length == value.length) {
-          req.utils = { tags, ...req.utils }
-          return Promise.resolve()
-        }
-        return Promise.reject("tags does not valid")
-      }catch(error){
-        return Promise.reject("tags does not valid")
-      }
-    }),
+    tagsBodyCheck(),
     body("department_affected").isArray(),
     /**
      * Check that department affected is valid

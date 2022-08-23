@@ -118,6 +118,7 @@ export interface SituationBaseI {
    * If the situation is available for all company or just for some areas. 
    * @TODO convert description to constants
    * Work with canChooseWSALevel and WSALevelChosed.
+   * 
    */
   WSALevelAvailable: string[]
   /**
@@ -127,6 +128,7 @@ export interface SituationBaseI {
    */
   WSALevelChosed: string,
   /**
+   * When WSALevel = COMPANY this attribute is not required.
    * Areas available. Is used if WSALevel = AREA because a situation isn't available for all Company. Just for some areas.
    */
   areasAvailable?: Array<AreaI>,

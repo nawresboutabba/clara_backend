@@ -19,7 +19,7 @@ import TagService from "../../services/Tag.service";
 import CommentService from "../../services/Comment.service";
 import ChallengeService from "../../services/Challenge.service";
 import { query, validationResult, body, check } from "express-validator";
-import { tagsValidArray } from "../../utils/sanitization/tagsValidArray.check";
+import { tagsBodyCheck, tagsQueryCheck } from "../../utils/sanitization/tagsValidArray.check";
 import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
 
 router.get("/challenge/default-configuration", [
@@ -368,7 +368,7 @@ router.patch(
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
-    tagsValidArray(),
+    tagsBodyCheck(),
     body("department_affected").isArray(),
     /**
       * Check that department affected is valid
@@ -502,7 +502,7 @@ router.patch(
 
 router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
-  tagsValidArray().optional(),
+  tagsQueryCheck(),
   areasValidArray(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {

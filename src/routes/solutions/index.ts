@@ -427,7 +427,7 @@ router.get(
   URLS.SOLUTION.SOLUTION,
   [
     authentication,
-    tagsValidArray(),
+    tagsValidArray().optional(),
     areasValidArray(),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

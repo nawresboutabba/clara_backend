@@ -109,13 +109,15 @@ export interface SituationBaseI {
    */
   canChooseScope: boolean,
   /**
-   * Determines if the user can edit the WSALevel_chosed.
+   * Determines if the user can edit the WSALevel_chosed. W
+   * Work with WSALevelAvailable and WSALevelChosed. 
    */
   canChooseWSALevel: boolean,
   /**
    * WorkSpaceAvailable.
    * If the situation is available for all company or just for some areas. 
    * @TODO convert description to constants
+   * Work with canChooseWSALevel and WSALevelChosed.
    */
   WSALevelAvailable: string[]
   /**

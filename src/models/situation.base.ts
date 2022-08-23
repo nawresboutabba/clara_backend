@@ -147,9 +147,14 @@ export interface SituationBaseI {
    * participation_mode_available
    */
   participationModeChosed: string
-
+  /**
+  * Deprecated. Because the ideas are exposed and withdrawn at will.
+  */
   timeInPark: number,
   timeExpertFeedback: number,
+  /**
+  * Deprecated. Because the ideas are not rejected. Just exist a infity corrections cycle.
+  */
   timeIdeaFix: number,
 
   /**

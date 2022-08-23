@@ -368,24 +368,7 @@ router.patch(
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY),
     body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
     body("images", "images does not valid").isArray(),
-    body("tags").isArray(),    
-    body("tags").custom(async (value: string[], { req }): Promise<void> => {
-      try{
-        const query = {
-          tagId: { $in: value },
-          type: TAG_ORIGIN.IDEA
-        }
-        const tags = await TagService.getTagsByQuery(query)
- 
-        if (tags.length == value.length) {
-          req.utils = { tags, ...req.utils }
-          return Promise.resolve()
-        }
-        return Promise.reject("tags does not valid")
-      }catch(error){
-        return Promise.reject("tags does not valid")
-      }
-    }),
+    tagsValidArray(),
     body("department_affected").isArray(),
     /**
       * Check that department affected is valid
@@ -519,7 +502,7 @@ router.patch(
 
 router.get(URLS.CHALLENGE.CHALLENGE, [
   authentication,
-  tagsValidArray(),
+  tagsValidArray().optional(),
   areasValidArray(),
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {

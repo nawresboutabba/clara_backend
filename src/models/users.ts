@@ -103,4 +103,5 @@ const user = new Schema({
     default: 0,
   },
 });
+
 export default model("User", user);

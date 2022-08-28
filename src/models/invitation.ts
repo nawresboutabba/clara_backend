@@ -3,79 +3,79 @@ import { INVITATION } from "../constants";
 import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
-export interface InvitationI{
+export interface InvitationI {
   /**
    * InvitationId
    */
-    invitationId: string
-    /**
-     * Guest user
-     */
-    to: UserI,
-    /**
-     * User that did the invitation
-     */
-    from: UserI,
-    /**
-     * Invitation creation Date
-     */
-    creationDate: Date,
-    /**
-     * accepted: true, rejected: false
-     */
-    invitationAccepted?: boolean,
-    /**
-     * Decision date
-     */
-    decisionDate?: Date,
-    /**
-     * Resource for which an invitation is granted. e.g.: SOLUTION
-     */
-    resource: string
-    /**
-     * Invitation type. see: const INVITATIONS
-     */
-    type: string,
-    /**
-     * Status is calculated
-     */
-    status?: string
+  invitationId: string;
+  /**
+   * Guest user
+   */
+  to: UserI;
+  /**
+   * User that did the invitation
+   */
+  from: UserI;
+  /**
+   * Invitation creation Date
+   */
+  creationDate: Date;
+  /**
+   * accepted: true, rejected: false
+   */
+  invitationAccepted?: boolean;
+  /**
+   * Decision date
+   */
+  decisionDate?: Date;
+  /**
+   * Resource for which an invitation is granted. e.g.: SOLUTION
+   */
+  resource: string;
+  /**
+   * Invitation type. see: const INVITATIONS
+   */
+  type: string;
+  /**
+   * Status is calculated
+   */
+  status?: string;
 }
 
 export interface SolutionInvitationI extends InvitationI {
-  solution: SolutionI
+  solution: SolutionI;
 }
 
-const invitation = new Schema({
+const invitation = new Schema<SolutionInvitationI>({
   invitationId: String,
-  to:{
+  to: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
-  from:{
+  from: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
   creationDate: Date,
   invitationAccepted: Boolean,
   decisionDate: Date,
-  resource: String, 
+  resource: String,
   type: String,
-  solution:{
+  solution: {
     type: Schema.Types.ObjectId,
-    ref: 'Solution'
-  }
-})
+    ref: "Solution",
+  },
+});
 
-invitation.virtual('status').get(function() {
-  if (this.decisionDate == undefined){
-    return INVITATION.PENDING
-  }else if (this.invitationAccepted && this.decisionDate){
-    return INVITATION.ACCEPTED
-  }else if (! this.invitationAccepted && this.decisionDate){
-    return INVITATION.REJECTED
-  }else {
-    return "ERROR"
+invitation.virtual("status").get(function () {
+  if (this.decisionDate == undefined) {
+    return INVITATION.PENDING;
+  } else if (this.invitationAccepted && this.decisionDate) {
+    return INVITATION.ACCEPTED;
+  } else if (!this.invitationAccepted && this.decisionDate) {
+    return INVITATION.REJECTED;
+  } else {
+    return "ERROR";
   }
 });
-export default model('Invitation', invitation);
+export default model("Invitation", invitation);

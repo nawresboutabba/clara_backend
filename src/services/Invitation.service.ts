@@ -8,14 +8,12 @@ const InvitationService = {
   ): Promise<SolutionInvitationI> {
     try {
       const invitationResp = await Invitation.create({ ...invitation });
-      return invitationResp;
+      return invitationResp.toObject();
     } catch (error) {
-      return Promise.reject(
-        new ServiceError(
-          ERRORS.SERVICE.NEW_INVITATION,
-          HTTP_RESPONSE._500,
-          error
-        )
+      throw new ServiceError(
+        ERRORS.SERVICE.NEW_INVITATION,
+        HTTP_RESPONSE._500,
+        error
       );
     }
   },
@@ -34,15 +32,12 @@ const InvitationService = {
           queryTemp.status.includes(inv.status)
         );
       }
-
       return invitations;
     } catch (error) {
-      return Promise.reject(
-        new ServiceError(
-          ERRORS.SERVICE.GET_INVITATION,
-          HTTP_RESPONSE._500,
-          error
-        )
+      throw new ServiceError(
+        ERRORS.SERVICE.GET_INVITATION,
+        HTTP_RESPONSE._500,
+        error
       );
     }
   },

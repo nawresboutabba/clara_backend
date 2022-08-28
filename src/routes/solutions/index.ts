@@ -583,7 +583,7 @@ router.patch(
            */
           if (value == WSALEVEL.AREA) {
             const areas_available = req.body.areas_available
-            if (areas_available == undefined || areas_available == []){
+            if (areas_available == undefined || areas_available.length === 0){
               return Promise.reject('Insert at least an area when WSALevel is AREA')
             }
             const areasAvailable = await AreaService.getAreasById(req.body.areas_available)

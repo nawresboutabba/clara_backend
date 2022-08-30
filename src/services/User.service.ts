@@ -11,7 +11,7 @@ const UserService = {
   async getUser(query: any): Promise<UserI> {
     try {
       const user = await User.findOne(query);
-      return user.toObject();
+      return user;
     } catch (error) {
       throw new ServiceError(
         ERRORS.SERVICE.GET_USER_ACTIVE_BY_EMAIL,
@@ -33,7 +33,7 @@ const UserService = {
           error
         );
       });
-    return user.toObject();
+    return user;
   },
   async getUserActiveByUserId(userId: string): Promise<UserI> {
     const user = await User.findOne({ userId, active: true })
@@ -45,12 +45,12 @@ const UserService = {
           error
         );
       });
-    return user.toObject();
+    return user;
   },
   async newGenericUser(params: UserI): Promise<UserI> {
     try {
       const user = await User.create(params);
-      return user.toObject();
+      return user;
     } catch (err) {
       throw new ServiceError(
         ERRORS.SERVICE.USER_EXIST,
@@ -87,7 +87,7 @@ const UserService = {
         },
         { new: true }
       );
-      return resp.toObject();
+      return resp;
     } catch (error) {
       throw new ServiceError(
         ERRORS.SERVICE.UPDATE_USER,

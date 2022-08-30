@@ -1,6 +1,6 @@
 import { Post , Controller, Route, Body, Delete , Path, Get} from 'tsoa'
 import { ChallengeResponse } from '../challenge';
-import { SolutionResponse } from '../solution';
+import { SolutionResponse } from '../solutions';
 import { UserResponse } from '../users';
 
 export interface InteractionBody {

@@ -68,7 +68,7 @@ export interface UserI {
   points: number;
 }
 
-const user = new Schema({
+const user = new Schema<UserI>({
   userImage: String,
   username: String,
   email: {
@@ -104,4 +104,6 @@ const user = new Schema({
   },
 });
 
-export default model("User", user);
+const User = model("User", user);
+
+export default User;

@@ -12,17 +12,9 @@ import {
 } from "../../utils/field-filters/challenge";
 import { genericArraySolutionsFilter } from "../../utils/field-filters/solution";
 import { removeEmpty } from "../../utils/general/remove-empty";
+import { sortSchema } from "../../utils/params-query/sort.query";
 
-const sortZod = z.union([
-  z.literal(-1),
-  z.literal(1),
-  z.literal("asc"),
-  z.literal("ascending"),
-  z.literal("desc"),
-  z.literal("descending"),
-]);
-
-export const getChallengesController = validate(
+const getChallenges = validate(
   {
     query: z
       .object({
@@ -31,12 +23,7 @@ export const getChallengesController = validate(
         departmentAffected: z.array(z.string()),
         init: z.number(),
         offset: z.number(),
-        sort: z
-          .object({
-            title: sortZod,
-            created: sortZod,
-          })
-          .partial(),
+        sort: z.object({ title: sortSchema, created: sortSchema }).partial(),
         participationMode: z.string(),
         type: z.string(),
       })
@@ -66,7 +53,7 @@ export const getChallengesController = validate(
         )
       );
 
-      res.json(genericArrayChallengeFilter(challenges));
+      return genericArrayChallengeFilter(challenges);
     } else {
       const challenges = await Challenge.find(
         Object.assign(
@@ -93,7 +80,7 @@ export const getChallengesController = validate(
   }
 );
 
-export const getChallengeController = validate(
+const getChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
   },
@@ -109,19 +96,14 @@ export const getChallengeController = validate(
   }
 );
 
-export const getChallengeSolutionsController = validate(
+const getChallengeSolutions = validate(
   {
     params: z.object({ challengeId: z.string() }),
     query: z
       .object({
         init: z.number(),
         offset: z.number(),
-        sort: z
-          .object({
-            title: sortZod,
-            created: sortZod,
-          })
-          .partial(),
+        sort: z.object({ title: sortSchema, created: sortSchema }).partial(),
         participationMode: z.string(),
         type: z.string(),
       })
@@ -149,7 +131,7 @@ export const getChallengeSolutionsController = validate(
   }
 );
 
-export const createChallengeController = validate({}, async ({ user }, res) => {
+const createChallenge = validate({}, async ({ user }, res) => {
   const committee = await isCommitteMember(user);
 
   const challenge = await Challenge.create({
@@ -175,7 +157,7 @@ export const createChallengeController = validate({}, async ({ user }, res) => {
   res.status(201).json(await genericChallengeFilter(createdChallenge));
 });
 
-export const updateChallengeController = validate(
+const updateChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
     body: z
@@ -200,7 +182,7 @@ export const updateChallengeController = validate(
     }).populate("author");
 
     if (challenge.author.userId !== user.userId) {
-      res.status(401).send();
+      return res.status(401).send();
     }
 
     const tags = await TagService.getTagsById(body.tags);
@@ -232,7 +214,7 @@ export const updateChallengeController = validate(
   }
 );
 
-export const deleteChallengeController = validate(
+const deleteChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
   },
@@ -242,7 +224,7 @@ export const deleteChallengeController = validate(
     }).populate("author");
 
     if (challenge.author.userId !== user.userId) {
-      res.status(401).send();
+      return res.status(401).send();
     }
 
     await challenge.delete();
@@ -250,3 +232,12 @@ export const deleteChallengeController = validate(
     return genericChallengeFilter(challenge);
   }
 );
+
+export const challengesController = {
+  getChallenges,
+  getChallenge,
+  getChallengeSolutions,
+  createChallenge,
+  updateChallenge,
+  deleteChallenge,
+};

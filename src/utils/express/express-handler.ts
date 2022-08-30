@@ -1,4 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { ServerResponse } from "http";
 import { SafeParseSuccess, ZodSchema, ZodTypeAny } from "zod";
 import { UserI } from "../../models/users";
 
@@ -8,7 +9,7 @@ type ValidatedMiddleware<TBody, TQuery, TParams> = (
   },
   res: Response,
   next: NextFunction
-) => unknown;
+) => Promise<unknown> | void;
 
 type SchemaDefinition<TBody, TQuery, TParams> = Partial<{
   body: ZodSchema<TBody>;
@@ -45,9 +46,10 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
           res,
           next
         );
-        if (result) {
+        if (result && !(result instanceof ServerResponse)) {
           return res.json(result);
         }
+        return result;
       } catch (err) {
         next(err);
       }

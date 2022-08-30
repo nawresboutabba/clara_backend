@@ -15,7 +15,7 @@ import {
 import { listSolutions, updateSolution } from '../../repository/repository.solution';
 import { createSolution } from '../../repository/repository.solution'
 import { SituationBody, SituationResponse } from '../situation/situation';
-import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solution';
+import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solutions';
 import { CommentBody, CommentResponse } from '../comment';
 import { UserI } from '../../models/users';
 import { ReactionBody, ReactionResponse } from '../reaction';

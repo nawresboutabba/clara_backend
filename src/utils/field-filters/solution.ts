@@ -2,7 +2,7 @@ import { CHALLENGE_TYPE } from "../../constants";
 import {
   LightSolutionResponse,
   SolutionResponse,
-} from "../../controller/solution";
+} from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
 import { SolutionI } from "../../models/situation.solutions";
 import {

@@ -1,12 +1,6 @@
 import * as express from "express";
-import {
-  createChallengeController,
-  getChallengeController,
-  getChallengesController,
-  getChallengeSolutionsController,
-  updateChallengeController,
-  deleteChallengeController,
-} from "../../controller/challenge/challenge.controller";
+import { challengesController as controller } from "../../controller/challenge/challenges.controller";
+
 import authentication from "../../middlewares/authentication";
 import oldRoute from "./index";
 
@@ -15,12 +9,12 @@ export const challengeRouter = express.Router();
 challengeRouter
   .use(authentication)
   .use(oldRoute)
-  .get("/challenge/", getChallengesController)
-  .get("/challenge/:challengeId", getChallengeController)
-  .get("/challenge/:challengeId/solution", getChallengeSolutionsController)
-  .post("/challenge", createChallengeController)
-  .patch("/challenge/:challengeId", updateChallengeController)
-  .delete("/challenge/:challengeId", deleteChallengeController)
+  .get("/challenge/", controller.getChallenges)
+  .get("/challenge/:challengeId", controller.getChallenge)
+  .get("/challenge/:challengeId/solution", controller.getChallengeSolutions)
+  .post("/challenge", controller.createChallenge)
+  .patch("/challenge/:challengeId", controller.updateChallenge)
+  .delete("/challenge/:challengeId", controller.deleteChallenge)
   .post("/challenge/:challengeId/comment")
   .post("/challenge/:challengeId/transition")
   .post("/challenge/:challengeId/invitation/:invitationId/response")

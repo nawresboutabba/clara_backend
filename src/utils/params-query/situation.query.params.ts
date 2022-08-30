@@ -17,7 +17,7 @@ export interface QuerySituationForm {
   status?: string;
   tags?: { $in: TagI[] };
   departmentAffected?: { $in: AreaI[] };
-  type: string;
+  type?: string;
 }
 
 export interface createdFilter {

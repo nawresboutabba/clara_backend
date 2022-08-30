@@ -113,7 +113,7 @@ const SolutionService = {
    * @param challengeId
    * @returns
    */
-  async listSolutions(query: QuerySolutionForm, utils: any): Promise<any> {
+  async listSolutions(query: QuerySolutionForm, utils?: any): Promise<any> {
     try {
       const mongooseQuery = removeEmpty({
         title: { $regex: `.*${query.title}.*` },

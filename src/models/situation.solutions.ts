@@ -90,7 +90,7 @@ export interface SolutionI extends SituationBaseI {
   isPrivated: boolean;
 }
 
-const Solution = SituationBase.discriminator(
+const Solution = SituationBase.discriminator<SolutionI>(
   "Solution",
   new Schema({
     solutionId: String,

@@ -28,6 +28,10 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     updated,
     title,
     description,
+    price,
+    meta,
+    resources,
+    wanted_impact,
     active,
     fileComplementary,
     isStrategic,
@@ -55,16 +59,14 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   const banner_image = await getSignedUrl(challenge.bannerImage);
   const author = await genericUserFilter(challenge.author);
   const inserted_by = await genericUserFilter(challenge.insertedBy);
-  const areas_available = await genericArrayAreaFilter(
-    challenge.areasAvailable
-  );
-  const department_affected = await genericArrayAreaFilter(
+  const areas_available = genericArrayAreaFilter(challenge.areasAvailable);
+  const department_affected = genericArrayAreaFilter(
     challenge.departmentAffected
   );
   const group_validator = await genericGroupValidatorFilter(
     challenge.groupValidator
   );
-  const tags = await genericArrayTagsFilter(challenge.tags);
+  const tags = genericArrayTagsFilter(challenge.tags);
   return {
     challenge_id: challengeId,
     inserted_by,
@@ -74,6 +76,10 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     updated,
     title,
     description,
+    price,
+    meta,
+    resources,
+    wanted_impact,
     active,
     file_complementary: fileComplementary,
     banner_image,

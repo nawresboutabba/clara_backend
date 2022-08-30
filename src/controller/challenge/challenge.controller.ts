@@ -1,6 +1,10 @@
+import { nanoid } from "nanoid";
 import z from "zod";
+import { CHALLENGE_STATUS, CHALLENGE_TYPE } from "../../constants";
 import Challenge from "../../models/situation.challenges";
 import Solution from "../../models/situation.solutions";
+import TagService from "../../services/Tag.service";
+import { isCommitteMember } from "../../utils/acl/function.is_committe_member";
 import { validate } from "../../utils/express/express-handler";
 import {
   genericArrayChallengeFilter,
@@ -66,7 +70,7 @@ export const getChallengesController = validate(
     } else {
       const challenges = await Challenge.find(
         Object.assign(
-          { active: true },
+          { active: true, status: CHALLENGE_STATUS.OPENED },
           removeEmpty({
             tags: query?.tags,
             type: query?.type,
@@ -84,8 +88,7 @@ export const getChallengesController = validate(
         .limit(query.offset)
         .sort(query.sort);
 
-      const result = await genericArrayChallengeFilter(challenges);
-      res.json(result);
+      return genericArrayChallengeFilter(challenges);
     }
   }
 );
@@ -97,9 +100,12 @@ export const getChallengeController = validate(
   async (req, res) => {
     const challenge = await Challenge.findOne({
       challengeId: req.params.challengeId,
-    });
-    const serializedChallenge = await genericChallengeFilter(challenge);
-    res.json(serializedChallenge);
+    })
+      .populate("author")
+      .populate("insertedBy")
+      .populate("areasAvailable")
+      .populate("departmentAffected");
+    return genericChallengeFilter(challenge);
   }
 );
 
@@ -139,6 +145,108 @@ export const getChallengeSolutionsController = validate(
       .limit(query.offset)
       .sort(query.sort);
 
-    res.json(await genericArraySolutionsFilter(solutions));
+    return genericArraySolutionsFilter(solutions);
+  }
+);
+
+export const createChallengeController = validate({}, async ({ user }, res) => {
+  const committee = await isCommitteMember(user);
+
+  const challenge = await Challenge.create({
+    insertedBy: user,
+    author: user,
+    challengeId: nanoid(),
+    active: true,
+    type: CHALLENGE_TYPE.PARTICULAR,
+    status: CHALLENGE_STATUS.DRAFT,
+    images: [],
+    areasAvailable: [],
+    departmentAffected: [],
+  });
+
+  const createdChallenge = await Challenge.findOne({
+    challengeId: challenge.challengeId,
+  })
+    .populate("author")
+    .populate("insertedBy")
+    .populate("areasAvailable")
+    .populate("departmentAffected");
+
+  res.status(201).json(await genericChallengeFilter(createdChallenge));
+});
+
+export const updateChallengeController = validate(
+  {
+    params: z.object({ challengeId: z.string() }),
+    body: z
+      .object({
+        title: z.string(),
+        description: z.string(),
+        tags: z.array(z.string()),
+        areas: z.array(z.string()),
+        finalization: z.date(),
+        banner_image: z.string(),
+        images: z.array(z.string()),
+        price: z.number(),
+        meta: z.string(),
+        resources: z.string(),
+        wanted_impact: z.string(),
+      })
+      .partial(),
+  },
+  async ({ user, params, body }, res) => {
+    const challenge = await Challenge.findOne({
+      challengeId: params.challengeId,
+    }).populate("author");
+
+    if (challenge.author.userId !== user.userId) {
+      res.status(401).send();
+    }
+
+    const tags = await TagService.getTagsById(body.tags);
+
+    const updatedChallenge = await Challenge.findOneAndUpdate(
+      {
+        challengeId: params.challengeId,
+      },
+      removeEmpty({
+        title: body.title,
+        description: body.description,
+        bannerImage: body.banner_image,
+        images: body.images,
+        tags,
+        finalization: body.finalization,
+        price: body.price,
+        meta: body.meta,
+        resources: body.resources,
+        wanted_impact: body.wanted_impact,
+      }),
+      { new: true }
+    )
+      .populate("author")
+      .populate("insertedBy")
+      .populate("areasAvailable")
+      .populate("departmentAffected");
+
+    return genericChallengeFilter(updatedChallenge);
+  }
+);
+
+export const deleteChallengeController = validate(
+  {
+    params: z.object({ challengeId: z.string() }),
+  },
+  async ({ user, params }, res) => {
+    const challenge = await Challenge.findOne({
+      challengeId: params.challengeId,
+    }).populate("author");
+
+    if (challenge.author.userId !== user.userId) {
+      res.status(401).send();
+    }
+
+    await challenge.delete();
+
+    return genericChallengeFilter(challenge);
   }
 );

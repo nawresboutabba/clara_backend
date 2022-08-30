@@ -10,7 +10,8 @@ import cors from "cors";
 
 import swaggerDocument from "../swagger.json";
 
-import solutionsRouter from "./routes/solutions";
+import { solutionsRouter, challengeRouter } from "./routes";
+
 import userRouter from "./routes/users";
 import companyRouter from "./routes/company";
 import areaRouter from "./routes/area";
@@ -25,7 +26,6 @@ import emailRouter from "./routes/email";
 import { logError } from "./handle-error/middleware.log-error";
 import { clientErrorHandler } from "./handle-error/middleware.client-error-handler";
 import { errorHandler } from "./handle-error/middleware.error-handler";
-import { challengeRouter } from "./routes/challenge/new_index";
 import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
 
@@ -49,8 +49,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(morgan("dev"));
 
-app.use("/", solutionsRouter);
 app.use("/", userRouter);
+app.use(solutionsRouter);
 app.use(challengeRouter);
 app.use("/", companyRouter);
 app.use("/", areaRouter);

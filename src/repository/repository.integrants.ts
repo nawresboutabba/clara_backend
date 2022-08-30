@@ -27,7 +27,7 @@ export const newIntegrant = async (user: UserI, functionDescription: string): Pr
              * role: if user exist, then has role. this field not depend on active flag
              * 
              */
-      const check = await IntegrantService.checkUserInCommitte(user)
+      const check = await IntegrantService.checkUserInCommittee(user)
       /**
              * User is member and active. They can't be added again.
              */

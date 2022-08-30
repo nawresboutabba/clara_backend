@@ -1,5 +1,5 @@
 import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Inject, Put } from 'tsoa'
-import { ChallengeI } from '../../models/situation.challenges';
+import { ChallengeI, CHALLENGE_TYPE } from '../../models/situation.challenges';
 import {
   newChallenge,
   getChallenge,
@@ -33,7 +33,7 @@ export interface ChallengeBody extends SituationBody {
   /**
    * GENERIC | PARTICULAR
    */
-  type: string
+  type: CHALLENGE_TYPE
   /**
    * author is required for a challenge creation
    */
@@ -116,7 +116,7 @@ export default class ChallengeController extends Controller {
    * @param user User that insert the challenge
    * @returns 
    */
-   @Post('/proposal')
+  @Post('/proposal')
   public async newChallengeProposal(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
     return newChallengeProposal(body, user, utils)
   }
@@ -128,9 +128,9 @@ export default class ChallengeController extends Controller {
    * @returns 
    */
   @Post()
-   public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
-     return newChallenge(body, user, utils)
-   }
+  public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
+    return newChallenge(body, user, utils)
+  }
 
   @Post(':challengeId/solution')
   public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {

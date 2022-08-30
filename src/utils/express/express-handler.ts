@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { ZodSchema } from "zod";
+import { SafeParseSuccess, ZodSchema, ZodTypeAny } from "zod";
 import { UserI } from "../../models/users";
 
 type ValidatedMiddleware<TBody, TQuery, TParams> = (
@@ -16,14 +16,15 @@ type SchemaDefinition<TBody, TQuery, TParams> = Partial<{
   params: ZodSchema<TParams>;
 }>;
 
-const check = <TType>(
+const check = <T extends ZodTypeAny>(
+  path: string,
   obj?: unknown,
-  schema?: ZodSchema<TType>
-): obj is TType => {
+  schema?: T
+) => {
   if (!schema) {
-    return true;
+    return { success: true, data: true } as SafeParseSuccess<true>;
   }
-  return schema.safeParse(obj).success;
+  return schema.safeParse(obj);
 };
 
 export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
@@ -31,43 +32,37 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
   middleware: ValidatedMiddleware<TBody, TQuery, TParams>
 ): RequestHandler => {
   return async (req, res, next) => {
-    if (
-      check(req.body, schema.body) &&
-      check(req.query, schema.query) &&
-      check(req.params, schema.params)
-    ) {
+    const bodyParsed = check("body", req.body, schema.body);
+    const queryParsed = check("query", req.query, schema.query);
+    const paramsParsed = check("params", req.params, schema.params);
+
+    if (bodyParsed.success && queryParsed.success && paramsParsed.success) {
       try {
-        return await middleware(
+        const result = await middleware(
           req as unknown as Request<TParams, unknown, TBody, TQuery> & {
             user: UserI;
           },
           res,
           next
         );
+        if (result) {
+          return res.json(result);
+        }
       } catch (err) {
         next(err);
       }
     }
 
-    if (schema.body) {
-      const result = schema.body.safeParse(req.body, { path: ["body"] });
-      if (result.success === false) {
-        return next(result.error);
-      }
+    if (bodyParsed.success === false) {
+      return next(bodyParsed.error);
     }
 
-    if (schema.query) {
-      const result = schema.query.safeParse(req.query, { path: ["query"] });
-      if (result.success === false) {
-        return next(result.error);
-      }
+    if (queryParsed.success === false) {
+      return next(queryParsed.error);
     }
 
-    if (schema.params) {
-      const result = schema.params.safeParse(req.params, { path: ["params"] });
-      if (result.success === false) {
-        return next(result.error);
-      }
+    if (paramsParsed.success === false) {
+      return next(paramsParsed.error);
     }
 
     return next(new Error("zod-express-guard could not validate this request"));

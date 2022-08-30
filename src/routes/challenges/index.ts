@@ -131,7 +131,7 @@ router.get(URLS.CHALLENGE.CHALLENGE_PROPOSE_PROPOSEID, [
 
 router.post(
   [
-    URLS.CHALLENGE.CHALLENGE,
+    // URLS.CHALLENGE.CHALLENGE,
     URLS.CHALLENGE.CHALLENGE_PROPOSE,
   ],
   [
@@ -500,125 +500,8 @@ router.patch(
     }
   })
 
-router.get(URLS.CHALLENGE.CHALLENGE, [
-  authentication,
-  tagsQueryCheck(),
-  areasValidArray(),
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-    const challengeController = new ChallengeController()
 
-    const query: QueryChallengeForm = await formatChallengeQuery(req.query, {
-      tags: req.utils?.tags,
-      departmentAffected: req.utils?.areas,
-    })
-    const challenges = await challengeController.listChallenges(query, req.user)
 
-    res
-      .json(challenges)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
-  }
-})
-
-router.get(
-  URLS.CHALLENGE.CHALLENGE_CHALLENGEID,
-  [
-    authentication,
-    acl(
-      RULES.CAN_VIEW_CHALLENGE
-    )
-  ],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-
-      const challengeController = new ChallengeController();
-      const challenge = await challengeController.getChallenge(req.params.challengeId, req.resources.challenge, req.user)
-
-      res
-        .json(challenge)
-        .status(200)
-        .send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-router.patch(
-  "/challenge/:challengeId",
-  [
-    authentication,
-  ]
-  ,
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
-
-      const challengeController = new ChallengeController();
-      const challenge = await challengeController.updateChallengePartially(req.body, req.params.challengeId)
-
-      res
-        .status(200)
-        .json(challenge)
-        .send();
-      next();
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-router.delete(
-  "/challenge/:challengeId",
-  [
-    authentication
-  ],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-
-      const challengeController = new ChallengeController();
-      await challengeController.deleteChallenge(req.params.challengeId)
-      res.status(204).send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-router.get(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_SOLUTION, [
-  authentication,
-  // !TODO enhance access rule
-  acl(RULES.CAN_VIEW_CHALLENGE),
-  check('init').escape(),
-  check('offset').escape(),
-  query('status').optional().isIn(Object.values(SOLUTION_STATUS)),
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-
-    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)
-
-    const challengeController = new ChallengeController();
-    req.query.challengeId = req.params.challengeId
-    const query: QuerySolutionForm = await formatSolutionQuery(req.query, req.utils)
-
-    const solutions = await challengeController.listSolutions(
-      req.params.challengeId,
-      query
-    )
-    res
-      .json(solutions)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
-  }
-})
 
 router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
   authentication,

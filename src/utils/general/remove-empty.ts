@@ -1,4 +1,5 @@
 import { pickBy } from "lodash";
+
 export function removeEmpty<T>(obj: T): T {
   return pickBy(obj, (v) => v !== undefined && v !== null);
 }

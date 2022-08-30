@@ -117,7 +117,7 @@ const IntegrantService = {
     );
     return true;
   },
-  async checkUserInCommitte(user: UserI): Promise<IntegrantStatusI> {
+  async checkUserInCommittee(user: UserI): Promise<IntegrantStatusI> {
     try {
       /**
        * @TODO

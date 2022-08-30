@@ -1,13 +1,22 @@
 import { Schema } from "mongoose";
 import { options } from "./situation.base";
 import SituationBase, { SituationBaseI } from "./situation.base";
+import { CHALLENGE_STATUS } from "../constants";
+
+export const CHALLENGE_TYPE = {
+  GENERIC: "GENERIC",
+  PARTICULAR: "PARTICULAR",
+};
+export type CHALLENGE_TYPE = keyof typeof CHALLENGE_TYPE;
 
 export interface ChallengeI extends SituationBaseI {
   /**
    * GENERIC | PARTICULAR . Generic challenge is created for group ideas free.
    * Exist just one GENERIC CHALLENGE
    */
-  type: string;
+  type: CHALLENGE_TYPE;
+
+  status: CHALLENGE_STATUS;
   /**
    * True or False. Work in combination with canChooseScope
    */
@@ -28,6 +37,11 @@ export interface ChallengeI extends SituationBaseI {
    * Challenge finalization. Time limit for submit Ideas.
    */
   finalization: Date;
+
+  price: number;
+  meta: string;
+  resources: string;
+  wanted_impact: string;
 }
 
 export const challengeModel = {
@@ -36,6 +50,10 @@ export const challengeModel = {
   challengeId: String,
   isStrategic: Boolean,
   finalization: Date,
+  price: Number,
+  meta: String,
+  resources: String,
+  wanted_impact: String,
 };
 
 const Challenge = SituationBase.discriminator<ChallengeI>(

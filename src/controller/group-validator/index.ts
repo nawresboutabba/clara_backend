@@ -4,7 +4,7 @@ import { SolutionI } from '../../models/situation.solutions';
 import { UserI } from '../../models/users';
 import { getAllGroupValidatorsDetails, getBaremosLinkedToSolution, getSolutionsLinked, newGroupValidator } from '../../repository/repository.group-validator';
 import { BaremoResponse } from '../baremo';
-import { LightSolutionResponse } from '../solution';
+import { LightSolutionResponse } from '../solutions';
 import { UserResponse } from '../users';
 
 export interface GroupValidatorBody {

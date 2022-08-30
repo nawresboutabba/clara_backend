@@ -1,4 +1,4 @@
-import { EvaluationNoteResponse } from "../../controller/solution"
+import { EvaluationNoteResponse } from "../../controller/solutions"
 import { EvaluationNoteI } from "../../models/evaluation-note"
 import { lightSolutionFilter } from "./solution"
 import { genericUserFilter } from "./user"

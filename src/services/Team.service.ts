@@ -3,41 +3,26 @@ import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 
 const TeamService = {
-  async newTeam (team: TeamI): Promise<TeamI>{
-    try{
-      const teamResp = await Team.create(team)
-      return teamResp
-    }catch(error){
-      return Promise.reject(error)
-    }
+  async newTeam(team: TeamI): Promise<TeamI> {
+    const teamResp = await Team.create(team);
+    return teamResp.toObject();
   },
   async getTeamById(teamId: string): Promise<TeamI> {
-    return await Team
-      .findOne({ teamId: teamId })
-      .then(result => {
-        return result;
-      })
-      .catch(error => {
-        // @TODO set error
-        return Promise.reject(error);
-      });
+    const result = await Team.findOne({ teamId: teamId });
+    return result.toObject();
   },
   async getTeamByName(name: string): Promise<TeamI> {
-    return new Promise (async (resolve, reject)=> {
-      await Team
-        .findOne({name: name})
-        .then(result => {
-          return resolve(result)
-        })
-        .catch(error=> {
-          return reject(new ServiceError(
-            ERRORS.SERVICE.GET_TEAM_BY_NAME,
-            HTTP_RESPONSE._500,
-            error
-          ))
-        })
-    })
+    try {
+      const result = await Team.findOne({ name: name });
+      return result.toObject();
+    } catch (error) {
+      throw new ServiceError(
+        ERRORS.SERVICE.GET_TEAM_BY_NAME,
+        HTTP_RESPONSE._500,
+        error
+      );
+    }
   },
-}
+};
 
-export default TeamService
+export default TeamService;

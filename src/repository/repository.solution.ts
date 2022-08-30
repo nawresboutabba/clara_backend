@@ -1,6 +1,6 @@
 import { SolutionI } from "../models/situation.solutions";
 import { ChallengeI } from '../models/situation.challenges';
-import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solution";
+import { EvaluationNoteResponse, LightSolutionResponse, SolutionBody, SolutionResponse } from "../controller/solutions";
 import SolutionService, { SolutionEditablesFields } from "../services/Solution.service";
 import { COMMENT_LEVEL, ERRORS, EVENTS_TYPE, HTTP_RESPONSE, INTERACTION, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, SOLUTION_STATUS, WSALEVEL } from '../constants'
 import { nanoid } from 'nanoid'
@@ -145,7 +145,7 @@ export const updateSolution = async (body: SolutionBody, resources: any, user: U
       areasAvailable : utils.areasAvailable
     }
 
-    const solution = await SolutionService.updateSolutionPartially(currentSolution, change);
+    const solution = await SolutionService.updateSolutionPartially(currentSolution.solutionId, change);
 
     const resp = await genericSolutionFilter(solution)
 
@@ -301,7 +301,7 @@ export const newBaremo = async (solution: SolutionI, user: UserI, utils: any): P
         status : SolutionStateMachine.dispatch(solution.status , "analyze"),
         startAnalysis : date,
       }
-      await SolutionService.updateSolutionPartially(solution, updateSolution)
+      await SolutionService.updateSolutionPartially(solution.solutionId, updateSolution)
     }
 
     const bar = await BaremoService.newBaremo(baremo)
@@ -447,7 +447,7 @@ export const applyTransition = async (data: any , solution:SolutionI) :Promise<a
       update = {...update , version}
     }
 
-    const resp = await SolutionService.updateSolutionPartially(solution, update)
+    const resp = await SolutionService.updateSolutionPartially(solution.solutionId, update)
     const respFilterd = await genericSolutionFilter(resp)
     return respFilterd
   }catch(error){
@@ -476,7 +476,7 @@ export const responseInvitation = async (invitation: SolutionInvitationI, respon
         $addToSet: { externalOpinion: invitation.to } 
       }
     }
-    const solution = await SolutionService.updateSolutionPartially(invitation.solution, updateSolution)
+    const solution = await SolutionService.updateSolutionPartially(invitation.solution.solutionId, updateSolution)
     if (solution){
       const resp = await InvitationService.updateInvitation(invitation, update)
       const respFilterd = await genericSolutionInvitationFilter(resp)

@@ -1,4 +1,4 @@
-import { LightSolutionResponse } from "../solution";
+import { LightSolutionResponse } from "../solutions";
 import { LightUserInterface } from "../users";
 
 export interface BaremoResponse {

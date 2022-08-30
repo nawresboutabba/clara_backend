@@ -10,9 +10,7 @@ const UserService = {
    */
   async getUser(query: any): Promise<UserI> {
     try {
-      const user = User.findOne({
-        ...query,
-      });
+      const user = await User.findOne(query);
       return user;
     } catch (error) {
       throw new ServiceError(
@@ -26,7 +24,7 @@ const UserService = {
     /**
      * @see https://mongoosejs.com/docs/tutorials/lean.html
      */
-    return User.findOne({ email, active: true })
+    const user = await User.findOne({ email, active: true })
       .populate("areaVisible")
       .catch((error) => {
         throw new ServiceError(
@@ -35,9 +33,10 @@ const UserService = {
           error
         );
       });
+    return user;
   },
   async getUserActiveByUserId(userId: string): Promise<UserI> {
-    return User.findOne({ userId, active: true })
+    const user = await User.findOne({ userId, active: true })
       .populate("areaVisible")
       .catch((error) => {
         throw new ServiceError(
@@ -46,22 +45,19 @@ const UserService = {
           error
         );
       });
+    return user;
   },
-  async newGenericUser(user: UserI): Promise<UserI> {
-    return new Promise((resolve, reject) => {
-      User.create({ ...user })
-        .then((resp) => {
-          return resolve(resp);
-        })
-        .catch((err) => {
-          const customError = new ServiceError(
-            ERRORS.SERVICE.USER_EXIST,
-            HTTP_RESPONSE._409,
-            err
-          );
-          return reject(customError);
-        });
-    });
+  async newGenericUser(params: UserI): Promise<UserI> {
+    try {
+      const user = await User.create(params);
+      return user;
+    } catch (err) {
+      throw new ServiceError(
+        ERRORS.SERVICE.USER_EXIST,
+        HTTP_RESPONSE._409,
+        err
+      );
+    }
   },
   async getUsers(query: any): Promise<any> {
     try {

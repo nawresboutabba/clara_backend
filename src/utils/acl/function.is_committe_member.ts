@@ -2,9 +2,7 @@ import { IntegrantStatusI } from "../../models/integrant";
 import { UserI } from "../../models/users";
 import IntegrantService from "../../services/Integrant.service";
 
-export function isCommitteMember (user: UserI):Promise<IntegrantStatusI>{
-  return new Promise(async (resolve, reject)=> {
-    const committeMember = await IntegrantService.checkUserInCommitte(user)
-    return resolve(committeMember)
-  })
+export async function isCommitteMember(user: UserI): Promise<IntegrantStatusI> {
+  const committeeMember = await IntegrantService.checkUserInCommittee(user);
+  return committeeMember;
 }

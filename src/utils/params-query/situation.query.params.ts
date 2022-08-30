@@ -1,3 +1,4 @@
+import { SortOrder } from "mongoose";
 import { AreaI } from "../../models/organization.area";
 import { TagI } from "../../models/tag";
 import { removeEmpty } from "../general/remove-empty";
@@ -9,14 +10,14 @@ export interface QuerySituationForm {
   offset?: number;
   groupValidatorId?: string;
   sort?: {
-    title: string;
-    created: string;
+    title: SortOrder;
+    created: SortOrder;
   };
   title?: string;
   status?: string;
   tags?: { $in: TagI[] };
   departmentAffected?: { $in: AreaI[] };
-  type: string;
+  type?: string;
 }
 
 export interface createdFilter {

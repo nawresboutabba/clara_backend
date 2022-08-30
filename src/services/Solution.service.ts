@@ -8,6 +8,7 @@ import { AreaI } from "../models/organization.area";
 import { NewSolutionI } from "../repository/repository.solution";
 import { TagI } from "../models/tag";
 import { removeEmpty } from "../utils/general/remove-empty";
+import { UpdateQuery } from "mongoose";
 
 export interface SolutionEditablesFields {
   title?: string;
@@ -70,21 +71,13 @@ const SolutionService = {
     }
   },
   async updateSolutionPartially(
-    solution: SolutionI,
-    data: SolutionEditablesFields
-  ): Promise<any> {
+    solutionId: string,
+    data: UpdateQuery<SolutionI>
+  ): Promise<SolutionI> {
     try {
-      const resp = await Solution.findOneAndUpdate(
-        {
-          solutionId: solution.solutionId,
-        },
-        {
-          ...data,
-        },
-        {
-          new: true,
-        }
-      )
+      return await Solution.findOneAndUpdate({ solutionId }, data, {
+        new: true,
+      })
         .populate("departmentAffected")
         .populate("updatedBy")
         .populate("challenge")
@@ -95,15 +88,11 @@ const SolutionService = {
         .populate("areasAvailable")
         .populate("tags")
         .populate("externalOpinion");
-
-      return resp;
     } catch (error) {
-      return Promise.reject(
-        new ServiceError(
-          ERRORS.SERVICE.UPDATE_SOLUTION,
-          HTTP_RESPONSE._500,
-          error
-        )
+      throw new ServiceError(
+        ERRORS.SERVICE.UPDATE_SOLUTION,
+        HTTP_RESPONSE._500,
+        error
       );
     }
   },
@@ -113,7 +102,7 @@ const SolutionService = {
    * @param challengeId
    * @returns
    */
-  async listSolutions(query: QuerySolutionForm, utils: any): Promise<any> {
+  async listSolutions(query: QuerySolutionForm, utils?: any): Promise<any> {
     try {
       const mongooseQuery = removeEmpty({
         title: { $regex: `.*${query.title}.*` },
@@ -145,12 +134,10 @@ const SolutionService = {
         .populate("departmentAffected");
       return solutions;
     } catch (error) {
-      return Promise.reject(
-        new ServiceError(
-          ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
-          HTTP_RESPONSE._500,
-          error
-        )
+      throw new ServiceError(
+        ERRORS.SERVICE.GET_CHALLENGES_SOLUTIONS,
+        HTTP_RESPONSE._500,
+        error
       );
     }
   },
@@ -163,9 +150,9 @@ const SolutionService = {
           },
           {
             $or: [
-              {
-                insertedBy: user,
-              },
+              // {
+              //   insertedBy: user,
+              // },
               {
                 author: user,
               },

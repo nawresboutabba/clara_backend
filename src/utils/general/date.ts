@@ -1,17 +1,16 @@
-import { DateTime } from 'luxon'
+import { DateTime } from "luxon";
 
-export default function toISOData (date?: Date ): Date {
-  try{
-    if(date){
-      return DateTime.fromISO(date).toISODate()
+export default function toISOData(date?: Date): Date {
+  try {
+    if (date) {
+      return DateTime.fromISO(date).toISODate();
     }
-    throw new Error("Date is not defined")
-  }catch(error){
-    return error
+    throw new Error("Date is not defined");
+  } catch (error) {
+    return error;
   }
+}
 
-} 
-
-export function getCurrentDate (): Date {
-  return DateTime.now()
+export function getCurrentDate(): Date {
+  return DateTime.now();
 }

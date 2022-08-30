@@ -10,7 +10,7 @@ import { genericArrayUserFilter, lightUserFilter } from "../utils/field-filters/
 import SolutionService from "../services/Solution.service";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { genericArraySolutionsFilter, lightSolutionFilter } from "../utils/field-filters/solution";
-import { LightSolutionResponse } from "../controller/solution";
+import { LightSolutionResponse } from "../controller/solutions";
 import { SolutionI } from "../models/situation.solutions";
 import BaremoService from "../services/Baremo.service";
 import { BAREMO_STATUS, ERRORS, HTTP_RESPONSE, SOLUTION_STATUS } from "../constants";

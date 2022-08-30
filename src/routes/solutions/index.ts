@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
-import SolutionController from '../../controller/solution/index'
+import SolutionController from '../../controller/solutions/index'
 import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
 import AreaService from "../../services/Area.service";
@@ -583,7 +583,7 @@ router.patch(
            */
           if (value == WSALEVEL.AREA) {
             const areas_available = req.body.areas_available
-            if (areas_available == undefined || areas_available == []){
+            if (areas_available == undefined || areas_available.length === 0){
               return Promise.reject('Insert at least an area when WSALevel is AREA')
             }
             const areasAvailable = await AreaService.getAreasById(req.body.areas_available)

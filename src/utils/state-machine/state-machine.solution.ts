@@ -34,7 +34,10 @@ const machine = {
     /**
      * Solution in the park
      */
-    APPOVED_FOR_DISCUSSION: {
+    APPROVED_FOR_DISCUSSION: {
+      draft: function () {
+        this.changeState(SOLUTION_STATUS.DRAFT);
+      },
       evaluate: function () {
         this.changeState(SOLUTION_STATUS.PROPOSED);
       },

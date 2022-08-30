@@ -150,9 +150,9 @@ const SolutionService = {
           },
           {
             $or: [
-              {
-                insertedBy: user,
-              },
+              // {
+              //   insertedBy: user,
+              // },
               {
                 author: user,
               },

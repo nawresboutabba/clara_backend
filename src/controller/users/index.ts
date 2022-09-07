@@ -2,7 +2,6 @@ import { Post, Controller, Route, Body, Get, Inject, Query, Patch } from "tsoa";
 import { UserI } from "../../models/users";
 import {
   changePassword,
-  getInvitations,
   getParticipation,
   getUserInformation,
   getUsers,
@@ -126,11 +125,11 @@ export default class UserController extends Controller {
   ): Promise<UserResponse> {
     return changePassword(newPassword, oldPassword, user);
   }
-  @Get()
-  public async getInvitations(
-    @Query() query: any,
-    @Inject() user: UserI
-  ): Promise<any> {
-    return getInvitations(query, user);
-  }
+  // @Get()
+  // public async getInvitations(
+  //   @Query() query: any,
+  //   @Inject() user: UserI
+  // ): Promise<any> {
+  //   return getInvitations(query, user);
+  // }
 }

@@ -171,44 +171,5 @@ router.get(URLS.USER.USER,[
   }
 })
 
-/**
- * User's invitation. My invitations.
- * Query
- * status: undefined || [ACCEPTED, REJECTED, PENDING] . See constants.ts. Pending
- * E.G /user/invitation?status=ACCEPTED&status=REJECTED&status=PENDING
- */
-router.get(URLS.USER.USER_INVITATION,[
-  authentication,
-  query('status').custom(async (value, {req}):Promise<void>=> {
-    try{
-      if (!value){
-        return Promise.resolve()
-      }
-      if (_.isString(value)){
-        assert.ok(value in INVITATION, "status not valid")
-        return Promise.resolve()
-      }
-      const result = value.every(element => {
-        return element in INVITATION
-      })
-      assert.ok(result, "status not valid")
-      return Promise.resolve()
-    }catch(error){
-      return Promise.reject("status not valid")
-    }
-  })  
-],async (req:RequestMiddleware , res: ResponseMiddleware, next:NextFunction) => {
-  try{
-    await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_INVITATIONS)
-    const userController = new UserController()
-    const userParticipation = await userController.getInvitations(req.query, req.user)
-    res
-      .json(userParticipation)
-      .status(200)
-      .send()  
-  }catch(error){
-    next(error)
-  }
-})
 const userRouter = router
 export default userRouter;

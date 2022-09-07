@@ -257,31 +257,6 @@ const handlerInvitations = {
   },
 };
 
-export const getInvitations = async (query: any, user: UserI): Promise<any> => {
-  try {
-    const queryCleaned = new Proxy(query, handlerInvitations);
-    const mongooseQuery = {
-      ..._.pickBy(
-        {
-          status: queryCleaned.status,
-          to: user,
-        },
-        _.identity
-      ),
-    };
-
-    const invitations = await InvitationService.getSolutionInvitations(
-      mongooseQuery
-    );
-    const invitationFiltered = await genericArraySolutionInvitationFilter(
-      invitations
-    );
-
-    return invitationFiltered;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
 export const getParticipation = async (
   user: UserI,
   query: any

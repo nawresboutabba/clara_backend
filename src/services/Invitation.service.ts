@@ -1,14 +1,15 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import Invitation, { SolutionInvitationI } from "../models/invitation";
+import { SolutionInvitationI, SolutionInvitation } from "../models/invitation";
+import { FilterQuery, Types, UpdateQuery } from "mongoose";
 
 const InvitationService = {
   async newInvitation(
     invitation: SolutionInvitationI
   ): Promise<SolutionInvitationI> {
     try {
-      const invitationResp = await Invitation.create({ ...invitation });
-      return invitationResp.toObject();
+      const invitationResp = await SolutionInvitation.create({ ...invitation });
+      return invitationResp;
     } catch (error) {
       throw new ServiceError(
         ERRORS.SERVICE.NEW_INVITATION,
@@ -17,9 +18,9 @@ const InvitationService = {
       );
     }
   },
-  async getSolutionInvitations(queryTemp: any): Promise<any[]> {
+  async getSolutionInvitations(queryTemp: FilterQuery<SolutionInvitationI>) {
     try {
-      const invitations = await Invitation.find({ ...queryTemp })
+      const invitations = await SolutionInvitation.find(queryTemp)
         .populate({
           path: "solution",
           populate: { path: "challenge" },
@@ -27,11 +28,6 @@ const InvitationService = {
         .populate("from")
         .populate("to");
 
-      if (queryTemp.status) {
-        return invitations.filter((inv) =>
-          queryTemp.status.includes(inv.status)
-        );
-      }
       return invitations;
     } catch (error) {
       throw new ServiceError(
@@ -42,9 +38,9 @@ const InvitationService = {
     }
   },
   // Deprecated
-  async getInvitationById(invitationId: string): Promise<any> {
+  async getInvitationById(invitationId: string) {
     try {
-      const invitation = await Invitation.findOne({
+      const invitation = await SolutionInvitation.findOne({
         invitationId,
       })
         .populate({
@@ -65,20 +61,14 @@ const InvitationService = {
     }
   },
   async updateInvitation(
-    invitation: SolutionInvitationI,
-    update: any
-  ): Promise<any> {
+    invitationId: Types.ObjectId,
+    update: UpdateQuery<SolutionInvitationI>
+  ) {
     try {
-      const invitationResp = await Invitation.findOneAndUpdate(
-        {
-          invitationId: invitation.invitationId,
-        },
-        {
-          ...update,
-        },
-        {
-          new: true,
-        }
+      const invitationResp = await SolutionInvitation.findByIdAndUpdate(
+        invitationId,
+        update,
+        { new: true }
       )
         .populate({
           path: "solution",

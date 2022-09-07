@@ -253,7 +253,7 @@ export const getSolutionComments = async (solution: SolutionI, query: any, user:
       scope: query.scope,
     }
 
-    // if(query.scope === COMMENT_LEVEL.GROUP && solution.status !== 'APROVED_FOR_DISCUSSION'){
+    // if(query.scope === COMMENT_LEVEL.GROUP && solution.status !== 'APPROVED_FOR_DISCUSSION'){
     //   const canViewComment = [
     //     ...solution.coauthor.map(coauthor => coauthor.userId),
     //     solution.author.userId,
@@ -373,65 +373,6 @@ export const newEvaluationNote = async (data: any, solution: SolutionI, user: Us
   }
 }
 
-export const getInvitations = async (solution: SolutionI , query: any, utils: any):Promise<any> => {
-  try{
-    const queryCleaned = new Proxy(query, handler);
-    const mongooseQuery = {..._.pickBy({
-      solution,
-      invitationAccepted: queryCleaned.invitation_accepted
-    }, _.identity),
-    }
-    const invitations = await InvitationService.getSolutionInvitations(mongooseQuery)
-    const invitationsFiltered = await genericArraySolutionInvitationFilter(invitations)
-    return invitationsFiltered
-  }catch(error){
-    return Promise.reject(error)
-  }
-}
-
-export const newInvitation = async (utils: any, solution: SolutionI, type: string): Promise<any> => {
-  try{
-    /**
-     * @TODO create user if does not exist for external opinion
-     */
-    const date = getCurrentDate()
-    const invitation: SolutionInvitationI = {
-      resource: RESOURCE.SOLUTION,
-      invitationId: nanoid(),
-      /**
-       * do not confuse req.utils.user with req.user. 
-       * Req.user is the person in the session, while req.utils.user 
-       * can be the storage of an auxiliary user for an endpoint. 
-       * for example in this case it is used to store the person who is invited
-       */
-      from: solution.author,
-      to: utils.user,
-      creationDate: date, 
-      solution,
-      type
-    }
-    const resp = await InvitationService.newInvitation(invitation)
-    const Destination =  {
-      BccAddresses: [
-      ], 
-      CcAddresses: [
-      ], 
-      ToAddresses: [
-        utils.user.email, 
-      ]
-    }
-    const info = {
-      solution,
-      invitation:resp
-    }
-    await sendEmail(Destination, EVENTS_TYPE.EXTERNAL_OPINION_INVITATION, info)
-    const resp_filtered = await genericSolutionInvitationFilter(resp)
-    return resp_filtered
-  }catch(error){
-    return Promise.reject(error)    
-  }
-}
-
 export const applyTransition = async (data: any , solution:SolutionI) :Promise<any> => {
   try{
     const date = getCurrentDate()
@@ -456,38 +397,5 @@ export const applyTransition = async (data: any , solution:SolutionI) :Promise<a
       HTTP_RESPONSE._500,
       error
     ))    
-  }
-}
-
-export const responseInvitation = async (invitation: SolutionInvitationI, response: string):Promise<any>=> {
-  try{
-    const date = getCurrentDate()
-    const update = {
-      invitationAccepted: response == INVITATION.ACCEPTED? true:false,
-      decisionDate: date
-    }
-    let updateSolution 
-    if ((invitation.type == INVITATIONS.TEAM_PARTICIPATION) && update.invitationAccepted){
-      updateSolution = { 
-        $addToSet: { coauthor: invitation.to } 
-      }
-    }else if (invitation.type == INVITATIONS.EXTERNAL_OPINION && update.invitationAccepted){
-      updateSolution = { 
-        $addToSet: { externalOpinion: invitation.to } 
-      }
-    }
-    const solution = await SolutionService.updateSolutionPartially(invitation.solution.solutionId, updateSolution)
-    if (solution){
-      const resp = await InvitationService.updateInvitation(invitation, update)
-      const respFilterd = await genericSolutionInvitationFilter(resp)
-      return respFilterd
-    }
-    throw 'Errors when data is updated'
-  }catch(error){
-    return Promise.reject(new RepositoryError(
-      ERRORS.REPOSITORY.UPDATE_INVITATIONS,
-      HTTP_RESPONSE._500,
-      error
-    ))
   }
 }

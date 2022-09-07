@@ -10,9 +10,8 @@ import cors from "cors";
 
 import swaggerDocument from "../swagger.json";
 
-import { solutionsRouter, challengeRouter } from "./routes";
+import { solutionsRouter, challengeRouter, usersRouter } from "./routes";
 
-import userRouter from "./routes/users";
 import companyRouter from "./routes/company";
 import areaRouter from "./routes/area";
 import groupValidatorRouter from "./routes/group-validator";
@@ -49,7 +48,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(morgan("dev"));
 
-app.use("/", userRouter);
+app.use(usersRouter);
 app.use(solutionsRouter);
 app.use(challengeRouter);
 app.use("/", companyRouter);

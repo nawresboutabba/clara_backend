@@ -10,9 +10,8 @@ import cors from "cors";
 
 import swaggerDocument from "../swagger.json";
 
-import { solutionsRouter, challengeRouter } from "./routes";
+import { solutionsRouter, challengeRouter, usersRouter } from "./routes";
 
-import userRouter from "./routes/users";
 import companyRouter from "./routes/company";
 import areaRouter from "./routes/area";
 import groupValidatorRouter from "./routes/group-validator";
@@ -28,6 +27,7 @@ import { clientErrorHandler } from "./handle-error/middleware.client-error-handl
 import { errorHandler } from "./handle-error/middleware.error-handler";
 import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
+import { invitationRouter } from "./routes/invitation";
 
 mongoose
   .connect(
@@ -36,7 +36,7 @@ mongoose
   )
   .then((db) =>
     console.log(
-      `DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`
+      `DB is connected to, server: ${db.connection.host}, port: ${db.connection.port}, db: ${db.connection.name}`
     )
   )
   .catch((err) => console.log(err));
@@ -49,9 +49,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(morgan("dev"));
 
-app.use("/", userRouter);
+app.use(usersRouter);
 app.use(solutionsRouter);
 app.use(challengeRouter);
+app.use(invitationRouter);
 app.use("/", companyRouter);
 app.use("/", areaRouter);
 app.use("/", groupValidatorRouter);

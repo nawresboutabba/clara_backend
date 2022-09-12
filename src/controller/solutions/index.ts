@@ -1,40 +1,72 @@
-import { bool } from 'aws-sdk/clients/signer';
-import { Post, Controller, Route, Body, Delete, Path, Get, Request, Query, Inject, Patch } from 'tsoa'
-import { RESOURCE } from '../../constants';
-import { BaremoI } from '../../models/baremo';
-import { ConfigurationBaseI } from '../../models/configuration.default';
-import { CommentI } from '../../models/interaction.comment';
-import { ChallengeI } from '../../models/situation.challenges';
-import { SolutionI } from '../../models/situation.solutions';
-import { UserI } from '../../models/users';
-import { setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { applyTransition, createSolution, editBaremo, getCurrent, getInvitations, getSolutionComments, getSolutionCommentsWithoutRelations, getThread, listSolutions, newBaremo, newEvaluationNote, newInvitation, newSolutionComment, responseInvitation, updateSolution } from '../../repository/repository.solution';
-import { deleteSolution, getSolution } from '../../repository/repository.solution';
-import { AreaResponse } from '../area/area';
-import { BaremoResponse } from '../baremo';
-import { ChallengeResponse, LightChallengeResponse } from '../challenge';
-import { CommentBody, CommentResponse } from '../comment';
-import { ConfigurationBody } from '../configuration';
-import { LightSituationResponse, SituationBody, SituationResponse } from '../situation/situation';
-import { TagResponse } from '../tag';
-import { UserResponse } from '../users';
+import { bool } from "aws-sdk/clients/signer";
+import {
+  Post,
+  Controller,
+  Route,
+  Body,
+  Delete,
+  Path,
+  Get,
+  Request,
+  Query,
+  Inject,
+  Patch,
+} from "tsoa";
+import { RESOURCE } from "../../constants";
+import { BaremoI } from "../../models/baremo";
+import { ConfigurationBaseI } from "../../models/configuration.default";
+import { CommentI } from "../../models/interaction.comment";
+import { ChallengeI } from "../../models/situation.challenges";
+import { SolutionI } from "../../models/situation.solutions";
+import { UserI } from "../../models/users";
+import { setDefaultConfiguration } from "../../repository/repository.configuration-challenge";
+import {
+  applyTransition,
+  createSolution,
+  editBaremo,
+  getCurrent,
+  getSolutionComments,
+  getSolutionCommentsWithoutRelations,
+  getThread,
+  listSolutions,
+  newBaremo,
+  newEvaluationNote,
+  newSolutionComment,
+  updateSolution,
+} from "../../repository/repository.solution";
+import {
+  deleteSolution,
+  getSolution,
+} from "../../repository/repository.solution";
+import { AreaResponse } from "../area/area";
+import { BaremoResponse } from "../baremo";
+import { ChallengeResponse, LightChallengeResponse } from "../challenge";
+import { CommentBody, CommentResponse } from "../comment";
+import { ConfigurationBody } from "../configuration";
+import {
+  LightSituationResponse,
+  SituationBody,
+  SituationResponse,
+} from "../situation/situation";
+import { TagResponse } from "../tag";
+import { UserResponse } from "../users";
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
-  differential:string,
-  is_new_for:string,
-  was_tested: bool,
-  test_description: string,
-  barema_type_suggested:string,
-  first_difficulty:string,
-  second_difficulty:string,
-  third_difficulty:string,
-  implementation_time_in_months: number,
-  impact: string,
-  money_needed:number,
+  differential: string;
+  is_new_for: string;
+  was_tested: bool;
+  test_description: string;
+  barema_type_suggested: string;
+  first_difficulty: string;
+  second_difficulty: string;
+  third_difficulty: string;
+  implementation_time_in_months: number;
+  impact: string;
+  money_needed: number;
 
   /**
-   * Participation defines the type of intervention 
+   * Participation defines the type of intervention
    * that the creator chose to make the proposal.
    * - It can be TEAM: then the creator plus the guests, form a team
    * - It can be INDIVIDUAL_WITH_COAUTHORSHIP: then the creator will be the author and the guests will be co-authors
@@ -44,52 +76,52 @@ export interface SolutionBody extends SituationBody {
     /**
      * ParticipationModeChosed
      */
-    chosed_mode: string,
-    creator: string,
-    guest: Array<string>
+    chosed_mode: string;
+    creator: string;
+    guest: Array<string>;
     /**
      * is used if the modality is equal to TEAM
      */
-    team_name?: string
-  }
+    team_name?: string;
+  };
 }
 
 export interface SolutionResponse extends SituationResponse {
-  solution_id: string,
-  proposed_solution: string,
-  differential:string ,
-  is_new_for:string,
-  was_tested:bool,
-  first_difficulty:string,  
-  second_difficulty:string,
-  third_difficulty:string,
-  implementation_time_in_months:number,
-  money_needed:number,
-  test_description: string,
-  barema_type_suggested:string,
-  impact: string, 
+  solution_id: string;
+  proposed_solution: string;
+  differential: string;
+  is_new_for: string;
+  was_tested: bool;
+  first_difficulty: string;
+  second_difficulty: string;
+  third_difficulty: string;
+  implementation_time_in_months: number;
+  money_needed: number;
+  test_description: string;
+  barema_type_suggested: string;
+  impact: string;
 
   /**
    * challenge associated
    */
-  challenge_id?: string,
-  challenge?: LightChallengeResponse,
-  is_privated: boolean
+  challenge_id?: string;
+  challenge?: LightChallengeResponse;
+  is_privated: boolean;
 }
 
 export interface LightSolutionResponse extends LightSituationResponse {
-  solution_id: string,
-  proposed_solution: string,
-  challenge_id?: string,
+  solution_id: string;
+  proposed_solution: string;
+  challenge_id?: string;
   challenge?: {
     type: string;
     challenge_id: string;
     title: string;
     description: string;
-    finalization: Date,
-  },
-  tags: TagResponse[]
-  departmentAffected: AreaResponse[]
+    finalization: Date;
+  };
+  tags: TagResponse[];
+  departmentAffected: AreaResponse[];
   differential: string;
   is_new_for: string;
   was_tested: boolean;
@@ -102,133 +134,206 @@ export interface LightSolutionResponse extends LightSituationResponse {
   third_difficulty: string;
 }
 
-
 export interface EvaluationNoteResponse {
-  note_id: string,
-  solution: LightSolutionResponse,
-  user: UserResponse,
-  title: string,
-  description:string,
-  created: Date,
-  updated: Date,
+  note_id: string;
+  solution: LightSolutionResponse;
+  user: UserResponse;
+  title: string;
+  description: string;
+  created: Date;
+  updated: Date;
 }
 
-@Route('solution')
+@Route("solution")
 export default class SolutionController extends Controller {
-
   /**
    * Add new solution. It´s associated to Free challenge
-   * @param body 
-   * @param user 
-   * @param utils 
-   * @param challenge 
-   * @returns 
+   * @param body
+   * @param user
+   * @param utils
+   * @param challenge
+   * @returns
    */
 
   @Post()
-  public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
-    return createSolution(user, utils, challenge)
+  public async newSolution(
+    @Inject() user: UserI,
+    @Inject() utils: any,
+    @Inject() challenge: ChallengeI
+  ): Promise<SolutionResponse> {
+    return createSolution(user, utils, challenge);
   }
-  @Patch(':solutionId')
-  public async updateSolution(@Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any):Promise<any> {
-    return updateSolution(body, resources, user, utils)
+  @Patch(":solutionId")
+  public async updateSolution(
+    @Path("solutionId") solutionId: string,
+    @Body() body: any,
+    @Inject() resources: any,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<any> {
+    return updateSolution(body, resources, user, utils);
   }
-  
-  @Delete(':solutionId')
-  public async deleteSolution(@Path('solutionId') solutionId: string, @Inject() user:UserI): Promise<boolean> {
-    return deleteSolution(solutionId, user)
+
+  @Delete(":solutionId")
+  public async deleteSolution(
+    @Path("solutionId") solutionId: string,
+    @Inject() user: UserI
+  ): Promise<boolean> {
+    return deleteSolution(solutionId, user);
   }
-  @Get(':solutionId')
-  public async getSolution(@Path('solutionId') solutionId: string, @Request() solution: SolutionI, @Inject() user: UserI): Promise<SolutionResponse> {
-    return getSolution(solutionId, solution, user)
+  @Get(":solutionId")
+  public async getSolution(
+    @Path("solutionId") solutionId: string,
+    @Request() solution: SolutionI,
+    @Inject() user: UserI
+  ): Promise<SolutionResponse> {
+    return getSolution(solutionId, solution, user);
   }
 
   @Get()
-  public async listSolutions(@Query() query?: any, @Inject() utils?: any): Promise<LightSolutionResponse[]> {
-    return listSolutions(query, utils)
+  public async listSolutions(
+    @Query() query?: any,
+    @Inject() utils?: any
+  ): Promise<LightSolutionResponse[]> {
+    return listSolutions(query, utils);
   }
-  @Post('/default-configuration')
-  public async setSolutionDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationBaseI> {
-    return setDefaultConfiguration(body, RESOURCE.SOLUTION)
+  @Post("/default-configuration")
+  public async setSolutionDefaultConfiguration(
+    @Body() body: ConfigurationBody
+  ): Promise<ConfigurationBaseI> {
+    return setDefaultConfiguration(body, RESOURCE.SOLUTION);
   }
   /**
    * New comment endpoint
    */
-   @Post('/:solutionId/comment')
-  public async newComment(@Path('solutionId') solutionId: string, @Body() comment: CommentBody,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any): Promise<CommentResponse> {
-    return newSolutionComment(comment,solution, user, utils)
+  @Post("/:solutionId/comment")
+  public async newComment(
+    @Path("solutionId") solutionId: string,
+    @Body() comment: CommentBody,
+    @Inject() solution: SolutionI,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<CommentResponse> {
+    return newSolutionComment(comment, solution, user, utils);
   }
   /**
    * Get Comment endpoint
    */
-  @Get('/:solutionId/comment')
-   public async listComments(@Path('solutionId') solutionId: string, @Query() query: any , @Inject() solution: SolutionI, @Inject() user: UserI): Promise<CommentI[]>{
-     return getSolutionComments(solution, query, user)
-   }
+  @Get("/:solutionId/comment")
+  public async listComments(
+    @Path("solutionId") solutionId: string,
+    @Query() query: any,
+    @Inject() solution: SolutionI,
+    @Inject() user: UserI
+  ): Promise<CommentI[]> {
+    return getSolutionComments(solution, query, user);
+  }
 
-  @Get('/:solutionId/comment/resume')
+  @Get("/:solutionId/comment/resume")
   public async listCommentsWithoutRelation(@Inject() solution: SolutionI) {
     return getSolutionCommentsWithoutRelations(solution);
   }
   /**
    * Get  a Comment with his childs
    */
-   @Get('/:solutionId/comment/:commentId')
-  public async getComments( @Path('commentId') commentId: string,  @Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any): Promise<CommentI[]>{
-    return getThread(utils)
-  }   
-   /**
-    * New baremo
-    */
-   @Post('/:solutionId/baremo/group-validator')
-   public async newBaremo(@Path('solutionId') solutionId: string,@Inject() solution: SolutionI, @Inject() user: UserI, @Inject() utils: any ): Promise <BaremoResponse> {
-     return newBaremo(solution, user, utils)
-   }
+  @Get("/:solutionId/comment/:commentId")
+  public async getComments(
+    @Path("commentId") commentId: string,
+    @Inject() solution: SolutionI,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<CommentI[]> {
+    return getThread(utils);
+  }
+  /**
+   * New baremo
+   */
+  @Post("/:solutionId/baremo/group-validator")
+  public async newBaremo(
+    @Path("solutionId") solutionId: string,
+    @Inject() solution: SolutionI,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<BaremoResponse> {
+    return newBaremo(solution, user, utils);
+  }
   /**
    * Get current Baremo for user X solution X version
    */
-  @Get('/:solutionId/baremo/group-validator/current')
-   public async getCurrent(@Path('solutionId') solutionId: string, solution: SolutionI, @Inject() user: UserI):Promise <BaremoResponse | void> {
-     return getCurrent (solution, user)
-   }
+  @Get("/:solutionId/baremo/group-validator/current")
+  public async getCurrent(
+    @Path("solutionId") solutionId: string,
+    solution: SolutionI,
+    @Inject() user: UserI
+  ): Promise<BaremoResponse | void> {
+    return getCurrent(solution, user);
+  }
 
-  @Patch('/:solutionId/baremo/:baremoId')
-  public async editBaremo(@Path('baremoId') baremoId: string ,@Body() data: any, @Inject() baremo: any, ): Promise<BaremoI> {
-    return editBaremo(baremo, data)
+  @Patch("/:solutionId/baremo/:baremoId")
+  public async editBaremo(
+    @Path("baremoId") baremoId: string,
+    @Body() data: any,
+    @Inject() baremo: any
+  ): Promise<BaremoI> {
+    return editBaremo(baremo, data);
   }
   /**
    * Evaluation note insert
    */
-   @Post('/:solutionId/evaluation-note')
-  public async evaluationNote(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() solution: SolutionI, @Inject() user: UserI ): Promise <EvaluationNoteResponse> {
-    return newEvaluationNote(data, solution, user)
+  @Post("/:solutionId/evaluation-note")
+  public async evaluationNote(
+    @Path("solutionId") solutionId: string,
+    @Body() data: any,
+    @Inject() solution: SolutionI,
+    @Inject() user: UserI
+  ): Promise<EvaluationNoteResponse> {
+    return newEvaluationNote(data, solution, user);
   }
   /**
    * Create a invitation
    */
-  @Post('/:solutionId/invitation')
-   public async newInvitation(@Path('solutionId') solutionId: string, @Body() data: any, @Inject() utils: any, @Inject() solution: SolutionI): Promise<any> {
-     return newInvitation(utils, solution, data.type)
-   }
-   /**
-    * Get invitations
-    */
-   @Get('/:solutionId/invitation')
-  public async getInvitations(@Path('solutionId') solutionId: string, @Query() query: any, @Inject() solution: SolutionI,  @Inject() utils: any):Promise<any> {
-    return getInvitations(solution, query, utils)
+  @Post("/:solutionId/invitation")
+  public async newInvitation(
+    @Path("solutionId") solutionId: string,
+    @Body() data: any,
+    @Inject() utils: any,
+    @Inject() solution: SolutionI
+  ): Promise<any> {
+    // return newInvitation(utils, solution, data.type);
   }
-    /**
-     * Response invitation
-     */
-    @Post('/:solutionId/invitation/:invitationId/response')
-   public async responseInvitation(@Path('solutionId') solutionId: string, @Path('invitationId') invitationId: string, @Body() data: any,@Inject() utils: any, ): Promise<any> {
-     return responseInvitation(utils.invitation, data.response)
-   }
-   /**
-    * Apply TRansition function
-    */
-   @Post('/:solutionId/transition')
-    public async applyTransition(@Path('solutionId') solutionId: string,@Body() data: any,  @Inject() solution: SolutionI){
-      return applyTransition(data, solution)
-    }
+  /**
+   * Get invitations
+   */
+  @Get("/:solutionId/invitation")
+  public async getInvitations(
+    @Path("solutionId") solutionId: string,
+    @Query() query: any,
+    @Inject() solution: SolutionI,
+    @Inject() utils: any
+  ): Promise<any> {
+    // return getInvitations(solution, query, utils);
+  }
+  /**
+   * Response invitation
+   */
+  @Post("/:solutionId/invitation/:invitationId/response")
+  public async responseInvitation(
+    @Path("solutionId") solutionId: string,
+    @Path("invitationId") invitationId: string,
+    @Body() data: any,
+    @Inject() utils: any
+  ): Promise<any> {
+    // return responseInvitation(utils.invitation, data.response);
+  }
+  /**
+   * Apply TRansition function
+   */
+  @Post("/:solutionId/transition")
+  public async applyTransition(
+    @Path("solutionId") solutionId: string,
+    @Body() data: any,
+    @Inject() solution: SolutionI
+  ) {
+    return applyTransition(data, solution);
+  }
 }

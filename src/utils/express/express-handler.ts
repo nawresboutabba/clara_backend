@@ -17,11 +17,7 @@ type SchemaDefinition<TBody, TQuery, TParams> = Partial<{
   params: ZodSchema<TParams>;
 }>;
 
-const check = <T extends ZodTypeAny>(
-  path: string,
-  obj?: unknown,
-  schema?: T
-) => {
+const check = <T extends ZodTypeAny>(obj?: unknown, schema?: T) => {
   if (!schema) {
     return { success: true, data: true } as SafeParseSuccess<true>;
   }
@@ -33,9 +29,9 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
   middleware: ValidatedMiddleware<TBody, TQuery, TParams>
 ): RequestHandler => {
   return async (req, res, next) => {
-    const bodyParsed = check("body", req.body, schema.body);
-    const queryParsed = check("query", req.query, schema.query);
-    const paramsParsed = check("params", req.params, schema.params);
+    const bodyParsed = check(req.body, schema.body);
+    const queryParsed = check(req.query, schema.query);
+    const paramsParsed = check(req.params, schema.params);
 
     if (bodyParsed.success && queryParsed.success && paramsParsed.success) {
       try {
@@ -67,6 +63,9 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
       return next(paramsParsed.error);
     }
 
+    // schema.body?.parse(req.body);
+    // schema.query?.parse(req.query);
+    // schema.params?.parse(req.params);
     return next(new Error("zod-express-guard could not validate this request"));
   };
 };

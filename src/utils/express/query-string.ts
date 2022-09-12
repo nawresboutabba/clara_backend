@@ -1,7 +1,7 @@
 import qs from "qs";
 
 export function parseQueryString(value: string) {
-  return parseObject(qs.parse(value, { comma: true }));
+  return parseObject(qs.parse(value, {}));
 }
 
 function isObject(val: unknown): val is Record<string, unknown> {

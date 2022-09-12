@@ -8,21 +8,24 @@ import { lightSolutionFilter } from "./solution";
 import { lightUserFilter } from "./user";
 import { Types } from "mongoose";
 
-interface SolutionInvitationResponse {
-  id: Types.ObjectId;
-  resource: LightSolutionResponse;
-  createdAt: Date;
-  updatedAt: Date;
-  decision_date: Date;
-  status: INVITATION_STATUS_TYPE;
-  type: INVITATION_TYPE_TYPE;
-  to: any;
-  from: any;
-}
+// interface  {
+//   id: Types.ObjectId;
+//   resource: LightSolutionResponse;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   decisionDate: Date;
+//   status: INVITATION_STATUS_TYPE;
+//   type: INVITATION_TYPE_TYPE;
+//   to: any;
+//   from: any;
+// }
 
+type SolutionInvitationResponse = ReturnType<
+  typeof genericSolutionInvitationFilter
+>;
 export async function genericSolutionInvitationFilter(
   invitation: SolutionInvitationI
-): Promise<SolutionInvitationResponse> {
+) {
   const to = await lightUserFilter(invitation.to);
   const from = await lightUserFilter(invitation.from);
   const solution = await lightSolutionFilter(invitation.resource);
@@ -32,7 +35,7 @@ export async function genericSolutionInvitationFilter(
     resource: solution,
     createdAt: invitation.createdAt,
     updatedAt: invitation.updatedAt,
-    decision_date: invitation.decisionDate,
+    decisionDate: invitation.decisionDate,
     status: invitation.status,
     type: invitation.type,
     to,

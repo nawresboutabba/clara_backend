@@ -22,7 +22,7 @@ const InvitationService = {
     try {
       const invitations = await SolutionInvitation.find(queryTemp)
         .populate({
-          path: "solution",
+          path: "resource",
           populate: { path: "challenge" },
         })
         .populate("from")
@@ -44,7 +44,7 @@ const InvitationService = {
         invitationId,
       })
         .populate({
-          path: "solution",
+          path: "resource",
           populate: { path: "challenge" },
         })
         .populate("from")
@@ -71,7 +71,7 @@ const InvitationService = {
         { new: true }
       )
         .populate({
-          path: "solution",
+          path: "resource",
           populate: { path: "challenge" },
         })
         .populate("from")

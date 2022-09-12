@@ -27,6 +27,7 @@ import { clientErrorHandler } from "./handle-error/middleware.client-error-handl
 import { errorHandler } from "./handle-error/middleware.error-handler";
 import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
+import { invitationRouter } from "./routes/invitation";
 
 mongoose
   .connect(
@@ -35,7 +36,7 @@ mongoose
   )
   .then((db) =>
     console.log(
-      `DB is conected to, server: ${db.connection.host}, puerto: ${db.connection.port}, db: ${db.connection.name}`
+      `DB is connected to, server: ${db.connection.host}, port: ${db.connection.port}, db: ${db.connection.name}`
     )
   )
   .catch((err) => console.log(err));
@@ -51,6 +52,7 @@ app.use(morgan("dev"));
 app.use(usersRouter);
 app.use(solutionsRouter);
 app.use(challengeRouter);
+app.use(invitationRouter);
 app.use("/", companyRouter);
 app.use("/", areaRouter);
 app.use("/", groupValidatorRouter);

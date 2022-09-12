@@ -184,6 +184,16 @@ const createSolutionInvite = validate(
       return res.status(403).json({ message: "this user is already member" });
     }
 
+    const hasOldInvitation = await SolutionInvitation.find({
+      to: userToInvite,
+      resource: solution,
+      status: INVITATION_STATUS.PENDING,
+    });
+
+    if (hasOldInvitation) {
+      return res.status(400).json({ message: "User has invite" });
+    }
+
     const createdInvitation = await SolutionInvitation.create({
       from: user,
       to: userToInvite,
@@ -215,7 +225,6 @@ const getSolutionInvites = validate(
   },
   async ({ user, params: { solutionId }, query: { status } }, res) => {
     const solution = await getSolutionById(solutionId);
-    console.log("UAi");
     if (
       solution.author.userId !== user.userId &&
       solution.coauthor.every((e: UserI) => e.userId !== user.userId)
@@ -248,7 +257,13 @@ const responseSolutionInvite = validate(
     { user, params: { invitationId, solutionId }, body: { response } },
     res
   ) => {
-    const invite = await SolutionInvitation.findById(invitationId);
+    const invite = await SolutionInvitation.findById(invitationId)
+      .populate({
+        path: "resource",
+        populate: { path: "challenge" },
+      })
+      .populate("from")
+      .populate("to");
 
     if (invite.to.userId !== user.userId) {
       return res.status(403).json({ message: "not authorized" });
@@ -282,7 +297,13 @@ const cancelSolutionInvite = validate(
     params: z.object({ invitationId: z.string() }),
   },
   async ({ user, params: { invitationId } }, res) => {
-    const invite = await SolutionInvitation.findById(invitationId);
+    const invite = await SolutionInvitation.findById(invitationId)
+      .populate({
+        path: "resource",
+        populate: { path: "challenge" },
+      })
+      .populate("from")
+      .populate("to");
 
     if (invite.from.userId !== user.userId) {
       return res.status(403).json({ message: "not authorized" });

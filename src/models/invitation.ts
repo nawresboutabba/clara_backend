@@ -70,8 +70,6 @@ const invitationSchema = new Schema<InvitationI>(
   { timestamps: true }
 );
 
-invitationSchema.index({ resource: 1, to: 1 }, { unique: true });
-
 const Invitation = model<InvitationI>("Invitation", invitationSchema);
 
 export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(

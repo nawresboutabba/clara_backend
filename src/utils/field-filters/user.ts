@@ -3,7 +3,7 @@ import { UserI } from "../../models/users";
 import { getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "./area";
 
-export const lightUserFilter = async (user: UserI): Promise<any> => {
+export const lightUserFilter = async (user: UserI): Promise<UserResponse> => {
   const user_image = await getSignedUrl(user.userImage);
   return {
     user_id: user.userId,
@@ -13,6 +13,14 @@ export const lightUserFilter = async (user: UserI): Promise<any> => {
     first_name: user.firstName,
     last_name: user.lastName,
     points: user.points,
+    about: user.about,
+    active: user.active,
+    area_visible: (user.areaVisible ?? []).map((e) => ({
+      area_id: e.areaId,
+      name: e.name,
+    })),
+    external_user: user.externalUser,
+    linkedIn: user.linkedIn,
   };
 };
 /**

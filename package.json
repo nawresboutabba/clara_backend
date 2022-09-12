@@ -29,7 +29,6 @@
   },
   "homepage": "https://github.com/SARQUIS-BOUTROS/IDEATION_BACKEND#readme",
   "dependencies": {
-    "-": "0.0.1",
     "@typegoose/typegoose": "^9.11.2",
     "assert": "^2.0.0",
     "aws-sdk": "^2.1204.0",

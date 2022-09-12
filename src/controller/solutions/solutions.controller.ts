@@ -190,7 +190,7 @@ const createSolutionInvite = validate(
       status: INVITATION_STATUS.PENDING,
     });
 
-    if (hasOldInvitation) {
+    if (hasOldInvitation.length > 0) {
       return res.status(400).json({ message: "User has invite" });
     }
 

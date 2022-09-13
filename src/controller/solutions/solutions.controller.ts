@@ -5,15 +5,13 @@ import {
   INVITATION_TYPE,
   SolutionInvitation,
 } from "../../models/invitation";
-import Solution, { SolutionI } from "../../models/situation.solutions";
+import Solution from "../../models/situation.solutions";
 import User, { UserI } from "../../models/users";
 import { sendEmail } from "../../repository/repository.mailing";
 import { newExternalUser } from "../../repository/repository.users";
-import IntegrantService from "../../services/Integrant.service";
 import InvitationService from "../../services/Invitation.service";
 import SolutionService from "../../services/Solution.service";
 import UserService from "../../services/User.service";
-import { isCommitteMember } from "../../utils/acl/function.is_committe_member";
 import { validate } from "../../utils/express/express-handler";
 import {
   genericArraySolutionInvitationFilter,
@@ -132,7 +130,7 @@ const leaveSolution = validate(
     params: z.object({ solutionId: z.string() }),
   },
   async ({ params: { solutionId }, user }, res) => {
-    const solution = await Solution.findOne({ solutionId }).populate("author");
+    const solution = await getSolutionById(solutionId);
 
     if (solution.author.userId === user.userId) {
       return res.status(403).json({ message: "author cannot leave" });

@@ -256,32 +256,6 @@ router.post(
   }
 );
 
-router.get(
-  URLS.SOLUTION.SOLUTION,
-  [
-    authentication,
-    tagsQueryCheck(),
-    areasValidArray(),
-  ],
-  async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.LISTING_SOLUTIONS)     
-      const solutionController = new SolutionController()
-      const query: QuerySolutionForm = await formatSolutionQuery(req.query, {
-        tags: req.utils?.tags,
-        departmentAffected: req.utils?.areas,
-      });
-      const solutions = await solutionController.listSolutions(query, req.utils)
-      res
-        .json(solutions)
-        .status(200)
-        .send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
 
 /**
  * Body:

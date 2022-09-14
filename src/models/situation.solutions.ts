@@ -3,6 +3,19 @@ import SituationBase, { SituationBaseI } from "./situation.base";
 import { ChallengeI } from "./situation.challenges";
 import { UserI } from "./users";
 
+export enum SOLUTION_STATUS {
+  DRAFT = "DRAFT",
+  PROPOSED = "PROPOSED",
+  APPROVED_FOR_DISCUSSION = "APPROVED_FOR_DISCUSSION",
+  READY_FOR_ANALYSIS = "READY_FOR_ANALYSIS",
+  ANALYZING = "ANALYZING",
+  REVIEW = "REVIEW",
+  APPROVED_FOR_CONSTRUCTION = "APPROVED_FOR_CONSTRUCTION",
+  REJECTED = "REJECTED",
+}
+
+export type SOLUTION_STATUS_TYPE = keyof typeof SOLUTION_STATUS;
+
 export interface SolutionI extends SituationBaseI {
   /**
    * Id that uniquely identifies a solution
@@ -88,6 +101,8 @@ export interface SolutionI extends SituationBaseI {
    * if committee allow to user choose solution privacity
    */
   isPrivated: boolean;
+
+  status: SOLUTION_STATUS;
 }
 
 const Solution = SituationBase.discriminator<SolutionI>(

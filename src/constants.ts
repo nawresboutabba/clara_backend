@@ -63,7 +63,7 @@ export const CHALLENGE_STATUS = {
   OPENED: "OPENED",
   CLOSED: "CLOSED",
 };
-export type CHALLENGE_STATUS = keyof typeof SOLUTION_STATUS;
+export type CHALLENGE_STATUS = keyof typeof CHALLENGE_STATUS;
 
 export const BAREMO_STATUS = {
   ONGOING: "ONGOING",

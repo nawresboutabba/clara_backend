@@ -5,9 +5,7 @@ import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
 import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
 import ChallengeController from '../../controller/challenge'
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
-import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
-import { formatChallengeQuery, QueryChallengeForm } from "../../utils/params-query/challenge.query.params";
+import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import AreaService from "../../services/Area.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import GroupValidatorService from "../../services/GroupValidator.service";
@@ -15,12 +13,11 @@ import * as _ from 'lodash';
 import toISOData, { getCurrentDate } from "../../utils/general/date";
 import TeamService from "../../services/Team.service";
 import ConfigurationService from "../../services/Configuration.service";
-import TagService from "../../services/Tag.service";
 import CommentService from "../../services/Comment.service";
 import ChallengeService from "../../services/Challenge.service";
-import { query, validationResult, body, check } from "express-validator";
-import { tagsBodyCheck, tagsQueryCheck } from "../../utils/sanitization/tagsValidArray.check";
-import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
+import { validationResult, body, check } from "express-validator";
+import { tagsBodyCheck } from "../../utils/sanitization/tagsValidArray.check";
+import { Tag } from "../../models/tag";
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
@@ -143,18 +140,18 @@ router.post(
     /**
      * Just can exist one generic challenge
      */
-    body("type").custom(async (value): Promise<void>=> {
-      try{
-        if (CHALLENGE_TYPE.PARTICULAR == value){
+    body("type").custom(async (value): Promise<void> => {
+      try {
+        if (CHALLENGE_TYPE.PARTICULAR == value) {
           return Promise.resolve()
         }
         const genericChallenge = await ChallengeService.getGenericChallenge()
 
-        if(genericChallenge) {
+        if (genericChallenge) {
           return Promise.reject("generic challenge that exist")
         }
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject("generic challenge that exist")
       }
     }),
@@ -176,31 +173,31 @@ router.post(
     }),
     body("tags").isArray(),
     body("tags").custom(async (value: string[], { req }): Promise<void> => {
-      try{
+      try {
         const query = {
           tagId: { $in: value },
           type: TAG_ORIGIN.CHALLENGE
         }
-        const tags = await TagService.getTagsByQuery(query)
+        const tags = await Tag.find(query)
         if (tags.length == value.length) {
           req.utils = { tags, ...req.utils }
           return Promise.resolve()
         }
         return Promise.reject("tags does not valid")
-      }catch(error){
+      } catch (error) {
         return Promise.reject("tags does not valid")
       }
     }),
     body("group_validator").custom((value: string, { req }): Promise<void> => {
-      try{
+      try {
         const groupValidator = GroupValidatorService.getGroupValidatorById(value)
-        if(groupValidator){
-          req.utils = {groupValidator, ...req.utils}
+        if (groupValidator) {
+          req.utils = { groupValidator, ...req.utils }
           return Promise.resolve()
         }
         return Promise.reject("Group Validator that not exist")
-      }catch(error){
-        return Promise.reject("Group Validator that not exist")        
+      } catch (error) {
+        return Promise.reject("Group Validator that not exist")
       }
     }),
     body("is_strategic", "is_strategic invalid").notEmpty().escape().isIn([true, false]),
@@ -209,15 +206,15 @@ router.post(
      * Check that finalization date is in the future
      */
     body("finalization").custom((value: Date): Promise<void> => {
-      try{
+      try {
         const currentDate = toISOData(getCurrentDate())
         const finalizationData = toISOData(value)
 
-        if (finalizationData> currentDate) {
+        if (finalizationData > currentDate) {
           return Promise.resolve()
         }
         return Promise.reject("Date does not valid. Finalization must be greater than current date")
-      }catch(error){
+      } catch (error) {
         return Promise.reject("Date does not valid. Finalization must be greater than current date")
       }
     }),
@@ -233,7 +230,7 @@ router.post(
     body("can_choose_WSALevel", "can_choose_WSALevel invalid").notEmpty().escape().isIn([true, false]),
     body("WSALevel_available").notEmpty(),
     body("WSALevel_available", "WSALevel_available invalid").custom((value: string[], { req }): Promise<void> => {
-      try{
+      try {
         const WSALevel: string[] = _.sortedUniq(value)
         WSALevel.forEach(value => {
           if (![WSALEVEL.COMPANY, WSALEVEL.AREA].includes(value)) {
@@ -241,7 +238,7 @@ router.post(
           }
         })
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject("WSALevel_available invalid")
       }
     }),
@@ -366,7 +363,7 @@ router.patch(
      * Challenge situation description
      */
     body("description", VALIDATIONS_MESSAGE_ERROR.SOLUTION.DESCRIPTION_EMPTY),
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
     tagsBodyCheck(),
     body("department_affected").isArray(),
@@ -385,24 +382,24 @@ router.patch(
         return Promise.reject("department_affected does not valid")
       }
     }),
-    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).custom(async (value: string, { req }):Promise<void> => {
-      try{
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).custom(async (value: string, { req }): Promise<void> => {
+      try {
         const is_privated = value
-        if(req.resources.solution.canChooseScope){
-          if(is_privated in[true, false]){
+        if (req.resources.solution.canChooseScope) {
+          if (is_privated in [true, false]) {
             return Promise.resolve()
           }
-        }else {
+        } else {
           if (is_privated == req.resources.solution.challenge.defaultScope) {
             return Promise.resolve()
           }
         }
         return Promise.reject()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     }),
-    body("WSALevel_chosed","WSALevel_chosed can not be empty").notEmpty().isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
+    body("WSALevel_chosed", "WSALevel_chosed can not be empty").notEmpty().isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
     body("WSALevel_chosed").custom(async (value: string, { req }): Promise<void> => {
       try {
         /**
@@ -420,7 +417,7 @@ router.patch(
             */
           if (value == WSALEVEL.AREA) {
             const areas_available = req.body.areas_available
-            if (areas_available == undefined || areas_available.length === 0){
+            if (areas_available == undefined || areas_available.length === 0) {
               return Promise.reject('Insert at least an area when WSALevel is AREA')
             }
             const areasAvailable = await AreaService.getAreasById(req.body.areas_available)
@@ -443,7 +440,7 @@ router.patch(
       * Solution description
       */
     body("proposed_solution").escape(),
- 
+
     /**
       * participation.mode_chosed is like participation_mode_chosed
       */
@@ -477,25 +474,25 @@ router.patch(
             return Promise.reject("team_with this name already exist")
           }
         }
- 
+
         return Promise.resolve()
-         
+
       } catch (error) {
         return Promise.reject("participation.chosed_mode invalid")
       }
     }),
   ],
   async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try{
+    try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
 
       const challengeController = new ChallengeController();
-      const resp = await challengeController.updateSolution(req.params.challengeId,req.params.solutionId, req.body, req.resources, req.user, req.utils)
+      const resp = await challengeController.updateSolution(req.params.challengeId, req.params.solutionId, req.body, req.resources, req.user, req.utils)
       res
         .json(resp)
         .status(200)
         .send()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   })
@@ -508,13 +505,13 @@ router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
   acl(
     RULES.CAN_VIEW_CHALLENGE
   ),
-  body("author","author does not valid").custom(async (value, { req }) => {
-    try{
-      if(value != req.user.userId){
+  body("author", "author does not valid").custom(async (value, { req }) => {
+    try {
+      if (value != req.user.userId) {
         return Promise.reject()
       }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject()
     }
   }),
@@ -522,36 +519,36 @@ router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
   body('version', 'version can not be empty').notEmpty(),
   body('scope').isIn([COMMENT_LEVEL.PUBLIC]),
   body('parent').custom(async (value, { req }) => {
-    try{
-      if(value){
+    try {
+      if (value) {
         const parentComment = await CommentService.getComment(value)
-        if(!parentComment){
+        if (!parentComment) {
           return Promise.reject("parent not found")
         }
-        if(parentComment.parent) {
+        if (parentComment.parent) {
           return Promise.reject("more that 2 levels of comments")
         }
-        req.utils = {...req.utils , parentComment}
+        req.utils = { ...req.utils, parentComment }
       }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject("parent validation")
     }
   }),
-  body('tag', 'tag does not valid').custom(async (value, {req})=> {
-    try{
-      const tag = await TagService.getTagById(value)
-      if (!tag){
+  body('tag', 'tag does not valid').custom(async (value, { req }) => {
+    try {
+      const tag = await Tag.findById(value)
+      if (!tag) {
         return Promise.reject('tag does not exist')
       }
-      if(req.utils?.parentComment){
-        if(req.utils.parentComment.tag.tagId != value ){
+      if (req.utils?.parentComment) {
+        if (req.utils.parentComment.tag.tagId != value) {
           return Promise.reject('tag parent and child does not same')
         }
       }
-      req.utils = {...req.utils , tagComment:tag}
+      req.utils = { ...req.utils, tagComment: tag }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject(error)
     }
   })

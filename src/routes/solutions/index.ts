@@ -2,29 +2,22 @@
 import * as express from "express";
 const router = express.Router();
 import authentication from "../../middlewares/authentication";
-import * as _ from 'lodash';
 import { NextFunction } from "express"
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
 import { validationResult, body, query, param } from "express-validator";
 import SolutionController from '../../controller/solutions/index'
-import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, INVITATION, INVITATIONS, PARTICIPATION_MODE, RESOURCE, RULES, SOLUTION_STATUS, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
-import { formatSolutionQuery, QuerySolutionForm } from "../../utils/params-query/solution.query.params";
+import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import AreaService from "../../services/Area.service";
 import TeamService from "../../services/Team.service";
-import UserService from "../../services/User.service";
 import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 import { acl } from "../../middlewares/acl";
 import CommentService from "../../services/Comment.service";
-import TagService from "../../services/Tag.service";
 import BaremoService from "../../services/Baremo.service";
 import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
-import { UserI } from "../../models/users";
-import InvitationService from "../../services/Invitation.service";
-import * as assert from 'assert';
 import { checkProposedSolution } from "../../utils/sanitization/proposedSolution.check";
-import { checkDifferential} from "../../utils/sanitization/differential.check";
-import { checkIsNewFor} from "../../utils/sanitization/isNewFor.check";
+import { checkDifferential } from "../../utils/sanitization/differential.check";
+import { checkIsNewFor } from "../../utils/sanitization/isNewFor.check";
 import { checkBaremaTypeSuggested } from "../../utils/sanitization/baremaTypeSuggested.check";
 import { checkWasTested } from "../../utils/sanitization/wasTested.check";
 import { checkTestDescription } from "../../utils/sanitization/testDescription.check";
@@ -34,10 +27,8 @@ import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.c
 import { checkImplementationTimeInMonths } from "../../utils/sanitization/implementationTimeInMonth.check";
 import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
 import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
-import { newExternalUser } from "../../repository/repository.users";
-import { generatePassword } from "../../utils/general/generate-password";
-import { tagsBodyCheck, tagsQueryCheck } from "../../utils/sanitization/tagsValidArray.check";
-import { areasValidArray } from "../../utils/sanitization/areasValidArray.check";
+import { tagsBodyCheck } from "../../utils/sanitization/tagsValidArray.check";
+import { Tag } from "../../models/tag";
 
 
 router.get(
@@ -46,7 +37,7 @@ router.get(
     authentication,
     acl(RULES.CAN_VIEW_COMMENT)
   ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try{
+    try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
 
       const solutionController = new SolutionController()
@@ -55,7 +46,7 @@ router.get(
         .json(resp)
         .status(200)
         .send()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   }
@@ -68,27 +59,27 @@ router.get(
     acl(RULES.CAN_VIEW_SOLUTION),
     query('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
     query('scope').custom(async (value, { req }) => {
-      try{
+      try {
         const solution = req.resources.solution;
-        if(value == COMMENT_LEVEL.GROUP){
+        if (value == COMMENT_LEVEL.GROUP) {
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),
             solution.author.userId,
             ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
           ]
-          if(canViewComment.includes(user.userId) == false){
+          if (canViewComment.includes(user.userId) == false) {
             throw 'You are not authorized to see this comments'
           }
         }
 
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     }),
   ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try{
+    try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
 
       const solutionController = new SolutionController()
@@ -97,7 +88,7 @@ router.get(
         .json(resp)
         .status(200)
         .send()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   })
@@ -108,7 +99,7 @@ router.get(
     authentication,
     acl(RULES.CAN_VIEW_SOLUTION),
   ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try{
+    try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
 
       const solutionController = new SolutionController()
@@ -117,7 +108,7 @@ router.get(
         .json(resp)
         .status(200)
         .send()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   })
@@ -127,13 +118,13 @@ router.post(
   [
     authentication,
     acl(RULES.CAN_VIEW_SOLUTION),
-    body("author","author does not valid").custom(async (value, { req }) => {
-      try{
-        if(value != req.user.userId){
+    body("author", "author does not valid").custom(async (value, { req }) => {
+      try {
+        if (value != req.user.userId) {
           return Promise.reject()
         }
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject()
       }
     }),
@@ -141,78 +132,78 @@ router.post(
     body('version', 'version can not be empty').notEmpty(),
     body('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
     body('scope').custom(async (value, { req }) => {
-      try{
+      try {
         const solution = req.resources.solution
-        if(value == COMMENT_LEVEL.GROUP){
+        if (value == COMMENT_LEVEL.GROUP) {
           const user = req.user
           const canViewComment = [
             ...solution.coauthor.map(coauthor => coauthor.userId),
             solution.author.userId,
             ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
           ]
-          if(canViewComment.includes(user.userId) == false){
+          if (canViewComment.includes(user.userId) == false) {
             throw 'You are not authorized to see this comments'
           }
         }
 
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     }),
     body('parent').custom(async (value, { req }) => {
-      try{
-        if(value){
+      try {
+        if (value) {
           const parentComment = await CommentService.getComment(value)
-          if(!parentComment){
+          if (!parentComment) {
             return Promise.reject("parent not found")
           }
-          if(parentComment.parent) {
+          if (parentComment.parent) {
             return Promise.reject("more that 2 levels of comments")
           }
-          req.utils = {...req.utils , parentComment}
+          req.utils = { ...req.utils, parentComment }
         }
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject("parent validation")
       }
     }),
-    body('tag', 'tag does not valid').custom(async (value, {req}):Promise<void> => {
-      try{
-        const tag = await TagService.getTagById(value)
-        if (!tag){
+    body('tag', 'tag does not valid').custom(async (value, { req }): Promise<void> => {
+      try {
+        const tag = await Tag.findById(value)
+        if (!tag) {
           return Promise.reject('tag does not exist')
         }
-        if(req.utils?.parentComment){
-          if(req.utils.parentComment.tag.tagId != value ){
+        if (req.utils?.parentComment) {
+          if (req.utils.parentComment.tag.tagId != value) {
             return Promise.reject('tag parent and child does not same')
           }
         }
-        req.utils = {...req.utils , tagComment:tag}
+        req.utils = { ...req.utils, tagComment: tag }
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     })
   ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try{
+    try {
 
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_COMMENT)
 
       const solutionController = new SolutionController()
       const resp = await solutionController.newComment(
-        req.params.solutionId, 
-        req.body, 
-        req.resources.solution, 
+        req.params.solutionId,
+        req.body,
+        req.resources.solution,
         req.user,
         req.utils
       )
-      
+
       res
         .json(resp)
         .status(201)
         .send();
-    } catch(error){
+    } catch (error) {
       next(error)
     }
   })
@@ -226,15 +217,15 @@ router.post(
      * goal is check that generic challenge was created, Remember that ideas free are associated
      * to GENERIC CHALLENGE
      */
-    body("generic_challenge_exist").custom(async (value: any, { req }): Promise<void>=> {
-      try{
+    body("generic_challenge_exist").custom(async (value: any, { req }): Promise<void> => {
+      try {
         const challenge = await ChallengeService.getGenericChallenge()
-        if (challenge){
-          req.resources  = {challenge, ...req.resource}
+        if (challenge) {
+          req.resources = { challenge, ...req.resource }
           return Promise.resolve()
         }
         return Promise.reject()
-      }catch(error){
+      } catch (error) {
         return Promise.reject()
       }
     }),
@@ -263,20 +254,20 @@ router.post(
  * Datails see in state-machine.solution.ts (Contain all transitions)
  */
 router.post(
-  URLS.SOLUTION.SOLUTION_SOLUTIONID_TRANSITION, 
+  URLS.SOLUTION.SOLUTION_SOLUTIONID_TRANSITION,
   [
     authentication,
     acl(RULES.CAN_EDIT_SOLUTION),
-    body('transition').custom(async (value:string, {req}):Promise<void>=> {
-      try{
+    body('transition').custom(async (value: string, { req }): Promise<void> => {
+      try {
         const solution = req.resources.solution
         /**
          * Check if transition is valid
          */
-        await SolutionStateMachine.dispatch(solution.status , value)
+        await SolutionStateMachine.dispatch(solution.status, value)
 
         return Promise.resolve()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     }),
@@ -289,10 +280,10 @@ router.post(
     checkFirstDifficulty(body),
     checkSecondDifficulty(body),
     checkThirdDifficulty(body),
-    checkImplementationTimeInMonths(body), 
-    checkMoneyNeeded(body),       
-  ], async (req:RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
-    try{
+    checkImplementationTimeInMonths(body),
+    checkMoneyNeeded(body),
+  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+    try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.PATCH_SOLUTION)
       const solutionController = new SolutionController()
       const solution = await solutionController.applyTransition(req.params.solutionId, req.body, req.resources.solution)
@@ -300,7 +291,7 @@ router.post(
         .json(solution)
         .status(200)
         .send()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   })
@@ -316,7 +307,7 @@ router.patch(
     /**
      * Challenge situation description
      */
-    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),    
+    body("title", VALIDATIONS_MESSAGE_ERROR.SOLUTION.TITLE_EMPTY).notEmpty(),
     body("images", "images does not valid").isArray(),
     tagsBodyCheck(),
     body("department_affected").isArray(),
@@ -335,24 +326,24 @@ router.patch(
         return Promise.reject("department_affected does not valid")
       }
     }),
-    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).custom(async (value: string, { req }):Promise<void> => {
-      try{
+    body("is_privated", VALIDATIONS_MESSAGE_ERROR.SOLUTION.IS_PRIVATE_INVALID).custom(async (value: string, { req }): Promise<void> => {
+      try {
         const is_privated = value
-        if(req.resources.solution.canChooseScope){
-          if(is_privated in[true, false]){
+        if (req.resources.solution.canChooseScope) {
+          if (is_privated in [true, false]) {
             return Promise.resolve()
           }
-        }else {
+        } else {
           if (is_privated == req.resources.solution.challenge.defaultScope) {
             return Promise.resolve()
           }
         }
         return Promise.reject()
-      }catch(error){
+      } catch (error) {
         return Promise.reject(error)
       }
     }),
-    body("WSALevel_chosed","WSALevel_chosed can not be empty").notEmpty().isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
+    body("WSALevel_chosed", "WSALevel_chosed can not be empty").notEmpty().isIn([WSALEVEL.COMPANY, WSALEVEL.AREA]),
     body("WSALevel_chosed").custom(async (value: string, { req }): Promise<void> => {
       try {
         /**
@@ -370,7 +361,7 @@ router.patch(
            */
           if (value == WSALEVEL.AREA) {
             const areas_available = req.body.areas_available
-            if (areas_available == undefined || areas_available.length === 0){
+            if (areas_available == undefined || areas_available.length === 0) {
               return Promise.reject('Insert at least an area when WSALevel is AREA')
             }
             const areasAvailable = await AreaService.getAreasById(req.body.areas_available)
@@ -429,7 +420,7 @@ router.patch(
         }
 
         return Promise.resolve()
-        
+
       } catch (error) {
         return Promise.reject("participation.chosed_mode invalid")
       }
@@ -488,44 +479,44 @@ router.post([
    * Check that this user don't have another baremo open for this solution.
    * If exist a baremo with this USER-SOLUTION then the operation have to be GET or PATCH
    */
-  param('solutionId').custom(async (value, {req})=> {
-    try{
+  param('solutionId').custom(async (value, { req }) => {
+    try {
       const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(req.resources.solution, req.user)
-      if(baremo){
+      if (baremo) {
         return Promise.reject("this user has a baremo open for this solution")
       }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject("this user has a baremo open for this solution")
     }
   }),
   /**
    * Check if solution is available for analysis
    */
-  param('solutionId').custom(async (value, {req})=> {
-    try{
+  param('solutionId').custom(async (value, { req }) => {
+    try {
       const status = req.resources.solution.status
       const valid = [SOLUTION_STATUS.ANALYZING, SOLUTION_STATUS.READY_FOR_ANALYSIS]
-      if (!valid.includes(status)){
+      if (!valid.includes(status)) {
         return Promise.reject('anaysis not available for this solution status')
       }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject(error)
     }
   })
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
-  try{
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try {
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.NEW_BAREMO)
 
     const solutionController = new SolutionController()
     const baremo = await solutionController.newBaremo(req.params.solutionId, req.resources.solution, req.user, req.utils)
-    
+
     res
       .json(baremo)
       .status(200)
       .send()
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
@@ -534,40 +525,40 @@ router.put([
   URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID,
   URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_FINISH,
   URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_REOPEN,
-],[
+], [
   authentication,
   acl(RULES.IS_BAREMO_CREATOR),
   body('comment').notEmpty(),
   /**
    * Artificial attribute. Does not exist. Is used just for create the check operation
    */
-  body('transition').custom(async(value, {req})=> {
-    try{
-      if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_FINISH.replace(':baremoId',req.params.baremoId)){
-        const status = BaremoStateMachine.dispatch(req.utils.baremo.status , "confirm")
-        req.body = {...req.body, status }
-      }else if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_REOPEN.replace(':baremoId',req.params.baremoId)) {
-        const status = BaremoStateMachine.dispatch(req.utils.baremo.status , "reopen")
-        req.body = {...req.body, status }
+  body('transition').custom(async (value, { req }) => {
+    try {
+      if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_FINISH.replace(':baremoId', req.params.baremoId)) {
+        const status = BaremoStateMachine.dispatch(req.utils.baremo.status, "confirm")
+        req.body = { ...req.body, status }
+      } else if (req.url == URLS.SOLUTION.SOLUTION_BAREMO_BAREMOID_REOPEN.replace(':baremoId', req.params.baremoId)) {
+        const status = BaremoStateMachine.dispatch(req.utils.baremo.status, "reopen")
+        req.body = { ...req.body, status }
       }
       return Promise.resolve()
-    }catch(error){
+    } catch (error) {
       return Promise.reject(error)
     }
   })
   /**
    * Add SOLUTION.STATUS = 'ANALYZING' condition
    */
-], async (req: RequestMiddleware , res: ResponseMiddleware, next: NextFunction) => {
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
   try {
     await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.NEW_BAREMO)
     const solutionController = new SolutionController()
-    const baremo = await solutionController.editBaremo(req.params.baremoId, req.body, req.utils.baremo )
+    const baremo = await solutionController.editBaremo(req.params.baremoId, req.body, req.utils.baremo)
     res
       .json(baremo)
       .status(200)
       .send()
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 })
@@ -575,41 +566,41 @@ router.put([
 /**
  * Get current Baremo for an user for solution. User is obtained from session
  */
-router.get(URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR_CURRENT,[
+router.get(URLS.SOLUTION.SOLUTION_SOLUTIONID_BAREMO_GROUPVALIDATOR_CURRENT, [
   authentication,
   acl(RULES.IS_VALIDATOR_OF_SOLUTION),
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
-  try{
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try {
     const solutionController = new SolutionController()
     const baremo = await solutionController.getCurrent(req.params.solutionId, req.resources.solution, req.user)
     res
       .json(baremo)
       .status(200)
       .send()
-  }catch(error){
+  } catch (error) {
     next(error)
   }
 });
 
-router.post('/solution/:solutionId/evaluation-note',[
+router.post('/solution/:solutionId/evaluation-note', [
   authentication,
   /**
     * Check that validator can do this action
     */
   acl(RULES.IS_VALIDATOR_OF_SOLUTION),
-  body('title','title can not be empty').notEmpty(),
+  body('title', 'title can not be empty').notEmpty(),
   body('description', 'description can not be empty').notEmpty(),
   body('type', 'type is not valid').isIn([EVALUATION_NOTE_ROLE.GROUP_VALIDATOR]),
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction)=> {
-  try{
+], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+  try {
     const solutionController = new SolutionController()
     const note = await solutionController.evaluationNote(req.params.solutionId, req.body, req.resources.solution, req.user)
     res
       .json(note)
       .status(200)
       .send()
-  
-  }catch(error){
+
+  } catch (error) {
     next(error)
   }
 })

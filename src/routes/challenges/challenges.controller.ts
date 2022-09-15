@@ -3,7 +3,7 @@ import z from "zod";
 import { CHALLENGE_STATUS, CHALLENGE_TYPE } from "../../constants";
 import Challenge from "../../models/situation.challenges";
 import Solution from "../../models/situation.solutions";
-import TagService from "../../services/Tag.service";
+import * as TagsRep from "../tags/tags.repository";
 import { isCommitteMember } from "../../utils/acl/function.is_committe_member";
 import { validate } from "../../utils/express/express-handler";
 import {
@@ -185,7 +185,7 @@ const updateChallenge = validate(
       return res.status(401).send();
     }
 
-    const tags = await TagService.getTagsById(body.tags);
+    const tags = await TagsRep.getTagsById(body.tags);
 
     const updatedChallenge = await Challenge.findOneAndUpdate(
       {

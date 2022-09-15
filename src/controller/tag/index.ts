@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Body, Controller, Get, Inject, Post } from "tsoa";
 import { UserI } from "../../models/users";
 import { getTags, newTag } from "../../repository/repository.tags";
@@ -9,9 +10,9 @@ export interface TagBody {
 }
 
 export interface TagResponse {
-    tag_id:string,
-    name:string,
-    description:string,
+  id: Types.ObjectId
+  name:string,
+  description:string,
 }
 
 export default class TagController extends Controller {

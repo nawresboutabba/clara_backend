@@ -3,10 +3,9 @@ import { TagI } from "../../models/tag";
 
 export function genericTagFilter(tag: TagI): TagResponse {
   return {
-    tag_id: tag.tagId,
+    id: tag._id,
     name: tag.name,
     description: tag.description,
-    // created: tag.created,
   };
 }
 

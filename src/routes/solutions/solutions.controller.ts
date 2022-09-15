@@ -312,20 +312,20 @@ export const getSolutions = validate(
   {
     query: z
       .object({
-        title: z.string(),
-        tags: z.array(z.string()),
-        departmentAffected: z.array(z.string()),
-        status: z.nativeEnum(SOLUTION_STATUS),
-        challengeId: z.string(),
-        type: z.enum(["PARTICULAR", "GENERIC"]),
-        as: z.enum(["AUTHOR", "COAUTHOR"]),
+        title: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        departmentAffected: z.array(z.string()).default([]),
+        status: z.nativeEnum(SOLUTION_STATUS).optional(),
+        challengeId: z.string().optional(),
+        type: z.enum(["PARTICULAR", "GENERIC"]).optional(),
+        as: z.enum(["AUTHOR", "COAUTHOR"]).optional(),
         init: z.number().default(0),
         offset: z.number().default(10),
         sort: z
-          .object({ title: sortSchema, created: sortSchema.default(-1) })
-          .partial(),
-      })
-      .partial(),
+          .object({ title: sortSchema, created: sortSchema })
+          .partial()
+          .default({ created: -1 }),
+      }),
   },
   async ({ user, query }) => {
     const filterQuery = Object.assign(
@@ -333,9 +333,8 @@ export const getSolutions = validate(
       removeEmpty({
         status: query?.status,
         type: query?.type,
-        // TODO fix tags and department
-        tags: query?.tags,
-        departmentAffected: query?.departmentAffected,
+        tags: query.tags.length > 0 ? { $in: query.tags } : null,
+        departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
       }),
       query.title && {
         title: { $regex: `.*${query.title}.*`, $options: "i" },

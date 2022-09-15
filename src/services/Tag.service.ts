@@ -1,6 +1,6 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import Tag, { TagI } from "../models/tag";
+import { TagI, Tag } from "../models/tag";
 
 const TagService = {
   async newTag(tag: TagI): Promise<TagI> {

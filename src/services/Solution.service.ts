@@ -23,32 +23,22 @@ export interface SolutionEditablesFields {
 
 const SolutionService = {
   async getSolutionActiveById(id: string): Promise<any> {
-    try {
-      const solution = await Solution.findOne({
-        solutionId: id,
-        active: true,
-      })
-        .populate("departmentAffected")
-        .populate("updatedBy")
-        .populate("challenge")
-        .populate("author")
-        .populate("coauthor")
-        .populate("team")
-        .populate("insertedBy")
-        .populate("areasAvailable")
-        .populate("groupValidator")
-        .populate("tags")
-        .populate("externalOpinion");
-      return solution;
-    } catch (error) {
-      return Promise.reject(
-        new ServiceError(
-          ERRORS.SERVICE.SOLUTION_DOES_NOT_EXIST,
-          HTTP_RESPONSE._404,
-          error
-        )
-      );
-    }
+    const solution = await Solution.findOne({
+      solutionId: id,
+      active: true,
+    })
+      .populate("departmentAffected")
+      .populate("updatedBy")
+      .populate("challenge")
+      .populate("author")
+      .populate("coauthor")
+      .populate("team")
+      .populate("insertedBy")
+      .populate("areasAvailable")
+      .populate("groupValidator")
+      .populate("tags")
+      .populate("externalOpinion");
+    return solution;
   },
   async deactivateSolution(solution: any, update: any): Promise<boolean> {
     try {

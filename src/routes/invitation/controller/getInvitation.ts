@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { SolutionInvitation } from "../../models/invitation";
-import { validate } from "../../utils/express/express-handler";
-import { genericSolutionInvitationFilter } from "../../utils/field-filters/invitation";
+import { SolutionInvitation } from "../../../models/invitation";
+import { validate } from "../../../utils/express/express-handler";
+import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 
 export const getInvitation = validate(
   {

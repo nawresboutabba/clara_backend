@@ -2,7 +2,6 @@ import { NextFunction } from "express";
 import { RULES, OWNER } from "../constants";
 import { CAN_EDIT_SOLUTION } from "../utils/acl/acl.can_edit_solution";
 import { CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL } from "../utils/acl/acl.can_insert_challenge_or_challenge_proposal";
-import { CAN_INSERT_TAG } from "../utils/acl/acl.can_insert_tag";
 import { CAN_VIEW_CHALLENGE } from "../utils/acl/acl.can_view_challenge";
 import { CAN_VIEW_SOLUTION } from "../utils/acl/acl.can_view_solution";
 import { IS_ADMIN } from "../utils/acl/acl.is_admin";
@@ -15,17 +14,17 @@ import { IS_BAREMO_CREATOR } from "../utils/acl/is_baremo_creator";
 import { CAN_VIEW_COMMENT } from "../utils/acl/acl.can_view_comment";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
 
-export function acl(rule:string){
-  return async function (req:RequestMiddleware, res:ResponseMiddleware, next: NextFunction){
-    try{
+export function acl(rule: string) {
+  return async function (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) {
+    try {
       /**
         * Admin Role has full Access.Same function in IS_ADMIN (case situation)
         */
-      if(req.user.email === OWNER){
+      if (req.user.email === OWNER) {
         return next()
       }
-      switch(rule){
-      case RULES.CAN_VIEW_CHALLENGE: 
+      switch (rule) {
+      case RULES.CAN_VIEW_CHALLENGE:
         await CAN_VIEW_CHALLENGE(req)
         break;
       case RULES.CAN_VIEW_SOLUTION:
@@ -34,13 +33,13 @@ export function acl(rule:string){
       case RULES.CAN_VIEW_COMMENT:
         await CAN_VIEW_COMMENT(req)
         break;
-      case RULES.IS_COMMITTE_MEMBER: 
+      case RULES.IS_COMMITTE_MEMBER:
         await IS_COMMITTE_MEMBER(req)
         break;
-      case RULES.IS_LEADER: 
+      case RULES.IS_LEADER:
         await IS_LEADER(req)
         break;
-      case RULES.IS_ADMIN: 
+      case RULES.IS_ADMIN:
         await IS_ADMIN(req)
         break;
       case RULES.CAN_EDIT_SOLUTION:
@@ -61,14 +60,11 @@ export function acl(rule:string){
       case RULES.IS_BAREMO_CREATOR:
         await IS_BAREMO_CREATOR(req)
         break;
-      case RULES.CAN_INSERT_TAG:
-        await CAN_INSERT_TAG(req)
-        break;
 
       }
 
       next()
-    }catch(error){
+    } catch (error) {
       next(error)
     }
   }

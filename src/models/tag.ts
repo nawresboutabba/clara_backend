@@ -1,28 +1,36 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { UserI } from "./users";
 
+export enum TAG_TYPE {
+  COMMENT = "COMMENT",
+  SITUATION = "SITUATION",
+}
+export type TAG_TYPE_TYPE = keyof typeof TAG_TYPE;
+
 export interface TagI {
-    tagId: string,
-    name: string,
-    created: Date,
-    description: string,
-    /**
-     * COMMENT | IDEA | CHALLENGE
-     */
-    type: string,
-    creator: UserI
+  _id: Types.ObjectId;
+  name: string;
+  description: string;
+  type: TAG_TYPE_TYPE;
+  creator: UserI;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const tag = new Schema({
-  tagId: String,
-  name: String,
-  created: Date,
-  description: String,
-  type: String,
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },  
-})
+const TagSchema = new Schema<TagI>(
+  {
+    name: { type: String },
+    description: String,
+    type: String,
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
-export default model('Tag', tag);
+TagSchema.index({ name: "text" })
+TagSchema.index({ name: 1, type: 1 }, { unique: true })
+
+export const Tag = model<TagI>("Tag", TagSchema);

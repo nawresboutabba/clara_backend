@@ -1,5 +1,5 @@
 import * as express from "express";
-import { challengesController as controller } from "../../controller/challenge/challenges.controller";
+import { challengesController as controller } from "./challenges.controller";
 
 import authentication from "../../middlewares/authentication";
 import oldRoute from "./index";

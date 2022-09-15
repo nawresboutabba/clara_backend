@@ -1,48 +1,38 @@
 import { z } from "zod";
-import { EVENTS_TYPE, SOLUTION_STATUS, WSALEVEL } from "../../constants";
+import { EVENTS_TYPE, WSALEVEL } from "../../constants";
 import {
   INVITATION_STATUS,
   INVITATION_TYPE,
   SolutionInvitation,
 } from "../../models/invitation";
-import Solution from "../../models/situation.solutions";
+import Solution, { SOLUTION_STATUS } from "../../models/situation.solutions";
 import User, { UserI } from "../../models/users";
 import { sendEmail } from "../../repository/repository.mailing";
 import { newExternalUser } from "../../repository/repository.users";
 import InvitationService from "../../services/Invitation.service";
-import SolutionService from "../../services/Solution.service";
 import UserService from "../../services/User.service";
 import { validate } from "../../utils/express/express-handler";
 import {
   genericArraySolutionInvitationFilter,
   genericSolutionInvitationFilter,
 } from "../../utils/field-filters/invitation";
-import { genericSolutionFilter } from "../../utils/field-filters/solution";
+import {
+  genericArraySolutionsFilter,
+  genericSolutionFilter,
+} from "../../utils/field-filters/solution";
 import { getCurrentDate } from "../../utils/general/date";
 import { generatePassword } from "../../utils/general/generate-password";
 import { logVisit } from "../../utils/general/log-visit";
 import { removeEmpty } from "../../utils/general/remove-empty";
+import { sortSchema } from "../../utils/params-query/sort.query";
+import * as SolutionRep from "./solutions.repository";
 
-function getSolutionById(solutionId: string) {
-  return Solution.findOne({ solutionId })
-    .populate("departmentAffected")
-    .populate("updatedBy")
-    .populate("challenge")
-    .populate("author")
-    .populate("coauthor")
-    .populate("team")
-    .populate("insertedBy")
-    .populate("areasAvailable")
-    .populate("tags")
-    .populate("externalOpinion");
-}
-
-const getSolution = validate(
+export const getSolution = validate(
   {
     params: z.object({ solutionId: z.string() }),
   },
   async ({ user, params: { solutionId } }, res) => {
-    const solution = await getSolutionById(solutionId);
+    const solution = await SolutionRep.getSolutionById(solutionId);
 
     // const integrantStatus = await IntegrantService.checkUserInCommittee(user);
     // const isCommitteeMember = integrantStatus.isActive;
@@ -89,13 +79,13 @@ const getSolution = validate(
   }
 );
 
-const changeAuthor = validate(
+export const changeAuthor = validate(
   {
     params: z.object({ solutionId: z.string() }),
     body: z.object({ userId: z.string() }),
   },
   async ({ params: { solutionId }, user, body }, res) => {
-    const solution = await getSolutionById(solutionId);
+    const solution = await SolutionRep.getSolutionById(solutionId);
 
     const newAuthor = await User.findOne({ userId: body.userId });
 
@@ -113,7 +103,7 @@ const changeAuthor = validate(
       }
     );
 
-    const updatedSolution = await SolutionService.updateSolutionPartially(
+    const updatedSolution = await SolutionRep.updateSolutionPartially(
       solutionId,
       {
         $set: { author: newAuthor },
@@ -125,12 +115,12 @@ const changeAuthor = validate(
   }
 );
 
-const leaveSolution = validate(
+export const leaveSolution = validate(
   {
     params: z.object({ solutionId: z.string() }),
   },
   async ({ params: { solutionId }, user }, res) => {
-    const solution = await getSolutionById(solutionId);
+    const solution = await SolutionRep.getSolutionById(solutionId);
 
     if (solution.author.userId === user.userId) {
       return res.status(403).json({ message: "author cannot leave" });
@@ -140,7 +130,7 @@ const leaveSolution = validate(
       return res.status(403).json({ message: "you are not in the team" });
     }
 
-    const updatedSolution = await SolutionService.updateSolutionPartially(
+    const updatedSolution = await SolutionRep.updateSolutionPartially(
       solutionId,
       {
         $pull: { coauthor: user._id },
@@ -151,7 +141,7 @@ const leaveSolution = validate(
   }
 );
 
-const createSolutionInvite = validate(
+export const createSolutionInvite = validate(
   {
     params: z.object({ solutionId: z.string() }),
     body: z.object({
@@ -159,7 +149,7 @@ const createSolutionInvite = validate(
     }),
   },
   async ({ user, params: { solutionId }, body: { email } }, res) => {
-    const solution = await getSolutionById(solutionId);
+    const solution = await SolutionRep.getSolutionById(solutionId);
 
     if (solution.author.userId !== user.userId) {
       return res.status(403).json({ message: "not authorized" });
@@ -216,13 +206,13 @@ const createSolutionInvite = validate(
   }
 );
 
-const getSolutionInvites = validate(
+export const getSolutionInvites = validate(
   {
     params: z.object({ solutionId: z.string() }),
     query: z.object({ status: z.nativeEnum(INVITATION_STATUS) }).partial(),
   },
   async ({ user, params: { solutionId }, query: { status } }, res) => {
-    const solution = await getSolutionById(solutionId);
+    const solution = await SolutionRep.getSolutionById(solutionId);
     if (
       solution.author.userId !== user.userId &&
       solution.coauthor.every((e: UserI) => e.userId !== user.userId)
@@ -241,7 +231,7 @@ const getSolutionInvites = validate(
   }
 );
 
-const responseSolutionInvite = validate(
+export const responseSolutionInvite = validate(
   {
     params: z.object({ solutionId: z.string(), invitationId: z.string() }),
     body: z.object({
@@ -290,7 +280,7 @@ const responseSolutionInvite = validate(
   }
 );
 
-const cancelSolutionInvite = validate(
+export const cancelSolutionInvite = validate(
   {
     params: z.object({ invitationId: z.string() }),
   },
@@ -318,12 +308,55 @@ const cancelSolutionInvite = validate(
   }
 );
 
-export const solutionsController = {
-  getSolution,
-  changeAuthor,
-  leaveSolution,
-  createSolutionInvite,
-  getSolutionInvites,
-  responseSolutionInvite,
-  cancelSolutionInvite,
-};
+export const getSolutions = validate(
+  {
+    query: z
+      .object({
+        title: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        departmentAffected: z.array(z.string()).default([]),
+        status: z.nativeEnum(SOLUTION_STATUS).optional(),
+        challengeId: z.string().optional(),
+        type: z.enum(["PARTICULAR", "GENERIC"]).optional(),
+        as: z.enum(["AUTHOR", "COAUTHOR"]).optional(),
+        init: z.number().default(0),
+        offset: z.number().default(10),
+        sort: z
+          .object({ title: sortSchema, created: sortSchema })
+          .partial()
+          .default({ created: -1 }),
+      }),
+  },
+  async ({ user, query }) => {
+    const filterQuery = Object.assign(
+      { active: true },
+      removeEmpty({
+        status: query?.status,
+        type: query?.type,
+        tags: query.tags.length > 0 ? { $in: query.tags } : null,
+        departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
+      }),
+      query.title && {
+        title: { $regex: `.*${query.title}.*`, $options: "i" },
+      },
+      query.as === "AUTHOR" && {
+        author: user,
+      },
+      query.as === "COAUTHOR" && {
+        coauthor: user,
+      }
+    );
+
+    const hasUserQuery = {
+      $or: [{ author: user }, { coauthor: user }, { externalOpinion: user }],
+    };
+
+    const solutions = await SolutionRep.getSolutions({
+      $and: [hasUserQuery, filterQuery],
+    })
+      .skip(query.init)
+      .limit(query.offset)
+      .sort(query.sort);
+    return genericArraySolutionsFilter(solutions);
+  }
+);

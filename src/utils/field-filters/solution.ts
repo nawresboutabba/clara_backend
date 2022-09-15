@@ -9,9 +9,9 @@ import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericAreaFilter, genericArrayAreaFilter } from "./area";
+import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
+import { genericArrayAreaFilter } from "./area";
 import { lightChallengeFilter } from "./challenge";
-import { genericArrayTagsFilter } from "./tag";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async (
@@ -182,18 +182,6 @@ export async function lightSolutionFilter(
   };
 }
 
-export const genericArraySolutionsFilter = async (
-  solutions: Array<SolutionI>
-): Promise<Array<LightSolutionResponse>> => {
-  const arraySolution: Array<Promise<LightSolutionResponse>> = [];
-  solutions.forEach((solution) => {
-    arraySolution.push(lightSolutionFilter(solution));
-  });
-  return await Promise.all(arraySolution)
-    .then((result) => {
-      return result;
-    })
-    .catch((error) => {
-      return Promise.reject(error);
-    });
-};
+export function genericArraySolutionsFilter(solutions: Array<SolutionI>) {
+  return Promise.all(solutions.map(lightSolutionFilter));
+}

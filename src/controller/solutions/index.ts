@@ -38,6 +38,7 @@ import {
   deleteSolution,
   getSolution,
 } from "../../repository/repository.solution";
+import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { AreaResponse } from "../area/area";
 import { BaremoResponse } from "../baremo";
 import { ChallengeResponse, LightChallengeResponse } from "../challenge";
@@ -48,7 +49,6 @@ import {
   SituationBody,
   SituationResponse,
 } from "../situation/situation";
-import { TagResponse } from "../tag";
 import { UserResponse } from "../users";
 
 export interface SolutionBody extends SituationBody {
@@ -120,7 +120,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
     description: string;
     finalization: Date;
   };
-  tags: TagResponse[];
+  tags: TagSerialized[];
   departmentAffected: AreaResponse[];
   differential: string;
   is_new_for: string;

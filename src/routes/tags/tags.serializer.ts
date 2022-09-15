@@ -1,12 +1,17 @@
-import { TagResponse } from "../../controller/tag";
+import { Types } from "mongoose";
 import { TagI } from "../../models/tag";
 
-export function genericTagFilter(tag: TagI): TagResponse {
+export interface TagSerialized {
+  id: Types.ObjectId
+  name: string,
+  description: string,
+}
+
+export function genericTagFilter(tag: TagI): TagSerialized {
   return {
-    tag_id: tag.tagId,
+    id: tag._id,
     name: tag.name,
     description: tag.description,
-    // created: tag.created,
   };
 }
 

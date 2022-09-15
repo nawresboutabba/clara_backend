@@ -19,7 +19,7 @@ type SchemaDefinition<TBody, TQuery, TParams> = Partial<{
 
 const check = <T extends ZodTypeAny>(obj?: unknown, schema?: T) => {
   if (!schema) {
-    return { success: true, data: true } as SafeParseSuccess<true>;
+    return { success: true, data: {} } as SafeParseSuccess<true>;
   }
   return schema.safeParse(obj);
 };
@@ -36,9 +36,12 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
     if (bodyParsed.success && queryParsed.success && paramsParsed.success) {
       try {
         const result = await middleware(
-          req as unknown as Request<TParams, unknown, TBody, TQuery> & {
-            user: UserI;
-          },
+          {
+            ...req,
+            query: queryParsed.data,
+            body: bodyParsed.data,
+            params: paramsParsed.data,
+          } as Request<TParams, unknown, TBody, TQuery> & { user: UserI; },
           res,
           next
         );

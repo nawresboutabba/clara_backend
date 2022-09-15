@@ -1,5 +1,5 @@
 import * as express from "express";
-import { usersController } from "../../controller/users/users.controller";
+import { usersController } from "./users.controller";
 import authentication from "../../middlewares/authentication";
 import oldRoute from "./index";
 

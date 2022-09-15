@@ -26,7 +26,7 @@ import { clientErrorHandler } from "./handle-error/middleware.client-error-handl
 import { errorHandler } from "./handle-error/middleware.error-handler";
 import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
-import { invitationRouter } from "./routes/invitation";
+import { invitationRouter } from "./routes/invitation/invitations.route";
 
 mongoose
   .connect(

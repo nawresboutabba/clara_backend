@@ -1,6 +1,6 @@
 import { GroupValidatorResponse } from "../../repository/repository.group-validator";
+import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { AreaResponse } from "../area/area";
-import { TagResponse } from "../tag";
 import { TeamResponse } from "../team";
 import { UserResponse } from "../users";
 
@@ -66,7 +66,7 @@ export interface SituationResponse extends LightSituationResponse {
   department_affected: Array<AreaResponse>;
   group_validator?: GroupValidatorResponse;
   file_complementary: Array<string>;
-  tags: TagResponse[];
+  tags: TagSerialized[];
   /**
    * Configuration Section
    */

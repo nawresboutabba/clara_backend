@@ -1,5 +1,5 @@
+import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { InteractionBody, InteractionResponse } from "../interaction";
-import { TagResponse } from "../tag";
 
 export interface CommentBody extends InteractionBody {
     comment: string,
@@ -7,11 +7,11 @@ export interface CommentBody extends InteractionBody {
     scope: string,
 }
 
-export interface CommentResponse extends InteractionResponse{
+export interface CommentResponse extends InteractionResponse {
     comment_id: string
     comment: string,
-    version: string, 
-    tag: TagResponse,
+    version: string,
+    tag: TagSerialized,
     scope: string,
     parent?: CommentResponse
 }

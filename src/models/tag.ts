@@ -3,8 +3,7 @@ import { UserI } from "./users";
 
 export enum TAG_TYPE {
   COMMENT = "COMMENT",
-  IDEA = "IDEA",
-  CHALLENGE = "CHALLENGE",
+  SITUATION = "SITUATION",
 }
 export type TAG_TYPE_TYPE = keyof typeof TAG_TYPE;
 
@@ -18,9 +17,9 @@ export interface TagI {
   updatedAt: Date;
 }
 
-const tag = new Schema<TagI>(
+const TagSchema = new Schema<TagI>(
   {
-    name: String,
+    name: { type: String },
     description: String,
     type: String,
     creator: {
@@ -31,4 +30,7 @@ const tag = new Schema<TagI>(
   { timestamps: true }
 );
 
-export const Tag = model("Tag", tag);
+TagSchema.index({ name: "text" })
+TagSchema.index({ name: 1, type: 1 }, { unique: true })
+
+export const Tag = model<TagI>("Tag", TagSchema);

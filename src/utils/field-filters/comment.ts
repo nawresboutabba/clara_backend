@@ -1,10 +1,10 @@
 import { CommentResponse } from "../../controller/comment";
 import { CommentI } from "../../models/interaction.comment";
-import { genericTagFilter } from "./tag";
+import { genericTagFilter } from "../../routes/tags/tags.serializer";
 import { genericUserFilter } from "./user";
 
 export const genericCommentFilter = async (commentEntity: CommentI): Promise<CommentResponse> => {
-  try{
+  try {
     const {
       commentId,
       comment,
@@ -15,9 +15,9 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
     const author = await genericUserFilter(commentEntity.author)
     const tag = await genericTagFilter(commentEntity.tag)
     let resp: CommentResponse = {
-      comment_id: commentId, 
+      comment_id: commentId,
       comment,
-      date, 
+      date,
       author,
       tag,
       version,
@@ -26,18 +26,18 @@ export const genericCommentFilter = async (commentEntity: CommentI): Promise<Com
 
     if (commentEntity.parent) {
       const parent = await genericCommentFilter(commentEntity.parent)
-      resp = {...resp, parent}
+      resp = { ...resp, parent }
     }
 
 
-    return Promise.resolve({...resp})
-  }catch(error){
+    return Promise.resolve({ ...resp })
+  } catch (error) {
     return Promise.reject(error)
   }
 }
 
-export const genericArrayCommentFilter = async(comments: CommentI[]): Promise<CommentResponse[]> =>{
-  const arrayComment: Array<Promise<CommentResponse>>= []
+export const genericArrayCommentFilter = async (comments: CommentI[]): Promise<CommentResponse[]> => {
+  const arrayComment: Array<Promise<CommentResponse>> = []
   comments.forEach(comment => {
     arrayComment.push(genericCommentFilter(comment))
   })
@@ -46,7 +46,7 @@ export const genericArrayCommentFilter = async(comments: CommentI[]): Promise<Co
     .then(result => {
       return result
     })
-    .catch(error=> {
+    .catch(error => {
       return Promise.reject(error)
-    })  
+    })
 }

@@ -14,9 +14,9 @@ const TagService = {
   async getTagById(tagId: string): Promise<TagI> {
     try {
       const resp = await Tag.findOne({
-        tagId: tagId,
+        _id: tagId,
       });
-      return resp.toObject();
+      return resp;
     } catch (error) {
       throw new ServiceError(ERRORS.SERVICE.GET_TAG, HTTP_RESPONSE._500, error);
     }
@@ -24,9 +24,9 @@ const TagService = {
   async getTagsById(tagsId: string[]): Promise<TagI[]> {
     try {
       const resp = await Tag.find({
-        tagId: { $in: tagsId },
+        _id: { $in: tagsId }
       });
-      return resp.map((e) => e.toObject());
+      return resp;
     } catch (error) {
       throw new ServiceError(
         ERRORS.SERVICE.GET_ARRAY_TAGS,

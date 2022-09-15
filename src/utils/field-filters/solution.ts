@@ -9,9 +9,9 @@ import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericAreaFilter, genericArrayAreaFilter } from "./area";
+import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
+import { genericArrayAreaFilter } from "./area";
 import { lightChallengeFilter } from "./challenge";
-import { genericArrayTagsFilter } from "./tag";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 export const genericSolutionFilter = async (

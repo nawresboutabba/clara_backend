@@ -10,12 +10,12 @@ import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericArrayTagsFilter } from "./tag";
+import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
 
 /**
  * Challenge information filter.
  * Is used by controllers for return limited information in Response action.
- * This util is complemented with interfece that finalize with "Response". For example UserResponse interface
+ * This util is complemented with interface that finalize with "Response". For example UserResponse interface
  * @param challenge
  * @returns
  */

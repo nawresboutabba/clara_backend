@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { CHALLENGE_STATUS } from "../../../constants";
-import Challenge from "../../../models/situation.challenges";
+import Challenge, { CHALLENGE_STATUS } from "../../../models/situation.challenges";
 import Solution from "../../../models/situation.solutions";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";

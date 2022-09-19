@@ -1,64 +1,45 @@
-import { SolutionI } from "../models/situation.solutions";
-import { ChallengeI } from "../models/situation.challenges";
+import { nanoid } from "nanoid";
+import {
+  ERRORS, HTTP_RESPONSE
+} from "../constants";
+import { BaremoResponse } from "../controller/baremo";
+import { CommentBody, CommentResponse } from "../controller/comment";
 import {
   EvaluationNoteResponse,
   LightSolutionResponse,
   SolutionBody,
-  SolutionResponse,
+  SolutionResponse
 } from "../controller/solutions";
+import RepositoryError from "../handle-error/error.repository";
+import { BaremoI } from "../models/baremo";
+import { EvaluationNoteI } from "../models/evaluation-note";
+import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
+import { ChallengeI } from "../models/situation.challenges";
+import { SolutionI, SOLUTION_STATUS } from "../models/situation.solutions";
+import { TagI } from "../models/tag";
+import { UserI } from "../models/users";
+import BaremoService from "../services/Baremo.service";
+import EvaluationNoteService from "../services/EvaluationNote.service";
 import SolutionService, {
-  SolutionEditablesFields,
+  SolutionEditablesFields
 } from "../services/Solution.service";
-import {
-  COMMENT_LEVEL,
-  ERRORS,
-  EVENTS_TYPE,
-  HTTP_RESPONSE,
-  INTERACTION,
-  INVITATION,
-  INVITATIONS,
-  PARTICIPATION_MODE,
-  RESOURCE,
-  SOLUTION_STATUS,
-  WSALEVEL,
-} from "../constants";
-import { nanoid } from "nanoid";
-import * as _ from "lodash";
+import { genericBaremoFilter } from "../utils/field-filters/baremo";
+import { genericCommentFilter } from "../utils/field-filters/comment";
+import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 import {
   genericArraySolutionsFilter,
-  genericSolutionFilter,
+  genericSolutionFilter
 } from "../utils/field-filters/solution";
-import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
-import { ConfigurationSettingI } from "../models/configuration.default";
-import { UserI } from "../models/users";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
+import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
+import BaremoStateMachine from "../utils/state-machine/state-machine.baremo";
+import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
 import {
   getComments,
   getCommentsWithoutRelation,
-  newComment,
+  newComment
 } from "./repository.comment";
-import { CommentBody, CommentResponse } from "../controller/comment";
-import { genericCommentFilter } from "../utils/field-filters/comment";
-import { CommentScope, SolutionCommentI, GeneralCommentI } from "../models/interaction.comment";
-import BaremoStateMachine from "../utils/state-machine/state-machine.baremo";
-import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
-import BaremoService from "../services/Baremo.service";
-import RepositoryError from "../handle-error/error.repository";
-import { genericBaremoFilter } from "../utils/field-filters/baremo";
-import { BaremoResponse } from "../controller/baremo";
-import { BaremoI } from "../models/baremo";
-import { EvaluationNoteI } from "../models/evaluation-note";
-import EvaluationNoteService from "../services/EvaluationNote.service";
-import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
-import InvitationService from "../services/Invitation.service";
-import { SolutionInvitationI } from "../models/invitation";
-import {
-  genericArraySolutionInvitationFilter,
-  genericSolutionInvitationFilter,
-} from "../utils/field-filters/invitation";
-import { sendEmail } from "./repository.mailing";
-import { TagI } from "../models/tag";
 
 /**
  * This interface does not exactly correspond to a model,

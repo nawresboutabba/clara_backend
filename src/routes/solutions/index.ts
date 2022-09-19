@@ -2,11 +2,12 @@
 import * as express from "express";
 import { NextFunction } from "express";
 import { body, param, validationResult } from "express-validator";
-import { ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import { ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
 import SolutionController from '../../controller/solutions/index';
 import { acl } from "../../middlewares/acl";
 import authentication from "../../middlewares/authentication";
 import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
+import { SOLUTION_STATUS } from "../../models/situation.solutions";
 import AreaService from "../../services/Area.service";
 import BaremoService from "../../services/Baremo.service";
 import ChallengeService from "../../services/Challenge.service";

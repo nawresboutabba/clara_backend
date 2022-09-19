@@ -1,9 +1,9 @@
-import { CHALLENGE_TYPE } from "../../constants";
 import {
   LightSolutionResponse,
   SolutionResponse,
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
+import { CHALLENGE_TYPE } from "../../models/situation.challenges";
 import { SolutionI } from "../../models/situation.solutions";
 import {
   getArrayImageSignedUrl,

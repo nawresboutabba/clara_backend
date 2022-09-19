@@ -1,6 +1,6 @@
 import * as assert from "assert";
-import { IS_NEW_FOR, SOLUTION_STATUS } from "../../constants";
-import { SolutionI } from "../../models/situation.solutions";
+import { IS_NEW_FOR, } from "../../constants";
+import { SolutionI, SOLUTION_STATUS } from "../../models/situation.solutions";
 import SolutionStateMachine from "../state-machine/state-machine.solution";
 
 export function checkIsNewFor(body: CallableFunction): any {

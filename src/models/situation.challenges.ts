@@ -1,13 +1,20 @@
 import { Schema } from "mongoose";
 import { options } from "./situation.base";
 import SituationBase, { SituationBaseI } from "./situation.base";
-import { CHALLENGE_STATUS } from "../constants";
 
 export const CHALLENGE_TYPE = {
   GENERIC: "GENERIC",
   PARTICULAR: "PARTICULAR",
 };
 export type CHALLENGE_TYPE = keyof typeof CHALLENGE_TYPE;
+
+export const CHALLENGE_STATUS = {
+  DRAFT: "DRAFT",
+  PROPOSED: "PROPOSED",
+  OPENED: "OPENED",
+  CLOSED: "CLOSED",
+};
+export type CHALLENGE_STATUS = keyof typeof CHALLENGE_STATUS;
 
 export interface ChallengeI extends SituationBaseI {
   /**

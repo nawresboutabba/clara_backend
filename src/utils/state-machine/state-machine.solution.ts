@@ -1,4 +1,5 @@
-import { ERRORS, SOLUTION_STATUS } from "../../constants";
+import { ERRORS } from "../../constants";
+import { SOLUTION_STATUS } from "../../models/situation.solutions";
 /**
  * Solutions state machine
  * https://drive.google.com/file/d/1JFNcXbiDoof3LKlKQEQFrFnpRt4aq3E7/view?usp=sharing

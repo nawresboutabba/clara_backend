@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid";
-import { CHALLENGE_TYPE, CHALLENGE_STATUS } from "../../../constants";
-import Challenge from "../../../models/situation.challenges";
+import Challenge, { CHALLENGE_STATUS, CHALLENGE_TYPE } from "../../../models/situation.challenges";
 import { isCommitteMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";

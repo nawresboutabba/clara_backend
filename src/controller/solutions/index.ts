@@ -203,48 +203,7 @@ export default class SolutionController extends Controller {
   ): Promise<ConfigurationBaseI> {
     return setDefaultConfiguration(body, RESOURCE.SOLUTION);
   }
-  /**
-   * New comment endpoint
-   */
-  @Post("/:solutionId/comment")
-  public async newComment(
-    @Path("solutionId") solutionId: string,
-    @Body() comment: CommentBody,
-    @Inject() solution: SolutionI,
-    @Inject() user: UserI,
-    @Inject() utils: any
-  ): Promise<CommentResponse> {
-    return newSolutionComment(comment, solution, user, utils);
-  }
-  /**
-   * Get Comment endpoint
-   */
-  @Get("/:solutionId/comment")
-  public async listComments(
-    @Path("solutionId") solutionId: string,
-    @Query() query: any,
-    @Inject() solution: SolutionI,
-    @Inject() user: UserI
-  ): Promise<SolutionCommentI[]> {
-    return getSolutionComments(solution, query, user);
-  }
 
-  @Get("/:solutionId/comment/resume")
-  public async listCommentsWithoutRelation(@Inject() solution: SolutionI) {
-    return getSolutionCommentsWithoutRelations(solution);
-  }
-  /**
-   * Get  a Comment with his childs
-   */
-  @Get("/:solutionId/comment/:commentId")
-  public async getComments(
-    @Path("commentId") commentId: string,
-    @Inject() solution: SolutionI,
-    @Inject() user: UserI,
-    @Inject() utils: any
-  ): Promise<SolutionCommentI[]> {
-    return getThread(utils);
-  }
   /**
    * New baremo
    */

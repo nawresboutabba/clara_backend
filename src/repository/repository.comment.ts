@@ -31,26 +31,22 @@ export async function getThreadComments(commentId: string) {
 }
 
 export async function getComments(filter: any) {
-  try {
-    const parents = await CommentService.getParentsComments(filter);
+  const parents = await CommentService.getParentsComments(filter);
 
-    const parentsFiltered = await genericArrayCommentFilter(parents);
+  const parentsFiltered = await genericArrayCommentFilter(parents);
 
-    const allChildren = await CommentService.getChildrenComments(parents);
+  const allChildren = await CommentService.getChildrenComments(parents);
 
-    const allChildrenFiltered = await genericArrayCommentFilter(allChildren);
+  const allChildrenFiltered = await genericArrayCommentFilter(allChildren);
 
-    const complete = parentsFiltered.map((parent) => {
-      const children = allChildrenFiltered.filter(
-        (child) => child?.parent?.id == parent.id
-      );
-      return { ...parent, children };
-    });
+  const complete = parentsFiltered.map((parent) => {
+    const children = allChildrenFiltered.filter(
+      (child) => child?.parent?.id == parent.id
+    );
+    return { ...parent, children };
+  });
 
-    return complete;
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  return complete;
 }
 
 export async function getCommentsWithoutRelation(filter: any) {

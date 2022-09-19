@@ -10,8 +10,12 @@ solutionsRouter
   .use(oldRoute)
   .get("/solution", controller.getSolutions)
   .get("/solution/:solutionId", controller.getSolution)
-  .post("/solution/:solutionId/author", controller.changeAuthor)
+  .post("/solution/:solutionId/author", controller.changeSolutionAuthor)
   .post("/solution/:solutionId/leave", controller.leaveSolution)
+  .get("/solution/:solutionId/comment", controller.getSolutionComments)
+  .get("/solution/:solutionId/comment/resume", controller.getSolutionCommentsResume)
+  .get("/solution/:solutionId/comment/:commentId", controller.getSolutionComment)
+  .post("/solution/:solutionId/comment", controller.createSolutionComment)
   .post("/solution/:solutionId/invitation", controller.createSolutionInvite)
   .get("/solution/:solutionId/invitation", controller.getSolutionInvites)
   .post(

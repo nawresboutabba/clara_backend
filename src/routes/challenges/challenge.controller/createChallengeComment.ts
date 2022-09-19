@@ -29,7 +29,7 @@ export const createChallengeComment = validate(
     const parentComment = await CommentService.getComment(body.parent);
 
     if (parentComment !== null && parentComment.parent !== null) {
-      return res.status(400).json({ message: "Max level of 3" })
+      return res.status(400).json({ message: "Max comment child level is 2" })
     }
 
     const tag = await Tag.findById(body.tag)

@@ -7,8 +7,7 @@ import {
 } from "../../../utils/field-filters/solution";
 import * as SolutionRep from "../solutions.repository";
 
-
-export const changeAuthor = validate(
+export const changeSolutionAuthor = validate(
   {
     params: z.object({ solutionId: z.string() }),
     body: z.object({ userId: z.string() }),

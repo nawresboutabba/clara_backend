@@ -1,5 +1,5 @@
 import { NextFunction } from "express";
-import { RULES, OWNER } from "../constants";
+import { OWNER, RULES } from "../constants";
 import { CAN_EDIT_SOLUTION } from "../utils/acl/acl.can_edit_solution";
 import { CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL } from "../utils/acl/acl.can_insert_challenge_or_challenge_proposal";
 import { CAN_VIEW_CHALLENGE } from "../utils/acl/acl.can_view_challenge";
@@ -11,7 +11,6 @@ import { IS_PART_OF_GROUP_VALIDATOR } from "../utils/acl/acl.is_part_of_a_group_
 import { IS_SOLUTION_CREATOR } from "../utils/acl/acl.is_solution_creator";
 import { IS_VALIDATOR_OF_SOLUTION } from "../utils/acl/acl.is_validator_of_solution";
 import { IS_BAREMO_CREATOR } from "../utils/acl/is_baremo_creator";
-import { CAN_VIEW_COMMENT } from "../utils/acl/acl.can_view_comment";
 import { RequestMiddleware, ResponseMiddleware } from "./middlewares.interface";
 
 export function acl(rule: string) {
@@ -29,9 +28,6 @@ export function acl(rule: string) {
         break;
       case RULES.CAN_VIEW_SOLUTION:
         await CAN_VIEW_SOLUTION(req)
-        break;
-      case RULES.CAN_VIEW_COMMENT:
-        await CAN_VIEW_COMMENT(req)
         break;
       case RULES.IS_COMMITTE_MEMBER:
         await IS_COMMITTE_MEMBER(req)

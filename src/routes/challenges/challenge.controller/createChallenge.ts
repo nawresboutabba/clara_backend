@@ -23,9 +23,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     departmentAffected: [],
   });
 
-  const createdChallenge = await Challenge.findOne({
-    challengeId: challenge.challengeId,
-  })
+  const createdChallenge = await Challenge.findById(challenge._id)
     .populate("author")
     .populate("insertedBy")
     .populate("areasAvailable")

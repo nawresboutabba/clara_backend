@@ -1,28 +1,18 @@
-import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Inject, Put } from 'tsoa'
-import { ChallengeI, CHALLENGE_TYPE } from '../../models/situation.challenges';
-import {
-
-
-  updateChallengePartially,
-
-  newChallengeProposal,
-  getChallengeProposal,
-  acceptChallengeProposal,
-  listChallengeProposal,
-} from '../../repository/repository.challenge';
-import { listSolutions, updateSolution } from '../../repository/repository.solution';
-import { createSolution } from '../../repository/repository.solution'
-import { SituationBody, SituationResponse } from '../situation/situation';
-import { LightSolutionResponse, SolutionBody, SolutionResponse } from '../solutions';
-import { CommentBody, CommentResponse } from '../comment';
-import { UserI } from '../../models/users';
-import { ReactionBody, ReactionResponse } from '../reaction';
-import { getChallengeConfiguration, setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { ConfigurationBody } from '../configuration';
-import { ConfigurationDefaultI } from '../../models/configuration.default';
+import { Body, Controller, Get, Inject, Patch, Path, Post, Query, Route } from 'tsoa';
 import { RESOURCE } from '../../constants';
+import { ConfigurationDefaultI } from '../../models/configuration.default';
+import { ChallengeI, CHALLENGE_TYPE } from '../../models/situation.challenges';
+import { UserI } from '../../models/users';
+import {
+  acceptChallengeProposal, getChallengeProposal, listChallengeProposal, newChallengeProposal, updateChallengePartially
+} from '../../repository/repository.challenge';
+import { getChallengeConfiguration, setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
 import { GroupValidatorResponse } from '../../repository/repository.group-validator';
+import { createSolution, listSolutions, updateSolution } from '../../repository/repository.solution';
 import { AreaResponse } from '../area/area';
+import { ConfigurationBody } from '../configuration';
+import { SituationBody, SituationResponse } from '../situation/situation';
+import { LightSolutionResponse, SolutionResponse } from '../solutions';
 /**
  * Data that can be edited or inserted. Other are edited by 
  * another endpoints
@@ -48,7 +38,7 @@ export interface ChallengeBody extends SituationBody {
   default_scope: boolean
 }
 export interface LightChallengeResponse {
-  challenge_id: string;
+  id: string;
   created: Date;
   status: string;
   title: string;
@@ -69,7 +59,7 @@ export interface LightChallengeResponse {
 }
 
 export interface ChallengeResponse extends SituationResponse {
-  challenge_id: string
+  id: string
   is_strategic: boolean,
   finalization: Date,
   default_scope: boolean,

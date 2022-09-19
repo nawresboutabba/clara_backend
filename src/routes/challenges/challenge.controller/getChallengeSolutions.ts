@@ -20,7 +20,7 @@ export const getChallengeSolutions = validate(
   async ({ query, params }) => {
     const solutions = await Solution.find({
       status: "APPROVED_FOR_DISCUSSION",
-      challengeId: params.challengeId,
+      challenge: params.challengeId,
     })
       .populate("insertedBy")
       .populate("author")

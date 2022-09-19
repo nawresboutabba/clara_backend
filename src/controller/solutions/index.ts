@@ -115,7 +115,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
   challenge_id?: string;
   challenge?: {
     type: string;
-    challenge_id: string;
+    id: string;
     title: string;
     description: string;
     finalization: Date;

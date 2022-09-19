@@ -10,7 +10,8 @@ import { TagI } from './tag';
 
 export const options = {
   discriminatorKey: 'itemtype',
-  collection: 'situations'
+  collection: 'situations',
+  timestamps: true,
 };
 
 export interface SituationBaseI {

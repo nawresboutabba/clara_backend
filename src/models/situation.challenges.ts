@@ -1,6 +1,5 @@
 import { Schema } from "mongoose";
-import { options } from "./situation.base";
-import SituationBase, { SituationBaseI } from "./situation.base";
+import SituationBase, { SituationBaseI, options } from "./situation.base";
 
 export const CHALLENGE_TYPE = {
   GENERIC: "GENERIC",
@@ -28,10 +27,6 @@ export interface ChallengeI extends SituationBaseI {
    * True or False. Work in combination with canChooseScope
    */
   defaultScope: boolean;
-  /**
-   * Id that uniquely identifies a challenge
-   */
-  challengeId: string;
   /**
    * Situation title
    */

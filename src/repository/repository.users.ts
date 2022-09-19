@@ -274,7 +274,7 @@ export const getParticipation = async (
          */
         const challenges = new Set(
           rest
-            .map((idea) => idea.challenge.challenge_id)
+            .map((idea) => idea.challenge.id)
             .filter((id) => id != undefined)
         );
         /**
@@ -286,7 +286,7 @@ export const getParticipation = async (
          */
         challenges.forEach((challengeId) => {
           rest.forEach((idea) => {
-            if (idea.challenge?.challenge_id == challengeId) {
+            if (idea.challenge?.id == challengeId) {
               solutionByChallenge[challengeId] = {
                 challenge: idea.challenge,
                 /**
@@ -302,8 +302,8 @@ export const getParticipation = async (
          * Foreach solution, add the corresponding challenge
          */
         rest.forEach((solution) => {
-          if (challenges.has(solution.challenge?.challenge_id)) {
-            const challenge_id = solution.challenge.challenge_id;
+          if (challenges.has(solution.challenge?.id)) {
+            const challenge_id = solution.challenge.id;
             delete solution.challenge;
             solutionByChallenge[challenge_id].solutions.push(solution);
           }

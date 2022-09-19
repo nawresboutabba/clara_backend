@@ -57,7 +57,6 @@ export interface NewSolutionI {
   updated: Date;
   status: string;
   challenge: ChallengeI;
-  challengeId: string;
   version: number;
   type: string;
   /**
@@ -90,7 +89,6 @@ export const createSolution = async (
       updated: created,
       status: SOLUTION_STATUS.DRAFT,
       challenge,
-      challengeId: challenge.challengeId,
       type: challenge.type,
       version: 0,
       /**

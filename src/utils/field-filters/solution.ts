@@ -147,7 +147,7 @@ export async function lightSolutionFilter(
 
   const challenge = {
     type: solution.challenge.type,
-    challenge_id: solution.challenge.challengeId,
+    id: solution.challenge._id,
     title: solution.challenge.title,
     description: solution.challenge.description,
     finalization: solution.challenge.finalization,

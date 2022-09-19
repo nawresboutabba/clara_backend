@@ -11,9 +11,7 @@ export const getChallenge = validate(
     params: z.object({ challengeId: z.string() }),
   },
   async ({ user, params }, res) => {
-    const challenge = await Challenge.findOne({
-      challengeId: params.challengeId,
-    })
+    const challenge = await Challenge.findById(params.challengeId)
       .populate("author")
       .populate("insertedBy")
       .populate("areasAvailable")

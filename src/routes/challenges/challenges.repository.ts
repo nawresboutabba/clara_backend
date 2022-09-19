@@ -5,7 +5,7 @@ import { UserI } from "../../models/users"
 export async function getChallengeActiveById(id: string) {
   const resp = await Challenge.aggregate([
     {
-      $match: { $and: [{ challengeId: id, active: true }] },
+      $match: { $and: [{ _id: id, active: true }] },
     },
     {
       $lookup: {

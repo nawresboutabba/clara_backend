@@ -87,7 +87,6 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
       updatedBy: insertedBy,
       author: authorEntity,
       created,
-      challengeId: nanoid(),
       type: body.type,
       title: body.title,
       description: body.description,

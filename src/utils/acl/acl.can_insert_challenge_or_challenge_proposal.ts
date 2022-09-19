@@ -2,7 +2,7 @@ import { COMMITTE_ROLE, ERRORS, HTTP_RESPONSE, URLS } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 import { IntegrantStatusI } from "../../models/integrant";
-import { isCommitteMember } from "./function.is_committe_member";
+import { isCommitteeMember } from "./function.is_committe_member";
 
 /**
  * Committee members can submit challenge proposals
@@ -17,7 +17,7 @@ export async function CAN_INSERT_CHALLENGE_OR_CHALLENGE_PROPOSAL(
   req: RequestMiddleware
 ): Promise<void> {
   const url = req.url;
-  const committe: IntegrantStatusI = await isCommitteMember(req.user);
+  const committe: IntegrantStatusI = await isCommitteeMember(req.user);
   /**
    * Leader can insert a challenge or proposal challenge.
    *

@@ -15,7 +15,7 @@ import RepositoryError from "../handle-error/error.repository";
 import { genericUserFilter } from "../utils/field-filters/user";
 import SolutionService from "../services/Solution.service";
 import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
-import { isCommitteMember } from "../utils/acl/function.is_committe_member";
+import { isCommitteeMember } from "../utils/acl/function.is_committe_member";
 import * as _ from "lodash";
 import InvitationService from "../services/Invitation.service";
 import { genericArraySolutionInvitationFilter } from "../utils/field-filters/invitation";
@@ -178,7 +178,7 @@ export const getUserInformation = async (
     const user: UserI = await UserService.getUserActiveByUserId(
       userInformation.userId
     );
-    const status = await isCommitteMember(user);
+    const status = await isCommitteeMember(user);
     const resp: any = await genericUserFilter(user);
 
     resp.is_committe_member = status.isActive;

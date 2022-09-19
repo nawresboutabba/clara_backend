@@ -1,7 +1,7 @@
 import { ConfigurationDefaultI } from "../../models/configuration.default"
 import { ChallengeI } from "../../models/situation.challenges"
 import { UserI } from "../../models/users"
-import { isCommitteMember } from "../acl/function.is_committe_member"
+import { isCommitteeMember } from "../acl/function.is_committe_member"
 
 /**
  * This functions is used for checking users external participation according to conditions defined in the challenge or default configuration solution
@@ -10,7 +10,7 @@ import { isCommitteMember } from "../acl/function.is_committe_member"
  * @param configuration 
  * @returns 
  */
-export const isCompositionUsersValid = async (author: UserI, coauthor: UserI[], configuration: ChallengeI | ConfigurationDefaultI ): Promise<boolean> => {
+export const isCompositionUsersValid = async (author: UserI, coauthor: UserI[], configuration: ChallengeI | ConfigurationDefaultI): Promise<boolean> => {
   let areThereExternalsUser = false
 
   /**
@@ -28,7 +28,7 @@ export const isCompositionUsersValid = async (author: UserI, coauthor: UserI[], 
      */
     return Promise.resolve(true)
   } else {
-    const committeeMember = await isCommitteMember(author)
+    const committeeMember = await isCommitteeMember(author)
     /**
       * User can invite external users like committee member or generator
       */

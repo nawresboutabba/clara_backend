@@ -1,22 +1,16 @@
 import { z } from "zod";
-import { ChallengeComment, CommentScope } from "../../../models/interaction.comment";
-import { Tag } from "../../../models/tag";
-import { getComments } from "../../../repository/repository.comment";
-import CommentService from "../../../services/Comment.service";
+import { CommentScope } from "../../../models/interaction.comment";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 
 import { validate } from "../../../utils/express/express-handler";
-import { genericCommentFilter } from "../../../utils/field-filters/comment";
-import * as challengeRep from '../challenges.repository'
+import * as challengeRep from '../challenges.repository';
 
 export const getChallengeComments = validate(
   {
-    params: z.object({ challengeId: z.string(), commentId: z.string() }),
+    params: z.object({ challengeId: z.string() }),
     query: z.object({
-      comment: z.string(),
-      scope: z.nativeEnum(CommentScope),
-      parent: z.string().optional(),
-      tag: z.string()
+      scope: z.nativeEnum(CommentScope).optional().default(CommentScope.PUBLIC),
+      tag: z.string().optional()
     })
   },
   async ({ user, params: { challengeId }, query }, res) => {
@@ -40,9 +34,6 @@ export const getChallengeComments = validate(
       return res.status(403).json({ message: "Not authorized to create comment on this challenge" })
     }
 
-    return getComments({
-      resource: challenge,
-      scope: query.scope,
-    });
+    return challengeRep.listChallengeComments({ challengeId, scope: query.scope })
   }
 )

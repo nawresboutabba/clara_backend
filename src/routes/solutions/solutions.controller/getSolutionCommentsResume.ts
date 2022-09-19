@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CommentScope } from "../../../models/interaction.comment";
+import { CommentScope, SolutionComment } from "../../../models/interaction.comment";
 import CommentService from "../../../services/Comment.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayCommentFilter } from "../../../utils/field-filters/comment";
@@ -22,7 +22,7 @@ export const getSolutionCommentsResume = validate({
     return res.status(403).json({ message: "not authorized" })
   }
 
-  const comments = await CommentService.getComments({
+  const comments = await SolutionComment.find({
     resource: solution,
     scope: CommentScope.GROUP,
   });

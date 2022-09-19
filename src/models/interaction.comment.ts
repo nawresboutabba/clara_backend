@@ -40,6 +40,7 @@ export interface SolutionCommentI extends GeneralCommentI {
 const solutionCommentSchema = new Schema<SolutionCommentI>({
   ...schema,
   resource: { type: Types.ObjectId, ref: "Solution" },
+  parent: { type: Schema.Types.ObjectId, ref: 'SolutionComment' },
 }, options)
 
 export const SolutionComment = InteractionBase.discriminator<SolutionCommentI>("SolutionComment", solutionCommentSchema)
@@ -51,6 +52,7 @@ export interface ChallengeCommentI extends GeneralCommentI {
 const challengeCommentSchema = new Schema<ChallengeCommentI>({
   ...schema,
   resource: { type: Types.ObjectId, ref: "Challenge" },
+  parent: { type: Schema.Types.ObjectId, ref: 'ChallengeComment' },
 }, options)
 
 export const ChallengeComment = InteractionBase.discriminator<ChallengeCommentI>("ChallengeComment", challengeCommentSchema)

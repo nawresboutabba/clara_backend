@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ChallengeComment, CommentScope } from "../../../models/interaction.comment";
+import { ChallengeComment, CommentScope, SolutionComment } from "../../../models/interaction.comment";
 import { Tag } from "../../../models/tag";
 import CommentService from "../../../services/Comment.service";
 import { validate } from "../../../utils/express/express-handler";
@@ -31,7 +31,13 @@ export const createSolutionComment = validate({
     }
   }
 
-  const parentComment = await CommentService.getComment(body.parent);
+  const parentComment = await SolutionComment.findById(body.parent)
+    .populate("author")
+    .populate("insertedBy")
+    .populate("parent")
+    .populate("tag")
+    .populate("resource");
+
   if (parentComment !== null && parentComment.parent !== null) {
     return res.status(400).json({ message: "Max comment child level is 2" })
   }
@@ -41,7 +47,7 @@ export const createSolutionComment = validate({
     return res.status(400).json({ message: "Tag does not exists" })
   }
 
-  const newComment = await ChallengeComment.create({
+  const newComment = await SolutionComment.create({
     author: user,
     insertedBy: user,
     resource: solution,

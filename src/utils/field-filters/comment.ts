@@ -11,24 +11,17 @@ export const genericCommentFilter = async (commentEntity: GeneralCommentI): Prom
     scope
   } = commentEntity
   const author = await genericUserFilter(commentEntity.author)
-  const tag = await genericTagFilter(commentEntity.tag)
-  let resp: CommentResponse = {
+  const tag = genericTagFilter(commentEntity.tag)
+
+  return {
     id: _id.toString(),
     comment,
     date,
     author,
     tag,
-    scope
-  }
-
-  if (commentEntity.parent) {
-    const parent = await genericCommentFilter(commentEntity.parent)
-    resp = { ...resp, parent }
-  }
-
-
-  return Promise.resolve({ ...resp })
-
+    scope,
+    parent: commentEntity.parent ? await genericCommentFilter(commentEntity.parent) : null
+  } as CommentResponse
 }
 
 export function genericArrayCommentFilter(comments: GeneralCommentI[]): Promise<CommentResponse[]> {

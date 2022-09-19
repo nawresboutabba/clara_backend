@@ -30,7 +30,7 @@ export const getChallengeCommentsResume = validate(
       return res.status(403).json({ message: "not authorized" })
     }
 
-    const comments = await CommentService.getComments({
+    const comments = await ChallengeComment.find({
       resource: challenge,
       scope: CommentScope.GROUP,
     });

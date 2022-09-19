@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { CommentScope } from "../../../models/interaction.comment";
-import { getComments } from "../../../repository/repository.comment";
 import { validate } from "../../../utils/express/express-handler";
-import { canViewSolution, getSolutionById } from "../solutions.repository";
+import { canViewSolution, getSolutionById, listSolutionComments } from "../solutions.repository";
 
 export const getSolutionComment = validate({
   params: z.object({ solutionId: z.string(), commentId: z.string() }),
@@ -28,8 +27,5 @@ export const getSolutionComment = validate({
     return res.status(403).json({ message: "not authorized" })
   }
 
-  // TODO: use mongodb aggregate
-  return getComments({
-    _id: params.commentId
-  })[0];
+  return (await listSolutionComments({ solutionId: params.solutionId, commentId: params.commentId }))[0]
 })

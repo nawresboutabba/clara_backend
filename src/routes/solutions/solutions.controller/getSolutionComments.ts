@@ -26,8 +26,5 @@ export const getSolutionComments = validate({
     }
   }
 
-  return getComments({
-    resource: solution,
-    scope: query.scope,
-  });
+  return SolutionRep.listSolutionComments({ solutionId, scope: query.scope })
 })

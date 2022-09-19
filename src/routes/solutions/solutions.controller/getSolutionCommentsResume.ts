@@ -7,7 +7,7 @@ import * as SolutionRep from "../solutions.repository";
 
 export const getSolutionCommentsResume = validate({
   params: z.object({ solutionId: z.string() }),
-}, async ({ user, params: { solutionId }, query }, res) => {
+}, async ({ user, params: { solutionId } }, res) => {
   const solution = await SolutionRep.getSolutionById(solutionId);
   if (!SolutionRep.canViewSolution(user, solution)) {
     return res.status(403).json({ message: "not authorized" })
@@ -22,9 +22,8 @@ export const getSolutionCommentsResume = validate({
     return res.status(403).json({ message: "not authorized" })
   }
 
-
   const comments = await CommentService.getComments({
-    solution,
+    resource: solution,
     scope: CommentScope.GROUP,
   });
 

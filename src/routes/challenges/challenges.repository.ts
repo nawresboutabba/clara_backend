@@ -1,4 +1,6 @@
-import Challenge from "../../models/situation.challenges"
+import { IntegrantStatusI } from "../../models/integrant"
+import Challenge, { ChallengeI } from "../../models/situation.challenges"
+import { UserI } from "../../models/users"
 
 export async function getChallengeActiveById(id: string) {
   const resp = await Challenge.aggregate([
@@ -88,4 +90,24 @@ export async function getChallengeActiveById(id: string) {
   ])
   return resp[0]
 
+}
+
+export async function canViewChallenge(user: UserI, challenge: ChallengeI, committee: IntegrantStatusI) {
+  if (committee.isActive) {
+    return true
+  }
+
+  if (challenge.status === "OPENED") {
+    return true
+  }
+
+  if (challenge.externalOpinion.map(externalOpinion => externalOpinion.userId).includes(user.userId)) {
+    return true
+  }
+
+  if (challenge.author.userId === user.userId) {
+    return true
+  }
+
+  return false
 }

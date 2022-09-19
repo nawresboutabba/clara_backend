@@ -58,6 +58,6 @@ export const updateChallenge = validate(
       .populate("areasAvailable")
       .populate("departmentAffected");
 
-    return genericChallengeFilter(updatedChallenge);
+    return res.status(201).json(await genericChallengeFilter(updatedChallenge));
   }
 );

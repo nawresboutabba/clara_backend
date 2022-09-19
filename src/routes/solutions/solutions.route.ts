@@ -10,6 +10,7 @@ solutionsRouter
   .use(oldRoute)
   .get("/solution", controller.getSolutions)
   .get("/solution/:solutionId", controller.getSolution)
+  .delete("/solution/:solutionId", controller.deleteSolution)
   .post("/solution/:solutionId/author", controller.changeSolutionAuthor)
   .post("/solution/:solutionId/leave", controller.leaveSolution)
   .get("/solution/:solutionId/comment", controller.getSolutionComments)

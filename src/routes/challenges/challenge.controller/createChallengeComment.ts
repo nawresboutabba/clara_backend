@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ChallengeComment, CommentScope } from "../../../models/interaction.comment";
 import { Tag } from "../../../models/tag";
 import CommentService from "../../../services/Comment.service";
-import { isCommitteMember } from "../../../utils/acl/function.is_committe_member";
+import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 
 import { validate } from "../../../utils/express/express-handler";
 import { genericCommentFilter } from "../../../utils/field-filters/comment";
@@ -19,7 +19,7 @@ export const createChallengeComment = validate(
     })
   },
   async ({ user, params: { challengeId }, body }, res) => {
-    const committee = await isCommitteMember(user);
+    const committee = await isCommitteeMember(user);
 
     const challenge = await challengeRep.getChallengeActiveById(challengeId)
     if (!challenge) {
@@ -53,6 +53,6 @@ export const createChallengeComment = validate(
       tag: parentComment ? parentComment.tag : tag,
     })
 
-    return genericCommentFilter(newComment)
+    return res.status(201).json(await genericCommentFilter(newComment));
   }
 )

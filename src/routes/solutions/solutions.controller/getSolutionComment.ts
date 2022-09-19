@@ -15,15 +15,17 @@ export const getSolutionComment = validate({
     return res.status(403).json({ message: "not authorized" })
   }
 
-  if (query.scope === CommentScope.GROUP) {
-    const isInSolution = [
-      ...solution.coauthor.map(coauthor => coauthor.userId),
+  if (
+    query.scope === CommentScope.GROUP &&
+    [
       solution.author.userId,
-      ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
+      solution.coauthor.map(coauthor => coauthor.userId),
+      solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
     ]
-    if (!isInSolution.includes(user.userId)) {
-      return res.status(403).json({ message: "not authorized" })
-    }
+      .flat()
+      .includes(user.userId) === false
+  ) {
+    return res.status(403).json({ message: "not authorized" })
   }
 
   // TODO: use mongodb aggregate

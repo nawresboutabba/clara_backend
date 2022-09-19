@@ -27,7 +27,7 @@ export const getSolutionComments = validate({
   }
 
   return getComments({
-    solution,
+    resource: solution,
     scope: query.scope,
   });
 })

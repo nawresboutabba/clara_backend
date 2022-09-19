@@ -12,8 +12,8 @@ export const deleteChallenge = validate(
       challengeId: params.challengeId,
     }).populate("author");
 
-    if (challenge.author.userId !== user.userId) {
-      return res.status(401).send();
+    if (challenge.status !== "DRAFT" || challenge.author.userId !== user.userId) {
+      return res.status(403).json({ message: "not authorized" })
     }
 
     if (challenge.deletedAt) {
@@ -24,6 +24,6 @@ export const deleteChallenge = validate(
 
     await challenge.save();
 
-    return genericChallengeFilter(challenge);
+    return res.status(201).json(await genericChallengeFilter(challenge));
   }
 );

@@ -1,23 +1,23 @@
 import * as express from "express";
-const router = express.Router();
-import authentication from "../../middlewares/authentication";
-import { acl } from "../../middlewares/acl";
 import { NextFunction } from 'express';
-import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
-import ChallengeController from '../../controller/challenge'
-import { CHALLENGE_TYPE, COMMENT_LEVEL, ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
-import AreaService from "../../services/Area.service";
-import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
-import GroupValidatorService from "../../services/GroupValidator.service";
+import { body, check, validationResult } from "express-validator";
 import * as _ from 'lodash';
-import toISOData, { getCurrentDate } from "../../utils/general/date";
-import TeamService from "../../services/Team.service";
-import ConfigurationService from "../../services/Configuration.service";
-import CommentService from "../../services/Comment.service";
-import ChallengeService from "../../services/Challenge.service";
-import { validationResult, body, check } from "express-validator";
-import { tagsBodyCheck } from "../../utils/sanitization/tagsValidArray.check";
+import { ERRORS, PARTICIPATION_MODE, RESOURCE, RULES, TAG_ORIGIN, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import ChallengeController from '../../controller/challenge';
+import { acl } from "../../middlewares/acl";
+import authentication from "../../middlewares/authentication";
+import { RequestMiddleware, ResponseMiddleware } from '../../middlewares/middlewares.interface';
+import { CHALLENGE_TYPE } from "../../models/situation.challenges";
 import { Tag } from "../../models/tag";
+import AreaService from "../../services/Area.service";
+import ChallengeService from "../../services/Challenge.service";
+import ConfigurationService from "../../services/Configuration.service";
+import GroupValidatorService from "../../services/GroupValidator.service";
+import TeamService from "../../services/Team.service";
+import toISOData, { getCurrentDate } from "../../utils/general/date";
+import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import { tagsBodyCheck } from "../../utils/sanitization/tagsValidArray.check";
+const router = express.Router();
 
 router.get("/challenge/default-configuration", [
 ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {

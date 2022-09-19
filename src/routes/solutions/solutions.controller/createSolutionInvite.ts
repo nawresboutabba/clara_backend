@@ -76,6 +76,6 @@ export const createSolutionInvite = validate(
       invitation: createdInvitation,
     });
 
-    return genericSolutionInvitationFilter(createdInvitation);
+    return res.status(201).json(await genericSolutionInvitationFilter(createdInvitation));
   }
 );

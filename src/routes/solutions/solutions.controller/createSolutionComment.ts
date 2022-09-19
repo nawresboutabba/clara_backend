@@ -51,5 +51,5 @@ export const createSolutionComment = validate({
     tag: parentComment ? parentComment.tag : tag,
   })
 
-  return genericCommentFilter(newComment)
+  return res.status(201).json(await genericCommentFilter(newComment));
 })

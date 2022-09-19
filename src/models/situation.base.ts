@@ -62,10 +62,10 @@ export interface SituationBaseI {
     */
   description: string,
   /**
-   * Flag that indicate if a solution is active.
-   * When a challenge is delete, the flag is false
+   * Flag that indicate if a resource is active.
    */
   active: boolean,
+  deletedAt?: Date,
   /**
    * Banner image
    */
@@ -89,7 +89,7 @@ export interface SituationBaseI {
   /**
    * Complementary files to challenge, solution or problem
    */
-  fileComplementary:  Array<string>,
+  fileComplementary: Array<string>,
   /**
    * Tags relationated
    */
@@ -292,9 +292,9 @@ const SituationModel = model('SituationBase', situationBase);
 
 
 SituationModel.watch().
-/**
-   * @TODO add document audit
-   */
+  /**
+     * @TODO add document audit
+     */
   on('change', data => {
     try {
       const log = _.omit(data, ['_id', '__v'])

@@ -1,12 +1,10 @@
 import { Query, Post, Controller, Route, Body, Delete, Path, Patch, Get, Inject, Put } from 'tsoa'
 import { ChallengeI, CHALLENGE_TYPE } from '../../models/situation.challenges';
 import {
-  newChallenge,
-  getChallenge,
+
+
   updateChallengePartially,
-  deleteChallenge, listChallenges,
-  newChallengeComment,
-  newReaction,
+
   newChallengeProposal,
   getChallengeProposal,
   acceptChallengeProposal,
@@ -47,7 +45,7 @@ export interface ChallengeBody extends SituationBody {
    */
   group_validator: string,
   finalization: Date,
-  default_scope:boolean
+  default_scope: boolean
 }
 export interface LightChallengeResponse {
   challenge_id: string;
@@ -121,34 +119,9 @@ export default class ChallengeController extends Controller {
     return newChallengeProposal(body, user, utils)
   }
 
-  /**
-   * New Challenge method
-   * @param body Challenge definition according to ChallengeBody
-   * @param user User that insert the challenge
-   * @returns 
-   */
-  @Post()
-  public async newChallenge(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
-    return newChallenge(body, user, utils)
-  }
-
   @Post(':challengeId/solution')
   public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
     return createSolution(user, utils, challenge)
-  }
-  /**
-   * Challenge listing
-   * @param query 
-   * @returns 
-   */
-  @Get()
-  public async listChallenges(@Query() query: any, @Inject() user: UserI): Promise<LightChallengeResponse[]> {
-    return listChallenges(query, user)
-  }
-
-  @Get(':challengeId')
-  public async getChallenge(@Path('challengeId') challengeId: string, @Inject() challenge: ChallengeI, @Inject() user: UserI): Promise<ChallengeResponse> {
-    return getChallenge(challenge, user)
   }
 
   /**
@@ -167,40 +140,12 @@ export default class ChallengeController extends Controller {
   }
 
   @Patch(':challengeId/solution/:solutionId')
-  public async updateSolution(@Path('challengeId') challengeId: string,@Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any):Promise<any> {
+  public async updateSolution(@Path('challengeId') challengeId: string, @Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any): Promise<any> {
     return updateSolution(body, resources, user, utils)
   }
-    
 
   @Patch(':challengeId')
   public async updateChallengePartially(@Body() body: ChallengeBody, @Path('challengeId') challengeId: string): Promise<ChallengeI> {
     return updateChallengePartially(body, challengeId)
-  }
-  @Delete(':challengeId')
-  public async deleteChallenge(challengeId: string): Promise<boolean> {
-    return deleteChallenge(challengeId)
-  }
-  /**
-   * Challenge comment operation
-   * @param challengeId Challenge
-   * @param comment comment
-   * @param user user that insert the comment
-   * @returns 
-   */
-  @Post('/:challengeId/comment')
-  public async newComment(@Path('challengeId') challengeId: string, @Body() comment: CommentBody, @Inject() user: UserI, @Inject() utils: any): Promise<CommentResponse> {
-    return newChallengeComment(challengeId, comment, user, utils)
-  }
-  
-  /**
-   * New Reacion
-   * @param challengeId 
-   * @param reaction 
-   * @param user 
-   * @returns 
-   */
-  @Post('/:challengeId/reaction')
-  public async newReaction(@Path('challengeId') challengeId: string, @Body() reaction: ReactionBody, @Inject() user: UserI): Promise<ReactionResponse> {
-    return newReaction(challengeId, reaction, user)
   }
 }

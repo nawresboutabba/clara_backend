@@ -3,14 +3,14 @@ import { InteractionBody, InteractionResponse } from "../interaction";
 
 export interface CommentBody extends InteractionBody {
     comment: string,
-    version: string,
+    // version: string,
     scope: string,
 }
 
 export interface CommentResponse extends InteractionResponse {
-    comment_id: string
+    id: string
     comment: string,
-    version: string,
+    // version: string,
     tag: TagSerialized,
     scope: string,
     parent?: CommentResponse

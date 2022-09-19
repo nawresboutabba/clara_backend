@@ -38,7 +38,7 @@ import { interactionResume } from "../utils/general/interaction-resume";
 import { SolutionI } from "../models/situation.solutions";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
-import { CommentI } from "../models/interaction.comment";
+import { GeneralCommentI } from "../models/interaction.comment";
 
 export const newChallenge = async (body: ChallengeBody, user: UserI, utils: any): Promise<ChallengeResponse> => {
   try {
@@ -139,16 +139,6 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
   }
 }
 
-export const getChallenge = async (challenge: ChallengeI, user: UserI): Promise<ChallengeResponse> => {
-  try {
-    logVisit(user, challenge)
-    const resp = await genericChallengeFilter(challenge);
-    return resp
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
-
 export const updateChallengePartially = async (body: ChallengeBody, challengeId: string): Promise<ChallengeI> => {
   try {
     const challengeChanges = _.mapKeys(body, (v: any, k: any) => _.camelCase(k));
@@ -158,16 +148,6 @@ export const updateChallengePartially = async (body: ChallengeBody, challengeId:
     return Promise.reject(error)
   }
 }
-
-export const deleteChallenge = async (challengeId: string): Promise<boolean> => {
-  try {
-    await ChallengeService.deactivateChallenge(challengeId);
-    return true
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
-
 
 export async function listChallenges(query: QueryChallengeForm, user: UserI) {
   try {
@@ -214,78 +194,38 @@ export const listChallengeProposal = async (query: QueryChallengeForm): Promise<
   }
 }
 
-export const newChallengeComment = async (challengeId: string, commentBody: CommentBody, user: UserI, utils: any): Promise<CommentResponse> => {
-  try {
-    let insertedBy: UserI
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
-    const author = await UserService.getUserActiveByUserId(commentBody.author)
+// export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
+//   try {
+//     const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
+//     const author = await UserService.getUserActiveByUserId(user.userId)
 
-    if (!(challenge && author)) {
-      throw new RepositoryError(
-        ERRORS.REPOSITORY.CHALLENGE_OR_AUTHOR_NOT_VALID,
-        HTTP_RESPONSE._500
-      )
-    }
+//     if (!(isReaction(reaction.type))) {
+//       throw new RepositoryError(
+//         ERRORS.REPOSITORY.REACTION_INVALID,
+//         HTTP_RESPONSE._500
+//       )
+//     }
 
-    if (commentBody.author == user.userId) {
-      insertedBy = author
-    } else {
-      insertedBy = await UserService.getUserActiveByUserId(user.userId)
-    }
+//     /**
+//        * For reactions insertedBy and author is the same user
+//        */
 
-    const commentChallenge: CommentI = {
-      commentId: nanoid(),
-      insertedBy,
-      author,
-      type: INTERACTION.COMMENT,
-      scope: commentBody.scope,
-      comment: commentBody.comment,
-      tag: utils.tagComment,
-      version: commentBody.version,
-      date: getCurrentDate(),
-      challenge,
-    }
+//     const newReaction = {
+//       insertedBy: author,
+//       author,
+//       challenge,
+//       type: reaction.type,
+//       date: new Date()
+//     }
 
-    const comment = await newComment(commentChallenge)
-    const resp = await genericCommentFilter(comment)
-    return resp
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
+//     const reactionEntity = await ReactionService.newReaction(newReaction)
 
-export const newReaction = async (challengeId: string, reaction: ReactionBody, user: UserI): Promise<ReactionResponse> => {
-  try {
-    const challenge = await ChallengeService.getChallengeActiveById(challengeId, user)
-    const author = await UserService.getUserActiveByUserId(user.userId)
-
-    if (!(isReaction(reaction.type))) {
-      throw new RepositoryError(
-        ERRORS.REPOSITORY.REACTION_INVALID,
-        HTTP_RESPONSE._500
-      )
-    }
-
-    /**
-       * For reactions insertedBy and author is the same user
-       */
-
-    const newReaction = {
-      insertedBy: author,
-      author,
-      challenge,
-      type: reaction.type,
-      date: new Date()
-    }
-
-    const reactionEntity = await ReactionService.newReaction(newReaction)
-
-    const resp = genericReactionFilter(reactionEntity)
-    return resp
-  } catch (error) {
-    return Promise.reject(error)
-  }
-}
+//     const resp = genericReactionFilter(reactionEntity)
+//     return resp
+//   } catch (error) {
+//     return Promise.reject(error)
+//   }
+// }
 
 export const getChallengeProposal = async (proposalId: string): Promise<any> => {
   try {

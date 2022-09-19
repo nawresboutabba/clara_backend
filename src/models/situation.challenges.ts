@@ -47,7 +47,6 @@ export interface ChallengeI extends SituationBaseI {
 export const challengeModel = {
   type: String,
   defaultScope: Boolean,
-  challengeId: String,
   isStrategic: Boolean,
   finalization: Date,
   price: Number,

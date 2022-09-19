@@ -15,7 +15,7 @@ import {
 import { RESOURCE } from "../../constants";
 import { BaremoI } from "../../models/baremo";
 import { ConfigurationBaseI } from "../../models/configuration.default";
-import { CommentI } from "../../models/interaction.comment";
+import { SolutionCommentI } from "../../models/interaction.comment";
 import { ChallengeI } from "../../models/situation.challenges";
 import { SolutionI } from "../../models/situation.solutions";
 import { UserI } from "../../models/users";
@@ -225,7 +225,7 @@ export default class SolutionController extends Controller {
     @Query() query: any,
     @Inject() solution: SolutionI,
     @Inject() user: UserI
-  ): Promise<CommentI[]> {
+  ): Promise<SolutionCommentI[]> {
     return getSolutionComments(solution, query, user);
   }
 
@@ -242,7 +242,7 @@ export default class SolutionController extends Controller {
     @Inject() solution: SolutionI,
     @Inject() user: UserI,
     @Inject() utils: any
-  ): Promise<CommentI[]> {
+  ): Promise<SolutionCommentI[]> {
     return getThread(utils);
   }
   /**

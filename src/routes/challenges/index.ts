@@ -291,21 +291,21 @@ router.post(
     try {
       await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_CHALLENGE)
 
-      const challengeController = new ChallengeController();
-      if (req.url == URLS.CHALLENGE.CHALLENGE) {
-        const challenge = await challengeController.newChallenge(req.body, req.user, req.utils)
-        res
-          .status(200)
-          .json(challenge)
-          .send();
-      } else if (req.url == URLS.CHALLENGE.CHALLENGE_PROPOSE) {
-        const challenge = await challengeController.newChallengeProposal(req.body, req.user, req.utils)
+      // const challengeController = new ChallengeController();
+      // if (req.url == URLS.CHALLENGE.CHALLENGE) {
+      //   const challenge = await challengeController.newChallenge(req.body, req.user, req.utils)
+      //   res
+      //     .status(200)
+      //     .json(challenge)
+      //     .send();
+      // } else if (req.url == URLS.CHALLENGE.CHALLENGE_PROPOSE) {
+      //   const challenge = await challengeController.newChallengeProposal(req.body, req.user, req.utils)
 
-        res
-          .status(200)
-          .json(challenge)
-          .send();
-      }
+      //   res
+      //     .status(200)
+      //     .json(challenge)
+      //     .send();
+      // }
     } catch (error) {
       next(error);
     }
@@ -495,94 +495,27 @@ router.patch(
     } catch (error) {
       next(error)
     }
-  })
-
-
-
-
-router.post(URLS.CHALLENGE.CHALLENGE_CHALLENGEID_COMMENT, [
-  authentication,
-  acl(
-    RULES.CAN_VIEW_CHALLENGE
-  ),
-  body("author", "author does not valid").custom(async (value, { req }) => {
-    try {
-      if (value != req.user.userId) {
-        return Promise.reject()
-      }
-      return Promise.resolve()
-    } catch (error) {
-      return Promise.reject()
-    }
-  }),
-  body('comment').isString().trim().escape(),
-  body('version', 'version can not be empty').notEmpty(),
-  body('scope').isIn([COMMENT_LEVEL.PUBLIC]),
-  body('parent').custom(async (value, { req }) => {
-    try {
-      if (value) {
-        const parentComment = await CommentService.getComment(value)
-        if (!parentComment) {
-          return Promise.reject("parent not found")
-        }
-        if (parentComment.parent) {
-          return Promise.reject("more that 2 levels of comments")
-        }
-        req.utils = { ...req.utils, parentComment }
-      }
-      return Promise.resolve()
-    } catch (error) {
-      return Promise.reject("parent validation")
-    }
-  }),
-  body('tag', 'tag does not valid').custom(async (value, { req }) => {
-    try {
-      const tag = await Tag.findById(value)
-      if (!tag) {
-        return Promise.reject('tag does not exist')
-      }
-      if (req.utils?.parentComment) {
-        if (req.utils.parentComment.tag.tagId != value) {
-          return Promise.reject('tag parent and child does not same')
-        }
-      }
-      req.utils = { ...req.utils, tagComment: tag }
-      return Promise.resolve()
-    } catch (error) {
-      return Promise.reject(error)
-    }
-  })
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-    const challengeController = new ChallengeController()
-    // @TODO add comments rules
-    const resp = await challengeController.newComment(req.params.challengeId, req.body, req.user, req.utils)
-    res
-      .json(resp)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
   }
-})
+)
 
-router.post('/challenge/:challengeId/reaction', [
-  authentication,
-  acl(
-    RULES.CAN_VIEW_CHALLENGE
-  )
-], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-  try {
-    const challengeController = new ChallengeController()
-    const resp = await challengeController.newReaction(req.params.challengeId, req.body, req.user)
-    res
-      .json(resp)
-      .status(200)
-      .send()
-  } catch (error) {
-    next(error)
-  }
-})
+
+// router.post('/challenge/:challengeId/reaction', [
+//   authentication,
+//   acl(
+//     RULES.CAN_VIEW_CHALLENGE
+//   )
+// ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
+//   try {
+//     const challengeController = new ChallengeController()
+//     const resp = await challengeController.newReaction(req.params.challengeId, req.body, req.user)
+//     res
+//       .json(resp)
+//       .status(200)
+//       .send()
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 const challengeRouter = router
 export default challengeRouter;

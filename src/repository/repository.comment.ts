@@ -1,4 +1,4 @@
-import { CommentI } from "../models/interaction.comment";
+import { GeneralCommentI } from "../models/interaction.comment";
 import CommentService from "../services/Comment.service";
 import {
   genericArrayCommentFilter,
@@ -10,7 +10,7 @@ import {
  * @param comment Comment
  * @returns
  */
-export const newComment = async (comment: CommentI): Promise<CommentI> => {
+export const newComment = async (comment: GeneralCommentI): Promise<GeneralCommentI> => {
   try {
     const resp = await CommentService.newComment(comment);
     return Promise.resolve(resp);
@@ -19,7 +19,7 @@ export const newComment = async (comment: CommentI): Promise<CommentI> => {
   }
 };
 
-export const getThreadComments = async (commentId: string): Promise<any> => {
+export async function getThreadComments(commentId: string) {
   try {
     const comment = await CommentService.getComment(commentId);
 
@@ -28,9 +28,9 @@ export const getThreadComments = async (commentId: string): Promise<any> => {
   } catch (error) {
     return Promise.reject(error);
   }
-};
+}
 
-export const getComments = async (filter: any): Promise<any> => {
+export async function getComments(filter: any) {
   try {
     const parents = await CommentService.getParentsComments(filter);
 
@@ -42,7 +42,7 @@ export const getComments = async (filter: any): Promise<any> => {
 
     const complete = parentsFiltered.map((parent) => {
       const children = allChildrenFiltered.filter(
-        (child) => child?.parent?.comment_id == parent.comment_id
+        (child) => child?.parent?.id == parent.id
       );
       return { ...parent, children };
     });
@@ -51,9 +51,9 @@ export const getComments = async (filter: any): Promise<any> => {
   } catch (error) {
     return Promise.reject(error);
   }
-};
+}
 
 export async function getCommentsWithoutRelation(filter: any) {
   const comments = await CommentService.getComments(filter);
-  return genericArrayCommentFilter(comments as unknown as CommentI[]);
+  return genericArrayCommentFilter(comments as unknown as GeneralCommentI[]);
 }

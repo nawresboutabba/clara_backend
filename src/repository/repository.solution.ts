@@ -40,7 +40,7 @@ import {
 } from "./repository.comment";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import { genericCommentFilter } from "../utils/field-filters/comment";
-import { CommentI } from "../models/interaction.comment";
+import { CommentScope, SolutionCommentI, GeneralCommentI } from "../models/interaction.comment";
 import BaremoStateMachine from "../utils/state-machine/state-machine.baremo";
 import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
 import BaremoService from "../services/Baremo.service";
@@ -58,6 +58,7 @@ import {
   genericSolutionInvitationFilter,
 } from "../utils/field-filters/invitation";
 import { sendEmail } from "./repository.mailing";
+import { TagI } from "../models/tag";
 
 /**
  * This interface does not exactly correspond to a model,
@@ -243,22 +244,15 @@ export const newSolutionComment = async (
 ): Promise<CommentResponse> => {
   try {
     const parent = utils.parentComment;
-    let solutionComment: CommentI = {
-      commentId: nanoid(),
+    const com = await newComment({
       insertedBy: user,
       author: user,
-      type: INTERACTION.COMMENT,
-      tag: utils.tagComment,
-      scope: comment.scope,
-      version: comment.version,
+      tag: utils.tagComment as TagI,
+      scope: comment.scope as CommentScope,
       comment: comment.comment,
-      date: getCurrentDate(),
-      solution,
-    };
-    if (parent) {
-      solutionComment = { ...solutionComment, parent };
-    }
-    const com = await newComment(solutionComment);
+      resource: solution,
+      parent: parent as GeneralCommentI,
+    } as GeneralCommentI);
     const resp = await genericCommentFilter(com);
     return resp;
   } catch (error) {

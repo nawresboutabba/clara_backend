@@ -115,7 +115,11 @@ type AggregatedData = {
 export async function listSolutionComments({ solutionId, scope, commentId }: { solutionId: string; scope?: CommentScope; commentId?: string }) {
   const aggregatedData: AggregatedData[] = await SolutionComment.aggregate([
     {
-      $match: removeEmpty({ resource: new Types.ObjectId(solutionId), scope, parent: null, _id: commentId ? new Types.ObjectId(commentId) : null })
+      $match: removeEmpty({
+        resource: Types.ObjectId.isValid(solutionId) ? new Types.ObjectId(solutionId) : solutionId,
+        scope, parent: null,
+        _id: commentId ? new Types.ObjectId(commentId) : null
+      })
     },
     {
       $lookup: {

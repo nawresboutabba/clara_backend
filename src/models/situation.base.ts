@@ -189,68 +189,24 @@ export interface SituationBaseI {
 }
 
 export const situationBaseModel = {
-  insertedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  updatedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  coauthor: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  externalOpinion: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  team: {
-    type: Schema.Types.ObjectId,
-    ref: 'Team'
-  },
-  created: {
-    type: Date,
-    default: Date.now,
-  },
+  insertedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  author: { type: Schema.Types.ObjectId, ref: 'User' },
+  coauthor: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  externalOpinion: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  team: { type: Schema.Types.ObjectId, ref: 'Team' },
+  created: { type: Date, default: Date.now },
   updated: Date,
-  title: {
-    type: String,
-    required: false
-  },
+  title: { type: String, required: false },
   description: String,
-  active: {
-    type: Boolean,
-    default: true,
-  },
+  active: { type: Boolean, default: true },
   bannerImage: String,
-  images: [
-    {
-      type: String,
-    },
-  ],
-  departmentAffected: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Area'
-  }],
-  groupValidator: {
-    type: Schema.Types.ObjectId,
-    ref: 'GroupValidator'
-  },
+  images: [{ type: String }],
+  departmentAffected: [{ type: Schema.Types.ObjectId, ref: 'Area' }],
+  groupValidator: { type: Schema.Types.ObjectId, ref: 'GroupValidator' },
   status: String,
-  fileComplementary: [
-    {
-      type: String,
-    },
-  ],
-  tags: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Tag'
-  }],
+  fileComplementary: [{ type: String }],
+  tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
   /**
    * ---------------------------------
    * Configuration Section

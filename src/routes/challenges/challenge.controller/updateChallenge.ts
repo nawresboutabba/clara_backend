@@ -38,10 +38,8 @@ export const updateChallenge = validate(
     const tags = await TagsRep.getTagsById(body.tags);
     const departmentAffected = await AreaService.getAreasById(body.areas)
 
-    const updatedChallenge = await Challenge.findOneAndUpdate(
-      {
-        challengeId: params.challengeId,
-      },
+    const updatedChallenge = await Challenge.findByIdAndUpdate(
+      params.challengeId,
       removeEmpty({
         title: body.title,
         description: body.description,

@@ -15,6 +15,7 @@ export const getChallenge = validate(
       .populate("author")
       .populate("insertedBy")
       .populate("areasAvailable")
+      .populate("tags")
       .populate("departmentAffected");
 
     const committee = await isCommitteeMember(user);

@@ -10,16 +10,18 @@ export const getChallenges = validate(
   {
     query: z
       .object({
-        title: z.string(),
-        tags: z.array(z.string()),
-        departmentAffected: z.array(z.string()),
-        init: z.number(),
-        offset: z.number(),
-        sort: z.object({ title: sortSchema, created: sortSchema }).partial(),
-        participationMode: z.string(),
-        type: z.string(),
-      })
-      .partial(),
+        title: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        departmentAffected: z.array(z.string()).default([]),
+        init: z.number().default(0),
+        offset: z.number().default(10),
+        sort: z
+          .object({ title: sortSchema, created: sortSchema })
+          .partial()
+          .default({ created: -1 }),
+        participationMode: z.string().optional(),
+        type: z.string().optional(),
+      }),
   },
   async ({ user, query }) => {
     /**
@@ -55,9 +57,9 @@ export const getChallenges = validate(
             deleteAt: { $exists: false },
           },
           removeEmpty({
-            tags: query?.tags,
             type: query?.type,
-            departmentAffected: query?.departmentAffected,
+            tags: query.tags.length > 0 ? { $in: query.tags } : null,
+            departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
           }),
           query.title && {
             title: { $regex: `.*${query.title}.*`, $options: "i" },

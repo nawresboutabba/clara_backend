@@ -139,12 +139,14 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     challenge.groupValidator
   );
   const tags = genericArrayTagsFilter(challenge.tags);
+  const author = await genericUserFilter(challenge.author);
 
   return {
     id: _id,
     created,
     status,
     title,
+    author,
     description,
     active,
     banner_image,

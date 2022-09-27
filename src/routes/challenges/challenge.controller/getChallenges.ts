@@ -1,6 +1,7 @@
 import { z } from "zod";
 import Challenge, { CHALLENGE_STATUS } from "../../../models/situation.challenges";
 import Solution from "../../../models/situation.solutions";
+import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";
 import { removeEmpty } from "../../../utils/general/remove-empty";
@@ -12,6 +13,7 @@ export const getChallenges = validate(
       .object({
         title: z.string().optional(),
         tags: z.array(z.string()).default([]),
+        status: z.nativeEnum(CHALLENGE_STATUS).optional(),
         departmentAffected: z.array(z.string()).default([]),
         init: z.number().default(0),
         offset: z.number().default(10),
@@ -48,32 +50,38 @@ export const getChallenges = validate(
       );
 
       return genericArrayChallengeFilter(challenges);
-    } else {
-      const challenges = await Challenge.find(
-        Object.assign(
-          {
-            active: true,
-            status: CHALLENGE_STATUS.OPENED,
-            deleteAt: { $exists: false },
-          },
-          removeEmpty({
-            type: query?.type,
-            tags: query.tags.length > 0 ? { $in: query.tags } : null,
-            departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
-          }),
-          query.title && {
-            title: { $regex: `.*${query.title}.*`, $options: "i" },
-          }
-        )
-        // participationModeAvailable: { $in: query.participationMode },
-      )
-        .populate("tags")
-        .populate("departmentAffected")
-        .skip(query.init)
-        .limit(query.offset)
-        .sort(query.sort);
-
-      return genericArrayChallengeFilter(challenges);
     }
+
+    const committee = await isCommitteeMember(user);
+
+    const status = committee.isActive ? query.status : CHALLENGE_STATUS.OPENED
+
+    const challenges = await Challenge.find(
+      Object.assign(
+        {
+          active: true,
+          deleteAt: { $exists: false },
+        },
+        removeEmpty({
+          type: query?.type,
+          tags: query.tags.length > 0 ? { $in: query.tags } : null,
+          departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
+          status,
+        }),
+        query.title && {
+          title: { $regex: `.*${query.title}.*`, $options: "i" },
+        }
+      )
+      // participationModeAvailable: { $in: query.participationMode },
+    )
+      .populate("tags")
+      .populate("departmentAffected")
+      .populate("author")
+      .populate("coauthor")
+      .skip(query.init)
+      .limit(query.offset)
+      .sort(query.sort);
+
+    return genericArrayChallengeFilter(challenges);
   }
 );

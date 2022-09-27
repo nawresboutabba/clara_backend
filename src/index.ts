@@ -27,6 +27,7 @@ import { errorHandler } from "./handle-error/middleware.error-handler";
 import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
 import { invitationRouter } from "./routes/invitation/invitations.route";
+import { baremaRouter } from "./routes/barema/barema.route";
 
 mongoose
   .connect(
@@ -53,6 +54,7 @@ app.use(solutionsRouter);
 app.use(challengeRouter);
 app.use(invitationRouter);
 app.use(tagsRouter);
+app.use(baremaRouter);
 app.use("/", companyRouter);
 app.use("/", areaRouter);
 app.use("/", groupValidatorRouter);

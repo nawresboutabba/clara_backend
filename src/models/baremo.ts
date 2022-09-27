@@ -3,17 +3,17 @@ import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
 export interface BaremoI {
-    baremoId: string,
-    user: UserI
-    solution: SolutionI,
-    created: Date,
-    updated: Date,
-    status: string,
-    type: 'SPECIALIST_INTERVENTION' | 'GROUP_VALIDATOR',
-    comment: string
+  baremoId: string,
+  user: UserI
+  solution: SolutionI,
+  created: Date,
+  updated: Date,
+  status: string,
+  type: 'SPECIALIST_INTERVENTION' | 'GROUP_VALIDATOR',
+  comment: string
 }
 
-const baremo = new Schema({
+const baremo = new Schema<BaremoI>({
   baremoId: String,
   user: {
     type: Schema.Types.ObjectId,
@@ -21,7 +21,7 @@ const baremo = new Schema({
   },
   solution: {
     type: Schema.Types.ObjectId,
-    ref: 'Solution' 
+    ref: 'Solution'
   },
   created: Date,
   updated: Date,
@@ -31,5 +31,5 @@ const baremo = new Schema({
 })
 
 
-
-export default model('Baremo', baremo);
+export const Barema = model<BaremoI>('Baremo', baremo);
+export default Barema;

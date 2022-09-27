@@ -1,13 +1,19 @@
 import { Schema } from "mongoose";
-import { options } from "./situation.base";
-import SituationBase, { SituationBaseI } from "./situation.base";
-import { CHALLENGE_STATUS } from "../constants";
+import SituationBase, { SituationBaseI, options } from "./situation.base";
 
 export const CHALLENGE_TYPE = {
   GENERIC: "GENERIC",
   PARTICULAR: "PARTICULAR",
 };
 export type CHALLENGE_TYPE = keyof typeof CHALLENGE_TYPE;
+
+export const CHALLENGE_STATUS = {
+  DRAFT: "DRAFT",
+  PROPOSED: "PROPOSED",
+  OPENED: "OPENED",
+  CLOSED: "CLOSED",
+};
+export type CHALLENGE_STATUS = keyof typeof CHALLENGE_STATUS;
 
 export interface ChallengeI extends SituationBaseI {
   /**
@@ -21,10 +27,6 @@ export interface ChallengeI extends SituationBaseI {
    * True or False. Work in combination with canChooseScope
    */
   defaultScope: boolean;
-  /**
-   * Id that uniquely identifies a challenge
-   */
-  challengeId: string;
   /**
    * Situation title
    */
@@ -47,7 +49,6 @@ export interface ChallengeI extends SituationBaseI {
 export const challengeModel = {
   type: String,
   defaultScope: Boolean,
-  challengeId: String,
   isStrategic: Boolean,
   finalization: Date,
   price: Number,

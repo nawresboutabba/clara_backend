@@ -1,9 +1,9 @@
-import { CHALLENGE_TYPE } from "../../constants";
 import {
   LightSolutionResponse,
   SolutionResponse,
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
+import { CHALLENGE_TYPE } from "../../models/situation.challenges";
 import { SolutionI } from "../../models/situation.solutions";
 import {
   getArrayImageSignedUrl,
@@ -147,7 +147,7 @@ export async function lightSolutionFilter(
 
   const challenge = {
     type: solution.challenge.type,
-    challenge_id: solution.challenge.challengeId,
+    id: solution.challenge._id,
     title: solution.challenge.title,
     description: solution.challenge.description,
     finalization: solution.challenge.finalization,

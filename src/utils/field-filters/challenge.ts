@@ -22,7 +22,7 @@ import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
 
 export async function genericChallengeFilter(challenge: ChallengeI) {
   const {
-    challengeId,
+    _id,
     created,
     status,
     updated,
@@ -68,7 +68,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   );
   const tags = genericArrayTagsFilter(challenge.tags);
   return {
-    challenge_id: challengeId,
+    id: _id,
     inserted_by,
     author,
     created,
@@ -115,7 +115,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
 
 export async function lightChallengeFilter(challenge: ChallengeI) {
   const {
-    challengeId,
+    _id,
     created,
     status,
     title,
@@ -139,12 +139,14 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     challenge.groupValidator
   );
   const tags = genericArrayTagsFilter(challenge.tags);
+  const author = await genericUserFilter(challenge.author);
 
   return {
-    challenge_id: challengeId,
+    id: _id,
     created,
     status,
     title,
+    author,
     description,
     active,
     banner_image,

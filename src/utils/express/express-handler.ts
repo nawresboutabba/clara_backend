@@ -50,7 +50,7 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
         }
         return result;
       } catch (err) {
-        next(err);
+        return next(err);
       }
     }
 
@@ -66,9 +66,6 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
       return next(paramsParsed.error);
     }
 
-    // schema.body?.parse(req.body);
-    // schema.query?.parse(req.query);
-    // schema.params?.parse(req.params);
     return next(new Error("zod-express-guard could not validate this request"));
   };
 };

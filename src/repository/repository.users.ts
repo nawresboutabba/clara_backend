@@ -15,7 +15,7 @@ import RepositoryError from "../handle-error/error.repository";
 import { genericUserFilter } from "../utils/field-filters/user";
 import SolutionService from "../services/Solution.service";
 import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
-import { isCommitteMember } from "../utils/acl/function.is_committe_member";
+import { isCommitteeMember } from "../utils/acl/function.is_committe_member";
 import * as _ from "lodash";
 import InvitationService from "../services/Invitation.service";
 import { genericArraySolutionInvitationFilter } from "../utils/field-filters/invitation";
@@ -178,7 +178,7 @@ export const getUserInformation = async (
     const user: UserI = await UserService.getUserActiveByUserId(
       userInformation.userId
     );
-    const status = await isCommitteMember(user);
+    const status = await isCommitteeMember(user);
     const resp: any = await genericUserFilter(user);
 
     resp.is_committe_member = status.isActive;
@@ -274,7 +274,7 @@ export const getParticipation = async (
          */
         const challenges = new Set(
           rest
-            .map((idea) => idea.challenge.challenge_id)
+            .map((idea) => idea.challenge.id)
             .filter((id) => id != undefined)
         );
         /**
@@ -286,7 +286,7 @@ export const getParticipation = async (
          */
         challenges.forEach((challengeId) => {
           rest.forEach((idea) => {
-            if (idea.challenge?.challenge_id == challengeId) {
+            if (idea.challenge?.id == challengeId) {
               solutionByChallenge[challengeId] = {
                 challenge: idea.challenge,
                 /**
@@ -302,8 +302,8 @@ export const getParticipation = async (
          * Foreach solution, add the corresponding challenge
          */
         rest.forEach((solution) => {
-          if (challenges.has(solution.challenge?.challenge_id)) {
-            const challenge_id = solution.challenge.challenge_id;
+          if (challenges.has(solution.challenge?.id)) {
+            const challenge_id = solution.challenge.id;
             delete solution.challenge;
             solutionByChallenge[challenge_id].solutions.push(solution);
           }

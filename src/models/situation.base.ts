@@ -10,7 +10,8 @@ import { TagI } from './tag';
 
 export const options = {
   discriminatorKey: 'itemtype',
-  collection: 'situations'
+  collection: 'situations',
+  timestamps: true,
 };
 
 export interface SituationBaseI {
@@ -62,10 +63,10 @@ export interface SituationBaseI {
     */
   description: string,
   /**
-   * Flag that indicate if a solution is active.
-   * When a challenge is delete, the flag is false
+   * Flag that indicate if a resource is active.
    */
   active: boolean,
+  deletedAt?: Date,
   /**
    * Banner image
    */
@@ -89,7 +90,7 @@ export interface SituationBaseI {
   /**
    * Complementary files to challenge, solution or problem
    */
-  fileComplementary:  Array<string>,
+  fileComplementary: Array<string>,
   /**
    * Tags relationated
    */
@@ -188,68 +189,24 @@ export interface SituationBaseI {
 }
 
 export const situationBaseModel = {
-  insertedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  updatedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  coauthor: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  externalOpinion: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  team: {
-    type: Schema.Types.ObjectId,
-    ref: 'Team'
-  },
-  created: {
-    type: Date,
-    default: Date.now,
-  },
+  insertedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  author: { type: Schema.Types.ObjectId, ref: 'User' },
+  coauthor: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  externalOpinion: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  team: { type: Schema.Types.ObjectId, ref: 'Team' },
+  created: { type: Date, default: Date.now },
   updated: Date,
-  title: {
-    type: String,
-    required: false
-  },
+  title: { type: String, required: false },
   description: String,
-  active: {
-    type: Boolean,
-    default: true,
-  },
+  active: { type: Boolean, default: true },
   bannerImage: String,
-  images: [
-    {
-      type: String,
-    },
-  ],
-  departmentAffected: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Area'
-  }],
-  groupValidator: {
-    type: Schema.Types.ObjectId,
-    ref: 'GroupValidator'
-  },
+  images: [{ type: String }],
+  departmentAffected: [{ type: Schema.Types.ObjectId, ref: 'Area' }],
+  groupValidator: { type: Schema.Types.ObjectId, ref: 'GroupValidator' },
   status: String,
-  fileComplementary: [
-    {
-      type: String,
-    },
-  ],
-  tags: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Tag'
-  }],
+  fileComplementary: [{ type: String }],
+  tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
   /**
    * ---------------------------------
    * Configuration Section
@@ -292,9 +249,9 @@ const SituationModel = model('SituationBase', situationBase);
 
 
 SituationModel.watch().
-/**
-   * @TODO add document audit
-   */
+  /**
+     * @TODO add document audit
+     */
   on('change', data => {
     try {
       const log = _.omit(data, ['_id', '__v'])

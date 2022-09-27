@@ -1,11 +1,11 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import Comment, { CommentI } from "../models/interaction.comment";
+import { GeneralComment, GeneralCommentI } from "../models/interaction.comment";
 
 const CommentService = {
-  async newComment(comment: CommentI): Promise<any> {
+  async newComment(comment: GeneralCommentI): Promise<any> {
     try {
-      const resp = await Comment.create({
+      const resp = await GeneralComment.create({
         ...comment,
       });
       return resp;
@@ -19,7 +19,7 @@ const CommentService = {
   },
   async getParentsComments(filter: any): Promise<any> {
     try {
-      const comments = await Comment.find({
+      const comments = await GeneralComment.find({
         ...filter,
         parent: undefined,
       })
@@ -35,9 +35,9 @@ const CommentService = {
       );
     }
   },
-  async getChildrenComments(comments: CommentI[]): Promise<any> {
+  async getChildrenComments(comments: GeneralCommentI[]): Promise<any> {
     try {
-      const resp = await Comment.find({
+      const resp = await GeneralComment.find({
         parent: { $in: comments },
       })
         .populate("parent")
@@ -52,9 +52,9 @@ const CommentService = {
       );
     }
   },
-  async getChildComments(commentparent: CommentI): Promise<any> {
+  async getChildComments(commentparent: GeneralCommentI): Promise<any> {
     try {
-      const comments = await Comment.find({
+      const comments = await GeneralComment.find({
         parent: commentparent,
       });
 
@@ -67,17 +67,14 @@ const CommentService = {
       );
     }
   },
-  async getComment(commentId: string): Promise<any> {
+  async getComment(commentId: string) {
     try {
-      const comment = await Comment.findOne({
-        commentId,
-      })
+      const comment = await GeneralComment.findById(commentId)
         .populate("author")
         .populate("insertedBy")
         .populate("parent")
         .populate("tag")
-        .populate("solution")
-        .populate("challenge");
+        .populate("resource")
       return comment;
     } catch (error) {
       throw new ServiceError(
@@ -88,7 +85,7 @@ const CommentService = {
     }
   },
   async getComments(filter: any) {
-    return Comment.find(filter)
+    return GeneralComment.find(filter)
       .populate("author")
       .populate("insertedBy")
       .populate("parent")

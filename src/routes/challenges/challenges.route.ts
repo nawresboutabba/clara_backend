@@ -1,5 +1,5 @@
 import * as express from "express";
-import { challengesController as controller } from "./challenges.controller";
+import * as controller from './challenge.controller'
 
 import authentication from "../../middlewares/authentication";
 import oldRoute from "./index";
@@ -15,7 +15,10 @@ challengeRouter
   .post("/challenge", controller.createChallenge)
   .patch("/challenge/:challengeId", controller.updateChallenge)
   .delete("/challenge/:challengeId", controller.deleteChallenge)
-  .post("/challenge/:challengeId/comment")
-  .post("/challenge/:challengeId/transition")
+  .get("/challenge/:challengeId/comment", controller.getChallengeComments)
+  .get("/challenge/:challengeId/comment/resume", controller.getChallengeCommentsResume)
+  .get("/challenge/:challengeId/comment/:commentId", controller.getChallengeComment)
+  .post("/challenge/:challengeId/comment", controller.createChallengeComment)
   .post("/challenge/:challengeId/invitation/:invitationId/response")
-  .post("/challenge/:challengeId/invitation");
+  .post("/challenge/:challengeId/invitation")
+  .post("/challenge/:challengeId/transition")

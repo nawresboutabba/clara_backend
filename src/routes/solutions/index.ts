@@ -1,212 +1,34 @@
 "use strict";
 import * as express from "express";
-const router = express.Router();
-import authentication from "../../middlewares/authentication";
-import { NextFunction } from "express"
-import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
-import { validationResult, body, query, param } from "express-validator";
-import SolutionController from '../../controller/solutions/index'
-import { COMMENT_LEVEL, ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RULES, SOLUTION_STATUS, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
-import AreaService from "../../services/Area.service";
-import TeamService from "../../services/Team.service";
-import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import { NextFunction } from "express";
+import { body, param, validationResult } from "express-validator";
+import { ERRORS, EVALUATION_NOTE_ROLE, PARTICIPATION_MODE, RULES, URLS, VALIDATIONS_MESSAGE_ERROR, WSALEVEL } from "../../constants";
+import SolutionController from '../../controller/solutions/index';
 import { acl } from "../../middlewares/acl";
-import CommentService from "../../services/Comment.service";
+import authentication from "../../middlewares/authentication";
+import { RequestMiddleware, ResponseMiddleware } from "../../middlewares/middlewares.interface";
+import { SOLUTION_STATUS } from "../../models/situation.solutions";
+import AreaService from "../../services/Area.service";
 import BaremoService from "../../services/Baremo.service";
-import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
 import ChallengeService from "../../services/Challenge.service";
-import { checkProposedSolution } from "../../utils/sanitization/proposedSolution.check";
-import { checkDifferential } from "../../utils/sanitization/differential.check";
-import { checkIsNewFor } from "../../utils/sanitization/isNewFor.check";
+import TeamService from "../../services/Team.service";
 import { checkBaremaTypeSuggested } from "../../utils/sanitization/baremaTypeSuggested.check";
-import { checkWasTested } from "../../utils/sanitization/wasTested.check";
-import { checkTestDescription } from "../../utils/sanitization/testDescription.check";
+import { checkDifferential } from "../../utils/sanitization/differential.check";
 import { checkFirstDifficulty } from "../../utils/sanitization/firstDifficulty.check";
-import { checkSecondDifficulty } from "../../utils/sanitization/secondDifficulty.check";
-import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.check";
 import { checkImplementationTimeInMonths } from "../../utils/sanitization/implementationTimeInMonth.check";
+import { checkIsNewFor } from "../../utils/sanitization/isNewFor.check";
 import { checkMoneyNeeded } from "../../utils/sanitization/moneyNeeded.check";
-import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
+import { checkProposedSolution } from "../../utils/sanitization/proposedSolution.check";
+import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
+import { checkSecondDifficulty } from "../../utils/sanitization/secondDifficulty.check";
 import { tagsBodyCheck } from "../../utils/sanitization/tagsValidArray.check";
-import { Tag } from "../../models/tag";
+import { checkTestDescription } from "../../utils/sanitization/testDescription.check";
+import { checkThirdDifficulty } from "../../utils/sanitization/thirdDifficulty.check";
+import { checkWasTested } from "../../utils/sanitization/wasTested.check";
+import BaremoStateMachine from "../../utils/state-machine/state-machine.baremo";
+import SolutionStateMachine from "../../utils/state-machine/state-machine.solution";
+const router = express.Router();
 
-
-router.get(
-  URLS.SOLUTION.SOLUTION_SOLUTIONID_COMMENT_COMMENTID,
-  [
-    authentication,
-    acl(RULES.CAN_VIEW_COMMENT)
-  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
-
-      const solutionController = new SolutionController()
-      const resp = await solutionController.getComments(req.params.commentId, req.resources.solution, req.user, req.utils)
-      res
-        .json(resp)
-        .status(200)
-        .send()
-    } catch (error) {
-      next(error)
-    }
-  }
-)
-
-router.get(
-  URLS.SOLUTION.COMMENT,
-  [
-    authentication,
-    acl(RULES.CAN_VIEW_SOLUTION),
-    query('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
-    query('scope').custom(async (value, { req }) => {
-      try {
-        const solution = req.resources.solution;
-        if (value == COMMENT_LEVEL.GROUP) {
-          const user = req.user
-          const canViewComment = [
-            ...solution.coauthor.map(coauthor => coauthor.userId),
-            solution.author.userId,
-            ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
-          ]
-          if (canViewComment.includes(user.userId) == false) {
-            throw 'You are not authorized to see this comments'
-          }
-        }
-
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
-      }
-    }),
-  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
-
-      const solutionController = new SolutionController()
-      const resp = await solutionController.listComments(req.params.solutionId, req.query, req.resources.solution, req.user)
-      res
-        .json(resp)
-        .status(200)
-        .send()
-    } catch (error) {
-      next(error)
-    }
-  })
-
-router.get(
-  '/solution/:solutionId/comment/resume',
-  [
-    authentication,
-    acl(RULES.CAN_VIEW_SOLUTION),
-  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.GET_COMMENTS)
-
-      const solutionController = new SolutionController()
-      const resp = await solutionController.listCommentsWithoutRelation(req.resources.solution);
-      res
-        .json(resp)
-        .status(200)
-        .send()
-    } catch (error) {
-      next(error)
-    }
-  })
-
-router.post(
-  URLS.SOLUTION.COMMENT,
-  [
-    authentication,
-    acl(RULES.CAN_VIEW_SOLUTION),
-    body("author", "author does not valid").custom(async (value, { req }) => {
-      try {
-        if (value != req.user.userId) {
-          return Promise.reject()
-        }
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject()
-      }
-    }),
-    body('comment').isString().trim().escape(),
-    body('version', 'version can not be empty').notEmpty(),
-    body('scope').isIn([COMMENT_LEVEL.GROUP, COMMENT_LEVEL.PUBLIC]),
-    body('scope').custom(async (value, { req }) => {
-      try {
-        const solution = req.resources.solution
-        if (value == COMMENT_LEVEL.GROUP) {
-          const user = req.user
-          const canViewComment = [
-            ...solution.coauthor.map(coauthor => coauthor.userId),
-            solution.author.userId,
-            ...solution.externalOpinion.map(externalOpinion => externalOpinion.userId)
-          ]
-          if (canViewComment.includes(user.userId) == false) {
-            throw 'You are not authorized to see this comments'
-          }
-        }
-
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
-      }
-    }),
-    body('parent').custom(async (value, { req }) => {
-      try {
-        if (value) {
-          const parentComment = await CommentService.getComment(value)
-          if (!parentComment) {
-            return Promise.reject("parent not found")
-          }
-          if (parentComment.parent) {
-            return Promise.reject("more that 2 levels of comments")
-          }
-          req.utils = { ...req.utils, parentComment }
-        }
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject("parent validation")
-      }
-    }),
-    body('tag', 'tag does not valid').custom(async (value, { req }): Promise<void> => {
-      try {
-        const tag = await Tag.findById(value)
-        if (!tag) {
-          return Promise.reject('tag does not exist')
-        }
-        if (req.utils?.parentComment) {
-          if (req.utils.parentComment.tag.tagId != value) {
-            return Promise.reject('tag parent and child does not same')
-          }
-        }
-        req.utils = { ...req.utils, tagComment: tag }
-        return Promise.resolve()
-      } catch (error) {
-        return Promise.reject(error)
-      }
-    })
-  ], async (req: RequestMiddleware, res: ResponseMiddleware, next: NextFunction) => {
-    try {
-
-      await throwSanitizatorErrors(validationResult, req, ERRORS.ROUTING.ADD_COMMENT)
-
-      const solutionController = new SolutionController()
-      const resp = await solutionController.newComment(
-        req.params.solutionId,
-        req.body,
-        req.resources.solution,
-        req.user,
-        req.utils
-      )
-
-      res
-        .json(resp)
-        .status(201)
-        .send();
-    } catch (error) {
-      next(error)
-    }
-  })
 
 router.post(
   URLS.SOLUTION.SOLUTION,

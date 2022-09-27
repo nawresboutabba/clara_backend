@@ -43,7 +43,7 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
     about,
   } = user;
 
-  const area_visible = await genericArrayAreaFilter(user.areaVisible);
+  const area_visible = genericArrayAreaFilter(user.areaVisible);
   const user_image = await getSignedUrl(user.userImage);
   return {
     user_id: user.userId,

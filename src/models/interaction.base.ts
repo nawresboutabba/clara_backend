@@ -1,41 +1,26 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { ChallengeI } from "./situation.challenges";
 import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
-export const options = { 
-  discriminatorKey: 'itemtype', 
-  collection: 'interactions' 
+export const options = {
+  discriminatorKey: 'type',
+  collection: 'interactions',
+  timestamps: true
 };
 
 export interface InteractionBaseI {
-    insertedBy: UserI,
-    author: UserI,
-    date: Date,
-    type: string,
-    challenge?: ChallengeI,
-    solution?: SolutionI
+  insertedBy: UserI,
+  author: UserI,
+  date: Date,
+  resource: ChallengeI | SolutionI
 }
 
-const interactionBase = new Schema({
-  insertedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
+const interactionBase = new Schema<InteractionBaseI>({
+  insertedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  author: { type: Schema.Types.ObjectId, ref: 'User' },
   date: Date,
-  type: String,
-  challenge: {
-    type: Schema.Types.ObjectId,
-    ref: 'Challenge'
-  },
-  solution: {
-    type: Schema.Types.ObjectId,
-    ref: 'Solution'
-  },
-},options)
+  resource: Types.ObjectId,
+}, options)
 
-export default model("InteractionBase", interactionBase);
+export const InteractionBase = model<InteractionBaseI>("InteractionBase", interactionBase);

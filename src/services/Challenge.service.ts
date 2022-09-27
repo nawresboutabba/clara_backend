@@ -1,9 +1,9 @@
-import Challenge, { ChallengeI } from "../models/situation.challenges";
+import Challenge, { ChallengeI, CHALLENGE_TYPE } from "../models/situation.challenges";
 import { startSession } from 'mongoose';
 import HistoricalChallenge from "../models/historical-challenges";
 import * as _ from 'lodash';
 import ServiceError from "../handle-error/error.service";
-import { CHALLENGE_TYPE, ERRORS, HTTP_RESPONSE } from "../constants";
+import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
 import { UserI } from "../models/users";
 import { removeEmpty } from "../utils/general/remove-empty";
@@ -250,15 +250,17 @@ const ChallengeService = {
    * @returns 
    */
   async listChallengeForExternals(query: QueryChallengeForm, challengesParticipations: ChallengeI[], user: UserI): Promise<Array<any>> {
-    try{
+    try {
       const matchQuery = {
         $and: [
-          {_id: { $in: challengesParticipations.map(c => c._id) }},
-          {$or:[
-            {title:{$regex:`.*${query.title}.*`}},
-          ]},
-          {active:true},
-          { participationModeAvailable: {$in: query.participationMode}},
+          { _id: { $in: challengesParticipations.map(c => c._id) } },
+          {
+            $or: [
+              { title: { $regex: `.*${query.title}.*` } },
+            ]
+          },
+          { active: true },
+          { participationModeAvailable: { $in: query.participationMode } },
         ]
       }
       const resp = await Challenge.aggregate([
@@ -270,7 +272,7 @@ const ChallengeService = {
         {
           $lookup: {
             from: 'interactions',
-            localField: "_id",  
+            localField: "_id",
             foreignField: "challenge",
             pipeline: [
               {
@@ -295,7 +297,7 @@ const ChallengeService = {
         .sort(_.pickBy(query.sort, _.identity))
 
       return resp
-    }catch(error){
+    } catch (error) {
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.CHALLENGE_LISTING,
         HTTP_RESPONSE._500,
@@ -304,12 +306,12 @@ const ChallengeService = {
     }
   },
   async getGenericChallenge(): Promise<any> {
-    try{
+    try {
       const genericChallenge = await Challenge.findOne({
-        type : CHALLENGE_TYPE.GENERIC
+        type: CHALLENGE_TYPE.GENERIC
       })
       return genericChallenge
-    }catch(error){
+    } catch (error) {
       return Promise.reject(new ServiceError(
         ERRORS.SERVICE.GET_GENERIC_CHALLENGE,
         HTTP_RESPONSE._500,

@@ -93,7 +93,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
       bannerImage: body.banner_image,
       images: body.images,
       price: 0,
-      meta: "",
+      goal: "",
       resources: "",
       wanted_impact: "",
       tags: utils.tags,

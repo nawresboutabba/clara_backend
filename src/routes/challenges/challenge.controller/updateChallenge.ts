@@ -19,7 +19,7 @@ export const updateChallenge = validate(
         banner_image: z.string().optional(),
         images: z.array(z.string()).optional(),
         price: z.number().optional(),
-        meta: z.string().optional(),
+        goal: z.string().optional(),
         resources: z.string().optional(),
         wanted_impact: z.string().optional(),
       }),
@@ -49,7 +49,7 @@ export const updateChallenge = validate(
         departmentAffected,
         finalization: body.finalization,
         price: body.price,
-        meta: body.meta,
+        goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
       }),
@@ -57,6 +57,7 @@ export const updateChallenge = validate(
     )
       .populate("author")
       .populate("insertedBy")
+      .populate("tags")
       .populate("areasAvailable")
       .populate("departmentAffected");
 

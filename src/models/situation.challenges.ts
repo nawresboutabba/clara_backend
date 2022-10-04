@@ -41,7 +41,7 @@ export interface ChallengeI extends SituationBaseI {
   finalization: Date;
 
   price: number;
-  meta: string;
+  goal: string;
   resources: string;
   wanted_impact: string;
 }
@@ -52,7 +52,7 @@ export const challengeModel = {
   isStrategic: Boolean,
   finalization: Date,
   price: Number,
-  meta: String,
+  goal: String,
   resources: String,
   wanted_impact: String,
 };

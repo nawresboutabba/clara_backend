@@ -1,4 +1,5 @@
-import { CHALLENGE_STATUS, ERRORS } from "../../constants";
+import {  ERRORS } from "../../constants";
+import { CHALLENGE_STATUS } from "../../models/situation.challenges";
 const machine = {
   state: CHALLENGE_STATUS.DRAFT,
   transitions: {

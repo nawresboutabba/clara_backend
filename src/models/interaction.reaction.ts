@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { options } from "./interaction.base"
-import InteractionBase, { InteractionBaseI } from "./interaction.base";
+import { InteractionBaseI,InteractionBase } from "./interaction.base";
 
 export interface ReactionI extends InteractionBaseI{
   type: string

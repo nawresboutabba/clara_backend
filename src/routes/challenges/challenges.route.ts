@@ -23,5 +23,6 @@ challengeRouter
   .post("/challenge/:challengeId/invitation", controller.createChallengeInvite)
   .get("/challenge/:challengeId/invitation", controller.getChallengeInvites)
   .post("/challenge/:challengeId/invitation/:invitationId/response", controller.responseChallengeInvite)
-  .post("/challenge/:challengeId/invitation/:invitationId/cancel", controller.cancelChallengeInvite);
+  .post("/challenge/:challengeId/invitation/:invitationId/cancel", controller.cancelChallengeInvite)
+  .post("/challenge/:challengeId/author", controller.changeChallengeAuthor)
   

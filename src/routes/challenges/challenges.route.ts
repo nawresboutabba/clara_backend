@@ -19,6 +19,9 @@ challengeRouter
   .get("/challenge/:challengeId/comment/resume", controller.getChallengeCommentsResume)
   .get("/challenge/:challengeId/comment/:commentId", controller.getChallengeComment)
   .post("/challenge/:challengeId/comment", controller.createChallengeComment)
-  .post("/challenge/:challengeId/invitation/:invitationId/response")
-  .post("/challenge/:challengeId/invitation")
   .post("/challenge/:challengeId/transition")
+  .post("/challenge/:challengeId/invitation", controller.createChallengeInvite)
+  .get("/challenge/:challengeId/invitation", controller.getChallengeInvites)
+  .post("/challenge/:challengeId/invitation/:invitationId/response", controller.responseChallengeInvite)
+  .post("/challenge/:challengeId/invitation/:invitationId/cancel", controller.cancelChallengeInvite);
+  

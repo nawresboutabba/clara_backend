@@ -3,4 +3,5 @@
     "COAUTHORSHIP",
     "middlewares"
   ],
+  "thunder-client.saveToWorkspace": true,
 }

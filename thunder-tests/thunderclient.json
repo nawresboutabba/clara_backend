@@ -1,0 +1,193 @@
+[
+  {
+    "_id": "6806baa8-2b3a-443f-bb1b-8bcb5de6a231",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "login",
+    "url": "{{base_url}}/user/login",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-10-11T14:18:29.925Z",
+    "modified": "2022-10-11T14:34:29.318Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"ibis@gmail.com\",\n  \"password\": \"123456\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json.token",
+        "action": "setto",
+        "value": "{{access_token}}"
+      }
+    ]
+  },
+  {
+    "_id": "d9e64e13-fca5-4560-ad2f-93e11367e7dc",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "logged user",
+    "url": "{{base_url}}/user/info",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-10-11T14:22:42.790Z",
+    "modified": "2022-10-11T14:23:09.221Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "b059d447-76ff-4d62-a3b6-ad9c4536f36f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "logged user Copy",
+    "url": "{{base_url}}/user",
+    "method": "PATCH",
+    "sortNum": 30000,
+    "created": "2022-10-11T14:24:37.548Z",
+    "modified": "2022-10-11T14:24:53.981Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"first_name\": \"Rafael\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "8e87c1e9-4bc2-45de-b8f4-daafe1122e92",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "list challenge",
+    "url": "{{base_url}}/challenge",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2022-10-11T14:25:17.462Z",
+    "modified": "2022-10-11T14:25:50.865Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "8a975bb2-e843-47bd-88a1-9b5e3798b054",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "get challenge",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf",
+    "method": "GET",
+    "sortNum": 40000,
+    "created": "2022-10-11T14:26:02.887Z",
+    "modified": "2022-10-11T14:26:13.848Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "feca6637-7a62-474d-b219-123bb9bfa36f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "create challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation",
+    "method": "POST",
+    "sortNum": 50000,
+    "created": "2022-10-11T14:26:53.564Z",
+    "modified": "2022-10-11T14:34:09.132Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"ibis@gmail.com\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "012d333c-8212-4279-931e-fe71f61cea3f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "get challenge invites",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation?status=ACCEPTED",
+    "method": "GET",
+    "sortNum": 60000,
+    "created": "2022-10-11T14:26:55.635Z",
+    "modified": "2022-10-11T16:10:52.774Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "status",
+        "value": "ACCEPTED",
+        "isPath": false
+      }
+    ],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "49269905-1060-4922-9314-9ef4435efb75",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "cancel challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation/63457da74f7ac01998c17c1b/cancel",
+    "method": "POST",
+    "sortNum": 70000,
+    "created": "2022-10-11T14:27:21.061Z",
+    "modified": "2022-10-11T14:32:43.790Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "ca82fa13-158c-4f9e-ae21-9e57f48cfa7c",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "response challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation/63457ee05afb166015e7b815/response",
+    "method": "POST",
+    "sortNum": 80000,
+    "created": "2022-10-11T14:27:36.665Z",
+    "modified": "2022-10-11T14:35:53.083Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"response\": \"ACCEPTED\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  }
+]

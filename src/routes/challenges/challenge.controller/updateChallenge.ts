@@ -4,6 +4,7 @@ import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import { removeEmpty } from "../../../utils/general/remove-empty";
+import { dateSchema, numberSchema } from "../../../utils/zod";
 import * as TagsRep from "../../tags/tags.repository";
 
 export const updateChallenge = validate(
@@ -15,10 +16,10 @@ export const updateChallenge = validate(
         description: z.string().optional(),
         tags: z.array(z.string()).optional(),
         areas: z.array(z.string()).optional(),
-        finalization: z.date().min(new Date).optional(),
+        finalization: dateSchema(z.date().min(new Date).optional()),
         banner_image: z.string().optional(),
         images: z.array(z.string()).optional(),
-        price: z.number().optional(),
+        price: numberSchema(z.number().optional()),
         goal: z.string().optional(),
         resources: z.string().optional(),
         wanted_impact: z.string().optional(),

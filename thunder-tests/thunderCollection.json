@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "965bb216-6987-4e66-b689-9124ed026f46",
+    "colName": "ideation",
+    "created": "2022-10-11T14:18:08.693Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "ee3fafef-780f-4e17-9bd7-150196b54108",
+        "name": "auth",
+        "containerId": "",
+        "created": "2022-10-11T14:18:24.147Z",
+        "sortNum": 10000
+      },
+      {
+        "_id": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+        "name": "challenge",
+        "containerId": "",
+        "created": "2022-10-11T14:25:05.359Z",
+        "sortNum": 20000
+      }
+    ]
+  }
+]

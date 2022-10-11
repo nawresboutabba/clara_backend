@@ -58,6 +58,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   const images = await getArrayImageSignedUrl(challenge.images);
   const banner_image = await getSignedUrl(challenge.bannerImage);
   const author = await genericUserFilter(challenge.author);
+  const coauthor = await genericArrayUserFilter(challenge.coauthor);
   const inserted_by = await genericUserFilter(challenge.insertedBy);
   const areas_available = genericArrayAreaFilter(challenge.areasAvailable);
   const department_affected = genericArrayAreaFilter(
@@ -71,6 +72,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     id: _id,
     inserted_by,
     author,
+    coauthor,
     created,
     status,
     updated,

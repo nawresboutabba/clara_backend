@@ -130,13 +130,19 @@
     "colId": "965bb216-6987-4e66-b689-9124ed026f46",
     "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
     "name": "get challenge invites",
-    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation?status=ACCEPTED",
     "method": "GET",
     "sortNum": 60000,
     "created": "2022-10-11T14:26:55.635Z",
-    "modified": "2022-10-11T14:31:09.669Z",
+    "modified": "2022-10-11T16:10:52.774Z",
     "headers": [],
-    "params": [],
+    "params": [
+      {
+        "name": "status",
+        "value": "ACCEPTED",
+        "isPath": false
+      }
+    ],
     "auth": {
       "type": "bearer",
       "bearer": "{{access_token}}"

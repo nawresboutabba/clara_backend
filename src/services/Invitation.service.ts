@@ -37,9 +37,9 @@ const InvitationService = {
       );
     }
   },
-  async getChallengeInvitations(queryTemp: FilterQuery<SolutionInvitationI>) {
+  async getChallengeInvitations(filterQuery: FilterQuery<SolutionInvitationI>) {
     try {
-      const invitations = await ChallengeInvitation.find(queryTemp)
+      const invitations = await ChallengeInvitation.find(filterQuery)
         .populate({
           path: "resource",
           // populate: { path: "challenge" },

@@ -9,6 +9,26 @@ import { genericUserFilter } from "../../utils/field-filters/user"
 import { removeEmpty } from "../../utils/general/remove-empty"
 import { genericTagFilter } from "../tags/tags.serializer"
 
+export function getChallengeById(challengeId: string) {
+  return Challenge.findById(challengeId)
+    .populate("author")
+    .populate("coauthor")
+    .populate("insertedBy")
+    .populate("areasAvailable")
+    .populate("tags")
+    .populate("departmentAffected")
+    // .populate("departmentAffected")
+    // .populate("updatedBy")
+    // .populate("challenge")
+    // .populate("author")
+    // .populate("coauthor")
+    // .populate("team")
+    // .populate("insertedBy")
+    // .populate("areasAvailable")
+    // .populate("tags")
+    // .populate("externalOpinion");
+}
+
 export async function getChallengeActiveById(id: string) {
   const resp = await Challenge.aggregate([
     { $match: { _id: new Types.ObjectId(id), active: true, deletedAt: { $exists: false } } },

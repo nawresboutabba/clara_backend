@@ -54,6 +54,10 @@ export interface SolutionInvitationI extends InvitationI {
   resource: SolutionI;
 }
 
+export interface ChallengeInvitationI extends InvitationI {
+  resource: ChallengeI;
+}
+
 const invitationSchema = new Schema<InvitationI>(
   {
     to: { type: Types.ObjectId, ref: "User" },
@@ -76,5 +80,12 @@ export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(
   "SolutionInvitation",
   new Schema({
     resource: { type: Types.ObjectId, ref: "Solution" },
+  })
+);
+
+export const ChallengeInvitation = Invitation.discriminator<ChallengeInvitationI>(
+  "ChallengeInvitation",
+  new Schema({
+    resource: { type: Types.ObjectId, ref: "Challenge" },
   })
 );

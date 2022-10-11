@@ -4,7 +4,7 @@ import {
 } from "../../controller/challenge";
 import { ChallengeI } from "../../models/situation.challenges";
 import { genericArrayAreaFilter } from "./area";
-import { genericUserFilter } from "./user";
+import { genericArrayUserFilter, genericUserFilter } from "./user";
 import { genericGroupValidatorFilter } from "./group-validator";
 import {
   getArrayImageSignedUrl,
@@ -132,14 +132,16 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
   const areas_available = await genericArrayAreaFilter(
     challenge.areasAvailable
   );
-  const department_affected = await genericArrayAreaFilter(
-    challenge.departmentAffected
-  );
   const group_validator = await genericGroupValidatorFilter(
     challenge.groupValidator
   );
-  const tags = genericArrayTagsFilter(challenge.tags);
   const author = await genericUserFilter(challenge.author);
+  const coauthor = await genericArrayUserFilter(challenge.coauthor);
+
+  const tags = genericArrayTagsFilter(challenge.tags);
+  const department_affected = genericArrayAreaFilter(
+    challenge.departmentAffected
+  );
 
   return {
     id: _id,
@@ -147,6 +149,7 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     status,
     title,
     author,
+    coauthor,
     description,
     active,
     banner_image,

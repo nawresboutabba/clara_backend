@@ -1,31 +1,27 @@
 import { z } from "zod";
 import { EVENTS_TYPE } from "../../../constants";
-import {
-  INVITATION_STATUS,
-  INVITATION_TYPE,
-  SolutionInvitation
-} from "../../../models/invitation";
+import { ChallengeInvitation, INVITATION_STATUS, INVITATION_TYPE } from "../../../models/invitation";
+// import Challenge from "../../../models/situation.challenges";
 import { sendEmail } from "../../../repository/repository.mailing";
 import { newExternalUser } from "../../../repository/repository.users";
 import UserService from "../../../services/User.service";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionInvitationFilter
-} from "../../../utils/field-filters/invitation";
+import { genericChallengeInvitationFilter } from "../../../utils/field-filters/invitation";
 import { generatePassword } from "../../../utils/general/generate-password";
-import * as SolutionRep from "../solutions.repository";
+import * as ChallengeRep from "../challenges.repository"
 
-export const createSolutionInvite = validate(
+// TODO throw error if invitation is to committee member
+export const createChallengeInvite = validate(
   {
-    params: z.object({ solutionId: z.string() }),
+    params: z.object({ challengeId: z.string() }),
     body: z.object({
       email: z.string().email(),
     }),
   },
-  async ({ user, params: { solutionId }, body: { email } }, res) => {
-    const solution = await SolutionRep.getSolutionById(solutionId);
+  async ({ user, params: { challengeId }, body: { email } }, res) => {
+    const challenge = await ChallengeRep.getChallengeById(challengeId);
 
-    if (solution.author.userId !== user.userId) {
+    if (challenge.author.userId !== user.userId) {
       return res.status(403).json({ message: "not authorized" });
     }
 
@@ -39,16 +35,16 @@ export const createSolutionInvite = validate(
       });
     }
 
-    const alreadyMember = solution.coauthor.find(
+    const alreadyMember = challenge.coauthor.find(
       (member) => member.userId === userToInvite.userId
     );
     if (alreadyMember) {
       return res.status(403).json({ message: "this user is already member" });
     }
 
-    const hasOldInvitation = await SolutionInvitation.find({
+    const hasOldInvitation = await ChallengeInvitation.find({
       to: userToInvite,
-      resource: solution,
+      resource: challenge,
       status: INVITATION_STATUS.PENDING,
     });
 
@@ -56,10 +52,10 @@ export const createSolutionInvite = validate(
       return res.status(400).json({ message: "User has invite" });
     }
 
-    const createdInvitation = await SolutionInvitation.create({
+    const createdInvitation = await ChallengeInvitation.create({
       from: user,
       to: userToInvite,
-      resource: solution,
+      resource: challenge,
       type: userToInvite.externalUser
         ? INVITATION_TYPE.EXTERNAL_OPINION
         : INVITATION_TYPE.TEAM_PARTICIPATION,
@@ -72,10 +68,10 @@ export const createSolutionInvite = validate(
     };
 
     await sendEmail(Destination, EVENTS_TYPE.EXTERNAL_OPINION_INVITATION, {
-      resource: solution,
+      resource: challenge,
       invitation: createdInvitation,
     });
 
-    return res.status(201).json(await genericSolutionInvitationFilter(createdInvitation));
+    return res.status(201).json(await genericChallengeInvitationFilter(createdInvitation));
   }
 );

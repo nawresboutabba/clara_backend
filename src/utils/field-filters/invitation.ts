@@ -1,12 +1,10 @@
-import { LightSolutionResponse } from "../../controller/solutions";
 import {
-  INVITATION_STATUS_TYPE,
-  INVITATION_TYPE_TYPE,
+  ChallengeInvitationI,
   SolutionInvitationI,
 } from "../../models/invitation";
 import { lightSolutionFilter } from "./solution";
 import { lightUserFilter } from "./user";
-import { Types } from "mongoose";
+import { lightChallengeFilter } from "./challenge";
 
 // interface  {
 //   id: Types.ObjectId;
@@ -20,9 +18,6 @@ import { Types } from "mongoose";
 //   from: any;
 // }
 
-type SolutionInvitationResponse = ReturnType<
-  typeof genericSolutionInvitationFilter
->;
 export async function genericSolutionInvitationFilter(
   invitation: SolutionInvitationI
 ) {
@@ -47,4 +42,30 @@ export async function genericArraySolutionInvitationFilter(
   invitations: SolutionInvitationI[]
 ) {
   return Promise.all(invitations.map(genericSolutionInvitationFilter));
+}
+
+export async function genericChallengeInvitationFilter(
+  invitation: ChallengeInvitationI
+) {
+  const to = await lightUserFilter(invitation.to);
+  const from = await lightUserFilter(invitation.from);
+  const challenge = await lightChallengeFilter(invitation.resource);
+
+  return {
+    id: invitation._id,
+    resource: challenge,
+    createdAt: invitation.createdAt,
+    updatedAt: invitation.updatedAt,
+    decisionDate: invitation.decisionDate,
+    status: invitation.status,
+    type: invitation.type,
+    to,
+    from,
+  };
+}
+
+export async function genericArrayChallengeInvitationFilter(
+  invitations: ChallengeInvitationI[]
+) {
+  return Promise.all(invitations.map(genericChallengeInvitationFilter));
 }

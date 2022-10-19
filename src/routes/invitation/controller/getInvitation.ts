@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { SolutionInvitation } from "../../../models/invitation";
+import { Invitation } from "../../../models/invitation";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
+import { genericInvitationFilter } from "../../../utils/field-filters/invitation";
 
 export const getInvitation = validate(
   {
@@ -10,7 +10,7 @@ export const getInvitation = validate(
     }),
   },
   async ({ user, params: { invitationId } }, res) => {
-    const invite = await SolutionInvitation.findById(invitationId)
+    const invite = await Invitation.findById(invitationId)
       .populate({
         path: "resource",
         populate: { path: "challenge" },
@@ -25,6 +25,6 @@ export const getInvitation = validate(
       return res.status(403).json({ message: "not authorized" });
     }
 
-    return genericSolutionInvitationFilter(invite);
+    return genericInvitationFilter(invite);
   }
 );

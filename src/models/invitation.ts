@@ -21,6 +21,7 @@ export enum INVITATION_TYPE {
 export type INVITATION_TYPE_TYPE = keyof typeof INVITATION_TYPE;
 
 export interface InvitationI {
+  __t: "SolutionInvitation" | "ChallengeInvitation";
   _id: Types.ObjectId;
   /**
    * Guest user
@@ -74,7 +75,7 @@ const invitationSchema = new Schema<InvitationI>(
   { timestamps: true }
 );
 
-const Invitation = model<InvitationI>("Invitation", invitationSchema);
+export const Invitation = model<InvitationI>("Invitation", invitationSchema);
 
 export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(
   "SolutionInvitation",

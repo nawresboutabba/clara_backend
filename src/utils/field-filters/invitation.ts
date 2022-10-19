@@ -1,5 +1,6 @@
 import {
   ChallengeInvitationI,
+  InvitationI,
   SolutionInvitationI,
 } from "../../models/invitation";
 import { lightSolutionFilter } from "./solution";
@@ -35,6 +36,7 @@ export async function genericSolutionInvitationFilter(
     type: invitation.type,
     to,
     from,
+    __t: "SolutionInvitation",
   };
 }
 
@@ -61,6 +63,7 @@ export async function genericChallengeInvitationFilter(
     type: invitation.type,
     to,
     from,
+    __t: "ChallengeInvitation"
   };
 }
 
@@ -68,4 +71,14 @@ export async function genericArrayChallengeInvitationFilter(
   invitations: ChallengeInvitationI[]
 ) {
   return Promise.all(invitations.map(genericChallengeInvitationFilter));
+}
+
+export async function genericInvitationFilter(invitation: InvitationI) {
+  return invitation.__t === "ChallengeInvitation" ? genericChallengeInvitationFilter(invitation as ChallengeInvitationI) : genericSolutionInvitationFilter(invitation as SolutionInvitationI);
+}
+
+export async function genericArrayInvitationFilter(
+  invitations: InvitationI[]
+) {
+  return Promise.all(invitations.map(genericInvitationFilter));
 }

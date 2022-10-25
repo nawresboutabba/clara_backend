@@ -116,27 +116,40 @@ export async function listSolutionComments({ solutionId, scope, commentId }: { s
   const aggregatedData: AggregatedData[] = await SolutionComment.aggregate([
     {
       $match: removeEmpty({
-        resource: Types.ObjectId.isValid(solutionId) ? new Types.ObjectId(solutionId) : solutionId,
-        scope, parent: null,
+        resource: new Types.ObjectId(solutionId),
+        scope,
         _id: commentId ? new Types.ObjectId(commentId) : null
       })
     },
+    { $match: { $or: [{ parent: null }, { parent: { $exists: false } }] } },
     {
       $lookup: {
         from: "interactions",
-        localField: "_id",
-        foreignField: "parent",
-        as: "children"
-      }
+        let: { parentId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$parent", "$$parentId"] } } },
+          {
+            $lookup: {
+              from: "users",
+              localField: "author",
+              foreignField: "_id",
+              as: "author",
+            },
+          },
+          { $unwind: "$author" },
+        ],
+        as: "children",
+      },
     },
     {
       $lookup: {
-        from: "tag",
-        localField: "tag",
+        from: "tags",
         foreignField: "_id",
-        as: "tag"
-      }
+        localField: "tag",
+        as: "tag",
+      },
     },
+    { $unwind: "$tag" },
     {
       $lookup: {
         from: "users",
@@ -146,14 +159,6 @@ export async function listSolutionComments({ solutionId, scope, commentId }: { s
       }
     },
     { $unwind: "$author" },
-    // {
-    //   $lookup: {
-    //     from: "author.",
-    //     localField: "author",
-    //     foreignField: "_id",
-    //     as: "author"
-    //   }
-    // },
     {
       $lookup: {
         from: "users",

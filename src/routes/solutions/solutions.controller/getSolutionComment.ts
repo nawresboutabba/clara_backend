@@ -27,5 +27,5 @@ export const getSolutionComment = validate({
     return res.status(403).json({ message: "not authorized" })
   }
 
-  return (await listSolutionComments({ solutionId: params.solutionId, commentId: params.commentId }))[0]
+  return (await listSolutionComments({ solutionId: solution.id, commentId: params.commentId }))[0]
 })

@@ -1,24 +1,23 @@
 import { z } from "zod";
 import { ChallengeComment, CommentScope } from "../../../models/interaction.comment";
-import { Tag } from "../../../models/tag";
-import CommentService from "../../../services/Comment.service";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 
 import { validate } from "../../../utils/express/express-handler";
-import { genericArrayCommentFilter, genericCommentFilter } from "../../../utils/field-filters/comment";
+import { genericArrayCommentFilter } from "../../../utils/field-filters/comment";
+import { removeEmpty } from "../../../utils/general/remove-empty";
 import * as challengeRep from '../challenges.repository'
 
 export const getChallengeCommentsResume = validate(
   {
-    params: z.object({ challengeId: z.string(), commentId: z.string() }),
+    params: z.object({ challengeId: z.string() }),
     query: z.object({
-      comment: z.string(),
-      scope: z.nativeEnum(CommentScope).default(CommentScope.GROUP),
+      comment: z.string().optional(),
+      scope: z.nativeEnum(CommentScope).optional(),
       parent: z.string().optional(),
-      tag: z.string()
+      tag: z.string().optional()
     })
   },
-  async ({ user, params: { challengeId } }, res) => {
+  async ({ user, params: { challengeId }, query }, res) => {
     const committee = await isCommitteeMember(user);
 
     const challenge = await challengeRep.getChallengeActiveById(challengeId)
@@ -30,10 +29,14 @@ export const getChallengeCommentsResume = validate(
       return res.status(403).json({ message: "not authorized" })
     }
 
-    const comments = await ChallengeComment.find({
+    const comments = await ChallengeComment.find(removeEmpty({ 
       resource: challenge,
-      scope: CommentScope.GROUP,
-    });
+      scope: query.scope,
+      parent: query.parent
+    }))
+      .populate("author")
+      .populate("tag")
+      .populate("parent");
 
     return genericArrayCommentFilter(comments)
   }

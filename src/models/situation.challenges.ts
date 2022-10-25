@@ -1,19 +1,19 @@
 import { Schema } from "mongoose";
 import SituationBase, { SituationBaseI, options } from "./situation.base";
 
-export const CHALLENGE_TYPE = {
-  GENERIC: "GENERIC",
-  PARTICULAR: "PARTICULAR",
-};
-export type CHALLENGE_TYPE = keyof typeof CHALLENGE_TYPE;
+export enum CHALLENGE_TYPE {
+  GENERIC = "GENERIC",
+  PARTICULAR = "PARTICULAR",
+}
+export type CHALLENGE_TYPE_TYPE = keyof typeof CHALLENGE_TYPE;
 
-export const CHALLENGE_STATUS = {
-  DRAFT: "DRAFT",
-  PROPOSED: "PROPOSED",
-  OPENED: "OPENED",
-  CLOSED: "CLOSED",
-};
-export type CHALLENGE_STATUS = keyof typeof CHALLENGE_STATUS;
+export enum CHALLENGE_STATUS {
+  DRAFT = "DRAFT",
+  PROPOSED = "PROPOSED",
+  OPENED = "OPENED",
+  CLOSED = "CLOSED",
+}
+export type CHALLENGE_STATUS_TYPE = keyof typeof CHALLENGE_STATUS;
 
 export interface ChallengeI extends SituationBaseI {
   /**

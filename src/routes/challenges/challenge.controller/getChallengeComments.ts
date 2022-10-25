@@ -28,10 +28,9 @@ export const getChallengeComments = validate(
 
     if (
       query.scope === CommentScope.GROUP &&
-      committee.isActive === false &&
-      !challenge.externalOpinion.map(externalOpinion => externalOpinion.userId).includes(user.userId)
+      !challengeRep.canViewChallenge(user, challenge, committee)
     ) {
-      return res.status(403).json({ message: "Not authorized to create comment on this challenge" })
+      return res.status(403).json({ message: "Not authorized to see these comments" })
     }
 
     return challengeRep.listChallengeComments({ challengeId, scope: query.scope })

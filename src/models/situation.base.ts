@@ -15,6 +15,7 @@ export const options = {
 };
 
 export interface SituationBaseI {
+  id?: string,
   _id?: any,
   /**
    * When the inserted user is not same that author user. 

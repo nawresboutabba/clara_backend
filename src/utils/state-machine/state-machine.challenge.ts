@@ -1,4 +1,4 @@
-import {  ERRORS } from "../../constants";
+import { ERRORS } from "../../constants";
 import { CHALLENGE_STATUS } from "../../models/situation.challenges";
 const machine = {
   state: CHALLENGE_STATUS.DRAFT,
@@ -22,12 +22,12 @@ const machine = {
       }
     },
     OPENED: {
-      close: function(){
+      close: function () {
         this.changeState(CHALLENGE_STATUS.CLOSED);
       }
     },
     CLOSED: {
-      reopen: function(){
+      reopen: function () {
         this.changeState(CHALLENGE_STATUS.OPENED);
       }
     }

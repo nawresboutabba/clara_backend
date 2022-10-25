@@ -139,7 +139,7 @@ export async function canViewChallenge(user: UserI, challenge: ChallengeI, commi
     return true
   }
 
-  if (challenge.externalOpinion.map(externalOpinion => externalOpinion.userId).includes(user.userId)) {
+  if (challenge.coauthor.map(coauthor => coauthor.userId).includes(user.userId)) {
     return true
   }
 
@@ -169,24 +169,41 @@ type AggregatedData = {
 export async function listChallengeComments({ challengeId, scope, commentId }: { challengeId: string; scope?: CommentScope; commentId?: string }) {
   const aggregatedData: AggregatedData[] = await ChallengeComment.aggregate([
     {
-      $match: removeEmpty({ resource: new Types.ObjectId(challengeId), scope, parent: null, _id: commentId ? new Types.ObjectId(commentId) : null })
+      $match: removeEmpty({ 
+        resource: new Types.ObjectId(challengeId), 
+        scope, 
+        _id: commentId ? new Types.ObjectId(commentId) : null 
+      })
     },
+    { $match: { $or: [{ parent: null }, { parent: { $exists: false } }] } },
     {
       $lookup: {
         from: "interactions",
-        localField: "_id",
-        foreignField: "parent",
-        as: "children"
-      }
+        let: { parentId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$parent", "$$parentId"] } } },
+          {
+            $lookup: {
+              from: "users",
+              localField: "author",
+              foreignField: "_id",
+              as: "author",
+            },
+          },
+          { $unwind: "$author" },
+        ],
+        as: "children",
+      },
     },
     {
       $lookup: {
-        from: "tag",
-        localField: "tag",
+        from: "tags",
         foreignField: "_id",
-        as: "tag"
-      }
+        localField: "tag",
+        as: "tag",
+      },
     },
+    { $unwind: "$tag" },
     {
       $lookup: {
         from: "users",
@@ -196,14 +213,6 @@ export async function listChallengeComments({ challengeId, scope, commentId }: {
       }
     },
     { $unwind: "$author" },
-    // {
-    //   $lookup: {
-    //     from: "author.",
-    //     localField: "author",
-    //     foreignField: "_id",
-    //     as: "author"
-    //   }
-    // },
     {
       $lookup: {
         from: "users",

@@ -43,7 +43,7 @@ import { GeneralCommentI } from "../models/interaction.comment";
 export const newChallenge = async (body: ChallengeBody, user: UserI, utils: any): Promise<ChallengeResponse> => {
   try {
 
-    const data: ChallengeI = await composeChallenge(body, user, utils)
+    const data: Omit<ChallengeI, 'id'> = await composeChallenge(body, user, utils)
 
     const challenge = await ChallengeService.newChallenge({
       ...data
@@ -61,10 +61,10 @@ export const newChallenge = async (body: ChallengeBody, user: UserI, utils: any)
 
 export const newChallengeProposal = async (body: ChallengeBody, user: UserI, utils: any): Promise<ChallengeProposalResponse> => {
   try {
-    const challenge: ChallengeI = await composeChallenge(body, user, utils)
+    const challenge: Omit<ChallengeI, 'id'> = await composeChallenge(body, user, utils)
     const proposalId = nanoid()
     const dateProposal = getCurrentDate()
-    const data: ChallengeProposalI = { ...challenge, proposalId, dateProposal }
+    const data: Omit<ChallengeProposalI, 'id'> = { ...challenge, proposalId, dateProposal }
     const proposal: ChallengeProposalI = await ChallengeProposalService.newProposal(data)
     const resp: ChallengeProposalResponse = await genericChallengeProposalFilter(proposal)
     return resp
@@ -74,7 +74,7 @@ export const newChallengeProposal = async (body: ChallengeBody, user: UserI, uti
 }
 
 
-const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: any): Promise<ChallengeI> => {
+const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: any): Promise<Omit<ChallengeI, 'id'>> => {
   try {
     const created = new Date();
 
@@ -82,7 +82,7 @@ const composeChallenge = async (body: ChallengeBody, user: UserRequest, utils: a
     const authorEntity = await UserService.getUserActiveByUserId(user.userId)
     const groupValidator = await GroupValidatorService.getGroupValidatorById(body.group_validator)
 
-    const data: ChallengeI = {
+    const data: Omit<ChallengeI, 'id'> = {
       insertedBy,
       updatedBy: insertedBy,
       author: authorEntity,

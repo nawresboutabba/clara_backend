@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ChallengeInvitation, INVITATION_STATUS, INVITATION_TYPE } from "../../../models/invitation";
+import { ChallengeInvitation, INVITATION_STATUS } from "../../../models/invitation";
 import Challenge from "../../../models/situation.challenges";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeInvitationFilter } from "../../../utils/field-filters/invitation";
@@ -37,10 +37,7 @@ export const responseChallengeInvite = validate(
       await Challenge.findByIdAndUpdate(
         challengeId,
         {
-          $addToSet:
-            invite.type === INVITATION_TYPE.EXTERNAL_OPINION
-              ? { externalOpinion: user }
-              : { coauthor: user },
+          $addToSet: { coauthor: user },
         }
       );
     }

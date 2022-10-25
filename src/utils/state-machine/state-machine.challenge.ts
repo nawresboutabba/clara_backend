@@ -1,4 +1,4 @@
-import {  ERRORS } from "../../constants";
+import { ERRORS } from "../../constants";
 import { CHALLENGE_STATUS } from "../../models/situation.challenges";
 const machine = {
   state: CHALLENGE_STATUS.DRAFT,
@@ -9,7 +9,7 @@ const machine = {
       * ChallengeProposal Collection
       */
     DRAFT: {
-      confirm: function () {
+      confirm() {
         this.changeState(CHALLENGE_STATUS.PROPOSED);
       }
     },
@@ -17,17 +17,20 @@ const machine = {
      * Challenge is ready for init. Initialización is triggered by TIMER
      */
     PROPOSED: {
-      published: function () {
+      published() {
         this.changeState(CHALLENGE_STATUS.OPENED);
+      },
+      draft() {
+        this.changeState(CHALLENGE_STATUS.DRAFT);
       }
     },
     OPENED: {
-      close: function(){
+      close() {
         this.changeState(CHALLENGE_STATUS.CLOSED);
       }
     },
     CLOSED: {
-      reopen: function(){
+      reopen() {
         this.changeState(CHALLENGE_STATUS.OPENED);
       }
     }

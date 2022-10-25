@@ -1,5 +1,6 @@
 export * from './cancelChallengeInvite'
 export * from './changeChallengeOwner'
+export * from './changeChallengeState'
 export * from './createChallenge'
 export * from './createChallengeComment'
 export * from './createChallengeInvite'

@@ -12,7 +12,7 @@ export const updateChallenge = validate(
     params: z.object({ challengeId: z.string() }),
     body: z
       .object({
-        title: z.string().optional(),
+        title: z.string(),
         description: z.string().optional(),
         tags: z.array(z.string()).optional(),
         areas: z.array(z.string()).optional(),

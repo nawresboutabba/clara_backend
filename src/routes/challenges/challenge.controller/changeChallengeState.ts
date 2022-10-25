@@ -1,20 +1,19 @@
 import { z } from "zod";
-import { CHALLENGE_STATUS } from "../../../models/situation.challenges";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import ChallengeStateMachine from "../../../utils/state-machine/state-machine.challenge";
-import { dateSchema, numberSchema } from "../../../utils/zod";
+import { dateSchema } from "../../../utils/zod";
 import * as ChallengeRep from "../challenges.repository";
 
 const challengeSchema = z.object({
   title: z.string(),
   description: z.string(),
-  tags: z.array(z.string()),
-  areas: z.array(z.string()),
+  bannerImage: z.string(),
+  // images: z.array(z.any()),
+  tags: z.array(z.any()).min(1),
+  departmentAffected: z.array(z.any()).min(1),
   finalization: dateSchema(z.date().min(new Date)),
-  banner_image: z.string(),
-  images: z.array(z.string()),
-  price: numberSchema(z.number()),
+  price: z.number().positive(),
   goal: z.string(),
   resources: z.string(),
   wanted_impact: z.string(),
@@ -22,7 +21,7 @@ const challengeSchema = z.object({
 
 export const changeChallengeState = validate({
   params: z.object({ challengeId: z.string() }),
-  body: z.object({ state: z.enum(["confirm", "published", "close", "reopen"]) })
+  body: z.object({ state: z.enum(["confirm", "published", "close", "reopen", "draft"]) })
 }, async ({ user, params, body }, res) => {
   const challenge = await ChallengeRep.getChallengeById(params.challengeId);
 

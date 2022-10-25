@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { CommentScope, SolutionComment } from "../../../models/interaction.comment";
-import CommentService from "../../../services/Comment.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayCommentFilter } from "../../../utils/field-filters/comment";
 import * as SolutionRep from "../solutions.repository";

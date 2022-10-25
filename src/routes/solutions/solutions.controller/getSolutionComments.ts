@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { CommentScope } from "../../../models/interaction.comment";
-import { getComments } from "../../../repository/repository.comment";
 import { validate } from "../../../utils/express/express-handler";
 import * as SolutionRep from "../solutions.repository";
 
@@ -26,5 +25,5 @@ export const getSolutionComments = validate({
     }
   }
 
-  return SolutionRep.listSolutionComments({ solutionId, scope: query.scope })
+  return SolutionRep.listSolutionComments({ solutionId: solution.id, scope: query.scope })
 })

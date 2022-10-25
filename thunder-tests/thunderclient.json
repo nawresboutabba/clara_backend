@@ -4,11 +4,11 @@
     "colId": "965bb216-6987-4e66-b689-9124ed026f46",
     "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
     "name": "login",
-    "url": "{{base_url}}/user/login",
+    "url": "user/login",
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-11T14:18:29.925Z",
-    "modified": "2022-10-11T14:34:29.318Z",
+    "modified": "2022-10-24T14:03:45.554Z",
     "headers": [],
     "params": [],
     "body": {
@@ -187,6 +187,190 @@
     "auth": {
       "type": "bearer",
       "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "85e26573-1cd3-434c-b95d-25ad12692161",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c5081918-ee81-4e29-b816-0618891756d6",
+    "name": "solutions",
+    "url": "solution",
+    "method": "GET",
+    "sortNum": 90000,
+    "created": "2022-10-24T14:01:54.737Z",
+    "modified": "2022-10-24T14:03:13.855Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "114b68d8-9485-4b3a-8710-f8bde63cd6f2",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "comments from solution",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment?scope=PUBLIC",
+    "method": "GET",
+    "sortNum": 110000,
+    "created": "2022-10-24T14:04:09.970Z",
+    "modified": "2022-10-25T00:19:18.200Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "PUBLIC",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "59ecc002-3cf1-4541-a991-f91a1d6ac318",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "comments resume from solution",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment/resume?scope=PUBLIC",
+    "method": "GET",
+    "sortNum": 120000,
+    "created": "2022-10-24T14:05:06.057Z",
+    "modified": "2022-10-24T14:16:14.264Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "PUBLIC",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "657bb8df-5ccc-48a3-8a0a-b29fa35597fb",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "create solution topic",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment",
+    "method": "POST",
+    "sortNum": 120000,
+    "created": "2022-10-24T14:05:40.708Z",
+    "modified": "2022-10-24T14:11:21.767Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"TOPICOO\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "cc200b95-63ee-4404-9131-aa6270b8163b",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "41cc2181-5411-49b2-aee3-0c469ab087fc",
+    "name": "tags",
+    "url": "tags",
+    "method": "GET",
+    "sortNum": 130000,
+    "created": "2022-10-24T14:08:48.988Z",
+    "modified": "2022-10-24T14:08:53.410Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "2dad4035-ebfc-44ea-bce5-138f870303ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "create solution comment from topic",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment",
+    "method": "POST",
+    "sortNum": 130000,
+    "created": "2022-10-24T14:09:34.150Z",
+    "modified": "2022-10-25T00:19:26.606Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"comentario do topicoooo 2\",\n  \"parent\": \"63569c9573746afe95f9860a\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "243ffbca-4de1-40f1-a69b-f5668cdcafbb",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "comments from challenge",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment?scope=GROUP",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2022-10-24T14:48:42.583Z",
+    "modified": "2022-10-24T15:32:27.042Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "GROUP",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "bb0443f8-a466-468d-aac7-542ceafce146",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "comments resume from challenge",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment/resume?scope=GROUP",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-10-24T14:49:07.008Z",
+    "modified": "2022-10-24T15:53:42.737Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "GROUP",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "53d2b544-ee1b-448e-9fbf-558470f7c2d7",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "create challenge topic",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2022-10-24T14:49:09.515Z",
+    "modified": "2022-10-24T14:57:19.881Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"TOPICOO\",\n  \"scope\": \"GROUP\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "de499db1-0b0e-465f-9935-d9a48ef8b950",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "create challenge comment from topic",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2022-10-24T14:49:11.453Z",
+    "modified": "2022-10-24T15:17:05.493Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"comentario do topicoooo 2\",\n  \"parent\": \"6356a9b3185db6e4ac8f6ac7\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
     },
     "tests": []
   }

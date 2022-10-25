@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { ChallengeComment, CommentScope, SolutionComment } from "../../../models/interaction.comment";
+import { CommentScope, SolutionComment } from "../../../models/interaction.comment";
 import { Tag } from "../../../models/tag";
-import CommentService from "../../../services/Comment.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericCommentFilter } from "../../../utils/field-filters/comment";
 import * as SolutionRep from "../solutions.repository";
@@ -37,6 +36,10 @@ export const createSolutionComment = validate({
     .populate("parent")
     .populate("tag")
     .populate("resource");
+
+  if(parentComment.resource.id !== solution.id) {
+    return res.status(400).json({ message: `parent not belongs to solution ${solution.id}` })
+  }
 
   if (parentComment !== null && parentComment.parent !== null) {
     return res.status(400).json({ message: "Max comment child level is 2" })

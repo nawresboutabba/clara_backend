@@ -33,6 +33,10 @@ export const createChallengeComment = validate(
       .populate("tag")
       .populate("resource");
 
+    if(parentComment.resource.id !== challenge.id) {
+      return res.status(400).json({ message: `parent not belongs to challenge ${challenge.id}` })
+    }
+
     if (parentComment !== null && parentComment.parent !== null) {
       return res.status(400).json({ message: "Max comment child level is 2" })
     }
@@ -44,8 +48,7 @@ export const createChallengeComment = validate(
 
     if (
       body.scope === CommentScope.GROUP &&
-      committee.isActive === false &&
-      !challenge.externalOpinion.map(externalOpinion => externalOpinion.userId).includes(user.userId)
+      !challengeRep.canViewChallenge(user, challenge, committee)
     ) {
       return res.status(403).json({ message: "Not authorized to create comment on this challenge" })
     }

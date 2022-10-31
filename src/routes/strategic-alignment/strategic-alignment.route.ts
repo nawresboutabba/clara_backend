@@ -8,5 +8,11 @@ strategicAlignmentsRouter
   .use(authentication)
   .get("/strategic-alignments", controller.getStrategicAlignment)
   .post("/strategic-alignments", controller.createStrategicAlignment)
-  .put("/strategic-alignments/:strategicAlignmentId", controller.updateStrategicAlignment)
-  .delete("/strategic-alignments/:strategicAlignmentId", controller.archiveStrategicAlignment)
+  .put(
+    "/strategic-alignments/:strategicAlignmentId",
+    controller.updateStrategicAlignment
+  )
+  .put(
+    "/strategic-alignments/:strategicAlignmentId/archive",
+    controller.archiveStrategicAlignment
+  );

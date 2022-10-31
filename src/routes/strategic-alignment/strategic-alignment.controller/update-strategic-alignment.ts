@@ -7,14 +7,14 @@ import { alignmentSerializer } from "../strategic-alignment.serializer";
 
 export const updateStrategicAlignment = validate(
   {
-    query: z.object({ strategicAlignmentId: z.string() }),
+    params: z.object({ strategicAlignmentId: z.string() }),
     body: z.object({
       description: z.string(),
       start_active: dateSchema(z.date()),
       end_active: dateSchema(z.date()),
     }),
   },
-  async ({ user, body, query: { strategicAlignmentId } }, res) => {
+  async ({ user, body, params: { strategicAlignmentId } }, res) => {
     const committee = await isCommitteeMember(user);
     if (!committee.isActive) {
       return res

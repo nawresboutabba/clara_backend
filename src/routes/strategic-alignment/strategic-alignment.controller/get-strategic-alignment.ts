@@ -16,7 +16,7 @@ export const getStrategicAlignment = validate(
       Object.assign(
         {},
         active
-          ? { $or: [{ archivedAt: { $eq: null } }, { endActive: { $gt: new Date() } }] }
+          ? { archivedAt: { $eq: null }, endActive: { $gt: new Date() } }
           : { $or: [{ archivedAt: { $ne: null } }, { endActive: { $lt: new Date() } },] }
       )
     ).populate("insertedBy");

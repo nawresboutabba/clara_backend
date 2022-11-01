@@ -4,13 +4,14 @@ import { UserI } from "../../models/users";
 export interface StrategicAlignmentI {
   _id: Types.ObjectId;
   id?: string;
+  archivedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+
   description: string;
   insertedBy: UserI;
   startActive: Date;
   endActive: Date;
-  archivedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const StrategicAlignmentSchema = new Schema<StrategicAlignmentI>(
@@ -24,5 +25,7 @@ const StrategicAlignmentSchema = new Schema<StrategicAlignmentI>(
   { timestamps: true }
 );
 
-
-export const StrategicAlignment = model<StrategicAlignmentI>("StrategicAlignment", StrategicAlignmentSchema);
+export const StrategicAlignment = model<StrategicAlignmentI>(
+  "StrategicAlignment",
+  StrategicAlignmentSchema
+);

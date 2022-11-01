@@ -9,7 +9,7 @@ import {
   SolutionResponse,
 } from "../controller/solutions";
 import RepositoryError from "../handle-error/error.repository";
-import { BaremoI } from "../models/baremo";
+import { BaremaI } from "../models/baremo";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
 import { ChallengeI } from "../routes/challenges/challenge.model";
@@ -301,7 +301,7 @@ export const newBaremo = async (
 ): Promise<BaremoResponse> => {
   try {
     const date = getCurrentDate();
-    const baremo: BaremoI = {
+    const baremo: BaremaI = {
       baremoId: nanoid(),
       user,
       solution,
@@ -372,7 +372,7 @@ export const getCurrent = async (
   }
 };
 
-export const editBaremo = async (baremo: BaremoI, data: any): Promise<any> => {
+export const editBaremo = async (baremo: BaremaI, data: any): Promise<any> => {
   try {
     data = { ...data, updated: getCurrentDate() };
     const result = await BaremoService.updateBaremo(baremo, data);

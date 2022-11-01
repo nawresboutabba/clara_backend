@@ -28,7 +28,7 @@ import {
   genericBaremoFilter,
 } from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
-import { BaremoI } from "../models/baremo";
+import { BaremaI } from "../models/baremo";
 import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
 import { isDefaultForAdditionalPropertiesAllowed } from "tsoa";
 import RepositoryError from "../handle-error/error.repository";
@@ -172,7 +172,7 @@ export const getSolutionsLinked = async (
         /**
          * Get baremos relationated to idea
          */
-        const baremosForIdea: BaremoI[] = baremoDictionary[idea.solution_id];
+        const baremosForIdea: BaremaI[] = baremoDictionary[idea.solution_id];
 
         /**
          * Chech that exist baremos for this. Redundant
@@ -183,7 +183,7 @@ export const getSolutionsLinked = async (
         /**
          * Check validators that did a baremo for this idea
          */
-        const usersWithBaremo = baremosForIdea.map((baremo: BaremoI) => {
+        const usersWithBaremo = baremosForIdea.map((baremo: BaremaI) => {
           return baremo.user.userId;
         });
 

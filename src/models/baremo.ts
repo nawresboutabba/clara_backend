@@ -1,34 +1,35 @@
-import { Schema, model } from "mongoose";
-import { SolutionI } from "../routes/solutions/solution.model";
+import { model, Schema } from "mongoose";
 import { UserI } from "./users";
 
-export interface BaremoI {
-  baremoId: string;
-  user: UserI;
-  solution: SolutionI;
-  created: Date;
-  updated: Date;
-  status: string;
-  type: "SPECIALIST_INTERVENTION" | "GROUP_VALIDATOR";
-  comment: string;
+export interface BaremaI {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  insertedBy: UserI;
+  archivedBy: UserI;
+  archivedAt: Date | null;
+
+  title: string;
+  description: string;
+  valueKind: "scale" | "bool";
+  weight: number;
+  type: "product" | "process" | "business";
+  axis: "difficulty" | "impact";
 }
 
-const baremo = new Schema<BaremoI>({
-  baremoId: String,
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  solution: {
-    type: Schema.Types.ObjectId,
-    ref: "Solution",
-  },
-  created: Date,
-  updated: Date,
-  status: String,
+const barema = new Schema<BaremaI>({
+  title: String,
+  description: String,
+  valueKind: String,
+  weight: Number,
   type: String,
-  comment: String,
+  axis: String,
+
+  insertedBy: { type: Schema.Types.ObjectId, ref: "User" },
+  archivedBy: { type: Schema.Types.ObjectId, ref: "User" },
+  archivedAt: { type: Date, default: null },
 });
 
-export const Barema = model<BaremoI>("Baremo", baremo);
+export const Barema = model<BaremaI>("Barema", barema);
 export default Barema;

@@ -1,5 +1,5 @@
 import * as express from "express";
-import { BaremoI } from "../models/baremo";
+import { BaremaI } from "../models/baremo";
 import { ConfigurationDefaultI } from "../models/configuration.default";
 import { GroupValidatorI } from "../models/group-validator";
 import { GeneralCommentI } from "../models/interaction.comment";
@@ -60,7 +60,7 @@ export interface RequestMiddleware extends express.Request {
     /**
      * Baremo Entity
      */
-    baremo: BaremoI;
+    baremo: BaremaI;
     /**
      * Invitation
      */

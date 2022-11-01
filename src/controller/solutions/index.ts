@@ -13,7 +13,7 @@ import {
   Patch,
 } from "tsoa";
 import { RESOURCE } from "../../constants";
-import { BaremoI } from "../../models/baremo";
+import { BaremaI } from "../../models/baremo";
 import { ConfigurationBaseI } from "../../models/configuration.default";
 import { SolutionCommentI } from "../../models/interaction.comment";
 import { ChallengeI } from "../../routes/challenges/challenge.model";
@@ -233,7 +233,7 @@ export default class SolutionController extends Controller {
     @Path("baremoId") baremoId: string,
     @Body() data: any,
     @Inject() baremo: any
-  ): Promise<BaremoI> {
+  ): Promise<BaremaI> {
     return editBaremo(baremo, data);
   }
   /**

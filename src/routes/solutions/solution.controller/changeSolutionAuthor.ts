@@ -3,7 +3,7 @@ import Solution from "../solution.model";
 import User, { UserI } from "../../../models/users";
 import { validate } from "../../../utils/express/express-handler";
 import { genericSolutionFilter } from "../../../utils/field-filters/solution";
-import * as SolutionRep from "../solutions.repository";
+import * as SolutionRep from "../solution.repository";
 
 export const changeSolutionAuthor = validate(
   {

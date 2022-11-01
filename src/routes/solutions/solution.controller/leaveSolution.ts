@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionFilter
-} from "../../../utils/field-filters/solution";
-import * as SolutionRep from "../solutions.repository";
+import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import * as SolutionRep from "../solution.repository";
 
 export const leaveSolution = validate(
   {

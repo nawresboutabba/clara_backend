@@ -4,7 +4,7 @@ import { validate } from "../../../utils/express/express-handler";
 import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
-import * as SolutionRep from "../solutions.repository";
+import * as SolutionRep from "../solution.repository";
 
 export const getSolutions = validate(
   {

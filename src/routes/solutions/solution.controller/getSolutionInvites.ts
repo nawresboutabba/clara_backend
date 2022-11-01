@@ -1,15 +1,11 @@
 import { z } from "zod";
-import {
-  INVITATION_STATUS
-} from "../../../models/invitation";
+import { INVITATION_STATUS } from "../../../models/invitation";
 import { UserI } from "../../../models/users";
 import InvitationService from "../../../services/Invitation.service";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericArraySolutionInvitationFilter
-} from "../../../utils/field-filters/invitation";
+import { genericArraySolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 import { removeEmpty } from "../../../utils/general/remove-empty";
-import * as SolutionRep from "../solutions.repository";
+import * as SolutionRep from "../solution.repository";
 
 export const getSolutionInvites = validate(
   {

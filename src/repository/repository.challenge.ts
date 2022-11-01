@@ -4,47 +4,34 @@ import {
   ChallengeResponse,
 } from "../controller/challenge";
 
-import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
+import * as _ from "lodash";
+import { nanoid } from "nanoid";
+import { ERRORS, HTTP_RESPONSE, WSALEVEL } from "../constants";
+import { UserRequest } from "../controller/users";
+import RepositoryError from "../handle-error/error.repository";
+import { ChallengeProposalI } from "../models/challenge-proposal";
+import { AreaI } from "../models/organization.area";
+import { UserI } from "../models/users";
 import { ChallengeI } from "../routes/challenges/challenge.model";
+import { SolutionI } from "../routes/solutions/solution.model";
+import AreaService from "../services/Area.service";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
-import { nanoid } from "nanoid";
-import { UserRequest } from "../controller/users";
-import * as _ from "lodash";
+import ChallengeProposalService from "../services/Proposal.service";
+import SolutionService from "../services/Solution.service";
 import UserService from "../services/User.service";
 import {
   genericArrayChallengeFilter,
   genericChallengeFilter,
 } from "../utils/field-filters/challenge";
-import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
-import { CommentBody, CommentResponse } from "../controller/comment";
-import { UserI } from "../models/users";
-import { newComment } from "./repository.comment";
-import {
-  genericArrayCommentFilter,
-  genericCommentFilter,
-} from "../utils/field-filters/comment";
-import RepositoryError from "../handle-error/error.repository";
-import { ERRORS, HTTP_RESPONSE, INTERACTION, WSALEVEL } from "../constants";
-import CommentService from "../services/Comment.service";
-import { ReactionBody, ReactionResponse } from "../controller/reaction";
-import ReactionService from "../services/Reaction.service";
-import { isReaction } from "./repository.reaction";
-import { genericReactionFilter } from "../utils/field-filters/reaction";
-import AreaService from "../services/Area.service";
-import { AreaI } from "../models/organization.area";
-import ChallengeProposalService from "../services/Proposal.service";
-import { ChallengeProposalI } from "../models/challenge-proposal";
 import {
   genericArrayChallengeProposalFilter,
   genericChallengeProposalFilter,
 } from "../utils/field-filters/challenge-proposal";
-import SolutionService from "../services/Solution.service";
-import { interactionResume } from "../utils/general/interaction-resume";
-import { SolutionI } from "../routes/solutions/solution.model";
 import { getCurrentDate } from "../utils/general/date";
-import { logVisit } from "../utils/general/log-visit";
-import { GeneralCommentI } from "../models/interaction.comment";
+import { interactionResume } from "../utils/general/interaction-resume";
+import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
+import SolutionStateMachine from "../utils/state-machine/state-machine.solution";
 
 export const newChallenge = async (
   body: ChallengeBody,
@@ -52,15 +39,10 @@ export const newChallenge = async (
   utils: any
 ): Promise<ChallengeResponse> => {
   try {
-    const data: Omit<ChallengeI, "id"> = await composeChallenge(
-      body,
-      user,
-      utils
-    );
+    const data = await composeChallenge(body, user, utils);
 
-    const challenge = await ChallengeService.newChallenge({
-      ...data,
-    });
+    // @ts-expect-error refactoring on the new
+    const challenge = await ChallengeService.newChallenge(data);
     const resp = await genericChallengeFilter(challenge);
     return resp;
   } catch (error) {
@@ -80,15 +62,12 @@ export const newChallengeProposal = async (
   utils: any
 ): Promise<ChallengeProposalResponse> => {
   try {
-    const challenge: Omit<ChallengeI, "id"> = await composeChallenge(
-      body,
-      user,
-      utils
-    );
+    const challenge = await composeChallenge(body, user, utils);
     const proposalId = nanoid();
     const dateProposal = getCurrentDate();
-    const data: Omit<ChallengeProposalI, "id"> = {
+    const data: Omit<ChallengeI, "id" | "strategic_alignment"> = {
       ...challenge,
+      // @ts-expect-error should refactor challenge proposal
       proposalId,
       dateProposal,
     };
@@ -106,7 +85,7 @@ const composeChallenge = async (
   body: ChallengeBody,
   user: UserRequest,
   utils: any
-): Promise<Omit<ChallengeI, "id">> => {
+): Promise<Omit<ChallengeI, "id" | "strategic_alignment">> => {
   try {
     const created = new Date();
 
@@ -116,7 +95,7 @@ const composeChallenge = async (
       body.group_validator
     );
 
-    const data: Omit<ChallengeI, "id"> = {
+    const data = {
       insertedBy,
       updatedBy: insertedBy,
       author: authorEntity,
@@ -163,6 +142,7 @@ const composeChallenge = async (
       const areasAvailable: Array<AreaI> = await AreaService.getAreasById(
         body.areas_available
       );
+      // @ts-expect-error no new pattern
       data.areasAvailable = areasAvailable;
     }
 

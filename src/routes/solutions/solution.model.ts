@@ -2,6 +2,7 @@ import { Schema } from "mongoose";
 import SituationBase, { SituationBaseI } from "../../models/situation.base";
 import { ChallengeI } from "../challenges/challenge.model";
 import { UserI } from "../../models/users";
+import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
 
 export const SOLUTION_STATUS = {
   DRAFT: "DRAFT",
@@ -102,6 +103,7 @@ export interface SolutionI extends SituationBaseI {
   isPrivated: boolean;
 
   status: SOLUTION_STATUS;
+  strategic_alignment: StrategicAlignmentI;
 }
 
 const Solution = SituationBase.discriminator<SolutionI>(
@@ -134,6 +136,10 @@ const Solution = SituationBase.discriminator<SolutionI>(
     version: Number,
     isPrivated: Boolean,
     type: String,
+    strategic_alignment: {
+      type: Schema.Types.ObjectId,
+      ref: "StrategicAlignment",
+    },
   })
 );
 

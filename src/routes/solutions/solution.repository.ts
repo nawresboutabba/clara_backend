@@ -24,7 +24,8 @@ export function getSolutionById(solutionId: string) {
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("externalOpinion");
+    .populate("externalOpinion")
+    .populate("strategic_alignment");
 }
 
 export function updateSolutionPartially(
@@ -41,7 +42,8 @@ export function updateSolutionPartially(
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("externalOpinion");
+    .populate("externalOpinion")
+    .populate("strategic_alignment");
 }
 
 export function getSolutions(filterQuery: FilterQuery<SolutionI>) {

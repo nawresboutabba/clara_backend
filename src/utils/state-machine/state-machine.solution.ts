@@ -58,11 +58,11 @@ const machine = {
       prepare: function () {
         this.changeState(SOLUTION_STATUS.PROPOSED);
       },
-      aproved: function () {
+      approved: function () {
         this.changeState(SOLUTION_STATUS.APPROVED_FOR_CONSTRUCTION);
       },
     },
-    APROVED_FOR_CONSTRUCTION: {
+    APPROVED_FOR_CONSTRUCTION: {
       /**
        * One of possible final for a solution
        */

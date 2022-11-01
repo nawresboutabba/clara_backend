@@ -10,7 +10,13 @@ import cors from "cors";
 
 import swaggerDocument from "../swagger.json";
 
-import { solutionsRouter, challengeRouter, usersRouter, tagsRouter } from "./routes";
+import {
+  solutionsRouter,
+  challengeRouter,
+  usersRouter,
+  tagsRouter,
+  strategicAlignmentsRouter,
+} from "./routes";
 
 import companyRouter from "./routes/company";
 import areaRouter from "./routes/area";
@@ -55,6 +61,7 @@ app.use(challengeRouter);
 app.use(invitationRouter);
 app.use(tagsRouter);
 app.use(baremaRouter);
+app.use(strategicAlignmentsRouter);
 app.use("/", companyRouter);
 app.use("/", areaRouter);
 app.use("/", groupValidatorRouter);

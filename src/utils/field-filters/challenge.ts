@@ -2,15 +2,16 @@ import {
   ChallengeResponse,
   LightChallengeResponse,
 } from "../../controller/challenge";
-import { ChallengeI } from "../../models/situation.challenges";
-import { genericArrayAreaFilter } from "./area";
-import { genericUserFilter } from "./user";
-import { genericGroupValidatorFilter } from "./group-validator";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
+import { ChallengeI } from "../../routes/challenges/challenge.model";
+import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
+import { genericArrayAreaFilter } from "./area";
+import { genericGroupValidatorFilter } from "./group-validator";
+import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 /**
  * Challenge information filter.
@@ -29,7 +30,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     title,
     description,
     price,
-    meta,
+    goal,
     resources,
     wanted_impact,
     active,
@@ -58,6 +59,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   const images = await getArrayImageSignedUrl(challenge.images);
   const banner_image = await getSignedUrl(challenge.bannerImage);
   const author = await genericUserFilter(challenge.author);
+  const coauthor = await genericArrayUserFilter(challenge.coauthor);
   const inserted_by = await genericUserFilter(challenge.insertedBy);
   const areas_available = genericArrayAreaFilter(challenge.areasAvailable);
   const department_affected = genericArrayAreaFilter(
@@ -66,18 +68,23 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   const group_validator = await genericGroupValidatorFilter(
     challenge.groupValidator
   );
+
+  const strategic_alignment = lightAlignmentSerializer(
+    challenge.strategic_alignment
+  );
   const tags = genericArrayTagsFilter(challenge.tags);
   return {
     id: _id,
     inserted_by,
     author,
+    coauthor,
     created,
     status,
     updated,
     title,
     description,
     price,
-    meta,
+    goal,
     resources,
     wanted_impact,
     active,
@@ -90,6 +97,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     department_affected,
     group_validator,
     type,
+    strategic_alignment,
     /**
      * Configuration section
      */
@@ -132,14 +140,16 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
   const areas_available = await genericArrayAreaFilter(
     challenge.areasAvailable
   );
-  const department_affected = await genericArrayAreaFilter(
-    challenge.departmentAffected
-  );
   const group_validator = await genericGroupValidatorFilter(
     challenge.groupValidator
   );
-  const tags = genericArrayTagsFilter(challenge.tags);
   const author = await genericUserFilter(challenge.author);
+  const coauthor = await genericArrayUserFilter(challenge.coauthor);
+
+  const tags = genericArrayTagsFilter(challenge.tags);
+  const department_affected = genericArrayAreaFilter(
+    challenge.departmentAffected
+  );
 
   return {
     id: _id,
@@ -147,6 +157,7 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     status,
     title,
     author,
+    coauthor,
     description,
     active,
     banner_image,

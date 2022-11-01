@@ -1,4 +1,4 @@
-import Solution, { SolutionI } from "../models/situation.solutions";
+import Solution, { SolutionI } from "../routes/solutions/solution.model";
 import * as _ from "lodash";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";

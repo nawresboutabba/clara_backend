@@ -2,11 +2,11 @@ import * as express from "express";
 import { BaremoI } from "../models/baremo";
 import { ConfigurationDefaultI } from "../models/configuration.default";
 import { GroupValidatorI } from "../models/group-validator";
-import { CommentI } from "../models/interaction.comment";
+import { GeneralCommentI } from "../models/interaction.comment";
 import { SolutionInvitationI } from "../models/invitation";
 import { AreaI } from "../models/organization.area";
-import { ChallengeI } from "../models/situation.challenges";
-import { SolutionI } from "../models/situation.solutions";
+import { ChallengeI } from "../routes/challenges/challenge.model";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
 import { UserI } from "../models/users";
 
@@ -38,12 +38,12 @@ export interface RequestMiddleware extends express.Request {
     /**
      * Is the same that parentComment, but a comment without childs
      */
-    childComment?: CommentI;
+    childComment?: GeneralCommentI;
     /**
      * When a comment is inserted, it can have a parent.
      * Just can exist 2 nivels of comments.
      */
-    parentComment?: CommentI;
+    parentComment?: GeneralCommentI;
     /**
      * Tags what a resource is relationated
      */

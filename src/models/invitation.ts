@@ -1,6 +1,6 @@
 import { model, Schema, Types } from "mongoose";
-import { ChallengeI } from "./situation.challenges";
-import { SolutionI } from "./situation.solutions";
+import { ChallengeI } from "../routes/challenges/challenge.model";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "./users";
 
 export enum INVITATION_STATUS {
@@ -21,6 +21,7 @@ export enum INVITATION_TYPE {
 export type INVITATION_TYPE_TYPE = keyof typeof INVITATION_TYPE;
 
 export interface InvitationI {
+  __t: "SolutionInvitation" | "ChallengeInvitation";
   _id: Types.ObjectId;
   /**
    * Guest user
@@ -54,6 +55,10 @@ export interface SolutionInvitationI extends InvitationI {
   resource: SolutionI;
 }
 
+export interface ChallengeInvitationI extends InvitationI {
+  resource: ChallengeI;
+}
+
 const invitationSchema = new Schema<InvitationI>(
   {
     to: { type: Types.ObjectId, ref: "User" },
@@ -70,7 +75,7 @@ const invitationSchema = new Schema<InvitationI>(
   { timestamps: true }
 );
 
-const Invitation = model<InvitationI>("Invitation", invitationSchema);
+export const Invitation = model<InvitationI>("Invitation", invitationSchema);
 
 export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(
   "SolutionInvitation",
@@ -78,3 +83,11 @@ export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(
     resource: { type: Types.ObjectId, ref: "Solution" },
   })
 );
+
+export const ChallengeInvitation =
+  Invitation.discriminator<ChallengeInvitationI>(
+    "ChallengeInvitation",
+    new Schema({
+      resource: { type: Types.ObjectId, ref: "Challenge" },
+    })
+  );

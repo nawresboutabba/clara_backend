@@ -1,28 +1,30 @@
 import { z } from "zod";
-import Challenge from "../../../models/situation.challenges";
+import Challenge from "../challenge.model";
 import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import { removeEmpty } from "../../../utils/general/remove-empty";
+import { dateSchema, numberSchema } from "../../../utils/zod";
 import * as TagsRep from "../../tags/tags.repository";
+import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
 
 export const updateChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
-    body: z
-      .object({
-        title: z.string().optional(),
-        description: z.string().optional(),
-        tags: z.array(z.string()).optional(),
-        areas: z.array(z.string()).optional(),
-        finalization: z.date().min(new Date).optional(),
-        banner_image: z.string().optional(),
-        images: z.array(z.string()).optional(),
-        price: z.number().optional(),
-        meta: z.string().optional(),
-        resources: z.string().optional(),
-        wanted_impact: z.string().optional(),
-      }),
+    body: z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      areas: z.array(z.string()).optional(),
+      finalization: dateSchema(z.date().min(new Date()).optional()),
+      banner_image: z.string().optional(),
+      images: z.array(z.string()).optional(),
+      price: numberSchema(z.number().optional()),
+      goal: z.string().optional(),
+      resources: z.string().optional(),
+      wanted_impact: z.string().optional(),
+      strategic_alignment: z.string().optional(),
+    }),
   },
   async ({ user, params, body }, res) => {
     const challenge = await Challenge.findById(params.challengeId)
@@ -36,7 +38,10 @@ export const updateChallenge = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(body.areas)
+    const departmentAffected = await AreaService.getAreasById(body.areas);
+    const strategic_alignment = await StrategicAlignment.findById(
+      body.strategic_alignment
+    );
 
     const updatedChallenge = await Challenge.findByIdAndUpdate(
       params.challengeId,
@@ -49,16 +54,19 @@ export const updateChallenge = validate(
         departmentAffected,
         finalization: body.finalization,
         price: body.price,
-        meta: body.meta,
+        goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
+        strategic_alignment,
       }),
       { new: true }
     )
       .populate("author")
       .populate("insertedBy")
+      .populate("tags")
       .populate("areasAvailable")
-      .populate("departmentAffected");
+      .populate("departmentAffected")
+      .populate("strategic_alignment");
 
     return res.status(201).json(await genericChallengeFilter(updatedChallenge));
   }

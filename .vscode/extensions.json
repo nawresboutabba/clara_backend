@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "eliostruyf.vscode-typescript-exportallmodules",
+    "kimuson.ts-type-expand",
+    "aaron-bond.better-comments",
+    "mattpocock.ts-error-translator"
+  ]
+}

@@ -1,0 +1,70 @@
+[
+  {
+    "_id": "965bb216-6987-4e66-b689-9124ed026f46",
+    "colName": "ideation",
+    "created": "2022-10-11T14:18:08.693Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "ee3fafef-780f-4e17-9bd7-150196b54108",
+        "name": "auth",
+        "containerId": "",
+        "created": "2022-10-11T14:18:24.147Z",
+        "sortNum": 10000
+      },
+      {
+        "_id": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+        "name": "challenge",
+        "containerId": "",
+        "created": "2022-10-11T14:25:05.359Z",
+        "sortNum": 20000
+      },
+      {
+        "_id": "c5081918-ee81-4e29-b816-0618891756d6",
+        "name": "solutions",
+        "containerId": "",
+        "created": "2022-10-24T13:59:40.129Z",
+        "sortNum": 30000
+      },
+      {
+        "_id": "4485fd52-b325-44b9-ac66-e652cd859b15",
+        "name": "comments",
+        "containerId": "c5081918-ee81-4e29-b816-0618891756d6",
+        "created": "2022-10-24T13:59:45.243Z",
+        "sortNum": 40000
+      },
+      {
+        "_id": "41cc2181-5411-49b2-aee3-0c469ab087fc",
+        "name": "tags",
+        "containerId": "",
+        "created": "2022-10-24T14:08:44.313Z",
+        "sortNum": 50000
+      },
+      {
+        "_id": "c320071c-573e-4834-ab33-50c6ce7e8294",
+        "name": "comments",
+        "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+        "created": "2022-10-24T14:48:57.061Z",
+        "sortNum": 60000
+      },
+      {
+        "_id": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+        "name": "strategic-alignment",
+        "containerId": "",
+        "created": "2022-10-25T14:02:35.335Z",
+        "sortNum": 70000
+      }
+    ],
+    "settings": {
+      "headers": [],
+      "auth": {
+        "type": "bearer",
+        "bearer": "{{access_token}}"
+      },
+      "tests": [],
+      "options": {
+        "baseUrl": "{{base_url}}/"
+      }
+    }
+  }
+]

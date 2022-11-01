@@ -1,0 +1,436 @@
+[
+  {
+    "_id": "6806baa8-2b3a-443f-bb1b-8bcb5de6a231",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "login",
+    "url": "user/login",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-10-11T14:18:29.925Z",
+    "modified": "2022-10-25T14:05:44.485Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"rafael@gmail.com\",\n  \"password\": \"passwordExample\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json.token",
+        "action": "setto",
+        "value": "{{access_token}}"
+      }
+    ]
+  },
+  {
+    "_id": "d9e64e13-fca5-4560-ad2f-93e11367e7dc",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "logged user",
+    "url": "{{base_url}}/user/info",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-10-11T14:22:42.790Z",
+    "modified": "2022-10-11T14:23:09.221Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "b059d447-76ff-4d62-a3b6-ad9c4536f36f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "ee3fafef-780f-4e17-9bd7-150196b54108",
+    "name": "logged user Copy",
+    "url": "{{base_url}}/user",
+    "method": "PATCH",
+    "sortNum": 30000,
+    "created": "2022-10-11T14:24:37.548Z",
+    "modified": "2022-10-11T14:24:53.981Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"first_name\": \"Rafael\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "8e87c1e9-4bc2-45de-b8f4-daafe1122e92",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "list challenge",
+    "url": "{{base_url}}/challenge",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2022-10-11T14:25:17.462Z",
+    "modified": "2022-10-11T14:25:50.865Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "8a975bb2-e843-47bd-88a1-9b5e3798b054",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "get challenge",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf",
+    "method": "GET",
+    "sortNum": 40000,
+    "created": "2022-10-11T14:26:02.887Z",
+    "modified": "2022-10-11T14:26:13.848Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "feca6637-7a62-474d-b219-123bb9bfa36f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "create challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation",
+    "method": "POST",
+    "sortNum": 50000,
+    "created": "2022-10-11T14:26:53.564Z",
+    "modified": "2022-10-11T14:34:09.132Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"email\": \"ibis@gmail.com\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "012d333c-8212-4279-931e-fe71f61cea3f",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "get challenge invites",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation?status=ACCEPTED",
+    "method": "GET",
+    "sortNum": 60000,
+    "created": "2022-10-11T14:26:55.635Z",
+    "modified": "2022-10-11T16:10:52.774Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "status",
+        "value": "ACCEPTED",
+        "isPath": false
+      }
+    ],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "49269905-1060-4922-9314-9ef4435efb75",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "cancel challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation/63457da74f7ac01998c17c1b/cancel",
+    "method": "POST",
+    "sortNum": 70000,
+    "created": "2022-10-11T14:27:21.061Z",
+    "modified": "2022-10-11T14:32:43.790Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "ca82fa13-158c-4f9e-ae21-9e57f48cfa7c",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "response challenge invite",
+    "url": "{{base_url}}/challenge/6331c3e560613aa626bc66bf/invitation/63457ee05afb166015e7b815/response",
+    "method": "POST",
+    "sortNum": 80000,
+    "created": "2022-10-11T14:27:36.665Z",
+    "modified": "2022-10-11T14:35:53.083Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"response\": \"ACCEPTED\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "85e26573-1cd3-434c-b95d-25ad12692161",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c5081918-ee81-4e29-b816-0618891756d6",
+    "name": "solutions",
+    "url": "solution",
+    "method": "GET",
+    "sortNum": 90000,
+    "created": "2022-10-24T14:01:54.737Z",
+    "modified": "2022-10-24T14:03:13.855Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "114b68d8-9485-4b3a-8710-f8bde63cd6f2",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "comments from solution",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment?scope=PUBLIC",
+    "method": "GET",
+    "sortNum": 110000,
+    "created": "2022-10-24T14:04:09.970Z",
+    "modified": "2022-10-25T00:19:18.200Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "PUBLIC",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "59ecc002-3cf1-4541-a991-f91a1d6ac318",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "comments resume from solution",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment/resume?scope=PUBLIC",
+    "method": "GET",
+    "sortNum": 120000,
+    "created": "2022-10-24T14:05:06.057Z",
+    "modified": "2022-10-24T14:16:14.264Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "PUBLIC",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "657bb8df-5ccc-48a3-8a0a-b29fa35597fb",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "create solution topic",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment",
+    "method": "POST",
+    "sortNum": 120000,
+    "created": "2022-10-24T14:05:40.708Z",
+    "modified": "2022-10-24T14:11:21.767Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"TOPICOO\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "cc200b95-63ee-4404-9131-aa6270b8163b",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "41cc2181-5411-49b2-aee3-0c469ab087fc",
+    "name": "tags",
+    "url": "tags",
+    "method": "GET",
+    "sortNum": 130000,
+    "created": "2022-10-24T14:08:48.988Z",
+    "modified": "2022-10-24T14:08:53.410Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "2dad4035-ebfc-44ea-bce5-138f870303ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "4485fd52-b325-44b9-ac66-e652cd859b15",
+    "name": "create solution comment from topic",
+    "url": "solution/PXi4EakOy-_vu0XNVmK_t/comment",
+    "method": "POST",
+    "sortNum": 130000,
+    "created": "2022-10-24T14:09:34.150Z",
+    "modified": "2022-10-25T00:19:26.606Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"comentario do topicoooo 2\",\n  \"parent\": \"63569c9573746afe95f9860a\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "243ffbca-4de1-40f1-a69b-f5668cdcafbb",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "comments from challenge",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment?scope=GROUP",
+    "method": "GET",
+    "sortNum": 10000,
+    "created": "2022-10-24T14:48:42.583Z",
+    "modified": "2022-10-24T15:32:27.042Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "GROUP",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "bb0443f8-a466-468d-aac7-542ceafce146",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "comments resume from challenge",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment/resume?scope=GROUP",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-10-24T14:49:07.008Z",
+    "modified": "2022-10-24T15:53:42.737Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "scope",
+        "value": "GROUP",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "53d2b544-ee1b-448e-9fbf-558470f7c2d7",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "create challenge topic",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2022-10-24T14:49:09.515Z",
+    "modified": "2022-10-24T14:57:19.881Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"TOPICOO\",\n  \"scope\": \"GROUP\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "de499db1-0b0e-465f-9935-d9a48ef8b950",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "c320071c-573e-4834-ab33-50c6ce7e8294",
+    "name": "create challenge comment from topic",
+    "url": "challenge/6331c3e560613aa626bc66bf/comment",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2022-10-24T14:49:11.453Z",
+    "modified": "2022-10-24T15:17:05.493Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"comment\": \"comentario do topicoooo 2\",\n  \"parent\": \"6356a9b3185db6e4ac8f6ac7\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "e55db033-2236-435b-976b-b3ece46ca190",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "active strategic alignments",
+    "url": "strategic-alignments?active=true",
+    "method": "GET",
+    "sortNum": 150000,
+    "created": "2022-10-25T14:02:51.003Z",
+    "modified": "2022-10-25T15:53:16.805Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "active",
+        "value": "true",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "5ee40467-da46-450c-a603-7d8675ee82ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "archived strategic alignments",
+    "url": "strategic-alignments?active=false",
+    "method": "GET",
+    "sortNum": 160000,
+    "created": "2022-10-25T14:03:34.221Z",
+    "modified": "2022-10-25T15:53:23.120Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "active",
+        "value": "false",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "dff6af48-579d-4df9-ba1e-262899cd219e",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "create strategic alignment",
+    "url": "strategic-alignments",
+    "method": "POST",
+    "sortNum": 160000,
+    "created": "2022-10-25T14:03:59.133Z",
+    "modified": "2022-10-25T14:14:08.765Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"description\": \"Conseguir 200 doadores para orfanatos\",\n  \"startActive\": \"2022-01-25T14:05:07.973Z\",\n  \"endActive\": \"2022-12-25T14:05:07.973Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  }
+]

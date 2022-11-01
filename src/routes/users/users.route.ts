@@ -1,5 +1,5 @@
 import * as express from "express";
-import { usersController } from "./users.controller";
+import * as usersController from "./users.controller";
 import authentication from "../../middlewares/authentication";
 import oldRoute from "./index";
 
@@ -7,4 +7,6 @@ export const usersRouter = express.Router();
 
 usersRouter
   .use(oldRoute)
-  .get("/user/invitation", authentication, usersController.usersInvites);
+  .use(authentication)
+  .get("/user/invitation", usersController.usersInvites)
+  .get("/user/participation/challenge", usersController.participatedChallenges);

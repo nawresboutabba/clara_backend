@@ -1,34 +1,32 @@
 import { nanoid } from "nanoid";
-import {
-  ERRORS, HTTP_RESPONSE
-} from "../constants";
+import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { BaremoResponse } from "../controller/baremo";
 import { CommentBody, CommentResponse } from "../controller/comment";
 import {
   EvaluationNoteResponse,
   LightSolutionResponse,
   SolutionBody,
-  SolutionResponse
+  SolutionResponse,
 } from "../controller/solutions";
 import RepositoryError from "../handle-error/error.repository";
 import { BaremoI } from "../models/baremo";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
-import { ChallengeI } from "../models/situation.challenges";
-import { SolutionI, SOLUTION_STATUS } from "../models/situation.solutions";
+import { ChallengeI } from "../routes/challenges/challenge.model";
+import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
 import { UserI } from "../models/users";
 import BaremoService from "../services/Baremo.service";
 import EvaluationNoteService from "../services/EvaluationNote.service";
 import SolutionService, {
-  SolutionEditablesFields
+  SolutionEditablesFields,
 } from "../services/Solution.service";
 import { genericBaremoFilter } from "../utils/field-filters/baremo";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 import {
   genericArraySolutionsFilter,
-  genericSolutionFilter
+  genericSolutionFilter,
 } from "../utils/field-filters/solution";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
@@ -38,7 +36,7 @@ import SolutionStateMachine from "../utils/state-machine/state-machine.solution"
 import {
   getComments,
   getCommentsWithoutRelation,
-  newComment
+  newComment,
 } from "./repository.comment";
 
 /**

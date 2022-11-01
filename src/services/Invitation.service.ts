@@ -1,6 +1,6 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import { SolutionInvitationI, SolutionInvitation } from "../models/invitation";
+import { SolutionInvitationI, SolutionInvitation, ChallengeInvitation } from "../models/invitation";
 import { FilterQuery, Types, UpdateQuery } from "mongoose";
 
 const InvitationService = {
@@ -24,6 +24,25 @@ const InvitationService = {
         .populate({
           path: "resource",
           populate: { path: "challenge" },
+        })
+        .populate("from")
+        .populate("to");
+
+      return invitations;
+    } catch (error) {
+      throw new ServiceError(
+        ERRORS.SERVICE.GET_INVITATION,
+        HTTP_RESPONSE._500,
+        error
+      );
+    }
+  },
+  async getChallengeInvitations(filterQuery: FilterQuery<SolutionInvitationI>) {
+    try {
+      const invitations = await ChallengeInvitation.find(filterQuery)
+        .populate({
+          path: "resource",
+          // populate: { path: "challenge" },
         })
         .populate("from")
         .populate("to");

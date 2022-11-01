@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Solution from "../../../models/situation.solutions";
+import Solution from "../../solutions/solution.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
 import { sortSchema } from "../../../utils/params-query/sort.query";

@@ -1,5 +1,8 @@
 import { nanoid } from "nanoid";
-import Challenge, { CHALLENGE_STATUS, CHALLENGE_TYPE } from "../../../models/situation.challenges";
+import Challenge, {
+  CHALLENGE_STATUS,
+  CHALLENGE_TYPE,
+} from "../challenge.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
@@ -8,7 +11,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
   const committee = await isCommitteeMember(user);
 
   if (!committee.isActive) {
-    return res.status(403).json({ message: "not authorized" })
+    return res.status(403).json({ message: "not authorized" });
   }
 
   const challenge = await Challenge.create({
@@ -27,7 +30,8 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     .populate("author")
     .populate("insertedBy")
     .populate("areasAvailable")
-    .populate("departmentAffected");
+    .populate("departmentAffected")
+    .populate("strategic_alignment");
 
   return res.status(201).json(await genericChallengeFilter(createdChallenge));
 });

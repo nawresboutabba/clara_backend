@@ -1,5 +1,5 @@
 import { ERRORS } from "../../constants";
-import { SOLUTION_STATUS } from "../../models/situation.solutions";
+import { SOLUTION_STATUS } from "../../routes/solutions/solution.model";
 /**
  * Solutions state machine
  * https://drive.google.com/file/d/1JFNcXbiDoof3LKlKQEQFrFnpRt4aq3E7/view?usp=sharing

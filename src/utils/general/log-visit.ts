@@ -1,5 +1,5 @@
 import { ChallengeI } from "../../routes/challenges/challenge.model";
-import { SolutionI } from "../../models/situation.solutions";
+import { SolutionI } from "../../routes/solutions/solution.model";
 import { UserI } from "../../models/users";
 import VisitService from "../../services/Visit.service";
 import { getCurrentDate } from "./date";

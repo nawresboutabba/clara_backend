@@ -1,6 +1,6 @@
 import { z } from "zod";
 import Challenge, { CHALLENGE_STATUS } from "../challenge.model";
-import Solution from "../../../models/situation.solutions";
+import Solution from "../../solutions/solution.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";

@@ -1,16 +1,16 @@
 import { Schema, model } from "mongoose";
-import { SolutionI } from "./situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "./users";
 
 export interface EvaluationNoteI {
-    noteId: string,
-    title: string,
-    description: string,
-    type: 'GROUP_VALIDATOR' | 'EXTERNAL_OPINION',
-    created: Date,
-    updated: Date,
-    user: UserI,
-    solution: SolutionI
+  noteId: string;
+  title: string;
+  description: string;
+  type: "GROUP_VALIDATOR" | "EXTERNAL_OPINION";
+  created: Date;
+  updated: Date;
+  user: UserI;
+  solution: SolutionI;
 }
 
 const evaluationNote = new Schema({
@@ -22,12 +22,12 @@ const evaluationNote = new Schema({
   updated: Date,
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
   solution: {
     type: Schema.Types.ObjectId,
-    ref: 'Solution'
+    ref: "Solution",
   },
-})
+});
 
-export default model('EvaluationNote', evaluationNote);
+export default model("EvaluationNote", evaluationNote);

@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { BaremoI } from "./baremo";
 import { GroupValidatorI } from "./group-validator";
 import { ChallengeI } from "../routes/challenges/challenge.model";
-import { SolutionI } from "./situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "./users";
 
 export interface SpecialistInterventionI {

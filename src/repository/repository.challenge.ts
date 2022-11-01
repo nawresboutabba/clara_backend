@@ -41,7 +41,7 @@ import {
 } from "../utils/field-filters/challenge-proposal";
 import SolutionService from "../services/Solution.service";
 import { interactionResume } from "../utils/general/interaction-resume";
-import { SolutionI } from "../models/situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
 import { GeneralCommentI } from "../models/interaction.comment";

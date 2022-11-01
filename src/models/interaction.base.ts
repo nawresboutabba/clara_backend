@@ -1,6 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { ChallengeI } from "../routes/challenges/challenge.model";
-import { SolutionI } from "./situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "./users";
 
 export const options = {

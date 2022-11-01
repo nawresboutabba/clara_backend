@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
-import SituationBase, { SituationBaseI } from "./situation.base";
-import { ChallengeI } from "../routes/challenges/challenge.model";
-import { UserI } from "./users";
+import SituationBase, { SituationBaseI } from "../../models/situation.base";
+import { ChallengeI } from "../challenges/challenge.model";
+import { UserI } from "../../models/users";
 
 export const SOLUTION_STATUS = {
   DRAFT: "DRAFT",

@@ -1,7 +1,7 @@
 import { Schema, Types } from "mongoose";
 import { InteractionBase, InteractionBaseI, options } from "./interaction.base";
 import { ChallengeI } from "../routes/challenges/challenge.model";
-import { SolutionI } from "./situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { TagI } from "./tag";
 
 export enum CommentScope {

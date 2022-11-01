@@ -13,7 +13,7 @@ import { BaremoI } from "../models/baremo";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
 import { ChallengeI } from "../routes/challenges/challenge.model";
-import { SolutionI, SOLUTION_STATUS } from "../models/situation.solutions";
+import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
 import { UserI } from "../models/users";
 import BaremoService from "../services/Baremo.service";

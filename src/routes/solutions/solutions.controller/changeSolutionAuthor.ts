@@ -1,10 +1,8 @@
 import { z } from "zod";
-import Solution from "../../../models/situation.solutions";
+import Solution from "../solution.model";
 import User, { UserI } from "../../../models/users";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionFilter
-} from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../../../utils/field-filters/solution";
 import * as SolutionRep from "../solutions.repository";
 
 export const changeSolutionAuthor = validate(

@@ -4,7 +4,7 @@ import {
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
 import { CHALLENGE_TYPE } from "../../routes/challenges/challenge.model";
-import { SolutionI } from "../../models/situation.solutions";
+import { SolutionI } from "../../routes/solutions/solution.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,

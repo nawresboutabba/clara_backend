@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { EVENTS_TYPE } from "../../../constants";
-import { ChallengeInvitation, INVITATION_STATUS, INVITATION_TYPE } from "../../../models/invitation";
+import {
+  ChallengeInvitation,
+  INVITATION_STATUS,
+  INVITATION_TYPE,
+} from "../../../models/invitation";
 // import Challenge from "../../../models/situation.challenges";
 import { sendEmail } from "../../../repository/repository.mailing";
 import { newExternalUser } from "../../../repository/repository.users";
@@ -8,7 +12,7 @@ import UserService from "../../../services/User.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeInvitationFilter } from "../../../utils/field-filters/invitation";
 import { generatePassword } from "../../../utils/general/generate-password";
-import * as ChallengeRep from "../challenges.repository"
+import * as ChallengeRep from "../challenge.repository";
 
 // TODO throw error if invitation is to committee member
 export const createChallengeInvite = validate(
@@ -72,6 +76,8 @@ export const createChallengeInvite = validate(
       invitation: createdInvitation,
     });
 
-    return res.status(201).json(await genericChallengeInvitationFilter(createdInvitation));
+    return res
+      .status(201)
+      .json(await genericChallengeInvitationFilter(createdInvitation));
   }
 );

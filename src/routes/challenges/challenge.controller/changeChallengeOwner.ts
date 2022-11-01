@@ -3,7 +3,7 @@ import Challenge from "../challenge.model";
 import User, { UserI } from "../../../models/users";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
-import * as ChallengeRep from "../challenges.repository";
+import * as ChallengeRep from "../challenge.repository";
 
 export const changeChallengeAuthor = validate(
   {

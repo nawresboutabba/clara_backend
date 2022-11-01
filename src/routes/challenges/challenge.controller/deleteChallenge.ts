@@ -1,16 +1,14 @@
 import { z } from "zod";
-import Challenge from "../challenge.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import * as ChallengeRep from "../challenges.repository";
 
 export const deleteChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
   },
   async ({ user, params }, res) => {
-    const challenge = await Challenge.findById(params.challengeId).populate(
-      "author"
-    );
+    const challenge = await ChallengeRep.getChallengeById(params.challengeId);
 
     if (
       challenge.status !== "DRAFT" ||

@@ -6,6 +6,7 @@ import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { dateSchema, numberSchema } from "../../../utils/zod";
 import * as TagsRep from "../../tags/tags.repository";
+import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
 
 export const updateChallenge = validate(
   {
@@ -22,6 +23,7 @@ export const updateChallenge = validate(
       goal: z.string().optional(),
       resources: z.string().optional(),
       wanted_impact: z.string().optional(),
+      strategic_alignment: z.string().optional(),
     }),
   },
   async ({ user, params, body }, res) => {
@@ -37,6 +39,9 @@ export const updateChallenge = validate(
 
     const tags = await TagsRep.getTagsById(body.tags);
     const departmentAffected = await AreaService.getAreasById(body.areas);
+    const strategic_alignment = await StrategicAlignment.findById(
+      body.strategic_alignment
+    );
 
     const updatedChallenge = await Challenge.findByIdAndUpdate(
       params.challengeId,
@@ -52,6 +57,7 @@ export const updateChallenge = validate(
         goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
+        strategic_alignment,
       }),
       { new: true }
     )
@@ -59,7 +65,8 @@ export const updateChallenge = validate(
       .populate("insertedBy")
       .populate("tags")
       .populate("areasAvailable")
-      .populate("departmentAffected");
+      .populate("departmentAffected")
+      .populate("strategic_alignment");
 
     return res.status(201).json(await genericChallengeFilter(updatedChallenge));
   }

@@ -37,6 +37,7 @@ import { AreaResponse } from "../area/area";
 import { ConfigurationBody } from "../configuration";
 import { SituationBody, SituationResponse } from "../situation/situation";
 import { LightSolutionResponse, SolutionResponse } from "../solutions";
+import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 /**
  * Data that can be edited or inserted. Other are edited by
  * another endpoints
@@ -88,6 +89,7 @@ export interface ChallengeResponse extends SituationResponse {
   finalization: Date;
   default_scope: boolean;
   group_validator: GroupValidatorResponse;
+  strategic_alignment: LightStrategicAlignmentSerialized;
   type: string;
   interactions?: {
     interaction: string;

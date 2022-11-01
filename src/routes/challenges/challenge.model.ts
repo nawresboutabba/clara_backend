@@ -3,6 +3,7 @@ import SituationBase, {
   SituationBaseI,
   options,
 } from "../../models/situation.base";
+import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
 
 export enum CHALLENGE_TYPE {
   GENERIC = "GENERIC",
@@ -47,6 +48,10 @@ export interface ChallengeI extends SituationBaseI {
   goal: string;
   resources: string;
   wanted_impact: string;
+  /**
+   * Alignment of the challenge with the company alignments
+   */
+  strategic_alignment: StrategicAlignmentI;
 }
 
 export const challengeModel = {
@@ -58,6 +63,10 @@ export const challengeModel = {
   goal: String,
   resources: String,
   wanted_impact: String,
+  strategic_alignment: {
+    type: Schema.Types.ObjectId,
+    ref: "StrategicAlignment",
+  },
 };
 
 const Challenge = SituationBase.discriminator<ChallengeI>(

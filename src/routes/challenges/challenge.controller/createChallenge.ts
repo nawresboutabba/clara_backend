@@ -30,7 +30,8 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     .populate("author")
     .populate("insertedBy")
     .populate("areasAvailable")
-    .populate("departmentAffected");
+    .populate("departmentAffected")
+    .populate("strategic_alignment");
 
   return res.status(201).json(await genericChallengeFilter(createdChallenge));
 });

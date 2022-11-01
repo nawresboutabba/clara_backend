@@ -84,3 +84,7 @@ export const validateParams = <TParams>(
   params: ZodSchema<TParams>,
   middleware: ValidatedMiddleware<unknown, unknown, TParams>
 ) => validate({ params }, middleware);
+
+export function noop() {
+  return;
+}

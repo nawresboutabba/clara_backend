@@ -3,8 +3,8 @@ import { isCommitteeMember } from "../../../utils/acl/function.is_committe_membe
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import { logVisit } from "../../../utils/general/log-visit";
-import * as ChallengeRep from "../challenges.repository";
-import { canViewChallenge } from "../challenges.repository";
+import * as ChallengeRep from "../challenge.repository";
+import { canViewChallenge } from "../challenge.repository";
 
 export const getChallenge = validate(
   {
@@ -16,10 +16,10 @@ export const getChallenge = validate(
     const committee = await isCommitteeMember(user);
 
     if (!canViewChallenge(user, challenge, committee)) {
-      return res.status(403).json({ message: "not authorized" })
+      return res.status(403).json({ message: "not authorized" });
     }
 
-    logVisit(user, challenge)
+    logVisit(user, challenge);
     return genericChallengeFilter(challenge);
   }
 );

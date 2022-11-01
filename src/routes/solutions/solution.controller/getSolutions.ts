@@ -1,31 +1,28 @@
 import { z } from "zod";
-import { SOLUTION_STATUS } from "../../../models/situation.solutions";
+import { SOLUTION_STATUS } from "../solution.model";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericArraySolutionsFilter
-} from "../../../utils/field-filters/solution";
+import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
-import * as SolutionRep from "../solutions.repository";
+import * as SolutionRep from "../solution.repository";
 
 export const getSolutions = validate(
   {
-    query: z
-      .object({
-        title: z.string().optional(),
-        tags: z.array(z.string()).default([]),
-        departmentAffected: z.array(z.string()).default([]),
-        status: z.nativeEnum(SOLUTION_STATUS).optional(),
-        challengeId: z.string().optional(),
-        type: z.enum(["PARTICULAR", "GENERIC"]).optional(),
-        as: z.enum(["AUTHOR", "COAUTHOR"]).optional(),
-        init: z.number().default(0),
-        offset: z.number().default(10),
-        sort: z
-          .object({ title: sortSchema, created: sortSchema })
-          .partial()
-          .default({ created: -1 }),
-      }),
+    query: z.object({
+      title: z.string().optional(),
+      tags: z.array(z.string()).default([]),
+      departmentAffected: z.array(z.string()).default([]),
+      status: z.nativeEnum(SOLUTION_STATUS).optional(),
+      challengeId: z.string().optional(),
+      type: z.enum(["PARTICULAR", "GENERIC"]).optional(),
+      as: z.enum(["AUTHOR", "COAUTHOR"]).optional(),
+      init: z.number().default(0),
+      offset: z.number().default(10),
+      sort: z
+        .object({ title: sortSchema, created: sortSchema })
+        .partial()
+        .default({ created: -1 }),
+    }),
   },
   async ({ user, query }) => {
     const filterQuery = Object.assign(
@@ -34,7 +31,10 @@ export const getSolutions = validate(
         status: query?.status,
         type: query?.type,
         tags: query.tags.length > 0 ? { $in: query.tags } : null,
-        departmentAffected: query.departmentAffected.length > 0 ? { $in: query?.departmentAffected } : null,
+        departmentAffected:
+          query.departmentAffected.length > 0
+            ? { $in: query?.departmentAffected }
+            : null,
       }),
       query.title && {
         title: { $regex: `.*${query.title}.*`, $options: "i" },

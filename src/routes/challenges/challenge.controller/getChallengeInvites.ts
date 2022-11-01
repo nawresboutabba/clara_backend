@@ -5,7 +5,7 @@ import InvitationService from "../../../services/Invitation.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayChallengeInvitationFilter } from "../../../utils/field-filters/invitation";
 import { removeEmpty } from "../../../utils/general/remove-empty";
-import * as ChallengeRep from "../challenges.repository"
+import * as ChallengeRep from "../challenge.repository";
 
 export const getChallengeInvites = validate(
   {

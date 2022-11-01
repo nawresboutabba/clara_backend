@@ -1,9 +1,9 @@
 import { z } from "zod";
-import Challenge from "../../../models/situation.challenges";
+import Challenge from "../challenge.model";
 import User, { UserI } from "../../../models/users";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
-import * as ChallengeRep from "../challenges.repository"
+import * as ChallengeRep from "../challenge.repository";
 
 export const changeChallengeAuthor = validate(
   {
@@ -22,12 +22,9 @@ export const changeChallengeAuthor = validate(
       return res.status(403).json({ message: "not authorized" });
     }
 
-    await Challenge.findByIdAndUpdate(
-      challengeId,
-      {
-        $pull: { coauthor: newAuthor._id },
-      }
-    );
+    await Challenge.findByIdAndUpdate(challengeId, {
+      $pull: { coauthor: newAuthor._id },
+    });
 
     const updatedChallenge = await ChallengeRep.updateChallengePartially(
       challengeId,

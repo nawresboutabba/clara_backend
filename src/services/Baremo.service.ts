@@ -1,7 +1,7 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import Baremo, { BaremoI } from "../models/baremo";
-import { SolutionI } from "../models/situation.solutions";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "../models/users";
 
 const BaremoService = {

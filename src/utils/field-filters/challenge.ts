@@ -2,15 +2,16 @@ import {
   ChallengeResponse,
   LightChallengeResponse,
 } from "../../controller/challenge";
-import { ChallengeI } from "../../models/situation.challenges";
-import { genericArrayAreaFilter } from "./area";
-import { genericArrayUserFilter, genericUserFilter } from "./user";
-import { genericGroupValidatorFilter } from "./group-validator";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
+import { ChallengeI } from "../../routes/challenges/challenge.model";
+import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
+import { genericArrayAreaFilter } from "./area";
+import { genericGroupValidatorFilter } from "./group-validator";
+import { genericArrayUserFilter, genericUserFilter } from "./user";
 
 /**
  * Challenge information filter.
@@ -67,6 +68,10 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   const group_validator = await genericGroupValidatorFilter(
     challenge.groupValidator
   );
+
+  const strategic_alignment = lightAlignmentSerializer(
+    challenge.strategic_alignment
+  );
   const tags = genericArrayTagsFilter(challenge.tags);
   return {
     id: _id,
@@ -92,6 +97,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     department_affected,
     group_validator,
     type,
+    strategic_alignment,
     /**
      * Configuration section
      */

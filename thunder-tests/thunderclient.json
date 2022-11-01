@@ -8,12 +8,12 @@
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-11T14:18:29.925Z",
-    "modified": "2022-10-24T14:03:45.554Z",
+    "modified": "2022-10-25T14:05:44.485Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"email\": \"ibis@gmail.com\",\n  \"password\": \"123456\"\n}",
+      "raw": "{\n  \"email\": \"rafael@gmail.com\",\n  \"password\": \"passwordExample\"\n}",
       "form": []
     },
     "tests": [
@@ -370,6 +370,65 @@
     "body": {
       "type": "json",
       "raw": "{\n  \"comment\": \"comentario do topicoooo 2\",\n  \"parent\": \"6356a9b3185db6e4ac8f6ac7\",\n  \"scope\": \"PUBLIC\",\n  \"tag\": \"630e4f72e365ee652fad6de0\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "e55db033-2236-435b-976b-b3ece46ca190",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "active strategic alignments",
+    "url": "strategic-alignments?active=true",
+    "method": "GET",
+    "sortNum": 150000,
+    "created": "2022-10-25T14:02:51.003Z",
+    "modified": "2022-10-25T15:53:16.805Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "active",
+        "value": "true",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "5ee40467-da46-450c-a603-7d8675ee82ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "archived strategic alignments",
+    "url": "strategic-alignments?active=false",
+    "method": "GET",
+    "sortNum": 160000,
+    "created": "2022-10-25T14:03:34.221Z",
+    "modified": "2022-10-25T15:53:23.120Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "active",
+        "value": "false",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "dff6af48-579d-4df9-ba1e-262899cd219e",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "97f26737-41fb-4079-80f7-4aea85f5d5a5",
+    "name": "create strategic alignment",
+    "url": "strategic-alignments",
+    "method": "POST",
+    "sortNum": 160000,
+    "created": "2022-10-25T14:03:59.133Z",
+    "modified": "2022-10-25T14:14:08.765Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"description\": \"Conseguir 200 doadores para orfanatos\",\n  \"startActive\": \"2022-01-25T14:05:07.973Z\",\n  \"endActive\": \"2022-12-25T14:05:07.973Z\"\n}",
       "form": []
     },
     "tests": []

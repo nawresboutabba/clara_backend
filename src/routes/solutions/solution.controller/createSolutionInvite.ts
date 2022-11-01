@@ -3,17 +3,15 @@ import { EVENTS_TYPE } from "../../../constants";
 import {
   INVITATION_STATUS,
   INVITATION_TYPE,
-  SolutionInvitation
+  SolutionInvitation,
 } from "../../../models/invitation";
 import { sendEmail } from "../../../repository/repository.mailing";
 import { newExternalUser } from "../../../repository/repository.users";
 import UserService from "../../../services/User.service";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionInvitationFilter
-} from "../../../utils/field-filters/invitation";
+import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 import { generatePassword } from "../../../utils/general/generate-password";
-import * as SolutionRep from "../solutions.repository";
+import * as SolutionRep from "../solution.repository";
 
 export const createSolutionInvite = validate(
   {
@@ -76,6 +74,8 @@ export const createSolutionInvite = validate(
       invitation: createdInvitation,
     });
 
-    return res.status(201).json(await genericSolutionInvitationFilter(createdInvitation));
+    return res
+      .status(201)
+      .json(await genericSolutionInvitationFilter(createdInvitation));
   }
 );

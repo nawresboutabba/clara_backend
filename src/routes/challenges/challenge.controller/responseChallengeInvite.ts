@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { ChallengeInvitation, INVITATION_STATUS } from "../../../models/invitation";
-import Challenge from "../../../models/situation.challenges";
+import {
+  ChallengeInvitation,
+  INVITATION_STATUS,
+} from "../../../models/invitation";
+import Challenge from "../challenge.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeInvitationFilter } from "../../../utils/field-filters/invitation";
 import { getCurrentDate } from "../../../utils/general/date";
@@ -34,12 +37,9 @@ export const responseChallengeInvite = validate(
     }
 
     if (response === INVITATION_STATUS.ACCEPTED) {
-      await Challenge.findByIdAndUpdate(
-        challengeId,
-        {
-          $addToSet: { coauthor: user },
-        }
-      );
+      await Challenge.findByIdAndUpdate(challengeId, {
+        $addToSet: { coauthor: user },
+      });
     }
 
     invite.decisionDate = getCurrentDate();

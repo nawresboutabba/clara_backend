@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionFilter
-} from "../../../utils/field-filters/solution";
-import * as SolutionRep from "../solutions.repository";
+import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import * as SolutionRep from "../solution.repository";
 
 export const deleteSolution = validate(
   {
@@ -13,14 +11,14 @@ export const deleteSolution = validate(
     const solution = await SolutionRep.getSolutionById(solutionId);
 
     if (solution.status !== "DRAFT" || solution.author.userId !== user.userId) {
-      return res.status(403).json({ message: "not authorized" })
+      return res.status(403).json({ message: "not authorized" });
     }
 
     if (solution.deletedAt) {
       return res.status(400).json({ message: "Cannot delete this challenge" });
     }
 
-    solution.deletedAt = new Date()
+    solution.deletedAt = new Date();
 
     return res.status(201).json(await genericSolutionFilter(solution));
   }

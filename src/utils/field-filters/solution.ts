@@ -3,8 +3,8 @@ import {
   SolutionResponse,
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
-import { CHALLENGE_TYPE } from "../../models/situation.challenges";
-import { SolutionI } from "../../models/situation.solutions";
+import { CHALLENGE_TYPE } from "../../routes/challenges/challenge.model";
+import { SolutionI } from "../../routes/solutions/solution.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,

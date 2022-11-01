@@ -2,13 +2,11 @@ import { z } from "zod";
 import {
   INVITATION_STATUS,
   INVITATION_TYPE,
-  SolutionInvitation
+  SolutionInvitation,
 } from "../../../models/invitation";
-import Solution from "../../../models/situation.solutions";
+import Solution from "../solution.model";
 import { validate } from "../../../utils/express/express-handler";
-import {
-  genericSolutionInvitationFilter
-} from "../../../utils/field-filters/invitation";
+import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 import { getCurrentDate } from "../../../utils/general/date";
 
 export const responseSolutionInvite = validate(

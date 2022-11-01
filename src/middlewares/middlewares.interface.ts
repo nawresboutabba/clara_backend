@@ -5,8 +5,8 @@ import { GroupValidatorI } from "../models/group-validator";
 import { GeneralCommentI } from "../models/interaction.comment";
 import { SolutionInvitationI } from "../models/invitation";
 import { AreaI } from "../models/organization.area";
-import { ChallengeI } from "../models/situation.challenges";
-import { SolutionI } from "../models/situation.solutions";
+import { ChallengeI } from "../routes/challenges/challenge.model";
+import { SolutionI } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
 import { UserI } from "../models/users";
 

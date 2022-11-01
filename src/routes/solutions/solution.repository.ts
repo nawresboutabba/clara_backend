@@ -1,9 +1,12 @@
 import { FilterQuery, Types, UpdateQuery } from "mongoose";
 import { WSALEVEL } from "../../constants";
 import { CommentResponse } from "../../controller/comment";
-import { CommentScope, SolutionComment } from "../../models/interaction.comment";
+import {
+  CommentScope,
+  SolutionComment,
+} from "../../models/interaction.comment";
 import { INVITATION_STATUS, SolutionInvitation } from "../../models/invitation";
-import Solution, { SolutionI, SOLUTION_STATUS } from "../../models/situation.solutions";
+import Solution, { SolutionI, SOLUTION_STATUS } from "./solution.model";
 import { TagI } from "../../models/tag";
 import { UserI } from "../../models/users";
 import { genericUserFilter } from "../../utils/field-filters/user";
@@ -21,7 +24,8 @@ export function getSolutionById(solutionId: string) {
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("externalOpinion");
+    .populate("externalOpinion")
+    .populate("strategic_alignment");
 }
 
 export function updateSolutionPartially(
@@ -38,7 +42,8 @@ export function updateSolutionPartially(
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("externalOpinion");
+    .populate("externalOpinion")
+    .populate("strategic_alignment");
 }
 
 export function getSolutions(filterQuery: FilterQuery<SolutionI>) {
@@ -96,30 +101,37 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
   return true;
 }
 
-
 type AggregatedData = {
-  _id: Types.ObjectId
-  comment: string
-  tag: TagI
-  parent: null | Types.ObjectId
-  scope: string
-  insertedBy: UserI
-  author: UserI
-  resource: Types.ObjectId
-  type: 'ChallengeComment'
-  createdAt: Date
-  updatedAt: Date
-  __v: number
-  children: Array<AggregatedData>
-}
-export async function listSolutionComments({ solutionId, scope, commentId }: { solutionId: string; scope?: CommentScope; commentId?: string }) {
+  _id: Types.ObjectId;
+  comment: string;
+  tag: TagI;
+  parent: null | Types.ObjectId;
+  scope: string;
+  insertedBy: UserI;
+  author: UserI;
+  resource: Types.ObjectId;
+  type: "ChallengeComment";
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+  children: Array<AggregatedData>;
+};
+export async function listSolutionComments({
+  solutionId,
+  scope,
+  commentId,
+}: {
+  solutionId: string;
+  scope?: CommentScope;
+  commentId?: string;
+}) {
   const aggregatedData: AggregatedData[] = await SolutionComment.aggregate([
     {
       $match: removeEmpty({
         resource: new Types.ObjectId(solutionId),
         scope,
-        _id: commentId ? new Types.ObjectId(commentId) : null
-      })
+        _id: commentId ? new Types.ObjectId(commentId) : null,
+      }),
     },
     { $match: { $or: [{ parent: null }, { parent: { $exists: false } }] } },
     {
@@ -155,8 +167,8 @@ export async function listSolutionComments({ solutionId, scope, commentId }: { s
         from: "users",
         localField: "author",
         foreignField: "_id",
-        as: "author"
-      }
+        as: "author",
+      },
     },
     { $unwind: "$author" },
     {
@@ -164,33 +176,36 @@ export async function listSolutionComments({ solutionId, scope, commentId }: { s
         from: "users",
         localField: "insertedBy",
         foreignField: "_id",
-        as: "insertedBy"
-      }
+        as: "insertedBy",
+      },
     },
     { $unwind: "$insertedBy" },
-  ])
+  ]);
 
   return Promise.all(
-    aggregatedData.map(async e => {
+    aggregatedData.map(async (e) => {
       const children = await Promise.all(
-        e.children.map(async child => ({
-          author: await genericUserFilter(child.author),
-          tag: genericTagFilter(child.tag),
-          id: child._id.toString(),
-          comment: child.comment,
-          scope: child.scope,
-          parent: null,
-        }) as CommentResponse)
-      )
-      return ({
+        e.children.map(
+          async (child) =>
+            ({
+              author: await genericUserFilter(child.author),
+              tag: genericTagFilter(child.tag),
+              id: child._id.toString(),
+              comment: child.comment,
+              scope: child.scope,
+              parent: null,
+            } as CommentResponse)
+        )
+      );
+      return {
         author: await genericUserFilter(e.author),
         tag: genericTagFilter(e.tag),
         id: e._id.toString(),
         comment: e.comment,
         scope: e.scope,
         parent: null,
-        children
-      });
+        children,
+      };
     })
-  )
+  );
 }

@@ -13,7 +13,7 @@ import {
   Patch,
 } from "tsoa";
 import { RESOURCE } from "../../constants";
-import { BaremaI } from "../../models/baremo";
+import { BaremaI } from "../../routes/barema/barema.model";
 import { ConfigurationBaseI } from "../../models/configuration.default";
 import { SolutionCommentI } from "../../models/interaction.comment";
 import { ChallengeI } from "../../routes/challenges/challenge.model";

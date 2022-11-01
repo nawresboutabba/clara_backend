@@ -1,5 +1,5 @@
 import { BaremoResponse } from "../../controller/baremo";
-import { BaremaI } from "../../models/baremo";
+import { BaremaI } from "../../routes/barema/barema.model";
 import { lightSolutionFilter } from "./solution";
 import { lightUserFilter } from "./user";
 

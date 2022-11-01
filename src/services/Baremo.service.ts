@@ -1,6 +1,6 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import Baremo, { BaremaI } from "../models/baremo";
+import Baremo, { BaremaI } from "../routes/barema/barema.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "../models/users";
 

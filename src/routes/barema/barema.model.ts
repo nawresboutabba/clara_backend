@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { UserI } from "./users";
+import { UserI } from "../../models/users";
 
 export interface BaremaI {
   id: string;

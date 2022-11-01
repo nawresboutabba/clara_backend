@@ -1,7 +1,7 @@
 import { ERRORS, HTTP_RESPONSE } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
-import { BaremaI } from "../../models/baremo";
+import { BaremaI } from "../../routes/barema/barema.model";
 import BaremoService from "../../services/Baremo.service";
 
 export async function IS_BAREMO_CREATOR(req: RequestMiddleware): Promise<void> {

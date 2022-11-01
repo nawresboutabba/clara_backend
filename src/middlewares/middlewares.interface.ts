@@ -1,5 +1,5 @@
 import * as express from "express";
-import { BaremaI } from "../models/baremo";
+import { BaremaI } from "../routes/barema/barema.model";
 import { ConfigurationDefaultI } from "../models/configuration.default";
 import { GroupValidatorI } from "../models/group-validator";
 import { GeneralCommentI } from "../models/interaction.comment";

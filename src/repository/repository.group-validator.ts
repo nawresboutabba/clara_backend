@@ -28,7 +28,7 @@ import {
   genericBaremoFilter,
 } from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
-import { BaremaI } from "../models/baremo";
+import { BaremaI } from "../routes/barema/barema.model";
 import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
 import { isDefaultForAdditionalPropertiesAllowed } from "tsoa";
 import RepositoryError from "../handle-error/error.repository";

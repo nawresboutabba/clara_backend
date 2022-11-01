@@ -9,7 +9,7 @@ import {
   SolutionResponse,
 } from "../controller/solutions";
 import RepositoryError from "../handle-error/error.repository";
-import { BaremaI } from "../models/baremo";
+import { BaremaI } from "../routes/barema/barema.model";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
 import { ChallengeI } from "../routes/challenges/challenge.model";

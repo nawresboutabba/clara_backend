@@ -1,21 +1,24 @@
 import { z } from "zod";
-import Barema from "../../../models/baremo";
+import Barema from "../barema.model";
 import { validate } from "../../../utils/express/express-handler";
 
-export const createBarema = validate({
-  body: z.object({
-    description: z.string()
-  })
-}, async ({
-  user,
-  body,
-  // query,
-  //  params
-}) => {
-  const createdBarema = await Barema.create({
+export const createBarema = validate(
+  {
+    body: z.object({
+      description: z.string(),
+    }),
+  },
+  async ({
     user,
-    description: body.description,
-  })
+    body,
+    // query,
+    //  params
+  }) => {
+    const createdBarema = await Barema.create({
+      user,
+      description: body.description,
+    });
 
-  return createdBarema;
-})
+    return createdBarema;
+  }
+);

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { BaremaI } from "./baremo";
+import { BaremaI } from "../routes/barema/barema.model";
 import { GroupValidatorI } from "./group-validator";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";

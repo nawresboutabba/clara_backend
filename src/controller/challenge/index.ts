@@ -1,41 +1,65 @@
-import { Body, Controller, Get, Inject, Patch, Path, Post, Query, Route } from 'tsoa';
-import { RESOURCE } from '../../constants';
-import { ConfigurationDefaultI } from '../../models/configuration.default';
-import { ChallengeI, CHALLENGE_TYPE } from '../../models/situation.challenges';
-import { UserI } from '../../models/users';
 import {
-  acceptChallengeProposal, getChallengeProposal, listChallengeProposal, newChallengeProposal, updateChallengePartially
-} from '../../repository/repository.challenge';
-import { getChallengeConfiguration, setDefaultConfiguration } from '../../repository/repository.configuration-challenge';
-import { GroupValidatorResponse } from '../../repository/repository.group-validator';
-import { createSolution, listSolutions, updateSolution } from '../../repository/repository.solution';
-import { AreaResponse } from '../area/area';
-import { ConfigurationBody } from '../configuration';
-import { SituationBody, SituationResponse } from '../situation/situation';
-import { LightSolutionResponse, SolutionResponse } from '../solutions';
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Patch,
+  Path,
+  Post,
+  Query,
+  Route,
+} from "tsoa";
+import { RESOURCE } from "../../constants";
+import { ConfigurationDefaultI } from "../../models/configuration.default";
+import {
+  ChallengeI,
+  CHALLENGE_TYPE,
+} from "../../routes/challenges/challenge.model";
+import { UserI } from "../../models/users";
+import {
+  acceptChallengeProposal,
+  getChallengeProposal,
+  listChallengeProposal,
+  newChallengeProposal,
+  updateChallengePartially,
+} from "../../repository/repository.challenge";
+import {
+  getChallengeConfiguration,
+  setDefaultConfiguration,
+} from "../../repository/repository.configuration-challenge";
+import { GroupValidatorResponse } from "../../repository/repository.group-validator";
+import {
+  createSolution,
+  listSolutions,
+  updateSolution,
+} from "../../repository/repository.solution";
+import { AreaResponse } from "../area/area";
+import { ConfigurationBody } from "../configuration";
+import { SituationBody, SituationResponse } from "../situation/situation";
+import { LightSolutionResponse, SolutionResponse } from "../solutions";
 /**
- * Data that can be edited or inserted. Other are edited by 
+ * Data that can be edited or inserted. Other are edited by
  * another endpoints
  */
 export interface ChallengeBody extends SituationBody {
   /**
    * GENERIC | PARTICULAR
    */
-  type: CHALLENGE_TYPE
+  type: CHALLENGE_TYPE;
   /**
    * author is required for a challenge creation
    */
-  author: string,
+  author: string;
   /**
    * Challenge is strategic?
    */
-  is_strategic: boolean,
+  is_strategic: boolean;
   /**
    * Required for challenge
    */
-  group_validator: string,
-  finalization: Date,
-  default_scope: boolean
+  group_validator: string;
+  finalization: Date;
+  default_scope: boolean;
 }
 export interface LightChallengeResponse {
   id: string;
@@ -59,59 +83,75 @@ export interface LightChallengeResponse {
 }
 
 export interface ChallengeResponse extends SituationResponse {
-  id: string
-  is_strategic: boolean,
-  finalization: Date,
-  default_scope: boolean,
-  group_validator: GroupValidatorResponse,
-  type: string,
+  id: string;
+  is_strategic: boolean;
+  finalization: Date;
+  default_scope: boolean;
+  group_validator: GroupValidatorResponse;
+  type: string;
   interactions?: {
-    interaction: string,
-    count: number
-  }
+    interaction: string;
+    count: number;
+  };
 }
 
 export interface ChallengeProposalResponse extends ChallengeResponse {
-  proposal_id: string
-  date_proposal: Date,
+  proposal_id: string;
+  date_proposal: Date;
 }
 
-@Route('challenge')
+@Route("challenge")
 export default class ChallengeController extends Controller {
-  @Post('/default-configuration')
-  public async setChallengeDefaultConfiguration(@Body() body: ConfigurationBody): Promise<ConfigurationDefaultI> {
-    return setDefaultConfiguration(body, RESOURCE.CHALLENGE)
+  @Post("/default-configuration")
+  public async setChallengeDefaultConfiguration(
+    @Body() body: ConfigurationBody
+  ): Promise<ConfigurationDefaultI> {
+    return setDefaultConfiguration(body, RESOURCE.CHALLENGE);
   }
-  @Get('/default-configuration')
+  @Get("/default-configuration")
   public async getChallengeDefaultConfiguration(): Promise<ConfigurationDefaultI> {
-    return getChallengeConfiguration()
+    return getChallengeConfiguration();
   }
-  @Get('/proposal')
-  public async listChallengeProposal(@Query() query: any): Promise<ChallengeProposalResponse[]> {
-    return listChallengeProposal(query)
+  @Get("/proposal")
+  public async listChallengeProposal(
+    @Query() query: any
+  ): Promise<ChallengeProposalResponse[]> {
+    return listChallengeProposal(query);
   }
-  @Get('/proposal/:proposalId')
-  public async getChallengeProposal(@Path('proposalId') proposalId: string): Promise<any> {
-    return getChallengeProposal(proposalId)
+  @Get("/proposal/:proposalId")
+  public async getChallengeProposal(
+    @Path("proposalId") proposalId: string
+  ): Promise<any> {
+    return getChallengeProposal(proposalId);
   }
-  @Post('/proposal/:proposeId/accept')
-  public async acceptChallengeProposal(@Path('proposeId') proposeId: string): Promise<any> {
-    return acceptChallengeProposal(proposeId)
+  @Post("/proposal/:proposeId/accept")
+  public async acceptChallengeProposal(
+    @Path("proposeId") proposeId: string
+  ): Promise<any> {
+    return acceptChallengeProposal(proposeId);
   }
   /**
    * New Challenge Proposal method
    * @param body Challenge definition according to ChallengeBody
    * @param user User that insert the challenge
-   * @returns 
+   * @returns
    */
-  @Post('/proposal')
-  public async newChallengeProposal(@Body() body: ChallengeBody, @Inject() user: UserI, @Inject() utils: any): Promise<ChallengeResponse> {
-    return newChallengeProposal(body, user, utils)
+  @Post("/proposal")
+  public async newChallengeProposal(
+    @Body() body: ChallengeBody,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<ChallengeResponse> {
+    return newChallengeProposal(body, user, utils);
   }
 
-  @Post(':challengeId/solution')
-  public async newSolution(@Inject() user: UserI, @Inject() utils: any, @Inject() challenge: ChallengeI): Promise<SolutionResponse> {
-    return createSolution(user, utils, challenge)
+  @Post(":challengeId/solution")
+  public async newSolution(
+    @Inject() user: UserI,
+    @Inject() utils: any,
+    @Inject() challenge: ChallengeI
+  ): Promise<SolutionResponse> {
+    return createSolution(user, utils, challenge);
   }
 
   /**
@@ -119,23 +159,33 @@ export default class ChallengeController extends Controller {
    * @param challengeId challenge for listing
    * @param init first document order
    * @param offset document per page
-   * @returns 
+   * @returns
    */
-  @Get(':challengeId/solution/')
+  @Get(":challengeId/solution/")
   public async listSolutions(
-    @Path('challengeId') challengeId: string,
+    @Path("challengeId") challengeId: string,
     @Query() query: any
   ): Promise<LightSolutionResponse[]> {
-    return listSolutions(query)
+    return listSolutions(query);
   }
 
-  @Patch(':challengeId/solution/:solutionId')
-  public async updateSolution(@Path('challengeId') challengeId: string, @Path('solutionId') solutionId: string, @Body() body: any, @Inject() resources: any, @Inject() user: UserI, @Inject() utils: any): Promise<any> {
-    return updateSolution(body, resources, user, utils)
+  @Patch(":challengeId/solution/:solutionId")
+  public async updateSolution(
+    @Path("challengeId") challengeId: string,
+    @Path("solutionId") solutionId: string,
+    @Body() body: any,
+    @Inject() resources: any,
+    @Inject() user: UserI,
+    @Inject() utils: any
+  ): Promise<any> {
+    return updateSolution(body, resources, user, utils);
   }
 
-  @Patch(':challengeId')
-  public async updateChallengePartially(@Body() body: ChallengeBody, @Path('challengeId') challengeId: string): Promise<ChallengeI> {
-    return updateChallengePartially(body, challengeId)
+  @Patch(":challengeId")
+  public async updateChallengePartially(
+    @Body() body: ChallengeBody,
+    @Path("challengeId") challengeId: string
+  ): Promise<ChallengeI> {
+    return updateChallengePartially(body, challengeId);
   }
 }

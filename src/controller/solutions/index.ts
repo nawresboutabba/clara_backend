@@ -16,7 +16,7 @@ import { RESOURCE } from "../../constants";
 import { BaremoI } from "../../models/baremo";
 import { ConfigurationBaseI } from "../../models/configuration.default";
 import { SolutionCommentI } from "../../models/interaction.comment";
-import { ChallengeI } from "../../models/situation.challenges";
+import { ChallengeI } from "../../routes/challenges/challenge.model";
 import { SolutionI } from "../../models/situation.solutions";
 import { UserI } from "../../models/users";
 import { setDefaultConfiguration } from "../../repository/repository.configuration-challenge";

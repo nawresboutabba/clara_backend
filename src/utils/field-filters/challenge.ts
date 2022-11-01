@@ -2,7 +2,7 @@ import {
   ChallengeResponse,
   LightChallengeResponse,
 } from "../../controller/challenge";
-import { ChallengeI } from "../../models/situation.challenges";
+import { ChallengeI } from "../../routes/challenges/challenge.model";
 import { genericArrayAreaFilter } from "./area";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 import { genericGroupValidatorFilter } from "./group-validator";

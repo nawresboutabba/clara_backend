@@ -1,5 +1,8 @@
 import { Schema } from "mongoose";
-import SituationBase, { SituationBaseI, options } from "./situation.base";
+import SituationBase, {
+  SituationBaseI,
+  options,
+} from "../../models/situation.base";
 
 export enum CHALLENGE_TYPE {
   GENERIC = "GENERIC",

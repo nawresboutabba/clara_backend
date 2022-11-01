@@ -1,5 +1,5 @@
 import { model, Schema, Types } from "mongoose";
-import { ChallengeI } from "./situation.challenges";
+import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "./situation.solutions";
 import { UserI } from "./users";
 
@@ -84,9 +84,10 @@ export const SolutionInvitation = Invitation.discriminator<SolutionInvitationI>(
   })
 );
 
-export const ChallengeInvitation = Invitation.discriminator<ChallengeInvitationI>(
-  "ChallengeInvitation",
-  new Schema({
-    resource: { type: Types.ObjectId, ref: "Challenge" },
-  })
-);
+export const ChallengeInvitation =
+  Invitation.discriminator<ChallengeInvitationI>(
+    "ChallengeInvitation",
+    new Schema({
+      resource: { type: Types.ObjectId, ref: "Challenge" },
+    })
+  );

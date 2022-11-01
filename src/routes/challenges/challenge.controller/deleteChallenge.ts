@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Challenge from "../../../models/situation.challenges";
+import Challenge from "../challenge.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 
@@ -8,10 +8,15 @@ export const deleteChallenge = validate(
     params: z.object({ challengeId: z.string() }),
   },
   async ({ user, params }, res) => {
-    const challenge = await Challenge.findById(params.challengeId).populate("author");
+    const challenge = await Challenge.findById(params.challengeId).populate(
+      "author"
+    );
 
-    if (challenge.status !== "DRAFT" || challenge.author.userId !== user.userId) {
-      return res.status(403).json({ message: "not authorized" })
+    if (
+      challenge.status !== "DRAFT" ||
+      challenge.author.userId !== user.userId
+    ) {
+      return res.status(403).json({ message: "not authorized" });
     }
 
     if (challenge.deletedAt) {

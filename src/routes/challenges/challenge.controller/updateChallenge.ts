@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Challenge from "../../../models/situation.challenges";
+import Challenge from "../challenge.model";
 import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
@@ -10,20 +10,19 @@ import * as TagsRep from "../../tags/tags.repository";
 export const updateChallenge = validate(
   {
     params: z.object({ challengeId: z.string() }),
-    body: z
-      .object({
-        title: z.string(),
-        description: z.string().optional(),
-        tags: z.array(z.string()).optional(),
-        areas: z.array(z.string()).optional(),
-        finalization: dateSchema(z.date().min(new Date).optional()),
-        banner_image: z.string().optional(),
-        images: z.array(z.string()).optional(),
-        price: numberSchema(z.number().optional()),
-        goal: z.string().optional(),
-        resources: z.string().optional(),
-        wanted_impact: z.string().optional(),
-      }),
+    body: z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      areas: z.array(z.string()).optional(),
+      finalization: dateSchema(z.date().min(new Date()).optional()),
+      banner_image: z.string().optional(),
+      images: z.array(z.string()).optional(),
+      price: numberSchema(z.number().optional()),
+      goal: z.string().optional(),
+      resources: z.string().optional(),
+      wanted_impact: z.string().optional(),
+    }),
   },
   async ({ user, params, body }, res) => {
     const challenge = await Challenge.findById(params.challengeId)
@@ -37,7 +36,7 @@ export const updateChallenge = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(body.areas)
+    const departmentAffected = await AreaService.getAreasById(body.areas);
 
     const updatedChallenge = await Challenge.findByIdAndUpdate(
       params.challengeId,

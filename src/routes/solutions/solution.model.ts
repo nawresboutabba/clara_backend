@@ -17,18 +17,6 @@ export const SOLUTION_STATUS_ENUM = z.enum([
 ]);
 export type SOLUTION_STATUS_ENUM = z.infer<typeof SOLUTION_STATUS_ENUM>;
 
-export const SOLUTION_STATUS = {
-  DRAFT: "DRAFT",
-  PROPOSED: "PROPOSED",
-  APPROVED_FOR_DISCUSSION: "APPROVED_FOR_DISCUSSION",
-  READY_FOR_ANALYSIS: "READY_FOR_ANALYSIS",
-  ANALYZING: "ANALYZING",
-  REVIEW: "REVIEW",
-  APPROVED_FOR_CONSTRUCTION: "APPROVED_FOR_CONSTRUCTION",
-  REJECTED: "REJECTED",
-};
-export type SOLUTION_STATUS = keyof typeof SOLUTION_STATUS;
-
 export interface SolutionI extends SituationBaseI {
   challenge: ChallengeI;
   /**

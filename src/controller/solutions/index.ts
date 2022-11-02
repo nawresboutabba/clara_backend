@@ -77,7 +77,7 @@ export interface SolutionBody extends SituationBody {
 }
 
 export interface SolutionResponse extends SituationResponse {
-  solution_id: string;
+  id: string;
   proposed_solution: string;
   differential: string;
   is_new_for: string;
@@ -95,15 +95,13 @@ export interface SolutionResponse extends SituationResponse {
   /**
    * challenge associated
    */
-  challenge_id?: string;
   challenge?: LightChallengeResponse;
   is_privated: boolean;
 }
 
 export interface LightSolutionResponse extends LightSituationResponse {
-  solution_id: string;
+  id: string;
   proposed_solution: string;
-  challenge_id?: string;
   challenge?: {
     type: string;
     id: string;

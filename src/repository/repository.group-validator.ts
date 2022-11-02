@@ -165,7 +165,7 @@ export const getSolutionsLinked = async (
         /**
          * Get baremos relationated to idea
          */
-        const baremosForIdea: BaremaI[] = baremoDictionary[idea.solution_id];
+        const baremosForIdea: BaremaI[] = baremoDictionary[idea.id];
 
         /**
          * Chech that exist baremos for this. Redundant

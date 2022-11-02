@@ -10,7 +10,7 @@ import { ERRORS, HTTP_RESPONSE, WSALEVEL } from "../constants";
 import { UserRequest } from "../controller/users";
 import RepositoryError from "../handle-error/error.repository";
 import { ChallengeProposalI } from "../models/challenge-proposal";
-import { AreaI } from "../models/organization.area";
+import { AreaI } from "../routes/area/area.model";
 import { UserI } from "../models/users";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";

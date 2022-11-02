@@ -23,6 +23,7 @@ export const archiveStrategicAlignment = validate(
       {
         $set: {
           archivedAt: alignment.archivedAt ? null : new Date(),
+          archivedBy: alignment.archivedAt ? null : user,
         },
       },
       { new: true }

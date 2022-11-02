@@ -1,5 +1,5 @@
 import { SortOrder } from "mongoose";
-import { AreaI } from "../../models/organization.area";
+import { AreaI } from "../../routes/area/area.model";
 import { TagI } from "../../models/tag";
 import { removeEmpty } from "../general/remove-empty";
 import { QuerySolutionForm } from "./solution.query.params";

@@ -4,7 +4,7 @@ import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import { UserI } from "../models/users";
-import { AreaI } from "../models/organization.area";
+import { AreaI } from "../routes/area/area.model";
 import { NewSolutionI } from "../repository/repository.solution";
 import { TagI } from "../models/tag";
 import { removeEmpty } from "../utils/general/remove-empty";

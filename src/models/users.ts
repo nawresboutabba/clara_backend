@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { AreaI } from "./organization.area";
+import { AreaI } from "../routes/area/area.model";
 
 export interface UserI {
   /**

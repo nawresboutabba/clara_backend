@@ -10,16 +10,7 @@ import cors from "cors";
 
 import swaggerDocument from "../swagger.json";
 
-import {
-  solutionsRouter,
-  challengeRouter,
-  usersRouter,
-  tagsRouter,
-  strategicAlignmentsRouter,
-} from "./routes";
-
 import companyRouter from "./routes/company";
-import areaRouter from "./routes/area";
 import groupValidatorRouter from "./routes/group-validator";
 import integrantRouter from "./routes/integrant";
 import teamRouter from "./routes/team";
@@ -34,6 +25,12 @@ import swaggerUi from "swagger-ui-express";
 import { parseQueryString } from "./utils/express/query-string";
 import { invitationRouter } from "./routes/invitation/invitations.route";
 import { baremaRouter } from "./routes/barema/barema.route";
+import { areaRouter } from "./routes/area/area.router";
+import { challengeRouter } from "./routes";
+import { solutionsRouter } from "./routes/solutions";
+import { strategicAlignmentsRouter } from "./routes/strategic-alignment";
+import { tagsRouter } from "./routes/tags/tags.route";
+import { usersRouter } from "./routes/users/users.route";
 
 mongoose
   .connect(
@@ -60,6 +57,7 @@ app.use(solutionsRouter);
 app.use(challengeRouter);
 app.use(invitationRouter);
 app.use(tagsRouter);
+app.use(areaRouter);
 app.use(baremaRouter);
 app.use(strategicAlignmentsRouter);
 app.use("/", companyRouter);

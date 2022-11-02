@@ -1,5 +1,5 @@
-import { AreaI } from "../models/organization.area";
-import Area from "../models/organization.area";
+import { AreaI } from "../routes/area/area.model";
+import Area from "../routes/area/area.model";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 

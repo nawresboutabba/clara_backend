@@ -1,20 +1,9 @@
-import { AreaResponse } from "../../controller/area/area";
-import { AreaI } from "../../models/organization.area";
+import { AreaI } from "./area.model";
 
-/**
- * Area information filter.
- * Is used by controllers for return limited information in Response action.
- * This util is complemented with interfece that finalize with "Response". For example UserResponse interface
- * @param area
- * @returns
- */
-export function genericAreaFilter({ areaId, name }: AreaI): AreaResponse {
-  return {
-    area_id: areaId,
-    name,
-  };
+export function genericAreaSerializer(area: AreaI) {
+  return area;
 }
 
 export function genericArrayAreaFilter(area: Array<AreaI>) {
-  return area.map(genericAreaFilter);
+  return area.map(genericAreaSerializer);
 }

@@ -4,7 +4,7 @@ import { ConfigurationDefaultI } from "../models/configuration.default";
 import { GroupValidatorI } from "../models/group-validator";
 import { GeneralCommentI } from "../models/interaction.comment";
 import { SolutionInvitationI } from "../models/invitation";
-import { AreaI } from "../models/organization.area";
+import { AreaI } from "../routes/area/area.model";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";

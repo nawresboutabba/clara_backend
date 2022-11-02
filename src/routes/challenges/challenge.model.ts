@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { z } from "zod";
-import { AreaI } from "../../models/organization.area";
+import { AreaI } from "../area/area.model";
 import SituationBase, {
   options,
   SituationBaseI,

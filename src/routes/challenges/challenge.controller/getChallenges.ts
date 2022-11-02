@@ -3,7 +3,7 @@ import Challenge, { CHALLENGE_STATUS } from "../challenge.model";
 import Solution from "../../solutions/solution.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericArrayChallengeFilter } from "../challenge.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 

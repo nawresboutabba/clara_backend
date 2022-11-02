@@ -5,7 +5,7 @@ import Challenge, {
 } from "../challenge.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericChallengeFilter } from "../challenge.serializer";
 
 export const createChallenge = validate({}, async ({ user }, res) => {
   const committee = await isCommitteeMember(user);

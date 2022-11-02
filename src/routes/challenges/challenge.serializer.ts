@@ -6,12 +6,15 @@ import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { ChallengeI } from "../../routes/challenges/challenge.model";
-import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
-import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
-import { genericArrayAreaFilter } from "./area";
-import { genericGroupValidatorFilter } from "./group-validator";
-import { genericArrayUserFilter, genericUserFilter } from "./user";
+import { ChallengeI } from "./challenge.model";
+import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
+import { genericArrayTagsFilter } from "../tags/tags.serializer";
+import { genericArrayAreaFilter } from "../../utils/field-filters/area";
+import { genericGroupValidatorFilter } from "../../utils/field-filters/group-validator";
+import {
+  genericArrayUserFilter,
+  genericUserFilter,
+} from "../../utils/field-filters/user";
 
 /**
  * Challenge information filter.

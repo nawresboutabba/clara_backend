@@ -23,7 +23,7 @@ import UserService from "../services/User.service";
 import {
   genericArrayChallengeFilter,
   genericChallengeFilter,
-} from "../utils/field-filters/challenge";
+} from "../routes/challenges/challenge.serializer";
 import {
   genericArrayChallengeProposalFilter,
   genericChallengeProposalFilter,

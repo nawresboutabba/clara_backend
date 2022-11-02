@@ -2,7 +2,7 @@ import { z } from "zod";
 import Challenge from "../challenge.model";
 import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericChallengeFilter } from "../challenge.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { dateSchema, numberSchema } from "../../../utils/zod";
 import * as TagsRep from "../../tags/tags.repository";

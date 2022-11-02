@@ -11,7 +11,7 @@ import {
 } from "../../repository/repository.image-service";
 import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
 import { genericArrayAreaFilter } from "./area";
-import { lightChallengeFilter } from "./challenge";
+import { lightChallengeFilter } from "../../routes/challenges/challenge.serializer";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
 import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import Challenge, { CHALLENGE_STATUS } from "../../challenges/challenge.model";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericArrayChallengeFilter } from "../../challenges/challenge.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 

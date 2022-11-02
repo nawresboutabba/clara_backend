@@ -2,7 +2,7 @@ import { z } from "zod";
 import Solution from "../solution.model";
 import User, { UserI } from "../../../models/users";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../solution.serializer";
 import * as SolutionRep from "../solution.repository";
 
 export const changeSolutionAuthor = validate(

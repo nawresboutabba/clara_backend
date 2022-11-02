@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../solution.serializer";
 import { logVisit } from "../../../utils/general/log-visit";
 import * as SolutionRep from "../solution.repository";
 

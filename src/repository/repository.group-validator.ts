@@ -19,7 +19,7 @@ import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
 import {
   genericArraySolutionsFilter,
   lightSolutionFilter,
-} from "../utils/field-filters/solution";
+} from "../routes/solutions/solution.serializer";
 import { LightSolutionResponse } from "../controller/solutions";
 import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
 import BaremoService from "../services/Baremo.service";
@@ -233,7 +233,7 @@ export const getBaremosLinkedToSolution = async (
 ): Promise<BaremoResponse[]> => {
   try {
     const baremos = await BaremoService.getAllBaremosBySolution(solution);
-    const resp = (baremos);
+    const resp = baremos;
     return resp;
   } catch (error) {
     return Promise.reject(error);

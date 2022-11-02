@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../solution.serializer";
 import SolutionStateMachine from "../../../utils/state-machine/state-machine.solution";
 import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";

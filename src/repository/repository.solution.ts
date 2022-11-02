@@ -26,7 +26,7 @@ import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-n
 import {
   genericArraySolutionsFilter,
   genericSolutionFilter,
-} from "../utils/field-filters/solution";
+} from "../routes/solutions/solution.serializer";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";

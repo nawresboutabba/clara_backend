@@ -3,7 +3,7 @@ import {
   InvitationI,
   SolutionInvitationI,
 } from "../../models/invitation";
-import { lightSolutionFilter } from "./solution";
+import { lightSolutionFilter } from "../../routes/solutions/solution.serializer";
 import { lightUserFilter } from "./user";
 import { lightChallengeFilter } from "../../routes/challenges/challenge.serializer";
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { SOLUTION_STATUS } from "../solution.model";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
+import { genericArraySolutionsFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 import * as SolutionRep from "../solution.repository";

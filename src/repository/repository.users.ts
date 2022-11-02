@@ -14,7 +14,7 @@ import { ERRORS, EVENTS_TYPE, HTTP_RESPONSE, VIEW_BY } from "../constants";
 import RepositoryError from "../handle-error/error.repository";
 import { genericUserFilter } from "../utils/field-filters/user";
 import SolutionService from "../services/Solution.service";
-import { genericArraySolutionsFilter } from "../utils/field-filters/solution";
+import { genericArraySolutionsFilter } from "../routes/solutions/solution.serializer";
 import { isCommitteeMember } from "../utils/acl/function.is_committe_member";
 import * as _ from "lodash";
 import InvitationService from "../services/Invitation.service";
@@ -273,9 +273,7 @@ export const getParticipation = async (
          * Get challenge_id. and save as set operation
          */
         const challenges = new Set(
-          rest
-            .map((idea) => idea.challenge.id)
-            .filter((id) => id != undefined)
+          rest.map((idea) => idea.challenge.id).filter((id) => id != undefined)
         );
         /**
          * Init dictionary with solution by challenge

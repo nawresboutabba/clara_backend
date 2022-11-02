@@ -3,17 +3,20 @@ import {
   SolutionResponse,
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
-import { CHALLENGE_TYPE } from "../../routes/challenges/challenge.model";
-import { SolutionI } from "../../routes/solutions/solution.model";
+import { CHALLENGE_TYPE } from "../challenges/challenge.model";
+import { SolutionI } from "./solution.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
-import { genericArrayAreaFilter } from "./area";
-import { lightChallengeFilter } from "../../routes/challenges/challenge.serializer";
-import { genericArrayUserFilter, genericUserFilter } from "./user";
-import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
+import { genericArrayTagsFilter } from "../tags/tags.serializer";
+import { genericArrayAreaFilter } from "../../utils/field-filters/area";
+import { lightChallengeFilter } from "../challenges/challenge.serializer";
+import {
+  genericArrayUserFilter,
+  genericUserFilter,
+} from "../../utils/field-filters/user";
+import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
 
 export const genericSolutionFilter = async (
   solution: SolutionI

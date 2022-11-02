@@ -1,7 +1,7 @@
 import { z } from "zod";
 import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";

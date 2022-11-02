@@ -22,7 +22,7 @@ export type CHALLENGE_STATUS_ENUM = z.infer<typeof CHALLENGE_STATUS_ENUM>;
 
 export const IDEA_BEHAVIOR_ENUM = z.enum([
   "WITH_PARK",
-  "WITHOUT_COMMENTS",
+  "WITHOUT_FORUM",
   "WITHOUT_PARK",
 ]);
 export type IDEA_BEHAVIOR_ENUM = z.infer<typeof IDEA_BEHAVIOR_ENUM>;

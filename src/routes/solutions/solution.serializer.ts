@@ -7,7 +7,7 @@ import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericArrayAreaFilter } from "../../utils/field-filters/area";
+import { genericArrayAreaFilter } from "../area/area.serializer";
 import {
   genericArrayUserFilter,
   genericUserFilter,

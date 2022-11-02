@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { z } from "zod";
 import SituationBase, {
   SituationBaseI,
   options,
@@ -11,13 +12,13 @@ export enum CHALLENGE_TYPE {
 }
 export type CHALLENGE_TYPE_TYPE = keyof typeof CHALLENGE_TYPE;
 
-export enum CHALLENGE_STATUS {
-  DRAFT = "DRAFT",
-  PROPOSED = "PROPOSED",
-  OPENED = "OPENED",
-  CLOSED = "CLOSED",
-}
-export type CHALLENGE_STATUS_TYPE = keyof typeof CHALLENGE_STATUS;
+export const CHALLENGE_STATUS_ENUM = z.enum([
+  "DRAFT",
+  "PROPOSED",
+  "OPENED",
+  "CLOSED",
+]);
+export type CHALLENGE_STATUS_ENUM = z.infer<typeof CHALLENGE_STATUS_ENUM>;
 
 export interface ChallengeI extends SituationBaseI {
   /**
@@ -26,7 +27,7 @@ export interface ChallengeI extends SituationBaseI {
    */
   type: CHALLENGE_TYPE;
 
-  status: CHALLENGE_STATUS;
+  status: CHALLENGE_STATUS_ENUM;
   /**
    * True or False. Work in combination with canChooseScope
    */

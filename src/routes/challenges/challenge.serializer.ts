@@ -72,10 +72,8 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     challenge.groupValidator
   );
 
-  const strategic_alignment = lightAlignmentSerializer(
-    challenge.strategicAlignment
-  );
   const tags = genericArrayTagsFilter(challenge.tags);
+
   return {
     id: _id,
     inserted_by,
@@ -100,7 +98,9 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     department_affected,
     group_validator,
     type,
-    strategic_alignment,
+    strategic_alignment: challenge.strategicAlignment
+      ? lightAlignmentSerializer(challenge.strategicAlignment)
+      : null,
     /**
      * Configuration section
      */

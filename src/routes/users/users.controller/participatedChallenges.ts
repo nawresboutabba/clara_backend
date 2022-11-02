@@ -1,5 +1,7 @@
 import { z } from "zod";
-import Challenge, { CHALLENGE_STATUS } from "../../challenges/challenge.model";
+import Challenge, {
+  CHALLENGE_STATUS_ENUM,
+} from "../../challenges/challenge.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArrayChallengeFilter } from "../../challenges/challenge.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
@@ -10,7 +12,7 @@ export const participatedChallenges = validate(
     query: z.object({
       title: z.string().optional(),
       tags: z.array(z.string()).default([]),
-      status: z.nativeEnum(CHALLENGE_STATUS).optional(),
+      status: CHALLENGE_STATUS_ENUM.optional(),
       departmentAffected: z.array(z.string()).default([]),
       init: z.number().default(0),
       offset: z.number().default(10),

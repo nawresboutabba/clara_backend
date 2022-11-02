@@ -1,6 +1,5 @@
-import { nanoid } from "nanoid";
 import Challenge, {
-  CHALLENGE_STATUS,
+  CHALLENGE_STATUS_ENUM,
   CHALLENGE_TYPE,
 } from "../challenge.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
@@ -19,7 +18,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     author: user,
     active: true,
     type: CHALLENGE_TYPE.PARTICULAR,
-    status: CHALLENGE_STATUS.DRAFT,
+    status: CHALLENGE_STATUS_ENUM.enum.DRAFT,
     images: [],
     areasAvailable: [],
     departmentAffected: [],

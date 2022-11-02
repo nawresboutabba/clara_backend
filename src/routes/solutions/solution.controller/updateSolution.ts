@@ -62,6 +62,8 @@ export const updateSolution = validate(
       body.strategic_alignment
     );
 
+    console.log(strategicAlignment);
+
     const updatedSolution = await SolutionRep.updateSolutionPartially(
       params.solutionId,
       removeEmpty({

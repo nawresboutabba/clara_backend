@@ -2,6 +2,7 @@ import { z } from "zod";
 import IntegrantService from "../../../services/Integrant.service";
 import { validate } from "../../../utils/express/express-handler";
 import { Area } from "../area.model";
+import { genericAreaSerializer } from "../area.serializer";
 
 export const archiveArea = validate(
   {
@@ -25,6 +26,6 @@ export const archiveArea = validate(
       },
       { new: true }
     );
-    return updatedArea;
+    return genericAreaSerializer(updatedArea);
   }
 );

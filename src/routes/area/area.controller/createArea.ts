@@ -2,6 +2,7 @@ import { z } from "zod";
 import IntegrantService from "../../../services/Integrant.service";
 import { validate } from "../../../utils/express/express-handler";
 import { Area } from "../area.model";
+import { genericAreaSerializer } from "../area.serializer";
 
 export const createArea = validate(
   {
@@ -13,6 +14,6 @@ export const createArea = validate(
       return res.status(403).json({ message: "not authorized" });
     }
     const areas = await Area.create({ name: body.name, insertedBy: user });
-    return areas;
+    return genericAreaSerializer(areas);
   }
 );

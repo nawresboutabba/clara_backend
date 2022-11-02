@@ -1,6 +1,15 @@
 import { model, Schema } from "mongoose";
+import { z } from "zod";
 import { UserI } from "../../models/users";
 
+export const BaremaValueKind = z.enum(["scale", "bool"]);
+export type BaremaValueKind = z.infer<typeof BaremaValueKind>;
+
+export const BaremaType = z.enum(["product", "process", "business"]);
+export type BaremaType = z.infer<typeof BaremaType>;
+
+export const BaremaAxis = z.enum(["difficulty", "impact"]);
+export type BaremaAxis = z.infer<typeof BaremaAxis>;
 export interface BaremaI {
   id: string;
   createdAt: Date;
@@ -12,10 +21,10 @@ export interface BaremaI {
 
   title: string;
   description: string;
-  valueKind: "scale" | "bool";
+  valueKind: BaremaValueKind;
   weight: number;
-  type: "product" | "process" | "business";
-  axis: "difficulty" | "impact";
+  type: BaremaType;
+  axis: BaremaAxis;
 }
 
 const barema = new Schema<BaremaI>({

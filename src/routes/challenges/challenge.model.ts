@@ -51,7 +51,7 @@ export interface ChallengeI extends SituationBaseI {
   /**
    * Alignment of the challenge with the company alignments
    */
-  strategic_alignment: StrategicAlignmentI;
+  strategicAlignment: StrategicAlignmentI;
 }
 
 export const challengeModel = {
@@ -63,7 +63,7 @@ export const challengeModel = {
   goal: String,
   resources: String,
   wanted_impact: String,
-  strategic_alignment: {
+  strategicAlignment: {
     type: Schema.Types.ObjectId,
     ref: "StrategicAlignment",
   },

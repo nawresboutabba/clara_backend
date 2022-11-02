@@ -58,7 +58,7 @@ export const updateChallenge = validate(
     const departmentAffected = await AreaService.getAreasById(
       body.department_affected
     );
-    const strategic_alignment = await StrategicAlignment.findById(
+    const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );
 
@@ -68,7 +68,7 @@ export const updateChallenge = validate(
         ...body,
         tags,
         departmentAffected,
-        strategic_alignment,
+        strategicAlignment,
       })
     );
 

@@ -103,7 +103,7 @@ export interface SolutionI extends SituationBaseI {
   isPrivated: boolean;
 
   status: SOLUTION_STATUS;
-  strategic_alignment: StrategicAlignmentI;
+  strategicAlignment: StrategicAlignmentI;
 }
 
 const Solution = SituationBase.discriminator<SolutionI>(
@@ -136,7 +136,7 @@ const Solution = SituationBase.discriminator<SolutionI>(
     version: Number,
     isPrivated: Boolean,
     type: String,
-    strategic_alignment: {
+    strategicAlignment: {
       type: Schema.Types.ObjectId,
       ref: "StrategicAlignment",
     },

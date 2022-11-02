@@ -39,7 +39,7 @@ export const updateChallenge = validate(
 
     const tags = await TagsRep.getTagsById(body.tags);
     const departmentAffected = await AreaService.getAreasById(body.areas);
-    const strategic_alignment = await StrategicAlignment.findById(
+    const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );
 
@@ -57,7 +57,7 @@ export const updateChallenge = validate(
         goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
-        strategic_alignment,
+        strategicAlignment,
       }),
       { new: true }
     )
@@ -66,7 +66,7 @@ export const updateChallenge = validate(
       .populate("tags")
       .populate("areasAvailable")
       .populate("departmentAffected")
-      .populate("strategic_alignment");
+      .populate("strategicAlignment");
 
     return res.status(201).json(await genericChallengeFilter(updatedChallenge));
   }

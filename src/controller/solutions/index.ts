@@ -28,6 +28,7 @@ import {
 import { BaremaI } from "../../routes/barema/barema.model";
 import { ChallengeI } from "../../routes/challenges/challenge.model";
 import { SolutionI } from "../../routes/solutions/solution.model";
+import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { AreaResponse } from "../area/area";
 import { BaremoResponse } from "../baremo";
@@ -89,6 +90,7 @@ export interface SolutionResponse extends SituationResponse {
   test_description: string;
   barema_type_suggested: string;
   impact: string;
+  strategic_alignment: LightStrategicAlignmentSerialized;
 
   /**
    * challenge associated

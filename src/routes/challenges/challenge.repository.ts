@@ -20,7 +20,7 @@ export function getChallengeById(challengeId: string) {
     .populate("areasAvailable")
     .populate("tags")
     .populate("departmentAffected")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment");
   // .populate("departmentAffected")
   // .populate("updatedBy")
   // .populate("challenge")
@@ -43,7 +43,8 @@ export function updateChallengePartially(
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("departmentAffected");
+    .populate("departmentAffected")
+    .populate("strategicAlignment");
 }
 
 export async function getChallengeActiveById(id: string) {

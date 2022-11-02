@@ -70,7 +70,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
   );
 
   const strategic_alignment = lightAlignmentSerializer(
-    challenge.strategic_alignment
+    challenge.strategicAlignment
   );
   const tags = genericArrayTagsFilter(challenge.tags);
   return {

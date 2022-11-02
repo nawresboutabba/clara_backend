@@ -13,6 +13,7 @@ import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
 import { genericArrayAreaFilter } from "./area";
 import { lightChallengeFilter } from "./challenge";
 import { genericArrayUserFilter, genericUserFilter } from "./user";
+import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 
 export const genericSolutionFilter = async (
   solution: SolutionI
@@ -110,6 +111,9 @@ export const genericSolutionFilter = async (
     test_description: testDescription,
     barema_type_suggested: baremaTypeSuggested,
     impact,
+    strategic_alignment: solution.strategicAlignment
+      ? lightAlignmentSerializer(solution.strategicAlignment)
+      : null,
     /**
      * Configuration section
      */

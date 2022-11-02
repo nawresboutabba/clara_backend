@@ -6,15 +6,15 @@ import {
   SolutionComment,
 } from "../../models/interaction.comment";
 import { INVITATION_STATUS, SolutionInvitation } from "../../models/invitation";
-import Solution, { SolutionI, SOLUTION_STATUS } from "./solution.model";
 import { TagI } from "../../models/tag";
 import { UserI } from "../../models/users";
 import { genericUserFilter } from "../../utils/field-filters/user";
 import { removeEmpty } from "../../utils/general/remove-empty";
 import { genericTagFilter } from "../tags/tags.serializer";
+import Solution, { SolutionI } from "./solution.model";
 
 export function getSolutionById(solutionId: string) {
-  return Solution.findOne({ solutionId })
+  return Solution.findById(solutionId)
     .populate("departmentAffected")
     .populate("updatedBy")
     .populate("challenge")
@@ -32,7 +32,7 @@ export function updateSolutionPartially(
   solutionId: string,
   data: UpdateQuery<SolutionI>
 ) {
-  return Solution.findOneAndUpdate({ solutionId }, data, { new: true })
+  return Solution.findByIdAndUpdate(solutionId, data, { new: true })
     .populate("departmentAffected")
     .populate("updatedBy")
     .populate("challenge")
@@ -74,7 +74,7 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
   );
 
   if (
-    solution.status !== SOLUTION_STATUS.APPROVED_FOR_DISCUSSION &&
+    solution.status !== "APPROVED_FOR_DISCUSSION" &&
     !isInvited &&
     !isAuthor &&
     !isCoAuthor &&
@@ -83,7 +83,7 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
     return false;
   }
 
-  if (solution.status === SOLUTION_STATUS.APPROVED_FOR_DISCUSSION) {
+  if (solution.status === "APPROVED_FOR_DISCUSSION") {
     const hasCommonAreas = solution.areasAvailable.some((area) =>
       user.areaVisible.find((userArea) => userArea.areaId === area.areaId)
     );

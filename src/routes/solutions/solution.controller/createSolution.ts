@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
 import Challenge, { CHALLENGE_TYPE } from "../../challenges/challenge.model";
-import Solution, { SOLUTION_STATUS } from "../solution.model";
+import Solution, { SOLUTION_STATUS_ENUM } from "../solution.model";
 import * as SolutionRep from "../solution.repository";
 import { genericSolutionFilter } from "../solution.serializer";
 
@@ -24,7 +24,7 @@ export const createSolution = validate(
       insertedBy: user,
       author: user,
       active: true,
-      status: SOLUTION_STATUS.DRAFT,
+      status: SOLUTION_STATUS_ENUM.enum.DRAFT,
       challenge,
       type: challenge.type,
       version: 0,

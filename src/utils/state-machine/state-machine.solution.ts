@@ -1,5 +1,7 @@
 import { ERRORS } from "../../constants";
-import { SOLUTION_STATUS } from "../../routes/solutions/solution.model";
+import { SOLUTION_STATUS_ENUM } from "../../routes/solutions/solution.model";
+
+const SOLUTION_STATUS = SOLUTION_STATUS_ENUM.enum;
 /**
  * Solutions state machine
  * https://drive.google.com/file/d/1JFNcXbiDoof3LKlKQEQFrFnpRt4aq3E7/view?usp=sharing

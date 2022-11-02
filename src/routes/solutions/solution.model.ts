@@ -3,6 +3,19 @@ import SituationBase, { SituationBaseI } from "../../models/situation.base";
 import { ChallengeI } from "../challenges/challenge.model";
 import { UserI } from "../../models/users";
 import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
+import { z } from "zod";
+
+export const SOLUTION_STATUS_ENUM = z.enum([
+  "DRAFT",
+  "PROPOSED",
+  "APPROVED_FOR_DISCUSSION",
+  "READY_FOR_ANALYSIS",
+  "ANALYZING",
+  "REVIEW",
+  "APPROVED_FOR_CONSTRUCTION",
+  "REJECTED",
+]);
+export type SOLUTION_STATUS_ENUM = z.infer<typeof SOLUTION_STATUS_ENUM>;
 
 export const SOLUTION_STATUS = {
   DRAFT: "DRAFT",
@@ -17,18 +30,6 @@ export const SOLUTION_STATUS = {
 export type SOLUTION_STATUS = keyof typeof SOLUTION_STATUS;
 
 export interface SolutionI extends SituationBaseI {
-  /**
-   * Id that uniquely identifies a solution
-   */
-  solutionId: string;
-  /**
-   * Id Challenge associated to solution.
-   */
-  challengeId: string;
-  /**
-   *  Challenge Object. challengeId refer to challenge attribute.
-   * The redundace is for performance lookup (for example Solutions with a particular challengeId)
-   */
   challenge: ChallengeI;
   /**
    * Solution description
@@ -102,7 +103,7 @@ export interface SolutionI extends SituationBaseI {
    */
   isPrivated: boolean;
 
-  status: SOLUTION_STATUS;
+  status: SOLUTION_STATUS_ENUM;
   strategicAlignment: StrategicAlignmentI;
 }
 

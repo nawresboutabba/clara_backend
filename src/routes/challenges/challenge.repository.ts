@@ -20,7 +20,8 @@ export function getChallengeById(challengeId: string) {
     .populate("areasAvailable")
     .populate("tags")
     .populate("departmentAffected")
-    .populate("strategicAlignment");
+    .populate("strategicAlignment")
+    .populate("targetAudienceValue");
   // .populate("departmentAffected")
   // .populate("updatedBy")
   // .populate("challenge")

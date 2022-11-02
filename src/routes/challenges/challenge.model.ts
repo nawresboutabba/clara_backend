@@ -1,9 +1,11 @@
 import { Schema } from "mongoose";
 import { z } from "zod";
+import { AreaI } from "../../models/organization.area";
 import SituationBase, {
-  SituationBaseI,
   options,
+  SituationBaseI,
 } from "../../models/situation.base";
+import { UserI } from "../../models/users";
 import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
 
 export enum CHALLENGE_TYPE {
@@ -27,7 +29,10 @@ export const IDEA_BEHAVIOR_ENUM = z.enum([
 ]);
 export type IDEA_BEHAVIOR_ENUM = z.infer<typeof IDEA_BEHAVIOR_ENUM>;
 
-export interface ChallengeI extends SituationBaseI {
+export const TARGET_AUDIENCE_ENUM = z.enum(["Company", "Area", "User"]);
+export type TARGET_AUDIENCE_ENUM = z.infer<typeof TARGET_AUDIENCE_ENUM>;
+
+export type ChallengeI = SituationBaseI & {
   /**
    * GENERIC | PARTICULAR . Generic challenge is created for group ideas free.
    * Exist just one GENERIC CHALLENGE
@@ -36,17 +41,9 @@ export interface ChallengeI extends SituationBaseI {
 
   status: CHALLENGE_STATUS_ENUM;
   /**
-   * True or False. Work in combination with canChooseScope
-   */
-  defaultScope: boolean;
-  /**
    * Situation title
    */
   title: string;
-  /**
-   * If challenge response to strategic organization need.
-   */
-  isStrategic: boolean;
   /**
    * Challenge finalization. Time limit for submit Ideas.
    */
@@ -61,7 +58,9 @@ export interface ChallengeI extends SituationBaseI {
    */
   strategicAlignment: StrategicAlignmentI;
   ideaBehavior: IDEA_BEHAVIOR_ENUM;
-}
+  targetAudience: TARGET_AUDIENCE_ENUM;
+  targetAudienceValue: AreaI[] | UserI[];
+};
 
 export const challengeModel = {
   type: String,
@@ -72,6 +71,19 @@ export const challengeModel = {
   goal: String,
   resources: String,
   wanted_impact: String,
+  targetAudience: {
+    type: String,
+    required: true,
+    enum: TARGET_AUDIENCE_ENUM.options,
+  },
+  targetAudienceValue: [
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      refPath: "targetAudience",
+      default: [],
+    },
+  ],
   ideaBehavior: String,
   strategicAlignment: {
     type: Schema.Types.ObjectId,

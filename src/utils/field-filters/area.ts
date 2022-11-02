@@ -15,11 +15,6 @@ export function genericAreaFilter({ areaId, name }: AreaI): AreaResponse {
   };
 }
 
-export function genericArrayAreaFilter(
-  area: Array<AreaI>
-): Array<AreaResponse> {
-  if (!area) {
-    return [];
-  }
+export function genericArrayAreaFilter(area: Array<AreaI>) {
   return area.map(genericAreaFilter);
 }

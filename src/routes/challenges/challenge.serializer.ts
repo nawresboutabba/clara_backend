@@ -2,19 +2,21 @@ import {
   ChallengeResponse,
   LightChallengeResponse,
 } from "../../controller/challenge";
+import { AreaI } from "../../models/organization.area";
+import { UserI } from "../../models/users";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { ChallengeI } from "./challenge.model";
-import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
-import { genericArrayTagsFilter } from "../tags/tags.serializer";
 import { genericArrayAreaFilter } from "../../utils/field-filters/area";
 import { genericGroupValidatorFilter } from "../../utils/field-filters/group-validator";
 import {
   genericArrayUserFilter,
   genericUserFilter,
 } from "../../utils/field-filters/user";
+import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
+import { genericArrayTagsFilter } from "../tags/tags.serializer";
+import { ChallengeI } from "./challenge.model";
 
 /**
  * Challenge information filter.
@@ -38,14 +40,14 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     wanted_impact,
     active,
     fileComplementary,
-    isStrategic,
     finalization,
     type,
+    targetAudienceValue,
     /**
      * Configuration section
      */
     canChooseScope,
-    defaultScope,
+    // defaultScope,
     canChooseWSALevel,
     WSALevelAvailable,
     WSALevelChosed,
@@ -93,7 +95,6 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     banner_image,
     images,
     tags,
-    is_strategic: isStrategic,
     finalization,
     department_affected,
     group_validator,
@@ -102,11 +103,18 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
       ? lightAlignmentSerializer(challenge.strategicAlignment)
       : null,
     idea_behavior: challenge.ideaBehavior,
+    target_audience: challenge.targetAudience,
+    target_audience_value:
+      challenge.targetAudience === "User"
+        ? await genericArrayUserFilter(targetAudienceValue as UserI[])
+        : challenge.targetAudience === "Area"
+        ? genericArrayAreaFilter(targetAudienceValue as AreaI[])
+        : [],
     /**
      * Configuration section
      */
     can_choose_scope: canChooseScope,
-    default_scope: defaultScope,
+    // default_scope: defaultScope,
     can_choose_WSALevel: canChooseWSALevel,
     WSALevel_available: WSALevelAvailable,
     WSALevel_chosed: WSALevelChosed,
@@ -133,7 +141,6 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     title,
     description,
     active,
-    isStrategic,
     finalization,
     interactions,
     type,
@@ -166,7 +173,6 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     active,
     banner_image,
     images,
-    is_strategic: isStrategic,
     finalization,
     areas_available,
     department_affected,

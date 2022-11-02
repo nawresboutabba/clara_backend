@@ -43,7 +43,7 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
     about,
   } = user;
 
-  const area_visible = genericArrayAreaFilter(user.areaVisible);
+  const area_visible = genericArrayAreaFilter(user.areaVisible ?? []);
   const user_image = await getSignedUrl(user.userImage);
   return {
     user_id: user.userId,
@@ -61,14 +61,6 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
   };
 };
 
-export const genericArrayUserFilter = async (
-  users: Array<UserI>
-): Promise<Array<UserResponse>> => {
-  // this will not run, the function should receive the params
-  // i not removed this code, because i am not confident with the code that uses this function
-  if (!users) {
-    return [];
-  }
-
+export async function genericArrayUserFilter(users: Array<UserI>) {
   return Promise.all(users.map(lightUserFilter));
-};
+}

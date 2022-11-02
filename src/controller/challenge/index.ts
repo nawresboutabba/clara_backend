@@ -54,10 +54,6 @@ export interface ChallengeBody extends SituationBody {
    */
   author: string;
   /**
-   * Challenge is strategic?
-   */
-  is_strategic: boolean;
-  /**
    * Required for challenge
    */
   group_validator: string;
@@ -73,7 +69,6 @@ export interface LightChallengeResponse {
   active: boolean;
   banner_image: string;
   images: string[];
-  is_strategic: boolean;
   finalization: Date;
   areas_available: AreaResponse[];
   department_affected: AreaResponse[];
@@ -89,9 +84,8 @@ export interface LightChallengeResponse {
 
 export interface ChallengeResponse extends SituationResponse {
   id: string;
-  is_strategic: boolean;
   finalization: Date;
-  default_scope: boolean;
+  // default_scope: boolean;
   group_validator: GroupValidatorResponse;
   strategic_alignment: LightStrategicAlignmentSerialized;
   idea_behavior: IDEA_BEHAVIOR_ENUM;

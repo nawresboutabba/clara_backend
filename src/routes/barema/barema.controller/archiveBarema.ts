@@ -26,6 +26,7 @@ export const archiveBarema = validate(
     const updatedBarema = await updateBaremaPartially(baremaId, {
       $set: {
         archivedAt: barema.archivedAt ? null : new Date(),
+        archivedBy: barema.archivedAt ? null : user,
       },
     });
 

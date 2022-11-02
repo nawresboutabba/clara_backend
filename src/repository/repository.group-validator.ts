@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import IntegrantService from "../services/Integrant.service";
 import * as _ from "lodash";
 import GroupValidatorService from "../services/GroupValidator.service";
@@ -23,10 +24,6 @@ import { LightSolutionResponse } from "../controller/solutions";
 import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
 import BaremoService from "../services/Baremo.service";
 import { BAREMO_STATUS, ERRORS, HTTP_RESPONSE } from "../constants";
-import {
-  genericArrayBaremoFilter,
-  genericBaremoFilter,
-} from "../utils/field-filters/baremo";
 import { BaremoResponse } from "../controller/baremo";
 import { BaremaI } from "../routes/barema/barema.model";
 import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
@@ -184,15 +181,17 @@ export const getSolutionsLinked = async (
          * Check validators that did a baremo for this idea
          */
         const usersWithBaremo = baremosForIdea.map((baremo: BaremaI) => {
+          // @ts-ignore
           return baremo.user.userId;
         });
 
         const calification = usersTeamMembers.map((user) => {
           if (usersWithBaremo.includes(user.user_id)) {
             const baremoUser = baremosForIdea.filter(
+              // @ts-ignore
               (baremo) => baremo.user.userId == user.user_id
             )[0];
-
+            // @ts-ignore
             if (baremoUser.status == BAREMO_STATUS.ONGOING) {
               return {
                 validator: user,
@@ -234,7 +233,7 @@ export const getBaremosLinkedToSolution = async (
 ): Promise<BaremoResponse[]> => {
   try {
     const baremos = await BaremoService.getAllBaremosBySolution(solution);
-    const resp = await genericArrayBaremoFilter(baremos);
+    const resp = (baremos);
     return resp;
   } catch (error) {
     return Promise.reject(error);

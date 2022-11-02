@@ -4,6 +4,9 @@ import authentication from "../../middlewares/authentication";
 
 export const baremaRouter = express.Router();
 
-baremaRouter.use(authentication)
-
-baremaRouter.post("barema", controller.createBarema)
+baremaRouter
+  .use(authentication)
+  .get("/baremas", controller.getBaremas)
+  .post("/baremas", controller.createBarema)
+  .put("/baremas/:baremaId", controller.updateBarema)
+  .put("/baremas/:baremaId/archive", controller.archiveBarema)

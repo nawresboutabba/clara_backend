@@ -3,13 +3,13 @@ import { isCommitteeMember } from "../../../utils/acl/function.is_committe_membe
 import { validate } from "../../../utils/express/express-handler";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
-import Barema, { BaremaAxis, BaremaValueKind } from "../barema.model";
+import Barema, { BaremaAxis, BaremaType } from "../barema.model";
 import { listBaremaSerializer } from "../barema.serializer";
 
 export const getBaremas = validate(
   {
     query: z.object({
-      valueKind: BaremaValueKind.optional(),
+      type: BaremaType.optional(),
       axis: BaremaAxis.optional(),
 
       active: z.boolean().default(true),
@@ -32,7 +32,7 @@ export const getBaremas = validate(
     const baremas = await Barema.find(
       removeEmpty(
         Object.assign(
-          { valueKind: query.valueKind, axis: query.axis },
+          { type: query.type, axis: query.axis },
           query.active
             ? { archivedAt: { $eq: null }, endActive: { $gt: new Date() } }
             : { $or: [{ archivedAt: { $ne: null } }, { endActive: { $lt: new Date() } }] }

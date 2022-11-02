@@ -432,5 +432,82 @@
       "form": []
     },
     "tests": []
+  },
+  {
+    "_id": "8bcb6de6-120b-49e0-849b-be5e0af9872e",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "b9eedf8d-c1c3-444c-ac3c-f189a9f43f23",
+    "name": "create barema",
+    "url": "baremas",
+    "method": "POST",
+    "sortNum": 170000,
+    "created": "2022-11-02T01:30:12.766Z",
+    "modified": "2022-11-02T02:11:36.385Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"title\": \"barema business 3\",\n  \"description\": \"barema about being good\",\n  \"valueKind\": \"scale\",\n  \"weight\": 1,\n  \"type\": \"business\",\n  \"axis\": \"impact\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "d447fdaa-1a3d-463c-819c-7728e8d50f6e",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "b9eedf8d-c1c3-444c-ac3c-f189a9f43f23",
+    "name": "update barema",
+    "url": "baremas/6361d1d1b2dd9667d784be8c",
+    "method": "PUT",
+    "sortNum": 180000,
+    "created": "2022-11-02T01:30:21.317Z",
+    "modified": "2022-11-02T02:14:18.376Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"valueKind\": \"bool\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "7f5b113e-20f1-432d-a7ca-7954c2ce00ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "b9eedf8d-c1c3-444c-ac3c-f189a9f43f23",
+    "name": "get baremas",
+    "url": "baremas?type=business&axis=impact",
+    "method": "GET",
+    "sortNum": 190000,
+    "created": "2022-11-02T01:30:27.672Z",
+    "modified": "2022-11-02T02:13:16.103Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "type",
+        "value": "business",
+        "isPath": false
+      },
+      {
+        "name": "axis",
+        "value": "impact",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "9873151a-2851-4c4a-b658-731dd66e6f6b",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "b9eedf8d-c1c3-444c-ac3c-f189a9f43f23",
+    "name": "toogle barema archive",
+    "url": "baremas/6361d1d1b2dd9667d784be8c/archive",
+    "method": "PUT",
+    "sortNum": 200000,
+    "created": "2022-11-02T01:30:49.194Z",
+    "modified": "2022-11-02T02:15:46.504Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]

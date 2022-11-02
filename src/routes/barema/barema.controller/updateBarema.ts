@@ -19,7 +19,7 @@ export const updateBarema = validate(
       weight: z.number(),
       type: BaremaType,
       axis: BaremaAxis,
-    }),
+    }).partial(),
   },
   async ({ user, body, params: { baremaId } }, res) => {
     const committee = await isCommitteeMember(user);

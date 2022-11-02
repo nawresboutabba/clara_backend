@@ -14,7 +14,7 @@ export const createBarema = validate(
       title: z.string(),
       description: z.string(),
       valueKind: BaremaValueKind,
-      weight: z.number(),
+      weight: z.number().default(1),
       type: BaremaType,
       axis: BaremaAxis,
     }),

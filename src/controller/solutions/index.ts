@@ -1,48 +1,37 @@
 import { bool } from "aws-sdk/clients/signer";
 import {
-  Post,
-  Controller,
-  Route,
   Body,
+  Controller,
   Delete,
-  Path,
   Get,
-  Request,
-  Query,
   Inject,
   Patch,
+  Path,
+  Post,
+  Query,
+  Request,
+  Route,
 } from "tsoa";
 import { RESOURCE } from "../../constants";
-import { BaremaI } from "../../routes/barema/barema.model";
 import { ConfigurationBaseI } from "../../models/configuration.default";
-import { SolutionCommentI } from "../../models/interaction.comment";
-import { ChallengeI } from "../../routes/challenges/challenge.model";
-import { SolutionI } from "../../routes/solutions/solution.model";
 import { UserI } from "../../models/users";
 import { setDefaultConfiguration } from "../../repository/repository.configuration-challenge";
 import {
   applyTransition,
   createSolution,
-  editBaremo,
-  getCurrent,
-  getSolutionComments,
-  getSolutionCommentsWithoutRelations,
-  getThread,
-  listSolutions,
-  newBaremo,
-  newEvaluationNote,
-  newSolutionComment,
-  updateSolution,
-} from "../../repository/repository.solution";
-import {
   deleteSolution,
   getSolution,
+  listSolutions,
+  newEvaluationNote,
+  updateSolution,
 } from "../../repository/repository.solution";
+import { BaremaI } from "../../routes/barema/barema.model";
+import { ChallengeI } from "../../routes/challenges/challenge.model";
+import { SolutionI } from "../../routes/solutions/solution.model";
 import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { AreaResponse } from "../area/area";
 import { BaremoResponse } from "../baremo";
-import { ChallengeResponse, LightChallengeResponse } from "../challenge";
-import { CommentBody, CommentResponse } from "../comment";
+import { LightChallengeResponse } from "../challenge";
 import { ConfigurationBody } from "../configuration";
 import {
   LightSituationResponse,
@@ -207,35 +196,35 @@ export default class SolutionController extends Controller {
   /**
    * New baremo
    */
-  @Post("/:solutionId/baremo/group-validator")
-  public async newBaremo(
-    @Path("solutionId") solutionId: string,
-    @Inject() solution: SolutionI,
-    @Inject() user: UserI,
-    @Inject() utils: any
-  ): Promise<BaremoResponse> {
-    return newBaremo(solution, user, utils);
-  }
+  // @Post("/:solutionId/baremo/group-validator")
+  // public async newBaremo(
+  //   @Path("solutionId") solutionId: string,
+  //   @Inject() solution: SolutionI,
+  //   @Inject() user: UserI,
+  //   @Inject() utils: any
+  // ): Promise<BaremoResponse> {
+  //   return newBaremo(solution, user, utils);
+  // }
   /**
    * Get current Baremo for user X solution X version
    */
-  @Get("/:solutionId/baremo/group-validator/current")
-  public async getCurrent(
-    @Path("solutionId") solutionId: string,
-    solution: SolutionI,
-    @Inject() user: UserI
-  ): Promise<BaremoResponse | void> {
-    return getCurrent(solution, user);
-  }
+  // @Get("/:solutionId/baremo/group-validator/current")
+  // public async getCurrent(
+  //   @Path("solutionId") solutionId: string,
+  //   solution: SolutionI,
+  //   @Inject() user: UserI
+  // ): Promise<BaremoResponse | void> {
+  //   return getCurrent(solution, user);
+  // }
 
-  @Patch("/:solutionId/baremo/:baremoId")
-  public async editBaremo(
-    @Path("baremoId") baremoId: string,
-    @Body() data: any,
-    @Inject() baremo: any
-  ): Promise<BaremaI> {
-    return editBaremo(baremo, data);
-  }
+  // @Patch("/:solutionId/baremo/:baremoId")
+  // public async editBaremo(
+  //   @Path("baremoId") baremoId: string,
+  //   @Body() data: any,
+  //   @Inject() baremo: any
+  // ): Promise<BaremaI> {
+  //   return editBaremo(baremo, data);
+  // }
   /**
    * Evaluation note insert
    */

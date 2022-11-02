@@ -9,7 +9,7 @@ import {
   SolutionResponse,
 } from "../controller/solutions";
 import RepositoryError from "../handle-error/error.repository";
-import { BaremoI } from "../models/baremo";
+import { BaremaI } from "../routes/barema/barema.model";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
 import { ChallengeI } from "../routes/challenges/challenge.model";
@@ -21,7 +21,6 @@ import EvaluationNoteService from "../services/EvaluationNote.service";
 import SolutionService, {
   SolutionEditablesFields,
 } from "../services/Solution.service";
-import { genericBaremoFilter } from "../utils/field-filters/baremo";
 import { genericCommentFilter } from "../utils/field-filters/comment";
 import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-note";
 import {
@@ -294,52 +293,52 @@ export async function getSolutionCommentsWithoutRelations(solution: SolutionI) {
   return getCommentsWithoutRelation(filter);
 }
 
-export const newBaremo = async (
-  solution: SolutionI,
-  user: UserI,
-  utils: any
-): Promise<BaremoResponse> => {
-  try {
-    const date = getCurrentDate();
-    const baremo: BaremoI = {
-      baremoId: nanoid(),
-      user,
-      solution,
-      created: date,
-      updated: date,
-      /**
-       * Initial State
-       */
-      status: BaremoStateMachine.init(),
-      type: utils.baremoType,
-      comment: "",
-    };
+// export const newBaremo = async (
+//   solution: SolutionI,
+//   user: UserI,
+//   utils: any
+// ): Promise<BaremoResponse> => {
+//   try {
+//     const date = getCurrentDate();
+//     const baremo: BaremaI = {
+//       baremoId: nanoid(),
+//       user,
+//       solution,
+//       created: date,
+//       updated: date,
+//       /**
+//        * Initial State
+//        */
+//       status: BaremoStateMachine.init(),
+//       type: utils.baremoType,
+//       comment: "",
+//     };
 
-    if (solution.status == SOLUTION_STATUS.READY_FOR_ANALYSIS) {
-      const updateSolution: SolutionEditablesFields = {
-        status: SolutionStateMachine.dispatch(solution.status, "analyze"),
-        startAnalysis: date,
-      };
-      await SolutionService.updateSolutionPartially(
-        solution.solutionId,
-        updateSolution
-      );
-    }
+//     if (solution.status == SOLUTION_STATUS.READY_FOR_ANALYSIS) {
+//       const updateSolution: SolutionEditablesFields = {
+//         status: SolutionStateMachine.dispatch(solution.status, "analyze"),
+//         startAnalysis: date,
+//       };
+//       await SolutionService.updateSolutionPartially(
+//         solution.solutionId,
+//         updateSolution
+//       );
+//     }
 
-    const bar = await BaremoService.newBaremo(baremo);
-    const baremoFiltered = await genericBaremoFilter(bar);
+//     const bar = await BaremoService.newBaremo(baremo);
+//     const baremoFiltered = await genericBaremoFilter(bar);
 
-    return baremoFiltered;
-  } catch (error) {
-    return Promise.reject(
-      new RepositoryError(
-        ERRORS.REPOSITORY.NEW_BAREMO,
-        HTTP_RESPONSE._500,
-        error
-      )
-    );
-  }
-};
+//     return baremoFiltered;
+//   } catch (error) {
+//     return Promise.reject(
+//       new RepositoryError(
+//         ERRORS.REPOSITORY.NEW_BAREMO,
+//         HTTP_RESPONSE._500,
+//         error
+//       )
+//     );
+//   }
+// };
 
 /**
  * Get current baremo for a solution X user. If not exist return undefined
@@ -347,41 +346,41 @@ export const newBaremo = async (
  * @param user
  * @returns
  */
-export const getCurrent = async (
-  solution: SolutionI,
-  user: UserI
-): Promise<BaremoResponse | void> => {
-  try {
-    const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(
-      solution,
-      user
-    );
-    if (baremo) {
-      const resp = genericBaremoFilter(baremo);
-      return resp;
-    }
-    return undefined;
-  } catch (error) {
-    return Promise.reject(
-      new RepositoryError(
-        ERRORS.REPOSITORY.GET_BAREMO,
-        HTTP_RESPONSE._500,
-        error
-      )
-    );
-  }
-};
+// export const getCurrent = async (
+//   solution: SolutionI,
+//   user: UserI
+// ): Promise<BaremoResponse | void> => {
+//   try {
+//     const baremo = await BaremoService.getCurrentBaremoByUserAndSolution(
+//       solution,
+//       user
+//     );
+//     if (baremo) {
+//       const resp = genericBaremoFilter(baremo);
+//       return resp;
+//     }
+//     return undefined;
+//   } catch (error) {
+//     return Promise.reject(
+//       new RepositoryError(
+//         ERRORS.REPOSITORY.GET_BAREMO,
+//         HTTP_RESPONSE._500,
+//         error
+//       )
+//     );
+//   }
+// };
 
-export const editBaremo = async (baremo: BaremoI, data: any): Promise<any> => {
-  try {
-    data = { ...data, updated: getCurrentDate() };
-    const result = await BaremoService.updateBaremo(baremo, data);
-    const res_filtered = await genericBaremoFilter(result);
-    return res_filtered;
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
+// export const editBaremo = async (baremo: BaremaI, data: any): Promise<any> => {
+//   try {
+//     data = { ...data, updated: getCurrentDate() };
+//     const result = await BaremoService.updateBaremo(baremo, data);
+//     const res_filtered = await genericBaremoFilter(result);
+//     return res_filtered;
+//   } catch (error) {
+//     return Promise.reject(error);
+//   }
+// };
 
 export const newEvaluationNote = async (
   data: any,

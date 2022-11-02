@@ -1,6 +1,6 @@
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
-import Baremo, { BaremoI } from "../models/baremo";
+import Baremo, { BaremaI } from "../routes/barema/barema.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import { UserI } from "../models/users";
 
@@ -19,7 +19,7 @@ const BaremoService = {
       );
     }
   },
-  async newBaremo(baremo: BaremoI): Promise<BaremoI> {
+  async newBaremo(baremo: BaremaI): Promise<BaremaI> {
     try {
       const resp = await Baremo.create(baremo);
       return resp.toObject();
@@ -50,7 +50,7 @@ const BaremoService = {
   async getCurrentBaremoByUserAndSolution(
     solution: SolutionI,
     user: UserI
-  ): Promise<BaremoI> {
+  ): Promise<BaremaI> {
     try {
       const baremo = await Baremo.findOne({
         solution: solution,
@@ -65,7 +65,7 @@ const BaremoService = {
       );
     }
   },
-  async updateBaremo(baremo: BaremoI, update: any): Promise<BaremoI> {
+  async updateBaremo(baremo: BaremaI, update: any): Promise<BaremaI> {
     try {
       const res = await Baremo.findOneAndUpdate(
         {

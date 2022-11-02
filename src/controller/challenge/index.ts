@@ -11,10 +11,6 @@ import {
 } from "tsoa";
 import { RESOURCE } from "../../constants";
 import { ConfigurationDefaultI } from "../../models/configuration.default";
-import {
-  ChallengeI,
-  CHALLENGE_TYPE,
-} from "../../routes/challenges/challenge.model";
 import { UserI } from "../../models/users";
 import {
   acceptChallengeProposal,
@@ -33,11 +29,17 @@ import {
   listSolutions,
   updateSolution,
 } from "../../repository/repository.solution";
+import {
+  ChallengeI,
+  CHALLENGE_TYPE,
+  CHALLENGE_TYPE_TYPE,
+  IDEA_BEHAVIOR_ENUM,
+} from "../../routes/challenges/challenge.model";
+import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 import { AreaResponse } from "../area/area";
 import { ConfigurationBody } from "../configuration";
 import { SituationBody, SituationResponse } from "../situation/situation";
 import { LightSolutionResponse, SolutionResponse } from "../solutions";
-import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignment/strategic-alignment.serializer";
 /**
  * Data that can be edited or inserted. Other are edited by
  * another endpoints
@@ -75,12 +77,14 @@ export interface LightChallengeResponse {
   finalization: Date;
   areas_available: AreaResponse[];
   department_affected: AreaResponse[];
+  type: CHALLENGE_TYPE_TYPE;
+  idea_behavior: IDEA_BEHAVIOR_ENUM;
+
   group_validator: GroupValidatorResponse;
   interactions: {
     interaction: string;
     count: number;
   };
-  type: string;
 }
 
 export interface ChallengeResponse extends SituationResponse {
@@ -90,6 +94,7 @@ export interface ChallengeResponse extends SituationResponse {
   default_scope: boolean;
   group_validator: GroupValidatorResponse;
   strategic_alignment: LightStrategicAlignmentSerialized;
+  idea_behavior: IDEA_BEHAVIOR_ENUM;
   type: string;
   interactions?: {
     interaction: string;

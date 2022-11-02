@@ -20,6 +20,13 @@ export const CHALLENGE_STATUS_ENUM = z.enum([
 ]);
 export type CHALLENGE_STATUS_ENUM = z.infer<typeof CHALLENGE_STATUS_ENUM>;
 
+export const IDEA_BEHAVIOR_ENUM = z.enum([
+  "WITH_PARK",
+  "WITHOUT_COMMENTS",
+  "WITHOUT_PARK",
+]);
+export type IDEA_BEHAVIOR_ENUM = z.infer<typeof IDEA_BEHAVIOR_ENUM>;
+
 export interface ChallengeI extends SituationBaseI {
   /**
    * GENERIC | PARTICULAR . Generic challenge is created for group ideas free.
@@ -53,6 +60,7 @@ export interface ChallengeI extends SituationBaseI {
    * Alignment of the challenge with the company alignments
    */
   strategicAlignment: StrategicAlignmentI;
+  ideaBehavior: IDEA_BEHAVIOR_ENUM;
 }
 
 export const challengeModel = {
@@ -64,6 +72,7 @@ export const challengeModel = {
   goal: String,
   resources: String,
   wanted_impact: String,
+  ideaBehavior: String,
   strategicAlignment: {
     type: Schema.Types.ObjectId,
     ref: "StrategicAlignment",

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Challenge from "../challenge.model";
+import Challenge, { IDEA_BEHAVIOR_ENUM } from "../challenge.model";
 import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../challenge.serializer";
@@ -24,6 +24,7 @@ export const updateChallenge = validate(
       resources: z.string().optional(),
       wanted_impact: z.string().optional(),
       strategic_alignment: z.string().optional(),
+      idea_behavior: IDEA_BEHAVIOR_ENUM.optional(),
     }),
   },
   async ({ user, params, body }, res) => {
@@ -57,6 +58,7 @@ export const updateChallenge = validate(
         goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
+        ideaBehavior: body.idea_behavior,
         strategicAlignment,
       }),
       { new: true }

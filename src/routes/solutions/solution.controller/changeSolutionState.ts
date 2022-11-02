@@ -38,7 +38,7 @@ const solutionSchema = z.object({
 
   participation: z.any(),
 
-  strategic_alignment: z.string(),
+  strategicAlignment: z.string(),
 });
 
 export const changeSolutionState = validate(

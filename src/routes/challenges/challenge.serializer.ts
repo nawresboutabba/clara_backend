@@ -101,6 +101,7 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     strategic_alignment: challenge.strategicAlignment
       ? lightAlignmentSerializer(challenge.strategicAlignment)
       : null,
+    idea_behavior: challenge.ideaBehavior,
     /**
      * Configuration section
      */
@@ -173,6 +174,7 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     interactions,
     type,
     tags,
+    idea_behavior: challenge.ideaBehavior,
   } as LightChallengeResponse;
 }
 

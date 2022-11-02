@@ -1,15 +1,15 @@
 import { z } from "zod";
+import { validate } from "../../../utils/express/express-handler";
+import { removeEmpty } from "../../../utils/general/remove-empty";
+import { dateSchema, numberSchema } from "../../../utils/zod";
+import { getAreasByIds } from "../../area/area.repository";
+import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
+import * as TagsRep from "../../tags/tags.repository";
 import Challenge, {
   IDEA_BEHAVIOR_ENUM,
   TARGET_AUDIENCE_ENUM,
 } from "../challenge.model";
-import AreaService from "../../../services/Area.service";
-import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../challenge.serializer";
-import { removeEmpty } from "../../../utils/general/remove-empty";
-import { dateSchema, numberSchema } from "../../../utils/zod";
-import * as TagsRep from "../../tags/tags.repository";
-import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
 
 export const updateChallenge = validate(
   {
@@ -44,7 +44,7 @@ export const updateChallenge = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(body.areas);
+    const departmentAffected = await getAreasByIds(body.areas);
     const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );

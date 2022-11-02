@@ -15,10 +15,7 @@ export const lightUserFilter = async (user: UserI): Promise<UserResponse> => {
     points: user.points,
     about: user.about,
     active: user.active,
-    area_visible: (user.areaVisible ?? []).map((e) => ({
-      area_id: e.areaId,
-      name: e.name,
-    })),
+    area_visible: genericArrayAreaFilter(user.areaVisible ?? []),
     external_user: user.externalUser,
     linkedIn: user.linkedIn,
   };

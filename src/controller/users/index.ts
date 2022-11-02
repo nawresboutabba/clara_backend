@@ -1,4 +1,4 @@
-import { Post, Controller, Route, Body, Get, Inject, Query, Patch } from "tsoa";
+import { Body, Controller, Get, Inject, Patch, Post, Query, Route } from "tsoa";
 import { UserI } from "../../models/users";
 import {
   changePassword,
@@ -9,7 +9,7 @@ import {
   signUp,
   updateUser,
 } from "../../repository/repository.users";
-import { AreaResponse } from "../area/area";
+import { AreaSerialized } from "../../routes/area";
 
 /**
  * User interface used when a user is added to Request after
@@ -55,7 +55,7 @@ export interface LightUserInterface {
 }
 
 export interface UserResponse extends LightUserInterface {
-  area_visible: Array<AreaResponse>;
+  area_visible: AreaSerialized[];
   external_user: boolean;
   user_image: string;
   active: boolean;

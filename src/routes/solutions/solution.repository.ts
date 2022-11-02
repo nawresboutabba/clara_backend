@@ -85,7 +85,7 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
 
   if (solution.status === "APPROVED_FOR_DISCUSSION") {
     const hasCommonAreas = solution.areasAvailable.some((area) =>
-      user.areaVisible.find((userArea) => userArea.areaId === area.areaId)
+      user.areaVisible.find((userArea) => userArea.id === area.id)
     );
 
     const hasWsaCompany = solution.WSALevelChosed == WSALEVEL.COMPANY;

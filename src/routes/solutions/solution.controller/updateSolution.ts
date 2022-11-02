@@ -1,5 +1,4 @@
 import { z } from "zod";
-import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericSolutionFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
@@ -8,6 +7,7 @@ import { booleanSchema } from "../../../utils/zod/booleanSchema";
 import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
 import * as TagsRep from "../../tags/tags.repository";
 import * as SolutionRep from "../solution.repository";
+import { getAreasByIds } from "../../area/area.repository";
 
 export const updateSolution = validate(
   {
@@ -55,9 +55,7 @@ export const updateSolution = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(
-      body.department_affected
-    );
+    const departmentAffected = await getAreasByIds(body.department_affected);
     const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );

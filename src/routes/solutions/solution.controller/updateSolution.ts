@@ -9,7 +9,7 @@ import { StrategicAlignment } from "../../strategic-alignment/strategic-alignmen
 import * as TagsRep from "../../tags/tags.repository";
 import * as SolutionRep from "../solution.repository";
 
-export const updateChallenge = validate(
+export const updateSolution = validate(
   {
     params: z.object({ solutionId: z.string() }),
     body: z.object({

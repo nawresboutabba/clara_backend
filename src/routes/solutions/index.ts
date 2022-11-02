@@ -1,95 +1,29 @@
 "use strict";
 import * as express from "express";
-import { NextFunction } from "express";
-import { body, validationResult } from "express-validator";
-import {
-  ERRORS,
-  EVALUATION_NOTE_ROLE, RULES,
-  URLS
-} from "../../constants";
-import SolutionController from "../../controller/solutions/index";
-import { acl } from "../../middlewares/acl";
-import authentication from "../../middlewares/authentication";
-import {
-  RequestMiddleware,
-  ResponseMiddleware
-} from "../../middlewares/middlewares.interface";
-import ChallengeService from "../../services/Challenge.service";
-import { throwSanitizatorErrors } from "../../utils/sanitization/satitization.errors";
 const router = express.Router();
 
-router.post(
-  URLS.SOLUTION.SOLUTION,
-  [
-    authentication,
-    /**
-     * This item that not exist in request. "generic_challenge_exist" is validation wich the
-     * goal is check that generic challenge was created, Remember that ideas free are associated
-     * to GENERIC CHALLENGE
-     */
-    body("generic_challenge_exist").custom(
-      async (value: any, { req }): Promise<void> => {
-        try {
-          const challenge = await ChallengeService.getGenericChallenge();
-          if (challenge) {
-            req.resources = { challenge, ...req.resource };
-            return Promise.resolve();
-          }
-          return Promise.reject();
-        } catch (error) {
-          return Promise.reject();
-        }
-      }
-    ),
-  ],
-  async (
-    req: RequestMiddleware,
-    res: ResponseMiddleware,
-    next: NextFunction
-  ) => {
-    try {
-      await throwSanitizatorErrors(
-        validationResult,
-        req,
-        ERRORS.ROUTING.ADD_SOLUTION
-      );
+// router.delete(
+//   "/solution/:solutionId",
+//   /**
+//    * @TODO Check that the user can delete the solution
+//    */
+//   [authentication, acl(RULES.IS_SOLUTION_CREATOR)],
+//   async (
+//     req: RequestMiddleware,
+//     res: ResponseMiddleware,
+//     next: NextFunction
+//   ) => {
+//     try {
+//       const solutionController = new SolutionController();
+//       await solutionController.deleteSolution(req.params.solutionId, req.user);
 
-      const solutionController = new SolutionController();
-      const solution = await solutionController.newSolution(
-        req.user,
-        req.utils,
-        req.resources.challenge
-      );
-      res.status(200).json(solution).send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
-
-router.delete(
-  "/solution/:solutionId",
-  /**
-   * @TODO Check that the user can delete the solution
-   */
-  [authentication, acl(RULES.IS_SOLUTION_CREATOR)],
-  async (
-    req: RequestMiddleware,
-    res: ResponseMiddleware,
-    next: NextFunction
-  ) => {
-    try {
-      const solutionController = new SolutionController();
-      await solutionController.deleteSolution(req.params.solutionId, req.user);
-
-      res.status(204).send();
-      next();
-    } catch (e) {
-      next(e);
-    }
-  }
-);
+//       res.status(204).send();
+//       next();
+//     } catch (e) {
+//       next(e);
+//     }
+//   }
+// );
 
 /**
  * This endpoint initialize a baremo. If this is a first baremo open, then
@@ -267,39 +201,39 @@ router.delete(
 //   }
 // );
 
-router.post(
-  "/solution/:solutionId/evaluation-note",
-  [
-    authentication,
-    /**
-     * Check that validator can do this action
-     */
-    acl(RULES.IS_VALIDATOR_OF_SOLUTION),
-    body("title", "title can not be empty").notEmpty(),
-    body("description", "description can not be empty").notEmpty(),
-    body("type", "type is not valid").isIn([
-      EVALUATION_NOTE_ROLE.GROUP_VALIDATOR,
-    ]),
-  ],
-  async (
-    req: RequestMiddleware,
-    res: ResponseMiddleware,
-    next: NextFunction
-  ) => {
-    try {
-      const solutionController = new SolutionController();
-      const note = await solutionController.evaluationNote(
-        req.params.solutionId,
-        req.body,
-        req.resources.solution,
-        req.user
-      );
-      res.json(note).status(200).send();
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+// router.post(
+//   "/solution/:solutionId/evaluation-note",
+//   [
+//     authentication,
+//     /**
+//      * Check that validator can do this action
+//      */
+//     acl(RULES.IS_VALIDATOR_OF_SOLUTION),
+//     body("title", "title can not be empty").notEmpty(),
+//     body("description", "description can not be empty").notEmpty(),
+//     body("type", "type is not valid").isIn([
+//       EVALUATION_NOTE_ROLE.GROUP_VALIDATOR,
+//     ]),
+//   ],
+//   async (
+//     req: RequestMiddleware,
+//     res: ResponseMiddleware,
+//     next: NextFunction
+//   ) => {
+//     try {
+//       const solutionController = new SolutionController();
+//       const note = await solutionController.evaluationNote(
+//         req.params.solutionId,
+//         req.body,
+//         req.resources.solution,
+//         req.user
+//       );
+//       res.json(note).status(200).send();
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 
 const solutionsRouter = router;
 export default solutionsRouter;

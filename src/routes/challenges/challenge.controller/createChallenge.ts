@@ -17,7 +17,6 @@ export const createChallenge = validate({}, async ({ user }, res) => {
   const challenge = await Challenge.create({
     insertedBy: user,
     author: user,
-    challengeId: nanoid(),
     active: true,
     type: CHALLENGE_TYPE.PARTICULAR,
     status: CHALLENGE_STATUS.DRAFT,
@@ -31,7 +30,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("departmentAffected")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment");
 
   return res.status(201).json(await genericChallengeFilter(createdChallenge));
 });

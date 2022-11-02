@@ -1,6 +1,7 @@
 export * from "./cancelSolutionInvite";
 export * from "./changeSolutionAuthor";
 export * from "./changeSolutionState";
+export * from "./createSolution";
 export * from "./createSolutionComment";
 export * from "./createSolutionInvite";
 export * from "./deleteSolution";

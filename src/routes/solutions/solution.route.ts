@@ -1,16 +1,15 @@
 import * as express from "express";
 import * as controller from "./solution.controller";
 import authentication from "../../middlewares/authentication";
-import oldRoute from "./index";
 
 export const solutionsRouter = express.Router();
 
 solutionsRouter
   .use(authentication)
-  .use(oldRoute)
   .get("/solutions", controller.getSolutions)
+  .post("/solutions", controller.createSolution)
   .get("/solutions/:solutionId", controller.getSolution)
-  .patch("/solutions/:solutionId", controller.updateChallenge)
+  .patch("/solutions/:solutionId", controller.updateSolution)
   .delete("/solutions/:solutionId", controller.deleteSolution)
   .post("/solutions/:solutionId/transition", controller.changeSolutionState)
   .post("/solutions/:solutionId/author", controller.changeSolutionAuthor)

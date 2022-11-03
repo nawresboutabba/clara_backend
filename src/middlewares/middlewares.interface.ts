@@ -8,7 +8,7 @@ import { AreaI } from "../routes/area/area.model";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
-import { UserI } from "../models/users";
+import { UserI } from "../routes/users/users.model";
 
 export interface RequestMiddleware extends express.Request {
   /**

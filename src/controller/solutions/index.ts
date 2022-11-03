@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { RESOURCE } from "../../constants";
 import { ConfigurationBaseI } from "../../models/configuration.default";
-import { UserI } from "../../models/users";
+import { UserI } from "../../routes/users/users.model";
 import { setDefaultConfiguration } from "../../repository/repository.configuration-challenge";
 import {
   applyTransition,

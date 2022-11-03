@@ -1,6 +1,6 @@
 import { z } from "zod";
 import Solution from "../solution.model";
-import User, { UserI } from "../../../models/users";
+import User, { UserI } from "../../users/users.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericSolutionFilter } from "../solution.serializer";
 import * as SolutionRep from "../solution.repository";

@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 import SituationBase, { SituationBaseI } from "../../models/situation.base";
 import { ChallengeI } from "../challenges/challenge.model";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/users.model";
 import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
 import { z } from "zod";
 

@@ -1,34 +1,36 @@
-import { Schema, model } from 'mongoose';
-import { UserI } from './users';
+import { Schema, model } from "mongoose";
+import { UserI } from "../routes/users/users.model";
 
 export interface CompanyI {
-    _id?: any,
-    companyId: string,
-    name?:string,
-    CNPJ?: string,
-    committe?: Array<UserI>
+  _id?: any;
+  companyId: string;
+  name?: string;
+  CNPJ?: string;
+  committe?: Array<UserI>;
 }
 
 const company = new Schema({
   companyId: {
-    type:String,
+    type: String,
     required: true,
-    unique: true
-  }, 
+    unique: true,
+  },
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   CNPJ: {
-    type:String,
+    type: String,
     required: true,
-    unique:true
+    unique: true,
   },
-  committe: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }]
-})
+  committe: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+});
 
-export default model('Company', company);
+export default model("Company", company);

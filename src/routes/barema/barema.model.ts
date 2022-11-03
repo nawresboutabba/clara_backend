@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { z } from "zod";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/users.model";
 
 export const BaremaValueKind = z.enum(["scale", "bool"]);
 export type BaremaValueKind = z.infer<typeof BaremaValueKind>;

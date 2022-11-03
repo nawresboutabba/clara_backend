@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/users.model";
 
 export interface StrategicAlignmentI {
   _id: Types.ObjectId;

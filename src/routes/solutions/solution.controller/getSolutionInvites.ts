@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { INVITATION_STATUS } from "../../../models/invitation";
-import { UserI } from "../../../models/users";
+import { UserI } from "../../users/users.model";
 import InvitationService from "../../../services/Invitation.service";
 import { validate } from "../../../utils/express/express-handler";
 import { genericArraySolutionInvitationFilter } from "../../../utils/field-filters/invitation";

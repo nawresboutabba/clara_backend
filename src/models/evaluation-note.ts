@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "./users";
+import { UserI } from "../routes/users/users.model";
 
 export interface EvaluationNoteI {
   noteId: string;

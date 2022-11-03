@@ -3,7 +3,7 @@ import { BaremaI } from "../routes/barema/barema.model";
 import { GroupValidatorI } from "./group-validator";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "./users";
+import { UserI } from "../routes/users/users.model";
 
 export interface SpecialistInterventionI {
   groupValidator: GroupValidatorI;

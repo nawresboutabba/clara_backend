@@ -7,7 +7,7 @@ import {
 } from "../../models/interaction.comment";
 import Challenge, { ChallengeI } from "./challenge.model";
 import { TagI } from "../../models/tag";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/users.model";
 import { genericUserFilter } from "../users/user.serializer";
 import { removeEmpty } from "../../utils/general/remove-empty";
 import { genericTagFilter } from "../tags/tags.serializer";

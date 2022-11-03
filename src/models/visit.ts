@@ -1,19 +1,19 @@
-import { UserI } from "./users";
+import { UserI } from "../routes/users/users.model";
 import { model, Schema } from "mongoose";
 
 export interface VisitI {
-    user: UserI,
-    visitDate: Date,
-    title: string,
-    images: string,
-    type: "CHALLENGE" | "SOLUTION",
-    resource: any,
+  user: UserI;
+  visitDate: Date;
+  title: string;
+  images: string;
+  type: "CHALLENGE" | "SOLUTION";
+  resource: any;
 }
 
 const visit = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
   },
   visitDate: Date,
   title: String,
@@ -21,8 +21,8 @@ const visit = new Schema({
   type: String,
   resource: {
     type: Schema.Types.ObjectId,
-    ref: 'SituationBase'   
+    ref: "SituationBase",
   },
-})
+});
 
 export default model("Visit", visit);

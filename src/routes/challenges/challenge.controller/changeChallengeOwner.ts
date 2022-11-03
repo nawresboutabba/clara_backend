@@ -1,6 +1,6 @@
 import { z } from "zod";
 import Challenge from "../challenge.model";
-import User, { UserI } from "../../../models/users";
+import User, { UserI } from "../../users/users.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericChallengeFilter } from "../challenge.serializer";
 import * as ChallengeRep from "../challenge.repository";

@@ -3,7 +3,7 @@ import {
   LightChallengeResponse,
 } from "../../controller/challenge";
 import { AreaI } from "../area/area.model";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/users.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,

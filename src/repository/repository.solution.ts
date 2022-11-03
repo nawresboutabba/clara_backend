@@ -18,7 +18,7 @@ import {
   SOLUTION_STATUS_ENUM,
 } from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
-import { UserI } from "../models/users";
+import { UserI } from "../routes/users/users.model";
 import BaremoService from "../services/Baremo.service";
 import EvaluationNoteService from "../services/EvaluationNote.service";
 import SolutionService, {

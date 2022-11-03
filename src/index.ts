@@ -28,7 +28,7 @@ import { baremaRouter } from "./routes/barema/barema.route";
 import { areaRouter } from "./routes/area/area.router";
 import { challengeRouter } from "./routes";
 import { solutionsRouter } from "./routes/solutions";
-import { strategicAlignmentsRouter } from "./routes/strategic-alignment";
+import { strategicAlignmentsRouter } from "./routes/strategic-alignments";
 import { tagsRouter } from "./routes/tags/tags.route";
 import { usersRouter } from "./routes/users/user.route";
 

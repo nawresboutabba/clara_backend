@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import SituationBase, { SituationBaseI } from "../../models/situation.base";
 import { ChallengeI } from "../challenges/challenge.model";
 import { UserI } from "../users/user.model";
-import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
+import { StrategicAlignmentI } from "../strategic-alignments/strategic-alignment.model";
 import { z } from "zod";
 
 export const SOLUTION_STATUS_ENUM = z.enum([

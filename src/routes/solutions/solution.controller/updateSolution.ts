@@ -4,7 +4,7 @@ import { genericSolutionFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";
-import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
+import { StrategicAlignment } from "../../strategic-alignments/strategic-alignment.model";
 import * as TagsRep from "../../tags/tags.repository";
 import * as SolutionRep from "../solution.repository";
 import { getAreasByIds } from "../../area/area.repository";

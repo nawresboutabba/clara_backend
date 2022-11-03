@@ -35,7 +35,7 @@ import {
   CHALLENGE_TYPE_TYPE,
   IDEA_BEHAVIOR_ENUM,
 } from "../../routes/challenges/challenge.model";
-import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignment/strategic-alignment.serializer";
+import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignments/strategic-alignment.serializer";
 import { AreaResponse } from "../area/area";
 import { ConfigurationBody } from "../configuration";
 import { SituationBody, SituationResponse } from "../situation/situation";

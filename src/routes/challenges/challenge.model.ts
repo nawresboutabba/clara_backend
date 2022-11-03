@@ -6,7 +6,7 @@ import SituationBase, {
   SituationBaseI,
 } from "../../models/situation.base";
 import { UserI } from "../users/user.model";
-import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
+import { StrategicAlignmentI } from "../strategic-alignments/strategic-alignment.model";
 
 export enum CHALLENGE_TYPE {
   GENERIC = "GENERIC",

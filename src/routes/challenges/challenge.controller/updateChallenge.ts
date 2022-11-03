@@ -3,7 +3,7 @@ import { validate } from "../../../utils/express/express-handler";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { dateSchema, numberSchema } from "../../../utils/zod";
 import { getAreasByIds } from "../../area/area.repository";
-import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
+import { StrategicAlignment } from "../../strategic-alignments/strategic-alignment.model";
 import * as TagsRep from "../../tags/tags.repository";
 import Challenge, {
   IDEA_BEHAVIOR_ENUM,

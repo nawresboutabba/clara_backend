@@ -13,7 +13,7 @@ import {
   genericUserFilter,
 } from "../users/user.serializer";
 import { lightChallengeFilter } from "../challenges/challenge.serializer";
-import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
+import { lightAlignmentSerializer } from "../strategic-alignments/strategic-alignment.serializer";
 import { genericArrayTagsFilter } from "../tags/tags.serializer";
 import { SolutionI } from "./solution.model";
 

@@ -13,7 +13,7 @@ import { genericGroupValidatorFilter } from "../../utils/field-filters/group-val
 import {
   genericArrayUserFilter,
   genericUserFilter,
-} from "../../utils/field-filters/user";
+} from "../users/user.serializer";
 import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
 import { genericArrayTagsFilter } from "../tags/tags.serializer";
 import { ChallengeI } from "./challenge.model";

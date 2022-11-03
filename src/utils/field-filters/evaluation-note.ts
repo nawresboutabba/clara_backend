@@ -1,7 +1,7 @@
 import { EvaluationNoteResponse } from "../../controller/solutions";
 import { EvaluationNoteI } from "../../models/evaluation-note";
 import { lightSolutionFilter } from "../../routes/solutions/solution.serializer";
-import { genericUserFilter } from "./user";
+import { genericUserFilter } from "../../routes/users/user.serializer";
 
 export const genericEvaluationNoteFilter = async (
   evaluationNoteEntity: EvaluationNoteI

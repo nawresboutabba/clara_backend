@@ -4,7 +4,7 @@ import {
   SolutionInvitationI,
 } from "../../models/invitation";
 import { lightSolutionFilter } from "../../routes/solutions/solution.serializer";
-import { lightUserFilter } from "./user";
+import { lightUserFilter } from "../../routes/users/user.serializer";
 import { lightChallengeFilter } from "../../routes/challenges/challenge.serializer";
 
 // interface  {

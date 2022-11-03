@@ -11,7 +11,7 @@ import { genericArrayAreaFilter } from "../area/area.serializer";
 import {
   genericArrayUserFilter,
   genericUserFilter,
-} from "../../utils/field-filters/user";
+} from "../users/user.serializer";
 import { lightChallengeFilter } from "../challenges/challenge.serializer";
 import { lightAlignmentSerializer } from "../strategic-alignment/strategic-alignment.serializer";
 import { genericArrayTagsFilter } from "../tags/tags.serializer";

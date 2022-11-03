@@ -24,7 +24,7 @@ import { genericGroupValidatorFilter } from "../utils/field-filters/group-valida
 import {
   genericArrayUserFilter,
   lightUserFilter,
-} from "../utils/field-filters/user";
+} from "../routes/users/user.serializer";
 
 export interface GroupValidatorResponse {
   group_validator_id: string;

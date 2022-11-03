@@ -1,5 +1,5 @@
 import { UserResponse } from "../../controller/users";
-import { genericUserFilter } from "../../utils/field-filters/user";
+import { genericUserFilter } from "../users/user.serializer";
 import { StrategicAlignmentI } from "./strategic-alignment.model";
 
 export interface StrategicAlignmentSerialized {

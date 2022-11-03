@@ -1,9 +1,7 @@
-import { genericUserFilter } from "../../utils/field-filters/user";
+import { genericUserFilter } from "../users/user.serializer";
 import { BaremaI } from "./barema.model";
 
 export async function baremaSerializer(barema: BaremaI) {
-
-
   return {
     id: barema.id,
 
@@ -15,7 +13,9 @@ export async function baremaSerializer(barema: BaremaI) {
     axis: barema.axis,
 
     inserted_by: await genericUserFilter(barema.insertedBy),
-    archived_by: barema.archivedBy ? await genericUserFilter(barema.archivedBy) : null,
+    archived_by: barema.archivedBy
+      ? await genericUserFilter(barema.archivedBy)
+      : null,
 
     createdAt: barema.createdAt,
     updatedAt: barema.updatedAt,
@@ -23,5 +23,5 @@ export async function baremaSerializer(barema: BaremaI) {
 }
 
 export async function listBaremaSerializer(baremas: BaremaI[]) {
-  return Promise.all(baremas.map(baremaSerializer))
+  return Promise.all(baremas.map(baremaSerializer));
 }

@@ -1,7 +1,7 @@
 import { UserResponse } from "../../controller/users";
 import { UserI } from "../../models/users";
 import { getSignedUrl } from "../../repository/repository.image-service";
-import { genericArrayAreaFilter } from "../../routes/area/area.serializer";
+import { genericArrayAreaFilter } from "../area/area.serializer";
 
 export const lightUserFilter = async (user: UserI): Promise<UserResponse> => {
   const user_image = await getSignedUrl(user.userImage);

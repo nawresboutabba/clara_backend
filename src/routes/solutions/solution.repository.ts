@@ -8,7 +8,7 @@ import {
 import { INVITATION_STATUS, SolutionInvitation } from "../../models/invitation";
 import { TagI } from "../../models/tag";
 import { UserI } from "../../models/users";
-import { genericUserFilter } from "../../utils/field-filters/user";
+import { genericUserFilter } from "../users/user.serializer";
 import { removeEmpty } from "../../utils/general/remove-empty";
 import { genericTagFilter } from "../tags/tags.serializer";
 import Solution, { SolutionI } from "./solution.model";

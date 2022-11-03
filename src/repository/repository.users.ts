@@ -12,7 +12,7 @@ import {
 } from "../controller/users";
 import { ERRORS, EVENTS_TYPE, HTTP_RESPONSE, VIEW_BY } from "../constants";
 import RepositoryError from "../handle-error/error.repository";
-import { genericUserFilter } from "../utils/field-filters/user";
+import { genericUserFilter } from "../routes/users/user.serializer";
 import SolutionService from "../services/Solution.service";
 import { genericArraySolutionsFilter } from "../routes/solutions/solution.serializer";
 import { isCommitteeMember } from "../utils/acl/function.is_committe_member";

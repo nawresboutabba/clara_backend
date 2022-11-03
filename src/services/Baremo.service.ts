@@ -2,7 +2,7 @@ import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import Baremo, { BaremaI } from "../routes/barema/barema.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 const BaremoService = {
   async getBaremoById(baremoId: string): Promise<any> {

@@ -3,7 +3,7 @@ import ServiceError from "../handle-error/error.service";
 import { GroupValidatorI } from "../models/group-validator";
 import Integrant, { IntegrantI } from "../models/integrant";
 import { IntegrantStatusI } from "../models/integrant";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 const IntegrantService = {
   async getIntegrantsOfGroupValidator(

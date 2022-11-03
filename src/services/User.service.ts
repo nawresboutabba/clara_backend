@@ -1,4 +1,4 @@
-import User, { UserI } from "../routes/users/users.model";
+import User, { UserI } from "../routes/users/user.model";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import ServiceError from "../handle-error/error.service";
 import { removeEmpty } from "../utils/general/remove-empty";

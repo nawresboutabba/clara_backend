@@ -1,5 +1,5 @@
 import { IntegrantStatusI } from "../../models/integrant";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import IntegrantService from "../../services/Integrant.service";
 
 export async function isCommitteeMember(

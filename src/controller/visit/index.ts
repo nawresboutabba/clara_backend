@@ -1,5 +1,5 @@
 import { Controller, Route, Get, Inject, Query } from "tsoa";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import { getLatest } from "../../repository/repository.visit";
 
 export interface VisitResponse {

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { UserI } from "../users/users.model";
+import { UserI } from "../users/user.model";
 
 export interface AreaI {
   name: string;

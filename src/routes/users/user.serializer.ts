@@ -1,5 +1,5 @@
 import { UserResponse } from "../../controller/users";
-import { UserI } from "./users.model";
+import { UserI } from "./user.model";
 import { getSignedUrl } from "../../repository/repository.image-service";
 import { genericArrayAreaFilter } from "../area/area.serializer";
 

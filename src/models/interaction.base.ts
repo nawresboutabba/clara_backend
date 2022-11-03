@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 export const options = {
   discriminatorKey: "type",

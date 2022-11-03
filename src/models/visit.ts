@@ -1,4 +1,4 @@
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import { model, Schema } from "mongoose";
 
 export interface VisitI {

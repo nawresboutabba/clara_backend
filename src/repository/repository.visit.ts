@@ -1,4 +1,4 @@
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import VisitService from "../services/Visit.service";
 import { genericArrayVisitFilter } from "../utils/field-filters/visit";
 

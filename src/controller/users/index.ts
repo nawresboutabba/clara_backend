@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Inject, Patch, Post, Query, Route } from "tsoa";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import {
   changePassword,
   getParticipation,

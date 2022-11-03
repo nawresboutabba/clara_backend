@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { GroupValidatorI } from "./group-validator";
 import { AreaI } from "../routes/area/area.model";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import { TeamI } from "./team";
 import Log from "./log";
 import historicalSolutions from "./historical-solutions";

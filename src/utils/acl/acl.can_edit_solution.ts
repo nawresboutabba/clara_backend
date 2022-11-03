@@ -2,7 +2,7 @@ import { ERRORS, HTTP_RESPONSE } from "../../constants";
 import RoutingError from "../../handle-error/error.routing";
 import { RequestMiddleware } from "../../middlewares/middlewares.interface";
 import { SolutionI } from "../../routes/solutions/solution.model";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import SolutionService from "../../services/Solution.service";
 
 export async function CAN_EDIT_SOLUTION(req: RequestMiddleware): Promise<void> {

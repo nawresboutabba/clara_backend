@@ -30,7 +30,7 @@ import { challengeRouter } from "./routes";
 import { solutionsRouter } from "./routes/solutions";
 import { strategicAlignmentsRouter } from "./routes/strategic-alignment";
 import { tagsRouter } from "./routes/tags/tags.route";
-import { usersRouter } from "./routes/users/users.route";
+import { usersRouter } from "./routes/users/user.route";
 
 mongoose
   .connect(

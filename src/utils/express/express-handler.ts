@@ -1,7 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ServerResponse } from "http";
 import { SafeParseSuccess, ZodSchema, ZodTypeAny } from "zod";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 
 type ValidatedMiddleware<TBody, TQuery, TParams> = (
   req: Request<TParams, unknown, TBody, TQuery> & {

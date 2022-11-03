@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { GroupValidatorI } from "./group-validator";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import historicalIntegrants from "./historical-integrants";
 import * as _ from "lodash";
 

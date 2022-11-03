@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 export enum TAG_TYPE {
   COMMENT = "COMMENT",

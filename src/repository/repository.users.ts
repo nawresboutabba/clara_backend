@@ -1,6 +1,6 @@
 import { hash, compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import { nanoid } from "nanoid";
 import UserService from "../services/User.service";
 import {

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 export interface ParticipationI {
   /**

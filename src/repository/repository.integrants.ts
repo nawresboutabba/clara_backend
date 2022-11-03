@@ -9,7 +9,7 @@ import {
   genericIntegrantFilter,
 } from "../utils/field-filters/integrant";
 import { IntegrantResponse } from "../controller/integrant";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 
 /**
  * Add a new integrant to committe . The role can be LEADER or GENERAL.

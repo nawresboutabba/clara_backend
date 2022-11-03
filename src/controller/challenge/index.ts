@@ -11,7 +11,7 @@ import {
 } from "tsoa";
 import { RESOURCE } from "../../constants";
 import { ConfigurationDefaultI } from "../../models/configuration.default";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import {
   acceptChallengeProposal,
   getChallengeProposal,

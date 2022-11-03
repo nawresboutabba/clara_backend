@@ -11,7 +11,7 @@ import { UserRequest } from "../controller/users";
 import RepositoryError from "../handle-error/error.repository";
 import { ChallengeProposalI } from "../models/challenge-proposal";
 import { AreaI } from "../routes/area/area.model";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import AreaService from "../services/Area.service";

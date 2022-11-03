@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import ServiceError from "../handle-error/error.service";
 import { ERRORS, HTTP_RESPONSE } from "../constants";
 import { QueryChallengeForm } from "../utils/params-query/challenge.query.params";
-import { UserI } from "../routes/users/users.model";
+import { UserI } from "../routes/users/user.model";
 import { removeEmpty } from "../utils/general/remove-empty";
 
 type editOneParams = {

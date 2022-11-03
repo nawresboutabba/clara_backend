@@ -1,5 +1,5 @@
 import { Post, Controller, Route, Body, Delete, Path, Get, Inject } from "tsoa";
-import { UserI } from "../../routes/users/users.model";
+import { UserI } from "../../routes/users/user.model";
 import { GroupValidatorResponse } from "../../repository/repository.group-validator";
 import {
   newIntegrant,

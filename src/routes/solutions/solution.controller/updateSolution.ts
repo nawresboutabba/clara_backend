@@ -1,15 +1,15 @@
 import { z } from "zod";
-import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
+import { genericSolutionFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";
-import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
+import { StrategicAlignment } from "../../strategic-alignments/strategic-alignment.model";
 import * as TagsRep from "../../tags/tags.repository";
 import * as SolutionRep from "../solution.repository";
+import { getAreasByIds } from "../../area/area.repository";
 
-export const updateChallenge = validate(
+export const updateSolution = validate(
   {
     params: z.object({ solutionId: z.string() }),
     body: z.object({
@@ -55,12 +55,12 @@ export const updateChallenge = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(
-      body.department_affected
-    );
-    const strategic_alignment = await StrategicAlignment.findById(
+    const departmentAffected = await getAreasByIds(body.department_affected);
+    const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );
+
+    console.log(strategicAlignment);
 
     const updatedSolution = await SolutionRep.updateSolutionPartially(
       params.solutionId,
@@ -68,7 +68,7 @@ export const updateChallenge = validate(
         ...body,
         tags,
         departmentAffected,
-        strategic_alignment,
+        strategicAlignment,
       })
     );
 

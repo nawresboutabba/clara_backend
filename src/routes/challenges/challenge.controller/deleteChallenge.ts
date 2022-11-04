@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericChallengeFilter } from "../challenge.serializer";
 import * as ChallengeRep from "../challenge.repository";
 
 export const deleteChallenge = validate(

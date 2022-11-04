@@ -3,9 +3,9 @@ import {
   InvitationI,
   SolutionInvitationI,
 } from "../../models/invitation";
-import { lightSolutionFilter } from "./solution";
-import { lightUserFilter } from "./user";
-import { lightChallengeFilter } from "./challenge";
+import { lightSolutionFilter } from "../../routes/solutions/solution.serializer";
+import { lightUserFilter } from "../../routes/users/user.serializer";
+import { lightChallengeFilter } from "../../routes/challenges/challenge.serializer";
 
 // interface  {
 //   id: Types.ObjectId;
@@ -63,7 +63,7 @@ export async function genericChallengeInvitationFilter(
     type: invitation.type,
     to,
     from,
-    __t: "ChallengeInvitation"
+    __t: "ChallengeInvitation",
   };
 }
 
@@ -74,11 +74,11 @@ export async function genericArrayChallengeInvitationFilter(
 }
 
 export async function genericInvitationFilter(invitation: InvitationI) {
-  return invitation.__t === "ChallengeInvitation" ? genericChallengeInvitationFilter(invitation as ChallengeInvitationI) : genericSolutionInvitationFilter(invitation as SolutionInvitationI);
+  return invitation.__t === "ChallengeInvitation"
+    ? genericChallengeInvitationFilter(invitation as ChallengeInvitationI)
+    : genericSolutionInvitationFilter(invitation as SolutionInvitationI);
 }
 
-export async function genericArrayInvitationFilter(
-  invitations: InvitationI[]
-) {
+export async function genericArrayInvitationFilter(invitations: InvitationI[]) {
   return Promise.all(invitations.map(genericInvitationFilter));
 }

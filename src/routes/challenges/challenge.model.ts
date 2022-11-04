@@ -1,9 +1,12 @@
 import { Schema } from "mongoose";
+import { z } from "zod";
+import { AreaI } from "../area/area.model";
 import SituationBase, {
-  SituationBaseI,
   options,
+  SituationBaseI,
 } from "../../models/situation.base";
-import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
+import { UserI } from "../users/user.model";
+import { StrategicAlignmentI } from "../strategic-alignments/strategic-alignment.model";
 
 export enum CHALLENGE_TYPE {
   GENERIC = "GENERIC",
@@ -11,34 +14,36 @@ export enum CHALLENGE_TYPE {
 }
 export type CHALLENGE_TYPE_TYPE = keyof typeof CHALLENGE_TYPE;
 
-export enum CHALLENGE_STATUS {
-  DRAFT = "DRAFT",
-  PROPOSED = "PROPOSED",
-  OPENED = "OPENED",
-  CLOSED = "CLOSED",
-}
-export type CHALLENGE_STATUS_TYPE = keyof typeof CHALLENGE_STATUS;
+export const CHALLENGE_STATUS_ENUM = z.enum([
+  "DRAFT",
+  "PROPOSED",
+  "OPENED",
+  "CLOSED",
+]);
+export type CHALLENGE_STATUS_ENUM = z.infer<typeof CHALLENGE_STATUS_ENUM>;
 
-export interface ChallengeI extends SituationBaseI {
+export const IDEA_BEHAVIOR_ENUM = z.enum([
+  "WITH_PARK",
+  "WITHOUT_FORUM",
+  "WITHOUT_PARK",
+]);
+export type IDEA_BEHAVIOR_ENUM = z.infer<typeof IDEA_BEHAVIOR_ENUM>;
+
+export const TARGET_AUDIENCE_ENUM = z.enum(["Company", "Area", "User"]);
+export type TARGET_AUDIENCE_ENUM = z.infer<typeof TARGET_AUDIENCE_ENUM>;
+
+export type ChallengeI = SituationBaseI & {
   /**
    * GENERIC | PARTICULAR . Generic challenge is created for group ideas free.
    * Exist just one GENERIC CHALLENGE
    */
   type: CHALLENGE_TYPE;
 
-  status: CHALLENGE_STATUS;
-  /**
-   * True or False. Work in combination with canChooseScope
-   */
-  defaultScope: boolean;
+  status: CHALLENGE_STATUS_ENUM;
   /**
    * Situation title
    */
   title: string;
-  /**
-   * If challenge response to strategic organization need.
-   */
-  isStrategic: boolean;
   /**
    * Challenge finalization. Time limit for submit Ideas.
    */
@@ -51,8 +56,11 @@ export interface ChallengeI extends SituationBaseI {
   /**
    * Alignment of the challenge with the company alignments
    */
-  strategic_alignment: StrategicAlignmentI;
-}
+  strategicAlignment: StrategicAlignmentI;
+  ideaBehavior: IDEA_BEHAVIOR_ENUM;
+  targetAudience: TARGET_AUDIENCE_ENUM;
+  targetAudienceValue: AreaI[] | UserI[];
+};
 
 export const challengeModel = {
   type: String,
@@ -63,7 +71,21 @@ export const challengeModel = {
   goal: String,
   resources: String,
   wanted_impact: String,
-  strategic_alignment: {
+  targetAudience: {
+    type: String,
+    required: true,
+    enum: TARGET_AUDIENCE_ENUM.options,
+  },
+  targetAudienceValue: [
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      refPath: "targetAudience",
+      default: [],
+    },
+  ],
+  ideaBehavior: String,
+  strategicAlignment: {
     type: Schema.Types.ObjectId,
     ref: "StrategicAlignment",
   },

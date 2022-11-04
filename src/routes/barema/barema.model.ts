@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { z } from "zod";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/user.model";
 
 export const BaremaValueKind = z.enum(["scale", "bool"]);
 export type BaremaValueKind = z.infer<typeof BaremaValueKind>;
@@ -10,6 +10,7 @@ export type BaremaType = z.infer<typeof BaremaType>;
 
 export const BaremaAxis = z.enum(["difficulty", "impact"]);
 export type BaremaAxis = z.infer<typeof BaremaAxis>;
+
 export interface BaremaI {
   id: string;
   createdAt: Date;

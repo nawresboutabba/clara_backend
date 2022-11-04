@@ -1,7 +1,7 @@
 import { UserResponse } from "../../controller/users";
-import { UserI } from "../../models/users";
+import { UserI } from "./user.model";
 import { getSignedUrl } from "../../repository/repository.image-service";
-import { genericArrayAreaFilter } from "./area";
+import { genericArrayAreaFilter } from "../area/area.serializer";
 
 export const lightUserFilter = async (user: UserI): Promise<UserResponse> => {
   const user_image = await getSignedUrl(user.userImage);
@@ -15,10 +15,7 @@ export const lightUserFilter = async (user: UserI): Promise<UserResponse> => {
     points: user.points,
     about: user.about,
     active: user.active,
-    area_visible: (user.areaVisible ?? []).map((e) => ({
-      area_id: e.areaId,
-      name: e.name,
-    })),
+    area_visible: genericArrayAreaFilter(user.areaVisible ?? []),
     external_user: user.externalUser,
     linkedIn: user.linkedIn,
   };
@@ -43,7 +40,7 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
     about,
   } = user;
 
-  const area_visible = genericArrayAreaFilter(user.areaVisible);
+  const area_visible = genericArrayAreaFilter(user.areaVisible ?? []);
   const user_image = await getSignedUrl(user.userImage);
   return {
     user_id: user.userId,
@@ -61,14 +58,6 @@ export const genericUserFilter = async (user: UserI): Promise<UserResponse> => {
   };
 };
 
-export const genericArrayUserFilter = async (
-  users: Array<UserI>
-): Promise<Array<UserResponse>> => {
-  // this will not run, the function should receive the params
-  // i not removed this code, because i am not confident with the code that uses this function
-  if (!users) {
-    return [];
-  }
-
+export async function genericArrayUserFilter(users: Array<UserI>) {
   return Promise.all(users.map(lightUserFilter));
-};
+}

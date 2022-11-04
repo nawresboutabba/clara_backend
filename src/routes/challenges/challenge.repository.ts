@@ -7,8 +7,8 @@ import {
 } from "../../models/interaction.comment";
 import Challenge, { ChallengeI } from "./challenge.model";
 import { TagI } from "../../models/tag";
-import { UserI } from "../../models/users";
-import { genericUserFilter } from "../../utils/field-filters/user";
+import { UserI } from "../users/user.model";
+import { genericUserFilter } from "../users/user.serializer";
 import { removeEmpty } from "../../utils/general/remove-empty";
 import { genericTagFilter } from "../tags/tags.serializer";
 
@@ -20,7 +20,8 @@ export function getChallengeById(challengeId: string) {
     .populate("areasAvailable")
     .populate("tags")
     .populate("departmentAffected")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment")
+    .populate("targetAudienceValue");
   // .populate("departmentAffected")
   // .populate("updatedBy")
   // .populate("challenge")
@@ -43,7 +44,8 @@ export function updateChallengePartially(
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("tags")
-    .populate("departmentAffected");
+    .populate("departmentAffected")
+    .populate("strategicAlignment");
 }
 
 export async function getChallengeActiveById(id: string) {

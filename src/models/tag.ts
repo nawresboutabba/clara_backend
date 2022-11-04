@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import { UserI } from "./users";
+import { UserI } from "../routes/users/user.model";
 
 export enum TAG_TYPE {
   COMMENT = "COMMENT",
@@ -30,7 +30,7 @@ const TagSchema = new Schema<TagI>(
   { timestamps: true }
 );
 
-TagSchema.index({ name: "text" })
-TagSchema.index({ name: 1, type: 1 }, { unique: true })
+TagSchema.index({ name: "text" });
+TagSchema.index({ name: 1, type: 1 }, { unique: true });
 
 export const Tag = model<TagI>("Tag", TagSchema);

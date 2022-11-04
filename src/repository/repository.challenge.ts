@@ -10,8 +10,8 @@ import { ERRORS, HTTP_RESPONSE, WSALEVEL } from "../constants";
 import { UserRequest } from "../controller/users";
 import RepositoryError from "../handle-error/error.repository";
 import { ChallengeProposalI } from "../models/challenge-proposal";
-import { AreaI } from "../models/organization.area";
-import { UserI } from "../models/users";
+import { AreaI } from "../routes/area/area.model";
+import { UserI } from "../routes/users/user.model";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
 import AreaService from "../services/Area.service";
@@ -23,7 +23,7 @@ import UserService from "../services/User.service";
 import {
   genericArrayChallengeFilter,
   genericChallengeFilter,
-} from "../utils/field-filters/challenge";
+} from "../routes/challenges/challenge.serializer";
 import {
   genericArrayChallengeProposalFilter,
   genericChallengeProposalFilter,
@@ -65,7 +65,7 @@ export const newChallengeProposal = async (
     const challenge = await composeChallenge(body, user, utils);
     const proposalId = nanoid();
     const dateProposal = getCurrentDate();
-    const data: Omit<ChallengeI, "id" | "strategic_alignment"> = {
+    const data: Omit<ChallengeI, "id" | "strategicAlignment"> = {
       ...challenge,
       // @ts-expect-error should refactor challenge proposal
       proposalId,
@@ -85,7 +85,7 @@ const composeChallenge = async (
   body: ChallengeBody,
   user: UserRequest,
   utils: any
-): Promise<Omit<ChallengeI, "id" | "strategic_alignment">> => {
+): Promise<Omit<ChallengeI, "id" | "strategicAlignment">> => {
   try {
     const created = new Date();
 

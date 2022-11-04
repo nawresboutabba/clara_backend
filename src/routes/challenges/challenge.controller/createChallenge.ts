@@ -1,11 +1,10 @@
-import { nanoid } from "nanoid";
 import Challenge, {
-  CHALLENGE_STATUS,
+  CHALLENGE_STATUS_ENUM,
   CHALLENGE_TYPE,
 } from "../challenge.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericChallengeFilter } from "../challenge.serializer";
 
 export const createChallenge = validate({}, async ({ user }, res) => {
   const committee = await isCommitteeMember(user);
@@ -17,10 +16,9 @@ export const createChallenge = validate({}, async ({ user }, res) => {
   const challenge = await Challenge.create({
     insertedBy: user,
     author: user,
-    challengeId: nanoid(),
     active: true,
     type: CHALLENGE_TYPE.PARTICULAR,
-    status: CHALLENGE_STATUS.DRAFT,
+    status: CHALLENGE_STATUS_ENUM.enum.DRAFT,
     images: [],
     areasAvailable: [],
     departmentAffected: [],
@@ -31,7 +29,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     .populate("insertedBy")
     .populate("areasAvailable")
     .populate("departmentAffected")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment");
 
   return res.status(201).json(await genericChallengeFilter(createdChallenge));
 });

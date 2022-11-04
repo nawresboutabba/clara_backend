@@ -2,13 +2,11 @@ import * as express from "express";
 import * as controller from "./challenge.controller";
 
 import authentication from "../../middlewares/authentication";
-import oldRoute from "./index";
 
 export const challengeRouter = express.Router();
 
 challengeRouter
   .use(authentication)
-  .use(oldRoute)
   .get("/challenges/", controller.getChallenges)
   .get("/challenges/:challengeId", controller.getChallenge)
   .get("/challenges/:challengeId/solution", controller.getChallengeSolutions)

@@ -13,9 +13,12 @@ import { BaremaI } from "../routes/barema/barema.model";
 import { EvaluationNoteI } from "../models/evaluation-note";
 import { CommentScope, GeneralCommentI } from "../models/interaction.comment";
 import { ChallengeI } from "../routes/challenges/challenge.model";
-import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
+import {
+  SolutionI,
+  SOLUTION_STATUS_ENUM,
+} from "../routes/solutions/solution.model";
 import { TagI } from "../models/tag";
-import { UserI } from "../models/users";
+import { UserI } from "../routes/users/user.model";
 import BaremoService from "../services/Baremo.service";
 import EvaluationNoteService from "../services/EvaluationNote.service";
 import SolutionService, {
@@ -26,7 +29,7 @@ import { genericEvaluationNoteFilter } from "../utils/field-filters/evaluation-n
 import {
   genericArraySolutionsFilter,
   genericSolutionFilter,
-} from "../utils/field-filters/solution";
+} from "../routes/solutions/solution.serializer";
 import { getCurrentDate } from "../utils/general/date";
 import { logVisit } from "../utils/general/log-visit";
 import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
@@ -84,7 +87,7 @@ export const createSolution = async (
       created,
       active: true,
       updated: created,
-      status: SOLUTION_STATUS.DRAFT,
+      status: SOLUTION_STATUS_ENUM.enum.DRAFT,
       challenge,
       type: challenge.type,
       version: 0,
@@ -314,7 +317,7 @@ export async function getSolutionCommentsWithoutRelations(solution: SolutionI) {
 //       comment: "",
 //     };
 
-//     if (solution.status == SOLUTION_STATUS.READY_FOR_ANALYSIS) {
+//     if (solution.status == SOLUTION_STATUS_ENUM.enum.READY_FOR_ANALYSIS) {
 //       const updateSolution: SolutionEditablesFields = {
 //         status: SolutionStateMachine.dispatch(solution.status, "analyze"),
 //         startAnalysis: date,
@@ -424,15 +427,15 @@ export const applyTransition = async (
     };
 
     if (
-      solution.status == SOLUTION_STATUS.DRAFT &&
-      update.status == SOLUTION_STATUS.PROPOSED
+      solution.status == SOLUTION_STATUS_ENUM.enum.DRAFT &&
+      update.status == SOLUTION_STATUS_ENUM.enum.PROPOSED
     ) {
       const version = solution.version + 1;
       update = { ...update, version };
     }
 
     const resp = await SolutionService.updateSolutionPartially(
-      solution.solutionId,
+      solution.id,
       update
     );
     const respFilterd = await genericSolutionFilter(resp);

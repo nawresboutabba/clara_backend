@@ -1,7 +1,7 @@
 import { Post, Controller, Route, Body, Get, Query, Inject, Path } from "tsoa";
 import { GroupValidatorI } from "../../models/group-validator";
 import { SolutionI } from "../../routes/solutions/solution.model";
-import { UserI } from "../../models/users";
+import { UserI } from "../../routes/users/user.model";
 import {
   getAllGroupValidatorsDetails,
   getBaremosLinkedToSolution,

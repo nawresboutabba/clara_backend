@@ -1,6 +1,6 @@
 import { ConfigurationDefaultI } from "../../models/configuration.default";
 import { ChallengeI } from "../../routes/challenges/challenge.model";
-import { UserI } from "../../models/users";
+import { UserI } from "../../routes/users/user.model";
 import { isCommitteeMember } from "../acl/function.is_committe_member";
 
 /**

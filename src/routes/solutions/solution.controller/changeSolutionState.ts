@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import { genericSolutionFilter } from "../../../utils/field-filters/solution";
 import SolutionStateMachine from "../../../utils/state-machine/state-machine.solution";
 import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";
-import { SOLUTION_STATUS } from "../solution.model";
 import * as SolutionRep from "../solution.repository";
+import { genericSolutionFilter } from "../solution.serializer";
 
 const solutionSchema = z.object({
   title: z.string(),
@@ -39,7 +38,7 @@ const solutionSchema = z.object({
 
   participation: z.any(),
 
-  strategic_alignment: z.string(),
+  strategicAlignment: z.string(),
 });
 
 export const changeSolutionState = validate(
@@ -79,8 +78,7 @@ export const changeSolutionState = validate(
       {
         status,
         version:
-          solution.status === SOLUTION_STATUS.DRAFT &&
-          status === SOLUTION_STATUS.PROPOSED
+          solution.status === "DRAFT" && status === "PROPOSED"
             ? solution.version + 1
             : solution.version,
       }

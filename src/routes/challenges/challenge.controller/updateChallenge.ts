@@ -1,12 +1,15 @@
 import { z } from "zod";
-import Challenge from "../challenge.model";
-import AreaService from "../../../services/Area.service";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { dateSchema, numberSchema } from "../../../utils/zod";
+import { getAreasByIds } from "../../area/area.repository";
+import { StrategicAlignment } from "../../strategic-alignments/strategic-alignment.model";
 import * as TagsRep from "../../tags/tags.repository";
-import { StrategicAlignment } from "../../strategic-alignment/strategic-alignment.model";
+import Challenge, {
+  IDEA_BEHAVIOR_ENUM,
+  TARGET_AUDIENCE_ENUM,
+} from "../challenge.model";
+import { genericChallengeFilter } from "../challenge.serializer";
 
 export const updateChallenge = validate(
   {
@@ -24,6 +27,9 @@ export const updateChallenge = validate(
       resources: z.string().optional(),
       wanted_impact: z.string().optional(),
       strategic_alignment: z.string().optional(),
+      idea_behavior: IDEA_BEHAVIOR_ENUM.optional(),
+      target_audience: TARGET_AUDIENCE_ENUM.default("Company"),
+      target_audience_value: z.array(z.string()).optional(),
     }),
   },
   async ({ user, params, body }, res) => {
@@ -38,8 +44,8 @@ export const updateChallenge = validate(
     }
 
     const tags = await TagsRep.getTagsById(body.tags);
-    const departmentAffected = await AreaService.getAreasById(body.areas);
-    const strategic_alignment = await StrategicAlignment.findById(
+    const departmentAffected = await getAreasByIds(body.areas);
+    const strategicAlignment = await StrategicAlignment.findById(
       body.strategic_alignment
     );
 
@@ -57,7 +63,10 @@ export const updateChallenge = validate(
         goal: body.goal,
         resources: body.resources,
         wanted_impact: body.wanted_impact,
-        strategic_alignment,
+        ideaBehavior: body.idea_behavior,
+        strategicAlignment,
+        targetAudience: body.target_audience,
+        targetAudienceValue: body.target_audience_value,
       }),
       { new: true }
     )
@@ -66,7 +75,8 @@ export const updateChallenge = validate(
       .populate("tags")
       .populate("areasAvailable")
       .populate("departmentAffected")
-      .populate("strategic_alignment");
+      .populate("strategicAlignment")
+      .populate("targetAudienceValue");
 
     return res.status(201).json(await genericChallengeFilter(updatedChallenge));
   }

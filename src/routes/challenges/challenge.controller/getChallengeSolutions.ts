@@ -1,7 +1,7 @@
 import { z } from "zod";
 import Solution from "../../solutions/solution.model";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
+import { genericArraySolutionsFilter } from "../../solutions/solution.serializer";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 
 export const getChallengeSolutions = validate(

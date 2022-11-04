@@ -1,15 +1,16 @@
 import { Schema, model, Types } from "mongoose";
-import { UserI } from "../../models/users";
+import { UserI } from "../users/user.model";
 
 export interface StrategicAlignmentI {
   _id: Types.ObjectId;
-  id?: string;
+  id: string;
+  insertedBy: UserI;
+  archivedBy: UserI;
   archivedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 
   description: string;
-  insertedBy: UserI;
   startActive: Date;
   endActive: Date;
 }
@@ -17,9 +18,10 @@ export interface StrategicAlignmentI {
 const StrategicAlignmentSchema = new Schema<StrategicAlignmentI>(
   {
     description: String,
-    insertedBy: { type: Schema.Types.ObjectId, ref: "User" },
     startActive: Date,
     endActive: Date,
+    insertedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    archivedBy: { type: Schema.Types.ObjectId, ref: "User" },
     archivedAt: { type: Date, default: null },
   },
   { timestamps: true }

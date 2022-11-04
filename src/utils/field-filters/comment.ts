@@ -1,17 +1,14 @@
 import { CommentResponse } from "../../controller/comment";
 import { GeneralCommentI } from "../../models/interaction.comment";
 import { genericTagFilter } from "../../routes/tags/tags.serializer";
-import { genericUserFilter } from "./user";
+import { genericUserFilter } from "../../routes/users/user.serializer";
 
-export const genericCommentFilter = async (commentEntity: GeneralCommentI): Promise<CommentResponse> => {
-  const {
-    _id,
-    comment,
-    date,
-    scope
-  } = commentEntity
-  const author = await genericUserFilter(commentEntity.author)
-  const tag = genericTagFilter(commentEntity.tag)
+export const genericCommentFilter = async (
+  commentEntity: GeneralCommentI
+): Promise<CommentResponse> => {
+  const { _id, comment, date, scope } = commentEntity;
+  const author = await genericUserFilter(commentEntity.author);
+  const tag = genericTagFilter(commentEntity.tag);
 
   return {
     id: _id.toString(),
@@ -20,10 +17,14 @@ export const genericCommentFilter = async (commentEntity: GeneralCommentI): Prom
     author,
     tag,
     scope,
-    parent: commentEntity.parent ? await genericCommentFilter(commentEntity.parent) : null
-  } as CommentResponse
-}
+    parent: commentEntity.parent
+      ? await genericCommentFilter(commentEntity.parent)
+      : null,
+  } as CommentResponse;
+};
 
-export function genericArrayCommentFilter(comments: GeneralCommentI[]): Promise<CommentResponse[]> {
+export function genericArrayCommentFilter(
+  comments: GeneralCommentI[]
+): Promise<CommentResponse[]> {
   return Promise.all(comments.map(genericCommentFilter));
 }

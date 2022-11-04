@@ -1,6 +1,6 @@
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "../models/users";
+import { UserI } from "../routes/users/user.model";
 import Visit, { VisitI } from "../models/visit";
 
 const VisitService = {

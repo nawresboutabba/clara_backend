@@ -1,7 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ServerResponse } from "http";
 import { SafeParseSuccess, ZodSchema, ZodTypeAny } from "zod";
-import { UserI } from "../../models/users";
+import { UserI } from "../../routes/users/user.model";
 
 type ValidatedMiddleware<TBody, TQuery, TParams> = (
   req: Request<TParams, unknown, TBody, TQuery> & {
@@ -41,7 +41,7 @@ export const validate = <TBody = unknown, TQuery = unknown, TParams = unknown>(
             query: queryParsed.data,
             body: bodyParsed.data,
             params: paramsParsed.data,
-          } as Request<TParams, unknown, TBody, TQuery> & { user: UserI; },
+          } as Request<TParams, unknown, TBody, TQuery> & { user: UserI },
           res,
           next
         );

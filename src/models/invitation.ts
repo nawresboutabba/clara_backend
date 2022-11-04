@@ -1,7 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import { UserI } from "./users";
+import { UserI } from "../routes/users/user.model";
 
 export enum INVITATION_STATUS {
   PENDING = "PENDING",

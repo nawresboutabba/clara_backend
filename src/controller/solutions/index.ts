@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { RESOURCE } from "../../constants";
 import { ConfigurationBaseI } from "../../models/configuration.default";
-import { UserI } from "../../models/users";
+import { UserI } from "../../routes/users/user.model";
 import { setDefaultConfiguration } from "../../repository/repository.configuration-challenge";
 import {
   applyTransition,
@@ -28,6 +28,7 @@ import {
 import { BaremaI } from "../../routes/barema/barema.model";
 import { ChallengeI } from "../../routes/challenges/challenge.model";
 import { SolutionI } from "../../routes/solutions/solution.model";
+import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignments/strategic-alignment.serializer";
 import { TagSerialized } from "../../routes/tags/tags.serializer";
 import { AreaResponse } from "../area/area";
 import { BaremoResponse } from "../baremo";
@@ -76,7 +77,7 @@ export interface SolutionBody extends SituationBody {
 }
 
 export interface SolutionResponse extends SituationResponse {
-  solution_id: string;
+  id: string;
   proposed_solution: string;
   differential: string;
   is_new_for: string;
@@ -89,19 +90,18 @@ export interface SolutionResponse extends SituationResponse {
   test_description: string;
   barema_type_suggested: string;
   impact: string;
+  strategic_alignment: LightStrategicAlignmentSerialized;
 
   /**
    * challenge associated
    */
-  challenge_id?: string;
   challenge?: LightChallengeResponse;
   is_privated: boolean;
 }
 
 export interface LightSolutionResponse extends LightSituationResponse {
-  solution_id: string;
+  id: string;
   proposed_solution: string;
-  challenge_id?: string;
   challenge?: {
     type: string;
     id: string;

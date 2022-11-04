@@ -1,9 +1,9 @@
 import { z } from "zod";
-import Challenge, { CHALLENGE_STATUS } from "../challenge.model";
+import Challenge, { CHALLENGE_STATUS_ENUM } from "../challenge.model";
 import Solution from "../../solutions/solution.model";
 import { isCommitteeMember } from "../../../utils/acl/function.is_committe_member";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArrayChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericArrayChallengeFilter } from "../challenge.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 
@@ -12,7 +12,7 @@ export const getChallenges = validate(
     query: z.object({
       title: z.string().optional(),
       tags: z.array(z.string()).default([]),
-      status: z.nativeEnum(CHALLENGE_STATUS).optional(),
+      status: CHALLENGE_STATUS_ENUM.optional(),
       departmentAffected: z.array(z.string()).default([]),
       init: z.number().default(0),
       offset: z.number().default(10),
@@ -53,7 +53,9 @@ export const getChallenges = validate(
 
     const committee = await isCommitteeMember(user);
 
-    const status = committee.isActive ? query.status : CHALLENGE_STATUS.OPENED;
+    const status = committee.isActive
+      ? query.status
+      : CHALLENGE_STATUS_ENUM.enum.OPENED;
 
     const challenges = await Challenge.find(
       Object.assign(

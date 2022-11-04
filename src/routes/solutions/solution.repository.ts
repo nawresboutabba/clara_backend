@@ -6,15 +6,15 @@ import {
   SolutionComment,
 } from "../../models/interaction.comment";
 import { INVITATION_STATUS, SolutionInvitation } from "../../models/invitation";
-import Solution, { SolutionI, SOLUTION_STATUS } from "./solution.model";
 import { TagI } from "../../models/tag";
-import { UserI } from "../../models/users";
-import { genericUserFilter } from "../../utils/field-filters/user";
+import { UserI } from "../users/user.model";
+import { genericUserFilter } from "../users/user.serializer";
 import { removeEmpty } from "../../utils/general/remove-empty";
 import { genericTagFilter } from "../tags/tags.serializer";
+import Solution, { SolutionI } from "./solution.model";
 
 export function getSolutionById(solutionId: string) {
-  return Solution.findOne({ solutionId })
+  return Solution.findById(solutionId)
     .populate("departmentAffected")
     .populate("updatedBy")
     .populate("challenge")
@@ -25,14 +25,14 @@ export function getSolutionById(solutionId: string) {
     .populate("areasAvailable")
     .populate("tags")
     .populate("externalOpinion")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment");
 }
 
 export function updateSolutionPartially(
   solutionId: string,
   data: UpdateQuery<SolutionI>
 ) {
-  return Solution.findOneAndUpdate({ solutionId }, data, { new: true })
+  return Solution.findByIdAndUpdate(solutionId, data, { new: true })
     .populate("departmentAffected")
     .populate("updatedBy")
     .populate("challenge")
@@ -43,7 +43,7 @@ export function updateSolutionPartially(
     .populate("areasAvailable")
     .populate("tags")
     .populate("externalOpinion")
-    .populate("strategic_alignment");
+    .populate("strategicAlignment");
 }
 
 export function getSolutions(filterQuery: FilterQuery<SolutionI>) {
@@ -74,7 +74,7 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
   );
 
   if (
-    solution.status !== SOLUTION_STATUS.APPROVED_FOR_DISCUSSION &&
+    solution.status !== "APPROVED_FOR_DISCUSSION" &&
     !isInvited &&
     !isAuthor &&
     !isCoAuthor &&
@@ -83,9 +83,9 @@ export async function canViewSolution(user: UserI, solution: SolutionI) {
     return false;
   }
 
-  if (solution.status === SOLUTION_STATUS.APPROVED_FOR_DISCUSSION) {
+  if (solution.status === "APPROVED_FOR_DISCUSSION") {
     const hasCommonAreas = solution.areasAvailable.some((area) =>
-      user.areaVisible.find((userArea) => userArea.areaId === area.areaId)
+      user.areaVisible.find((userArea) => userArea.id === area.id)
     );
 
     const hasWsaCompany = solution.WSALevelChosed == WSALEVEL.COMPANY;

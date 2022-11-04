@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { validate } from "../../../utils/express/express-handler";
-import { genericChallengeFilter } from "../../../utils/field-filters/challenge";
+import { genericChallengeFilter } from "../challenge.serializer";
 import ChallengeStateMachine from "../../../utils/state-machine/state-machine.challenge";
 import { dateSchema } from "../../../utils/zod";
 import * as ChallengeRep from "../challenge.repository";
+import { IDEA_BEHAVIOR_ENUM } from "../challenge.model";
 
 const challengeSchema = z.object({
   title: z.string(),
@@ -17,6 +18,8 @@ const challengeSchema = z.object({
   goal: z.string(),
   resources: z.string(),
   wanted_impact: z.string(),
+  strategicAlignment: z.string(),
+  ideaBehavior: IDEA_BEHAVIOR_ENUM,
 });
 
 export const changeChallengeState = validate(

@@ -1,22 +1,20 @@
 import { IntegrantResponse } from "../../controller/integrant";
 import { IntegrantI } from "../../models/integrant";
 import { genericGroupValidatorFilter } from "./group-validator";
-import { genericUserFilter } from "./user";
+import { genericUserFilter } from "../../routes/users/user.serializer";
 
-export const genericIntegrantFilter = async (integrant : IntegrantI): Promise<IntegrantResponse> => {
-  return new Promise(async (resolve, reject)=> {
-    const {
-      integrantId,
-      active,
-      created,
-      lastChangePosition,
-      finished,
-      role
-    } = integrant
-    const user = await genericUserFilter(integrant.user)
-    const group_validator = await genericGroupValidatorFilter(integrant.groupValidator)
+export const genericIntegrantFilter = async (
+  integrant: IntegrantI
+): Promise<IntegrantResponse> => {
+  return new Promise(async (resolve, reject) => {
+    const { integrantId, active, created, lastChangePosition, finished, role } =
+      integrant;
+    const user = await genericUserFilter(integrant.user);
+    const group_validator = await genericGroupValidatorFilter(
+      integrant.groupValidator
+    );
 
-    return resolve ({
+    return resolve({
       user,
       integrant_id: integrantId,
       active,
@@ -24,19 +22,21 @@ export const genericIntegrantFilter = async (integrant : IntegrantI): Promise<In
       last_change_position: lastChangePosition,
       finished,
       role,
-      group_validator            
-    })
-  })
-}
+      group_validator,
+    });
+  });
+};
 
-export const genericArrayIntegrantFilter = async (integrants : IntegrantI[]): Promise<IntegrantResponse[]> => {
-  return new Promise(async (resolve, reject)=> {
-    const integrantResponse = []
-    for(let i = 0; i < integrants.length; i++){
-      const integrant = integrants[i]
-      const integrantFiltered = await genericIntegrantFilter(integrant)
-      integrantResponse.push(integrantFiltered)
+export const genericArrayIntegrantFilter = async (
+  integrants: IntegrantI[]
+): Promise<IntegrantResponse[]> => {
+  return new Promise(async (resolve, reject) => {
+    const integrantResponse = [];
+    for (let i = 0; i < integrants.length; i++) {
+      const integrant = integrants[i];
+      const integrantFiltered = await genericIntegrantFilter(integrant);
+      integrantResponse.push(integrantFiltered);
     }
-    return resolve(integrantResponse)
-  })
-}
+    return resolve(integrantResponse);
+  });
+};

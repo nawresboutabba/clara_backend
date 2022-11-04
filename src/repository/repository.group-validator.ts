@@ -1,34 +1,30 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import IntegrantService from "../services/Integrant.service";
-import * as _ from "lodash";
-import GroupValidatorService from "../services/GroupValidator.service";
+import { nanoid } from "nanoid";
+import { BAREMO_STATUS, ERRORS, HTTP_RESPONSE } from "../constants";
+import { BaremoResponse } from "../controller/baremo";
 import {
   GroupValidatorBody,
   GroupValidatorQueueResponse,
 } from "../controller/group-validator";
+import { LightSolutionResponse } from "../controller/solutions";
+import RepositoryError from "../handle-error/error.repository";
 import { GroupValidatorI } from "../models/group-validator";
-import { nanoid } from "nanoid";
 import { IntegrantI } from "../models/integrant";
+import { BaremaI } from "../routes/barema/barema.model";
+import {
+  SolutionI,
+  SOLUTION_STATUS_ENUM,
+} from "../routes/solutions/solution.model";
+import { genericArraySolutionsFilter } from "../routes/solutions/solution.serializer";
+import BaremoService from "../services/Baremo.service";
+import GroupValidatorService from "../services/GroupValidator.service";
+import IntegrantService from "../services/Integrant.service";
+import SolutionService from "../services/Solution.service";
 import { genericGroupValidatorFilter } from "../utils/field-filters/group-validator";
 import {
   genericArrayUserFilter,
   lightUserFilter,
-} from "../utils/field-filters/user";
-import SolutionService from "../services/Solution.service";
-import { QuerySolutionForm } from "../utils/params-query/solution.query.params";
-import {
-  genericArraySolutionsFilter,
-  lightSolutionFilter,
-} from "../utils/field-filters/solution";
-import { LightSolutionResponse } from "../controller/solutions";
-import { SolutionI, SOLUTION_STATUS } from "../routes/solutions/solution.model";
-import BaremoService from "../services/Baremo.service";
-import { BAREMO_STATUS, ERRORS, HTTP_RESPONSE } from "../constants";
-import { BaremoResponse } from "../controller/baremo";
-import { BaremaI } from "../routes/barema/barema.model";
-import { ConfigurationServicePlaceholders } from "aws-sdk/lib/config_service_placeholders";
-import { isDefaultForAdditionalPropertiesAllowed } from "tsoa";
-import RepositoryError from "../handle-error/error.repository";
+} from "../routes/users/user.serializer";
 
 export interface GroupValidatorResponse {
   group_validator_id: string;
@@ -139,10 +135,10 @@ export const getSolutionsLinked = async (
       integrants: usersTeamMembers,
       queue: undefined,
     };
-    if (query.status == SOLUTION_STATUS.READY_FOR_ANALYSIS) {
+    if (query.status == SOLUTION_STATUS_ENUM.enum.READY_FOR_ANALYSIS) {
       queue.queue = resp;
       return queue;
-    } else if (query.status == SOLUTION_STATUS.ANALYZING) {
+    } else if (query.status == SOLUTION_STATUS_ENUM.enum.ANALYZING) {
       /**
        * For each solution, get baremos started
        */
@@ -169,7 +165,7 @@ export const getSolutionsLinked = async (
         /**
          * Get baremos relationated to idea
          */
-        const baremosForIdea: BaremaI[] = baremoDictionary[idea.solution_id];
+        const baremosForIdea: BaremaI[] = baremoDictionary[idea.id];
 
         /**
          * Chech that exist baremos for this. Redundant
@@ -233,7 +229,7 @@ export const getBaremosLinkedToSolution = async (
 ): Promise<BaremoResponse[]> => {
   try {
     const baremos = await BaremoService.getAllBaremosBySolution(solution);
-    const resp = (baremos);
+    const resp = baremos;
     return resp;
   } catch (error) {
     return Promise.reject(error);

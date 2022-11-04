@@ -1,34 +1,23 @@
 import { Schema } from "mongoose";
 import SituationBase, { SituationBaseI } from "../../models/situation.base";
 import { ChallengeI } from "../challenges/challenge.model";
-import { UserI } from "../../models/users";
-import { StrategicAlignmentI } from "../strategic-alignment/strategic-alignment.model";
+import { UserI } from "../users/user.model";
+import { StrategicAlignmentI } from "../strategic-alignments/strategic-alignment.model";
+import { z } from "zod";
 
-export const SOLUTION_STATUS = {
-  DRAFT: "DRAFT",
-  PROPOSED: "PROPOSED",
-  APPROVED_FOR_DISCUSSION: "APPROVED_FOR_DISCUSSION",
-  READY_FOR_ANALYSIS: "READY_FOR_ANALYSIS",
-  ANALYZING: "ANALYZING",
-  REVIEW: "REVIEW",
-  APPROVED_FOR_CONSTRUCTION: "APPROVED_FOR_CONSTRUCTION",
-  REJECTED: "REJECTED",
-};
-export type SOLUTION_STATUS = keyof typeof SOLUTION_STATUS;
+export const SOLUTION_STATUS_ENUM = z.enum([
+  "DRAFT",
+  "PROPOSED",
+  "APPROVED_FOR_DISCUSSION",
+  "READY_FOR_ANALYSIS",
+  "ANALYZING",
+  "REVIEW",
+  "APPROVED_FOR_CONSTRUCTION",
+  "REJECTED",
+]);
+export type SOLUTION_STATUS_ENUM = z.infer<typeof SOLUTION_STATUS_ENUM>;
 
 export interface SolutionI extends SituationBaseI {
-  /**
-   * Id that uniquely identifies a solution
-   */
-  solutionId: string;
-  /**
-   * Id Challenge associated to solution.
-   */
-  challengeId: string;
-  /**
-   *  Challenge Object. challengeId refer to challenge attribute.
-   * The redundace is for performance lookup (for example Solutions with a particular challengeId)
-   */
   challenge: ChallengeI;
   /**
    * Solution description
@@ -102,8 +91,8 @@ export interface SolutionI extends SituationBaseI {
    */
   isPrivated: boolean;
 
-  status: SOLUTION_STATUS;
-  strategic_alignment: StrategicAlignmentI;
+  status: SOLUTION_STATUS_ENUM;
+  strategicAlignment: StrategicAlignmentI;
 }
 
 const Solution = SituationBase.discriminator<SolutionI>(
@@ -136,7 +125,7 @@ const Solution = SituationBase.discriminator<SolutionI>(
     version: Number,
     isPrivated: Boolean,
     type: String,
-    strategic_alignment: {
+    strategicAlignment: {
       type: Schema.Types.ObjectId,
       ref: "StrategicAlignment",
     },

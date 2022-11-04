@@ -3,23 +3,25 @@ import {
   SolutionResponse,
 } from "../../controller/solutions";
 import { UserResponse } from "../../controller/users";
-import { CHALLENGE_TYPE } from "../../routes/challenges/challenge.model";
-import { SolutionI } from "../../routes/solutions/solution.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
-import { genericArrayAreaFilter } from "./area";
-import { lightChallengeFilter } from "./challenge";
-import { genericArrayUserFilter, genericUserFilter } from "./user";
+import { genericArrayAreaFilter } from "../area/area.serializer";
+import {
+  genericArrayUserFilter,
+  genericUserFilter,
+} from "../users/user.serializer";
+import { lightChallengeFilter } from "../challenges/challenge.serializer";
+import { lightAlignmentSerializer } from "../strategic-alignments/strategic-alignment.serializer";
+import { genericArrayTagsFilter } from "../tags/tags.serializer";
+import { SolutionI } from "./solution.model";
 
 export const genericSolutionFilter = async (
   solution: SolutionI
 ): Promise<SolutionResponse> => {
   const {
-    solutionId,
-    challengeId,
+    id,
     created,
     status,
     updated,
@@ -77,16 +79,12 @@ export const genericSolutionFilter = async (
   const banner_image = await getSignedUrl(solution.bannerImage);
 
   return {
+    id,
     inserted_by,
     author,
     coauthor,
     external_opinion,
     active,
-    solution_id: solutionId,
-    challenge_id:
-      solution.challenge.type == CHALLENGE_TYPE.PARTICULAR
-        ? challengeId
-        : undefined,
     challenge,
     created,
     status,
@@ -110,6 +108,9 @@ export const genericSolutionFilter = async (
     test_description: testDescription,
     barema_type_suggested: baremaTypeSuggested,
     impact,
+    strategic_alignment: solution.strategicAlignment
+      ? lightAlignmentSerializer(solution.strategicAlignment)
+      : null,
     /**
      * Configuration section
      */
@@ -155,7 +156,7 @@ export async function lightSolutionFilter(
   };
 
   return {
-    solution_id: solution.solutionId,
+    id: solution.id,
     inserted_by,
     author,
     coauthor,

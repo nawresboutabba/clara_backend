@@ -1,5 +1,7 @@
 import { ERRORS } from "../../constants";
-import { CHALLENGE_STATUS } from "../../routes/challenges/challenge.model";
+import { CHALLENGE_STATUS_ENUM } from "../../routes/challenges/challenge.model";
+
+const CHALLENGE_STATUS = CHALLENGE_STATUS_ENUM.enum;
 const machine = {
   state: CHALLENGE_STATUS.DRAFT,
   transitions: {

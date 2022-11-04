@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { SOLUTION_STATUS } from "../solution.model";
+import { SOLUTION_STATUS_ENUM } from "../solution.model";
 import { validate } from "../../../utils/express/express-handler";
-import { genericArraySolutionsFilter } from "../../../utils/field-filters/solution";
+import { genericArraySolutionsFilter } from "../solution.serializer";
 import { removeEmpty } from "../../../utils/general/remove-empty";
 import { sortSchema } from "../../../utils/params-query/sort.query";
 import * as SolutionRep from "../solution.repository";
@@ -12,7 +12,7 @@ export const getSolutions = validate(
       title: z.string().optional(),
       tags: z.array(z.string()).default([]),
       departmentAffected: z.array(z.string()).default([]),
-      status: z.nativeEnum(SOLUTION_STATUS).optional(),
+      status: SOLUTION_STATUS_ENUM.optional(),
       challengeId: z.string().optional(),
       type: z.enum(["PARTICULAR", "GENERIC"]).optional(),
       as: z.enum(["AUTHOR", "COAUTHOR"]).optional(),

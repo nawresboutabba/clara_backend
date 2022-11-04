@@ -2,16 +2,21 @@ import {
   ChallengeResponse,
   LightChallengeResponse,
 } from "../../controller/challenge";
+import { AreaI } from "../area/area.model";
+import { UserI } from "../users/user.model";
 import {
   getArrayImageSignedUrl,
   getSignedUrl,
 } from "../../repository/repository.image-service";
-import { ChallengeI } from "../../routes/challenges/challenge.model";
-import { lightAlignmentSerializer } from "../../routes/strategic-alignment/strategic-alignment.serializer";
-import { genericArrayTagsFilter } from "../../routes/tags/tags.serializer";
-import { genericArrayAreaFilter } from "./area";
-import { genericGroupValidatorFilter } from "./group-validator";
-import { genericArrayUserFilter, genericUserFilter } from "./user";
+import { genericArrayAreaFilter } from "../area/area.serializer";
+import { genericGroupValidatorFilter } from "../../utils/field-filters/group-validator";
+import {
+  genericArrayUserFilter,
+  genericUserFilter,
+} from "../users/user.serializer";
+import { lightAlignmentSerializer } from "../strategic-alignments/strategic-alignment.serializer";
+import { genericArrayTagsFilter } from "../tags/tags.serializer";
+import { ChallengeI } from "./challenge.model";
 
 /**
  * Challenge information filter.
@@ -35,14 +40,14 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     wanted_impact,
     active,
     fileComplementary,
-    isStrategic,
     finalization,
     type,
+    targetAudienceValue,
     /**
      * Configuration section
      */
     canChooseScope,
-    defaultScope,
+    // defaultScope,
     canChooseWSALevel,
     WSALevelAvailable,
     WSALevelChosed,
@@ -69,10 +74,8 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     challenge.groupValidator
   );
 
-  const strategic_alignment = lightAlignmentSerializer(
-    challenge.strategic_alignment
-  );
   const tags = genericArrayTagsFilter(challenge.tags);
+
   return {
     id: _id,
     inserted_by,
@@ -92,17 +95,26 @@ export async function genericChallengeFilter(challenge: ChallengeI) {
     banner_image,
     images,
     tags,
-    is_strategic: isStrategic,
     finalization,
     department_affected,
     group_validator,
     type,
-    strategic_alignment,
+    strategic_alignment: challenge.strategicAlignment
+      ? lightAlignmentSerializer(challenge.strategicAlignment)
+      : null,
+    idea_behavior: challenge.ideaBehavior,
+    target_audience: challenge.targetAudience,
+    target_audience_value:
+      challenge.targetAudience === "User"
+        ? await genericArrayUserFilter(targetAudienceValue as UserI[])
+        : challenge.targetAudience === "Area"
+        ? genericArrayAreaFilter(targetAudienceValue as AreaI[])
+        : [],
     /**
      * Configuration section
      */
     can_choose_scope: canChooseScope,
-    default_scope: defaultScope,
+    // default_scope: defaultScope,
     can_choose_WSALevel: canChooseWSALevel,
     WSALevel_available: WSALevelAvailable,
     WSALevel_chosed: WSALevelChosed,
@@ -129,7 +141,6 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     title,
     description,
     active,
-    isStrategic,
     finalization,
     interactions,
     type,
@@ -162,7 +173,6 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     active,
     banner_image,
     images,
-    is_strategic: isStrategic,
     finalization,
     areas_available,
     department_affected,
@@ -170,6 +180,7 @@ export async function lightChallengeFilter(challenge: ChallengeI) {
     interactions,
     type,
     tags,
+    idea_behavior: challenge.ideaBehavior,
   } as LightChallengeResponse;
 }
 

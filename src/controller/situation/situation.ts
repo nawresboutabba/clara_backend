@@ -1,6 +1,6 @@
 import { GroupValidatorResponse } from "../../repository/repository.group-validator";
+import { AreaSerialized } from "../../routes/area";
 import { TagSerialized } from "../../routes/tags/tags.serializer";
-import { AreaResponse } from "../area/area";
 import { TeamResponse } from "../team";
 import { UserResponse } from "../users";
 
@@ -63,7 +63,7 @@ export interface LightSituationResponse {
 export interface SituationResponse extends LightSituationResponse {
   active: boolean;
   updated: Date;
-  department_affected: Array<AreaResponse>;
+  department_affected: Array<AreaSerialized>;
   group_validator?: GroupValidatorResponse;
   file_complementary: Array<string>;
   tags: TagSerialized[];
@@ -74,7 +74,7 @@ export interface SituationResponse extends LightSituationResponse {
   can_choose_WSALevel: boolean;
   WSALevel_available: Array<string>;
   WSALevel_chosed: string;
-  areas_available: Array<AreaResponse>;
+  areas_available: Array<AreaSerialized>;
   community_can_see_reactions: boolean;
   participation_mode_available: Array<string>;
   participation_mode_chosed: string;

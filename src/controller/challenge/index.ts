@@ -36,10 +36,10 @@ import {
   IDEA_BEHAVIOR_ENUM,
 } from "../../routes/challenges/challenge.model";
 import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignments/strategic-alignment.serializer";
-import { AreaResponse } from "../area/area";
 import { ConfigurationBody } from "../configuration";
 import { SituationBody, SituationResponse } from "../situation/situation";
 import { LightSolutionResponse, SolutionResponse } from "../solutions";
+import { AreaSerialized } from "../../routes/area";
 /**
  * Data that can be edited or inserted. Other are edited by
  * another endpoints
@@ -70,8 +70,8 @@ export interface LightChallengeResponse {
   banner_image: string;
   images: string[];
   finalization: Date;
-  areas_available: AreaResponse[];
-  department_affected: AreaResponse[];
+  areas_available: AreaSerialized[];
+  department_affected: AreaSerialized[];
   type: CHALLENGE_TYPE_TYPE;
   idea_behavior: IDEA_BEHAVIOR_ENUM;
 

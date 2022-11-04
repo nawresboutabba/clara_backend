@@ -14,7 +14,7 @@ import { AreaI } from "../routes/area/area.model";
 import { UserI } from "../routes/users/user.model";
 import { ChallengeI } from "../routes/challenges/challenge.model";
 import { SolutionI } from "../routes/solutions/solution.model";
-import AreaService from "../services/Area.service";
+import * as AreaService from "../routes/area/area.repository";
 import ChallengeService from "../services/Challenge.service";
 import GroupValidatorService from "../services/GroupValidator.service";
 import ChallengeProposalService from "../services/Proposal.service";
@@ -114,7 +114,7 @@ const composeChallenge = async (
       status: SolutionStateMachine.init(),
       active: true,
       fileComplementary: body.file_complementary,
-      isStrategic: body.is_strategic,
+      // isStrategic: body.is_strategic,
 
       /**
        * Configuration section
@@ -139,13 +139,14 @@ const composeChallenge = async (
     };
 
     if (data.WSALevelChosed == WSALEVEL.AREA) {
-      const areasAvailable: Array<AreaI> = await AreaService.getAreasById(
+      const areasAvailable: Array<AreaI> = await AreaService.getAreasByIds(
         body.areas_available
       );
       // @ts-expect-error no new pattern
       data.areasAvailable = areasAvailable;
     }
 
+    // @ts-expect-error not using this function
     return data;
   } catch (error) {
     return Promise.reject(

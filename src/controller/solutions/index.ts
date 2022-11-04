@@ -30,8 +30,7 @@ import { ChallengeI } from "../../routes/challenges/challenge.model";
 import { SolutionI } from "../../routes/solutions/solution.model";
 import { LightStrategicAlignmentSerialized } from "../../routes/strategic-alignments/strategic-alignment.serializer";
 import { TagSerialized } from "../../routes/tags/tags.serializer";
-import { AreaResponse } from "../area/area";
-import { BaremoResponse } from "../baremo";
+
 import { LightChallengeResponse } from "../challenge";
 import { ConfigurationBody } from "../configuration";
 import {
@@ -40,6 +39,7 @@ import {
   SituationResponse,
 } from "../situation/situation";
 import { UserResponse } from "../users";
+import { AreaSerialized } from "../../routes/area";
 
 export interface SolutionBody extends SituationBody {
   proposed_solution: string;
@@ -110,7 +110,7 @@ export interface LightSolutionResponse extends LightSituationResponse {
     finalization: Date;
   };
   tags: TagSerialized[];
-  departmentAffected: AreaResponse[];
+  departmentAffected: AreaSerialized[];
   differential: string;
   is_new_for: string;
   was_tested: boolean;

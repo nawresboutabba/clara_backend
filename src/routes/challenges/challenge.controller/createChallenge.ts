@@ -19,6 +19,7 @@ export const createChallenge = validate({}, async ({ user }, res) => {
     active: true,
     type: CHALLENGE_TYPE.PARTICULAR,
     status: CHALLENGE_STATUS_ENUM.enum.DRAFT,
+    targetAudience: "Company",
     images: [],
     areasAvailable: [],
     departmentAffected: [],

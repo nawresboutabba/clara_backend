@@ -47,13 +47,13 @@ export const getSolutions = validate(
       }
     );
 
-    const hasUserQuery = {
-      $or: [{ author: user }, { coauthor: user }, { externalOpinion: user }],
-    };
+    // const hasUserQuery = {
+    // $or: [{ author: user }, { coauthor: user }, { externalOpinion: user }],
+    // };
 
-    const solutions = await SolutionRep.getSolutions({
-      $and: [hasUserQuery, filterQuery],
-    })
+    const solutions = await SolutionRep.getSolutions(
+      filterQuery
+    )
       .skip(query.init)
       .limit(query.offset)
       .sort(query.sort);

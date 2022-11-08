@@ -49,25 +49,28 @@ export const updateChallenge = validate(
       body.strategic_alignment
     );
 
+    const challengeBody = removeEmpty({
+      title: body.title,
+      description: body.description,
+      bannerImage: body.banner_image,
+      images: body.images,
+      tags,
+      departmentAffected,
+      finalization: body.finalization,
+      price: body.price,
+      goal: body.goal,
+      resources: body.resources,
+      wanted_impact: body.wanted_impact,
+      ideaBehavior: body.idea_behavior,
+      strategicAlignment,
+      targetAudience: body.target_audience,
+      targetAudienceValue: body.target_audience_value,
+    })
+
+    console.log(challengeBody)
     const updatedChallenge = await Challenge.findByIdAndUpdate(
       params.challengeId,
-      removeEmpty({
-        title: body.title,
-        description: body.description,
-        bannerImage: body.banner_image,
-        images: body.images,
-        tags,
-        departmentAffected,
-        finalization: body.finalization,
-        price: body.price,
-        goal: body.goal,
-        resources: body.resources,
-        wanted_impact: body.wanted_impact,
-        ideaBehavior: body.idea_behavior,
-        strategicAlignment,
-        targetAudience: body.target_audience,
-        targetAudienceValue: body.target_audience_value,
-      }),
+      body,
       { new: true }
     )
       .populate("author")

@@ -1,5 +1,5 @@
 import { Area } from "./area.model";
 
 export function getAreasByIds(areasIds: string[]) {
-  return Area.find({ id: { $in: areasIds } });
+  return Area.find({ _id: { $in: areasIds } });
 }

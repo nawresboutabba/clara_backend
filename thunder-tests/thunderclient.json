@@ -509,5 +509,46 @@
     "headers": [],
     "params": [],
     "tests": []
+  },
+  {
+    "_id": "286d3211-4f16-4e70-aa5a-c21a6811988d",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "create challenge",
+    "url": "{{base_url}}/challenges",
+    "method": "POST",
+    "sortNum": 45000,
+    "created": "2022-11-08T14:34:42.965Z",
+    "modified": "2022-11-08T14:35:30.805Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
+  },
+  {
+    "_id": "6dea1f02-af81-4976-b3bd-a2b1385b79ec",
+    "colId": "965bb216-6987-4e66-b689-9124ed026f46",
+    "containerId": "11626a7f-ed5f-4556-a227-2cb1724fa2cf",
+    "name": "update challenge",
+    "url": "{{base_url}}/challenges/636a6934210be0350f081730",
+    "method": "PATCH",
+    "sortNum": 37500,
+    "created": "2022-11-08T14:35:57.522Z",
+    "modified": "2022-11-08T14:37:57.611Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"title\": \"Titulo do desafio numero 33\",\n  \"tags\": [],\n  \"areas\": [],\n  \"target_audience\": \"Company\",\n  \"target_audience_value\": [],\n  \"description\": \"\",\n  \"price\": 0,\n  \"goal\": \"\",\n  \"resources\": \"\",\n  \"wanted_impact\": \"\",\n  \"idea_behavior\": \"WITH_PARK\",\n  \"images\": []\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{access_token}}"
+    },
+    "tests": []
   }
 ]

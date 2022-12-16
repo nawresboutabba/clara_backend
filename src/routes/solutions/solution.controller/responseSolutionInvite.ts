@@ -8,7 +8,7 @@ import Solution from "../solution.model";
 import { validate } from "../../../utils/express/express-handler";
 import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 import { getCurrentDate } from "../../../utils/general/date";
-
+import nodemailer from "nodemailer";
 export const responseSolutionInvite = validate(
   {
     params: z.object({ solutionId: z.string(), invitationId: z.string() }),
@@ -43,6 +43,7 @@ export const responseSolutionInvite = validate(
     if (response === INVITATION_STATUS.ACCEPTED) {
       await Solution.updateOne(
         { solutionId },
+        
         {
           $addToSet:
             invite.type === INVITATION_TYPE.EXTERNAL_OPINION
@@ -50,6 +51,31 @@ export const responseSolutionInvite = validate(
               : { coauthor: user },
         }
       );
+              //****************************email */
+              const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: 'tecnologia@claraidea.com.br',
+                  pass: 'Tecnologia1*'
+                }
+              });
+              
+            const mailOptions = {
+                from: 'tecnologia@claraidea.com.br',
+                to: user.email,
+                subject: 'Sending Email using Node.js',
+                text: 'That was easy!'
+              };
+              
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+      
+        //****************************email */
     }
 
     invite.decisionDate = getCurrentDate();

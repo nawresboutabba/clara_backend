@@ -30,7 +30,7 @@ export const cancelSolutionInvite = validate(
         .status(403)
         .json({ message: "The invitation has already been answered" });
     }
-
+  
     invite.decisionDate = getCurrentDate();
     invite.status = INVITATION_STATUS.CANCELED;
     return genericSolutionInvitationFilter(await invite.save());

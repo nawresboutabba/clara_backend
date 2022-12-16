@@ -8,6 +8,7 @@ import { StrategicAlignment } from "../../strategic-alignments/strategic-alignme
 import * as TagsRep from "../../tags/tags.repository";
 import * as SolutionRep from "../solution.repository";
 import { getAreasByIds } from "../../area/area.repository";
+import nodemailer from "nodemailer";
 
 export const updateSolution = validate(
   {
@@ -53,6 +54,31 @@ export const updateSolution = validate(
     if (solution.author.userId !== user.userId) {
       return res.status(403).json({ message: "not authorized" });
     }
+    //****************************email */
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'tecnologia@claraidea.com.br',
+        pass: 'Tecnologia1*'
+      }
+    });
+    
+  const mailOptions = {
+      from: 'tecnologia@claraidea.com.br',
+      to: user.email,
+      subject: 'Sending Email using Node.js',
+      text: 'That was easy!'
+    };
+    
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+
+//****************************email */
 
     const tags = await TagsRep.getTagsById(body.tags);
     const departmentAffected = await getAreasByIds(body.department_affected);

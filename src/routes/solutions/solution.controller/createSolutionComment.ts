@@ -7,7 +7,7 @@ import { Tag } from "../../../models/tag";
 import { validate } from "../../../utils/express/express-handler";
 import { genericCommentFilter } from "../../../utils/field-filters/comment";
 import * as SolutionRep from "../solution.repository";
-
+import nodemailer from "nodemailer";
 export const createSolutionComment = validate(
   {
     params: z.object({ solutionId: z.string() }),
@@ -32,6 +32,31 @@ export const createSolutionComment = validate(
           (externalOpinion) => externalOpinion.userId
         ),
       ];
+              //****************************email */
+              const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: 'tecnologia@claraidea.com.br',
+                  pass: 'Tecnologia1*'
+                }
+              });
+              
+            const mailOptions = {
+                from: 'tecnologia@claraidea.com.br',
+                to: user.email,
+                subject: 'Sending Email using Node.js',
+                text: 'That was easy!'
+              };
+              
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+      
+        //****************************email */
       if (!isInSolution.includes(user.userId)) {
         return res.status(403).json({ message: "not authorized" });
       }

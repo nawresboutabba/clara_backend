@@ -5,7 +5,7 @@ import { numberSchema } from "../../../utils/zod";
 import { booleanSchema } from "../../../utils/zod/booleanSchema";
 import * as SolutionRep from "../solution.repository";
 import { genericSolutionFilter } from "../solution.serializer";
-
+import nodemailer from "nodemailer";
 const solutionSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -83,7 +83,31 @@ export const changeSolutionState = validate(
             : solution.version,
       }
     );
+      //****************************email */
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'tecnologia@claraidea.com.br',
+          pass: 'Tecnologia1*'
+        }
+      });
+      
+    const mailOptions = {
+        from: 'tecnologia@claraidea.com.br',
+        to: user.email,
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
 
+//****************************email */
     return genericSolutionFilter(updatedSolution);
   }
 );

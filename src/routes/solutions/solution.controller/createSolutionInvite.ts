@@ -12,7 +12,7 @@ import { validate } from "../../../utils/express/express-handler";
 import { genericSolutionInvitationFilter } from "../../../utils/field-filters/invitation";
 import { generatePassword } from "../../../utils/general/generate-password";
 import * as SolutionRep from "../solution.repository";
-
+import nodemailer from "nodemailer";
 export const createSolutionInvite = validate(
   {
     params: z.object({ solutionId: z.string() }),
@@ -53,6 +53,33 @@ export const createSolutionInvite = validate(
     if (hasOldInvitation.length > 0) {
       return res.status(400).json({ message: "User has invite" });
     }
+
+
+        //****************************email */
+       const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'tecnologia@claraidea.com.br',
+            pass: 'Tecnologia1*'
+          }
+        });
+        
+      const mailOptions = {
+          from: 'tecnologia@claraidea.com.br',
+          to: user.email,
+          subject: 'Sending Email using Node.js',
+          text: 'That was easy!'
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email sent: ' + info.response);
+          }
+        });
+
+  //****************************email */
 
     const createdInvitation = await SolutionInvitation.create({
       from: user,
